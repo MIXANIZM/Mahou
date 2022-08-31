@@ -43,7 +43,7 @@ Mahou работает так как **Вы** хотите, настраивай
 
 ### Beta или "версия с последними изменениями" (aka latest-commit) [здесь](https://github.com/BladeMight/Mahou/releases/tag/latest-commit).
 
-! Хоть дата релиза и стоит "24 Jul 2019", этот релиз авто-собирается и обновляется каждый коммит. Скачать [Release_x86_x64.zip](https://github.com/BladeMight/Mahou/archive/refs/heads/master.zip).
+! Хоть дата релиза и стоит "12 Aug 2017", этот релиз авто-собирается и обновляется каждый коммит. Скачать [Release_x86_x64.zip](https://github.com/BladeMight/Mahou/releases/download/latest-commit/Release_x86_x64.zip).
 
 ### Используете Chocolatey? `cinst Mahou` для установки.
 
@@ -68,8 +68,14 @@ Mahou находится под [GPL v2+](https://github.com/BladeMight/Mahou/bl
 - Patreon: [Luanciel](https://www.patreon.com/Luanciel)
 
 
-###### Возможности по версиям:
+###### История изменений:
 
+<details><summary><b>v2.9.0.1 по 2.0.0.0</b></summary>
+
+**latest-commit (v2.9.0.1-dev <...>)**
+
+- [commits](https://github.com/BladeMight/Mahou/commits/master)
+	
 **v2.9.0.0**
 
 - 💎 Добавлен новый элемент в меню трея: "Перезапуск".
@@ -679,6 +685,8 @@ Mahou находится под [GPL v2+](https://github.com/BladeMight/Mahou/bl
 - Добавлены функции конверсии регистра текста.
 - Много исправлений.
 
+</details>
+
 <details>
   <summary><b>Более старые версии</b></summary>
 
@@ -797,7 +805,7 @@ Even selected text switches just between **selected** layouts, though if you lik
 
 ### Beta or "version with latest changes" (aka latest-commit) [here](https://github.com/BladeMight/Mahou/releases/tag/latest-commit).
 
-! Even though release date is "23 Jul 2019", this release is auto-compiled and updated every commit. If unsure download the Release_x86_x64.zip.
+! Even though release date is "12 Aug 2017", this release is auto-compiled and updated every commit. If unsure download the [Release_x86_x64.zip](https://github.com/BladeMight/Mahou/releases/download/latest-commit/Release_x86_x64.zip)..
 
 ### Using Chocolatey? type `cinst Mahou` to install.
 
@@ -822,7 +830,74 @@ Ways:
 - PayPal: [![](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4UHE4VSYVNUJW&source=url)
 - Patreon: [Luanciel](https://www.patreon.com/Luanciel)
 
-###### By version features:
+###### Change log:
+
+<details><summary> v2.9.0.1 to v2.0.0.0</summary>
+
+**latest-commit (v2.9.0.1-dev <...>)**
+
+- [commits](https://github.com/BladeMight/Mahou/commits/master)
+
+**v2.9.0.0**
+
+- 📝 AddSpaceToLastWord to true by default. #243
+- 📝 Added __convert snippet expression.
+- 📝 Typo ' ' to '|'...
+- 🐛 Bugfixes for __uppercase.
+- 🐛 Fixed ANY-like snippets in double-conversion.
+- 💎 Added __uppercase snippet expression.
+- 🐛 Auray fixed new lines issue.
+- thanks to ZiC for pointing out.
+- 📝 typo AppearEnce => AppearAnce.
+- 📝 Fix npre causes trouble for AltGr. #235
+- 📝 More rules to AltGr. #235
+- 📝 Added Any Alt+Ctrl to altgr rule. #235
+- 🐛 Removed PRE-KEY fix for altgr 1KeySwitch. #235
+- 📝 Added some rules to AltGr. #235
+- 📝 Added Clipboard copy-paste to sync.
+- 📝 Force UTF-8 encoding for sync.
+- 🐛 Fixed Upload wasn't have proxy.
+- 📝 Fix for proxy in Sync.
+- 📝 #231 W10 tab rows rule.
+- 📝 Layout==0 fix. Related: #230.
+- 💎 Added PreKey detect, KeyAfter for AltGr. related: #228
+- 📝 Real maxlength.
+- 📝 Added Sync translation. related: #222
+- 💎 Added Sync tab.
+- 💎 Improved JKL-workability checking.
+- 💎 Added delay snippets-exp, to delay actions.
+- 📝 Moved updates delay to uche thread.
+- 📝 Added startup updates delay.
+- 💎 Added JKL workability check.
+- 📝Now if JKL not works(or not found, etc.) as expected Mahou will try work without it.
+- 📝 Added more Logging in configs read/write.
+- 📝 Code format.
+- 📝 You in Russian typo.
+- 📝 Added more JKL logging.
+- 🐛 Use Int32.TryParse instead of Convert.ToInt32, on JKL uMSG id retrieve.
+- 📝 jklx86 uMSG static.
+- 📝 Fix for without JKL Convert Last.
+- 🐛 Added fix for Convert Last Word with JKL.
+- 📝 Added more logging in Convert Last Word.
+- 📝 Fixed error snip outside.
+- 📝 Lessened the logging of clear word.
+- 📝 Logging the Cycle Layout from JKL.
+- 🐛 Added fix for startup silent updates check.
+- 📝When no internet connection it caused an Exception, now it does not.
+- 📝 Experimental fix for random crash on "Exit" in tray.
+- 📝 Typo.
+- 💎 Added the Convert and Transliterate to tray. #221
+- The Latest context menu is not implemented at this time.
+- 🐛 Fixed rare "empty" tray icon bug.
+- 🐛 NULL FLAG exception fix.
+- 🐛 Fixed snippet expand by Tab deletion. #225
+- 💎 Added To Upper/Lower selection conversion hotkeys. #199
+- 📝 Simplified case conversion code.
+- 📝More statics.
+- Fixes random crash on system boot Mahou startup with JKL enabled.
+- 📝Suppress unneeded refresh flags when nowhere to display flags.
+- 🐛 Fixed clearing of LAST WORDS by Win key. affects #224
+- 📝 Most settings changed to static. #223
 
 **v2.8.0.0**
 
@@ -1541,6 +1616,8 @@ Removed (some just commented) the ones that are less popular.
 - Added memory clearing, now Mahou uses ~5MB RAM.
 - Added functions to convert text case.
 
+</details>
+								 
 <details>
   <summary><b>Older Versions</b></summary>
 
