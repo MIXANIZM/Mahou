@@ -4109,6 +4109,11 @@ namespace Mahou {
 				if (MMain.locales[i].Lang.Contains("Microsoft Office IME")) // fake layout
 					continue;
 				var l = MMain.locales[i].uId;
+				if (MahouUI.SwitchBetweenLayouts) {
+					if (l == target || (l != MahouUI.MAIN_LAYOUT1 && l != MahouUI.MAIN_LAYOUT2)) {
+						continue;
+					}
+				}
 				var l2 = target;
 				if (l == target) continue;
 				int wordLMinuses = 0;
