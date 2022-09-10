@@ -1650,7 +1650,7 @@ namespace Mahou
 			// 
 			this.nud_PersistentLayout2Interval.Location = new System.Drawing.Point(186, 204);
 			this.nud_PersistentLayout2Interval.Maximum = new decimal(new int[] {
-			5000,
+			99999,
 			0,
 			0,
 			0});
@@ -1713,7 +1713,7 @@ namespace Mahou
 			// 
 			this.nud_PersistentLayout1Interval.Location = new System.Drawing.Point(186, 204);
 			this.nud_PersistentLayout1Interval.Maximum = new decimal(new int[] {
-			5000,
+			99999,
 			0,
 			0,
 			0});
