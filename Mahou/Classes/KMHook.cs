@@ -2158,7 +2158,20 @@ namespace Mahou {
 			NOT_EXCLUDED_HWNDs.Add(hwnd);
 			return false;
 		}
+		public static void ResetPersistentTimer() {
+			if (MahouUI.PersistentLayoutForLayout1) {
+				Logging.Log("Reset persistent layout 1 timer.");
+				MMain.mahou.persistentLayout1Check.Stop();
+				MMain.mahou.persistentLayout1Check.Start();
+			}
+			if (MahouUI.PersistentLayoutForLayout2) {
+				Logging.Log("Reset persistent layout 2 timer.");
+				MMain.mahou.persistentLayout2Check.Stop();
+				MMain.mahou.persistentLayout2Check.Start();
+			}
+		}
 		public static void AS_IGN_fun() {
+			ResetPersistentTimer(); // not related to AS directly, but uses same triggers of switching layout.
 			if (AS_IGN_LS) {
 				if (AS_IGN_RULES.Contains("L")) {
 					Debug.WriteLine("[HEY] > "+ was_ls);
