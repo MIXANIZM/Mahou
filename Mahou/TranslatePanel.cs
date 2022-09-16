@@ -578,11 +578,13 @@ namespace Mahou {
 				LEFT = left;
 			if (top != -7)
 				TOP = top;
-			if (LEFT+Width > Screen.PrimaryScreen.Bounds.Width) {
-				LEFT = Screen.PrimaryScreen.Bounds.Width-Width-1;
-			}
-			if (TOP+Height > Screen.PrimaryScreen.Bounds.Height) {
-				TOP = Screen.PrimaryScreen.Bounds.Height-Height-1;
+			if (Screen.AllScreens.Length < 2) {
+				if (LEFT+Width > Screen.PrimaryScreen.Bounds.Width) {
+					LEFT = Screen.PrimaryScreen.Bounds.Width-Width-1;
+				}
+				if (TOP+Height > Screen.PrimaryScreen.Bounds.Height) {
+					TOP = Screen.PrimaryScreen.Bounds.Height-Height-1;
+				}
 			}
 			WinAPI.ShowWindow(Handle, WinAPI.SW_SHOWNOACTIVATE);
 			bull.Focus();
