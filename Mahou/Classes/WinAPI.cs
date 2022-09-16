@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 /// This class contains only WinAPI functions.
 /// </summary>
 public static class WinAPI {
+	public const int WM_PAINT = 0x000f;
     [DllImport("Imm32.dll", SetLastError = true)]
     public static extern bool ImmDisableIME(uint param1);
 	[DllImport("winmm.dll")]

@@ -7,7 +7,7 @@ namespace Mahou
 		/// Designer variable used to keep track of non-visual components.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
-		private System.Windows.Forms.TabControl tabs;
+		private TabControlC tabs;
 		private System.Windows.Forms.TabPage tab_functions;
 		private System.Windows.Forms.TabPage tab_layouts;
 		private System.Windows.Forms.Button btn_OK;
@@ -346,6 +346,7 @@ namespace Mahou
 		private System.Windows.Forms.Button btn_NCR_Sub;
 		private System.Windows.Forms.Label lbl_NCRCount;
 		private System.Windows.Forms.Label lbl_NCR;
+		private System.Windows.Forms.CheckBox Hchk_DARK;
 		/// <summary>
 		/// Disposes resources used by the form.
 		/// </summary>
@@ -361,7 +362,7 @@ namespace Mahou
 		}
 		public void InitializeComponent()
 		{
-			this.tabs = new System.Windows.Forms.TabControl();
+			this.tabs = new Mahou.MahouUI.TabControlC();
 			this.tab_functions = new System.Windows.Forms.TabPage();
 			this.lbl_TrayDislpayType = new System.Windows.Forms.Label();
 			this.cbb_TrayDislpayType = new System.Windows.Forms.ComboBox();
@@ -645,6 +646,7 @@ namespace Mahou
 			this.lnk_Site = new System.Windows.Forms.LinkLabel();
 			this.lnk_Repository = new System.Windows.Forms.LinkLabel();
 			this.tab_Hidden = new System.Windows.Forms.TabPage();
+			this.Hchk_DARK = new System.Windows.Forms.CheckBox();
 			this.Htxt_LayoutModifier_2 = new System.Windows.Forms.TextBox();
 			this.Hlbl_LayoutModifier_2 = new System.Windows.Forms.Label();
 			this.Htxt_LayoutModifier_1 = new System.Windows.Forms.TextBox();
@@ -779,6 +781,7 @@ namespace Mahou
 			this.tabs.Controls.Add(this.tab_updates);
 			this.tabs.Controls.Add(this.tab_about);
 			this.tabs.Controls.Add(this.tab_Hidden);
+			this.tabs.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
 			this.tabs.Location = new System.Drawing.Point(0, 0);
 			this.tabs.Multiline = true;
 			this.tabs.Name = "tabs";
@@ -4048,6 +4051,7 @@ namespace Mahou
 			// 
 			this.tab_Hidden.AutoScroll = true;
 			this.tab_Hidden.BackColor = System.Drawing.Color.DarkSlateGray;
+			this.tab_Hidden.Controls.Add(this.Hchk_DARK);
 			this.tab_Hidden.Controls.Add(this.Htxt_LayoutModifier_2);
 			this.tab_Hidden.Controls.Add(this.Hlbl_LayoutModifier_2);
 			this.tab_Hidden.Controls.Add(this.Htxt_LayoutModifier_1);
@@ -4107,6 +4111,17 @@ namespace Mahou
 			this.tab_Hidden.Size = new System.Drawing.Size(559, 268);
 			this.tab_Hidden.TabIndex = 15;
 			this.tab_Hidden.Text = "[Hidden]";
+			// 
+			// Hchk_DARK
+			// 
+			this.Hchk_DARK.AutoSize = true;
+			this.Hchk_DARK.Location = new System.Drawing.Point(8, 798);
+			this.Hchk_DARK.Name = "Hchk_DARK";
+			this.Hchk_DARK.Size = new System.Drawing.Size(94, 19);
+			this.Hchk_DARK.TabIndex = 57;
+			this.Hchk_DARK.Text = "Dark Theme?";
+			this.Hchk_DARK.UseVisualStyleBackColor = true;
+			this.Hchk_DARK.CheckedChanged += new System.EventHandler(this.Hchk_DARKCheckedChanged);
 			// 
 			// Htxt_LayoutModifier_2
 			// 
@@ -4665,7 +4680,7 @@ namespace Mahou
 			// 
 			// Hlbl_scrollpastcontent
 			// 
-			this.Hlbl_scrollpastcontent.Location = new System.Drawing.Point(234, 784);
+			this.Hlbl_scrollpastcontent.Location = new System.Drawing.Point(234, 803);
 			this.Hlbl_scrollpastcontent.Name = "Hlbl_scrollpastcontent";
 			this.Hlbl_scrollpastcontent.Size = new System.Drawing.Size(100, 23);
 			this.Hlbl_scrollpastcontent.TabIndex = 40;

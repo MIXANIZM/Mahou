@@ -210,6 +210,7 @@ namespace Mahou {
         	CreateConfigsFile();
         	ReadFromDisk();
         	#region Hidden
+			CheckBool("Hidden", "DARKTHEME", "false");
 			CheckInt("Hidden", "Layout_2_Modifier_Key", "0");
 			CheckInt("Hidden", "Layout_1_Modifier_Key", "0");
         	CheckBool("Hidden", "CycleCaseSaveBase", "false");

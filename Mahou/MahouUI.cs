@@ -1528,6 +1528,7 @@ namespace Mahou {
 			}
 		}
 		void saveHidden() {
+			MMain.MyConfs.Write("Hidden", "DARKTHEME", Hchk_DARK.Checked.ToString());
 			MMain.MyConfs.Write("Hidden", "ChangeLayoutOnTrayLMB", Hchk_LMBTrayLayoutChange.Checked.ToString());
 			MMain.MyConfs.Write("Hidden", "DisableMemoryFlush", Hchk_DisableMemFlush.Checked.ToString());
 			MMain.MyConfs.Write("Hidden", "SymbolClear", Htxt_SymbolClear.Text);
@@ -1606,6 +1607,9 @@ namespace Mahou {
 			CycleCaseSaveBase = Hchk_SaveBase.Checked = MMain.MyConfs.ReadBool("Hidden", "CycleCaseSaveBase");
 			Layout1ModifierKey = MMain.MyConfs.ReadInt("Hidden", "Layout_1_Modifier_Key");
 			Layout2ModifierKey = MMain.MyConfs.ReadInt("Hidden", "Layout_2_Modifier_Key");
+			if (MMain.MyConfs.ReadBool("Hidden", "DARKTHEME")) {
+				Hchk_DARK.Checked = true;
+			}
 			try {  var k = (Keys)Layout1ModifierKey; Htxt_LayoutModifier_1.Text = k==Keys.None?"":k.ToString(); } catch { Logging.Log("Layout modifier 1 key code is not valid key."); }
 			try { var k = (Keys)Layout2ModifierKey; Htxt_LayoutModifier_2.Text = k==Keys.None?"":k.ToString(); } catch { Logging.Log("Layout modifier 1 key code is not valid key."); }
 			parseRedefines();
@@ -4762,6 +4766,136 @@ DEL ""ExtractASD.cmd""";
 			Logging.Log("Language changed.");
 			SetTooltips();
 		}
+		class MTheme {
+			public Color BG;
+			public Color FG;
+			public Color TAB_BORDERS;
+			public Color TAB_FOCUS_BG;
+		}
+		void ToggleDark(bool yes) {
+			var BGDARK = Color.FromArgb(51, 54, 58);
+			var FGDARK = Color.FromArgb(181, 181, 181);
+			if (yes) {
+				for(int ii = 0; ii != this.Controls.Count; ii++) {
+					this.Controls[ii].BackColor = BGDARK;
+					this.Controls[ii].ForeColor = FGDARK;
+				}
+				this.BackColor = tabs.BG = lsb_Hotkeys.BackColor = lsb_LangTTAppearenceForList.BackColor = BGDARK;
+				this.ForeColor = tabs.FG = lsb_Hotkeys.ForeColor = lsb_LangTTAppearenceForList.ForeColor = FGDARK;
+				tabs.TAB_BORDERS = Color.DarkSlateGray;
+				tabs.TAB_FOCUS_BG = Color.Black;
+				for(int i = 0; i != tabs.TabPages.Count; i++) {
+					if (tabs.TabPages[i].Text == "[Hidden]") continue;
+					tabs.TabPages[i].BackColor = BGDARK;
+					tabs.TabPages[i].ForeColor = FGDARK;
+					for(int ii = 0; ii != tabs.TabPages[i].Controls.Count; ii++) {
+						if (tabs.TabPages[i].Controls[ii] is TextBoxCA || tabs.TabPages[i].Controls[ii] is TextBox) {
+							tabs.TabPages[i].Controls[ii].BackColor = Color.Black;
+							
+						} else {
+							tabs.TabPages[i].Controls[ii].BackColor = BGDARK;
+						}
+						tabs.TabPages[i].Controls[ii].ForeColor = FGDARK;
+					}
+				}
+			} else {
+				for(int ii = 0; ii != this.Controls.Count; ii++) {
+					this.Controls[ii].BackColor = SystemColors.Control;
+					this.Controls[ii].ForeColor = SystemColors.WindowText;
+				}
+				this.BackColor = tabs.BG = lsb_Hotkeys.BackColor = lsb_LangTTAppearenceForList.BackColor = SystemColors.Control;
+				this.ForeColor = tabs.FG = lsb_Hotkeys.ForeColor = lsb_LangTTAppearenceForList.ForeColor = SystemColors.WindowText;
+				tabs.TAB_BORDERS = SystemColors.ControlLight;
+				tabs.TAB_FOCUS_BG = SystemColors.Window;
+				for(int i = 0; i != tabs.TabPages.Count; i++) {
+					if (tabs.TabPages[i].Text == "[Hidden]") continue;
+					tabs.TabPages[i].BackColor = SystemColors.Control;
+					tabs.TabPages[i].ForeColor = SystemColors.WindowText;
+					for(int ii = 0; ii != tabs.TabPages[i].Controls.Count; ii++) {
+						if (tabs.TabPages[i].Controls[ii] is TextBoxCA || tabs.TabPages[i].Controls[ii] is TextBox) {
+							tabs.TabPages[i].Controls[ii].BackColor = SystemColors.Window;
+							
+						} else {
+							tabs.TabPages[i].Controls[ii].BackColor = SystemColors.Control;
+						}
+						tabs.TabPages[i].Controls[ii].ForeColor = SystemColors.WindowText;
+					}
+				}
+			}
+		}
+		#region Colored TabControl
+		public class TabControlC : TabControl {
+			public Color BG = SystemColors.Control;
+			public Color FG = SystemColors.WindowText;
+			public Color TAB_BORDERS = SystemColors.ControlLight;
+			public Color TAB_FOCUS_BG = SystemColors.Window;
+			public TabControlC() {
+				this.DrawItem += DrawItemHandler;
+			}
+			Dictionary<int, DrawItemEventArgs> ItemArgs = new Dictionary<int, DrawItemEventArgs>();
+			Dictionary<int, string> ItemTexts = new Dictionary<int, string>();
+			void DrawItemHandler(object sender, DrawItemEventArgs e) {
+		        if (!ItemArgs.ContainsKey(e.Index))
+		            ItemArgs.Add(e.Index, e);
+		        else
+		            ItemArgs[e.Index] = e;
+		        if (!ItemTexts.ContainsKey(e.Index))
+		        	ItemTexts.Add(e.Index, (sender as TabControlC).TabPages[e.Index].Text);
+		        else
+		            ItemTexts[e.Index] = (sender as TabControlC).TabPages[e.Index].Text;
+			}
+		    protected override void WndProc(ref Message m) {
+	        	base.WndProc(ref m);
+	        	if(m.Msg == (int) WinAPI.WM_PAINT) {
+	            	using (var g = this.CreateGraphics()) {
+		                //Double buffering stuff...
+		                BufferedGraphicsContext currentContext;
+		                BufferedGraphics myBuffer;
+		                currentContext = BufferedGraphicsManager.Current;
+		                myBuffer = currentContext.Allocate(g,
+		                   this.ClientRectangle);
+		                Rectangle r = ClientRectangle;
+		
+		                //Painting background
+		                if(Enabled)
+		                    myBuffer.Graphics.FillRectangle(new SolidBrush(BG), r);
+		                else
+		                    myBuffer.Graphics.FillRectangle(Brushes.LightGray, r);
+		
+		                //Painting border
+		                r.Height = this.DisplayRectangle.Height +1; //Using display rectangle hight because it excludes the tab headers already
+		                r.Y = this.DisplayRectangle.Y - 1; //Same for Y coordinate
+		                r.Width -= 5;
+		                r.X += 1;
+		
+		                if(Enabled)
+		                    myBuffer.Graphics.DrawRectangle(new Pen(Color.FromArgb(255, 133, 158, 191), 1), r);
+		                else
+		                    myBuffer.Graphics.DrawRectangle(Pens.DarkGray, r);
+		
+		                for (int ii = 0; ii != ItemArgs.Count; ii++) {
+		                	var i = ItemArgs[ii];
+		                	var t = ItemTexts[ii];
+							Debug.WriteLine(i.Bounds);
+//		                	CustomDrawItem(ItemArgs[i], ItemTexts[i]);
+							myBuffer.Graphics.DrawRectangle(new Pen(TAB_BORDERS), i.Bounds.X, i.Bounds.Y, i.Bounds.Width, i.Bounds.Height);
+							var yal = i.Bounds.Y;
+							var xal = i.Bounds.X;
+							if (i.Bounds.Height == 24) { // Assume that is focused tab
+								yal += 4;
+								xal += 6;
+								myBuffer.Graphics.FillRectangle(new SolidBrush(TAB_FOCUS_BG), i.Bounds.X+1, i.Bounds.Y+1, i.Bounds.Width-2, i.Bounds.Height-2);
+							}
+							myBuffer.Graphics.DrawString(t, i.Font, new SolidBrush(FG), xal, yal);
+		                }
+		
+		                myBuffer.Render();
+		                myBuffer.Dispose();
+		            }
+		        }    
+		    }
+		}
+		#endregion
 		#region Textbox + Ctrl+A
 		public class TextBoxCA : TextBox {
 			protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
@@ -5357,6 +5491,9 @@ DEL ""ExtractASD.cmd""";
 		}
 		#endregion
 		#region Mahou UI controls events
+		void Hchk_DARKCheckedChanged(object sender, EventArgs e) {
+			ToggleDark(Hchk_DARK.Checked);
+		}
 		void Txt_LCTRLLALTTempLayoutTextChanged(object sender, EventArgs e) {
 			var txt = (sender as TextBox);
 			if (Regex.IsMatch(txt.Text, @"[^0-9]")) {
