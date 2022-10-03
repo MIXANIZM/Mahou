@@ -5188,6 +5188,25 @@ DEL ""ExtractASD.cmd""";
 					KMHook.PasteText(cl);
 					KMHook.RestoreClipBoard();
 				}
+			} else if (act == "snipex") {
+				var expr = "";
+				foreach(var snex in KMHook.expressions) {
+					if (arg.Contains(snex.ToLower())) {
+						expr = snex.ToLower();
+						break;
+					}
+				}
+				if (expr != "") {
+					if (arg.EndsWith(")", StringComparison.InvariantCulture) &&
+					    arg.StartsWith(expr+"(", StringComparison.InvariantCulture)) {
+						var argn = arg.Substring(expr.Length + 1, arg.Length - expr.Length - 2);
+						KMHook.ExecExpression(expr, argn);
+					} else {
+						Logging.Log("Expression: " + arg + " missing ( or )", 2);
+					}
+				} else {
+					Logging.Log("Unknown expression called: " + arg, 2);
+				}
 			} else {
 				MessageBox.Show("Unknown action: " + act, "No such action",MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}

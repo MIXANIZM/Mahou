@@ -1526,7 +1526,7 @@ namespace Mahou {
 		}
 		#region in Snippets expressions 
 		//                                                0         1          2             3         4             5          6                7            8            9            10         11               12           13           14              15             16             17           18        19       20    
-		static readonly string[] expressions = new []{ "__date", "__time", "__version", "__system", "__title", "__keyboard", "__execute", "__cursorhere", "__paste", "__mahouhome", "__delay", "__uppercase", "__convert", "__setlayout", "__selection", "__clearlsnip", "__replace", "__setsnip", "__setlsnip", "__if", "__nif" };
+		public static readonly string[] expressions = new []{ "__date", "__time", "__version", "__system", "__title", "__keyboard", "__execute", "__cursorhere", "__paste", "__mahouhome", "__delay", "__uppercase", "__convert", "__setlayout", "__selection", "__clearlsnip", "__replace", "__setsnip", "__setlsnip", "__if", "__nif" };
 		static string ExpandSnippetWithExpressions(string expand) {
 			StringBuilder ex, args, raw, err, allraw;
 			ex = new StringBuilder(); args = new StringBuilder(); raw = new StringBuilder(); err = new StringBuilder(); allraw = new StringBuilder();
@@ -1675,7 +1675,10 @@ namespace Mahou {
 			}
 		}
 		static StringBuilder EXSN_result;
-		static void ExecExpression(string expr, string args, int curlefts = -1, string plaintext_pre = "") {
+		public static void ExecExpression(string expr, string args, int curlefts = -1, string plaintext_pre = "") {
+			if (EXSN_result == null) {
+				EXSN_result = new StringBuilder();
+			}
 			if (!string.IsNullOrEmpty(plaintext_pre)) {
 				EXSN_result.Append(plaintext_pre);
 			}
