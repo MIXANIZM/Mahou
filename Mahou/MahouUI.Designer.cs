@@ -1881,6 +1881,11 @@ namespace Mahou
 			// nud_LangTTPositionY
 			// 
 			this.nud_LangTTPositionY.Location = new System.Drawing.Point(73, 48);
+			this.nud_LangTTPositionY.Minimum = new decimal(new int[] {
+			100,
+			0,
+			0,
+			-2147483648});
 			this.nud_LangTTPositionY.Name = "nud_LangTTPositionY";
 			this.nud_LangTTPositionY.Size = new System.Drawing.Size(45, 23);
 			this.nud_LangTTPositionY.TabIndex = 3;
@@ -1898,6 +1903,11 @@ namespace Mahou
 			// nud_LangTTPositionX
 			// 
 			this.nud_LangTTPositionX.Location = new System.Drawing.Point(73, 19);
+			this.nud_LangTTPositionX.Minimum = new decimal(new int[] {
+			100,
+			0,
+			0,
+			-2147483648});
 			this.nud_LangTTPositionX.Name = "nud_LangTTPositionX";
 			this.nud_LangTTPositionX.Size = new System.Drawing.Size(45, 23);
 			this.nud_LangTTPositionX.TabIndex = 1;
