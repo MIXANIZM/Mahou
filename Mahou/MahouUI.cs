@@ -2572,10 +2572,11 @@ DEL "+restartMahouPath;
 	//			Debug.WriteLine("refresh?"+ (lastTrayFlagLayout != lcid || force));
 				if (lastTrayFlagLayout != lcid || force) {
 					RefreshFLAG(force);
-					var b = new Bitmap(FLAG);
+					Bitmap b = null;
+					if (FLAG != null) b = new Bitmap(FLAG);
 					if (TrayText && ITEXT != null) b = new Bitmap(ITEXT);
 					Icon flagicon;
-					if (FLAG != null)
+					if (b != null)
 						flagicon = Icon.FromHandle(b.GetHicon());
 					else 
 						flagicon = Mahou.Properties.Resources.MahouTrayHD;
