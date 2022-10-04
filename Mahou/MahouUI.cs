@@ -5270,6 +5270,7 @@ DEL ""ExtractASD.cmd""";
 					buf.Append(c);
 					lc = c;
 				}
+				arg = arg.Replace("\\|", "|");
 				if (!string.IsNullOrEmpty(hotk.ToString())) {
 					tray_hotkeys.Add(hotk.ToString(), new Tuple<Action, string>(() => 
                         menuhandle(act.ToString(), arg.ToString()),
