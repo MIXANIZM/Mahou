@@ -3235,8 +3235,13 @@ DEL "+restartMahouPath;
 				string csf = second ? CustomSound2 : CustomSound;
 				var sms = new MemoryStream(snd);
 				var sp = new System.Media.SoundPlayer(sms);
+				try {
 				if (ucs) if (File.Exists(csf))
 						sp = new System.Media.SoundPlayer(csf);
+				} catch(Exception e) {
+					Logging.Log("Error during loading of the custom sound file: "+e.Message + "\n" + e.StackTrace, 1);
+					Logging.Log("Fallback to default sound...");
+				}
 				sp.Play();
 				sp.Dispose();
 				sms.Dispose();
