@@ -2988,6 +2988,11 @@ DEL "+restartMahouPath;
 			ToggleTimers();
 		}
 		public void UpdateMouseLD() {
+			if (mouseLangDisplay == null) {
+				Logging.Log("mouseLangDisplay was null when trying to update it.", 2);
+				InitLangDisplays();
+				return;
+			}
 			if (LDForMouseOnChange) {
 				var cLuid = Locales.GetCurrentLocale();
 				if (UseJKL && !KMHook.JKLERR)
@@ -3013,6 +3018,11 @@ DEL "+restartMahouPath;
 			}
 		}
 		public void UpdateCaredLD() {
+			if (caretLangDisplay == null) {
+				Logging.Log("caretLangDisplay was null when trying to update it.", 2);
+				InitLangDisplays();
+				return;
+			}
 			var crtOnly = new Point(0,0);
 			var curCrtPos = CaretPos.GetCaretPointToScreen(out crtOnly);
 			uint cLuid = 0;
