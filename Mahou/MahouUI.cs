@@ -1903,12 +1903,12 @@ namespace Mahou {
 			CustomSound2 = lbl_CustomSound2.Text = MMain.MyConfs.Read("Sounds", "CustomSound2");
 			var lbCSh = lbl_CustomSound.Text;
 			var lbCSh2 = lbl_CustomSound2.Text;
-			if (!File.Exists(CustomSound)) {
+			if (!File.Exists(replaceenv(CustomSound, "%mahou_dir%", () => nPath))) {
 				lbl_CustomSound.ForeColor = Color.Red;
 				lbCSh = MMain.Lang[Languages.Element.Not] + " " + MMain.Lang[Languages.Element.Exist] + ":\r\n["+lbl_CustomSound.Text+"]";
 			} else
 				lbl_CustomSound.ForeColor = Color.FromKnownColor(KnownColor.WindowText);
-			if (!File.Exists(CustomSound2)) {
+			if (!File.Exists(replaceenv(CustomSound2, "%mahou_dir%", () => nPath))) {
 				lbl_CustomSound2.ForeColor = Color.Red;
 				lbCSh2 = MMain.Lang[Languages.Element.Not] + " " + MMain.Lang[Languages.Element.Exist] + ":\r\n["+lbl_CustomSound2.Text+"]";
 			} else
@@ -3236,7 +3236,8 @@ DEL "+restartMahouPath;
 				var sms = new MemoryStream(snd);
 				var sp = new System.Media.SoundPlayer(sms);
 				try {
-				if (ucs) if (File.Exists(csf))
+					csf = replaceenv(csf, "%mahou_dir%", () => nPath);
+					if (ucs) if (File.Exists(csf))
 						sp = new System.Media.SoundPlayer(csf);
 				} catch(Exception e) {
 					Logging.Log("Error during loading of the custom sound file: "+e.Message + "\n" + e.StackTrace, 1);
