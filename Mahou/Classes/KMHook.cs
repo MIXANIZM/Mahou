@@ -2543,6 +2543,10 @@ namespace Mahou {
 			return LIST.ToArray();
 		}
 		public static string ConvertText(string ClipStr, uint l1 = 0, uint l2 = 0) {
+			if (String.IsNullOrEmpty(ClipStr)) {
+		    	Logging.Log("Empty or null ClipStr.", 2);
+		    	return "";
+		    }
 			if (l1 == 0) l1 = cs_layout_last;
 			if (l2 == 0) l2 = GetNextLayout(l1).uId;
 			var result = new StringBuilder();
@@ -2993,6 +2997,10 @@ namespace Mahou {
 			return __dictReplace(CustomConversionDICT, ClipStr, ref onre);
 		}
 		public static string TransliterateText(string ClipStr) {
+			if (String.IsNullOrEmpty(ClipStr)) {
+		    	Logging.Log("Empty or null ClipStr.", 2);
+		    	return "";
+		    }
 			Logging.Log("[TRANSLTRT] > Starting Transliterate text.");
 			string output = __TSDictReplace(ClipStr);
 			Debug.WriteLine("1st TR: " +output);
