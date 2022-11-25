@@ -5420,6 +5420,44 @@ DEL ""ExtractASD.cmd""";
 		        return "";
 		    }
 		}
+		public static string GetLnkTarget(string lnkpath) {
+ 			Type t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); //Windows Script Host Shell Object
+ 			dynamic shell = Activator.CreateInstance(t);
+ 			string outpath = lnkpath;
+ 			try {
+ 				var lnk = shell.CreateShortcut(lnkpath);
+ 				try {
+ 					outpath = lnk.TargetPath;
+ 				} finally {
+ 					Marshal.FinalReleaseComObject(lnk);
+ 				}
+			} finally {
+				Marshal.FinalReleaseComObject(shell);
+ 			}
+ 			return outpath;
+		}
+		public static Icon GetPathIcon(string filepath, bool small = true) {
+            Icon clone;
+            WinAPI.SHGFI_Flag flags;
+            WinAPI.SHFILEINFO shinfo = new WinAPI.SHFILEINFO();
+            if (small) {
+                flags = WinAPI.SHGFI_Flag.SHGFI_ICON | WinAPI.SHGFI_Flag.SHGFI_SMALLICON;
+            }
+            else {
+                flags = WinAPI.SHGFI_Flag.SHGFI_ICON | WinAPI.SHGFI_Flag.SHGFI_LARGEICON;
+            }
+            if (WinAPI.SHGetFileInfo(filepath, 0, ref shinfo, Marshal.SizeOf(shinfo), flags) == 0) {
+                throw (new FileNotFoundException());
+            }
+            Icon tmp = Icon.FromHandle(shinfo.hIcon);
+            clone = (Icon)tmp.Clone();
+            tmp.Dispose();
+            if (!WinAPI.DestroyIcon(shinfo.hIcon))
+            {
+                return clone;
+            }
+            return clone;
+        }
 		static Dictionary<string, Image> file_icons_cache = new Dictionary<string, Image>();
 		static void dirparser(ref ToolStripMenuItem root, string dir, int max_depth, string allow_types, int maxentries, int this_depth=-1) {
 			Debug.WriteLine("parsing: " +dir);
@@ -5478,20 +5516,22 @@ DEL ""ExtractASD.cmd""";
 					var eex = ext;
 					var ffd = fd;
 					if (ext.ToLower() == ".lnk") {
-						ffd = GetShortcutTarget(fd);
+						ffd = GetLnkTarget(fd); //GetShortcutTarget(fd);
 						if (File.Exists(ffd)) {
 							eex = new FileInfo(ffd).Extension;
 						} else {
 							ffd = fd;
 						}
+						Debug.WriteLine("LNK-Real: " + ffd);
 					}
 					if (file_icons_cache.ContainsKey(eex)) {
 						img = file_icons_cache[eex];
 					} else {
-						var b = Icon.ExtractAssociatedIcon(ffd).ToBitmap();
+						var b = GetPathIcon(ffd).ToBitmap(); //Icon.ExtractAssociatedIcon(ffd).ToBitmap();
 						img = Image.FromHbitmap(b.GetHbitmap());
 						b.Dispose();
-						file_icons_cache[eex] = img;
+						if (eex != ".exe")
+							file_icons_cache[eex] = img;
 					}
 				} 
 				else {
