@@ -3388,6 +3388,7 @@ namespace Mahou {
 				var tmp = new DICT<int,int>();
 				var thisid = 0;
 				foreach (string l in ll) {
+					if (String.IsNullOrEmpty(l)) continue;
 					if (thisid != 0) {
 						var kcs = new List<string>();
 						if (l.Contains(',')) {
@@ -3511,7 +3512,7 @@ namespace Mahou {
 				if (MahouUI.UseJKL && !KMHook.JKLERR)
 					wasLocale = MahouUI.currentLayout;
 				var desl = GetNextLayout(wasLocale).uId;
-				YuKey[] YuKeys = line ? c_.ToArray() : LayoutKeyReplace(c_, (int)(wasLocale>>16), (int)(desl>>16)).ToArray();
+				YuKey[] YuKeys = line ? c_.ToArray() : LayoutKeyReplace(c_, (int)(wasLocale&0xffff), (int)(desl&0xffff)).ToArray();
 				if (MahouUI.UseJKL && MahouUI.EmulateLS && !JKLERR) {
 					Debug.WriteLine("JKL-ed CLW");
 					Logging.Log("[CLAST] > On JKL layout: " +desl);
