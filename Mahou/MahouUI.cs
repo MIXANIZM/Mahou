@@ -62,7 +62,7 @@ namespace Mahou {
 		#endregion
 		#region [Hidden]
 		public static bool __setlayoutForce, __setlayoutOnlyWM, nomemoryflush, LibreCtrlAltShiftV, __selection, __selection_nomouse, CycleCaseReset,
-							OVEXDisabled, ClipBackOnlyText, MahouMMTrayHoverLostFocusClose, CycleCaseSaveBase;
+							OVEXDisabled, ClipBackOnlyText, MahouMMTrayHoverLostFocusClose, CycleCaseSaveBase, cmdbackfix;
 		public static string ReselectCustoms, AutoCopyTranslation = "", onlySnippetsExcluded = "", onlyAutoSwitchExcluded = "", CycleCaseBase;
 		static string CycleCaseOrder = "TULSR", OverlayExcluded, tas, ncs;
 		static int OverlayExcludedInerval, arm;
@@ -226,6 +226,7 @@ namespace Mahou {
 	"\r\n->mahouver====>__version()<====\r\n->mahoutitle====>__title()<====\r\n->env_system====>__system()<====\r\n->date_esc====>\\__date(HH:mm:ss)<====";
 			// Switch to more secure connection.
 			ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+			nud_LangTTPositionX.Minimum = nud_LangTTPositionY.Minimum = -100;
            	LoadConfigs();
 			InitializeListBoxes();
 			// Set minnimum values because they're ALWAYS restores to 0 after Form Editor is used.
@@ -233,7 +234,6 @@ namespace Mahou {
 		        nud_LangTTCaretRefreshRate.Minimum = nud_LangTTMouseRefreshRate.Minimum =
 				nud_ScrollLockRefreshRate.Minimum =	nud_TrayFlagRefreshRate.Minimum = 
 		    	nud_PersistentLayout1Interval.Minimum = nud_PersistentLayout2Interval.Minimum =	1;
-			nud_LangTTPositionX.Minimum = nud_LangTTPositionY.Minimum = -100;
 			// Disable horizontal scroll
 			pan_TrSets.AutoScroll = pan_KeySets.AutoScroll = false;
 			pan_TrSets.HorizontalScroll.Maximum = pan_KeySets.HorizontalScroll.Maximum = 0;
@@ -1528,6 +1528,7 @@ namespace Mahou {
 			}
 		}
 		void saveHidden() {
+			MMain.MyConfs.Write("Hidden", "cmdbackfix", Hchk_cmdbackfix.Checked.ToString());
 			MMain.MyConfs.Write("Hidden", "DARKTHEME", Hchk_DARK.Checked.ToString());
 			MMain.MyConfs.Write("Hidden", "ChangeLayoutOnTrayLMB", Hchk_LMBTrayLayoutChange.Checked.ToString());
 			MMain.MyConfs.Write("Hidden", "DisableMemoryFlush", Hchk_DisableMemFlush.Checked.ToString());
@@ -1610,6 +1611,7 @@ namespace Mahou {
 			if (MMain.MyConfs.ReadBool("Hidden", "DARKTHEME")) {
 				Hchk_DARK.Checked = true;
 			}
+			Hchk_cmdbackfix.Checked = cmdbackfix = MMain.MyConfs.ReadBool("Hidden", "cmdbackfix");
 			try {  var k = (Keys)Layout1ModifierKey; Htxt_LayoutModifier_1.Text = k==Keys.None?"":k.ToString(); } catch { Logging.Log("Layout modifier 1 key code is not valid key."); }
 			try { var k = (Keys)Layout2ModifierKey; Htxt_LayoutModifier_2.Text = k==Keys.None?"":k.ToString(); } catch { Logging.Log("Layout modifier 1 key code is not valid key."); }
 			parseRedefines();

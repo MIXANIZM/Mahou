@@ -3313,7 +3313,8 @@ namespace Mahou {
 				var clsNM = Locales.ActiveWindowClassName(40, WinAPI.GetForegroundWindow());
 					if (IfNW7() &&
 					    clsNM == "ConsoleWindowClass" && (
-						MMain.mahou.HKCLast.VirtualKeyCode == (int)Keys.Pause))
+						MMain.mahou.HKCLast.VirtualKeyCode == (int)Keys.Pause)
+				   		&& MahouUI.cmdbackfix)
 						backs++;
 //					Debug.WriteLine("ACT_CLASSN: " + clsNM);
 					if (clsNM.StartsWith("Qt5")) { // Qt5 keyboard message handling seems slow, so wait for it before starting 

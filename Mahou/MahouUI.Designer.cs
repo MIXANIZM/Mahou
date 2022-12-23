@@ -347,6 +347,7 @@ namespace Mahou
 		private System.Windows.Forms.Label lbl_NCRCount;
 		private System.Windows.Forms.Label lbl_NCR;
 		private System.Windows.Forms.CheckBox Hchk_DARK;
+		private System.Windows.Forms.CheckBox Hchk_cmdbackfix;
 		/// <summary>
 		/// Disposes resources used by the form.
 		/// </summary>
@@ -646,6 +647,7 @@ namespace Mahou
 			this.lnk_Site = new System.Windows.Forms.LinkLabel();
 			this.lnk_Repository = new System.Windows.Forms.LinkLabel();
 			this.tab_Hidden = new System.Windows.Forms.TabPage();
+			this.Hchk_cmdbackfix = new System.Windows.Forms.CheckBox();
 			this.Hchk_DARK = new System.Windows.Forms.CheckBox();
 			this.Htxt_LayoutModifier_2 = new System.Windows.Forms.TextBox();
 			this.Hlbl_LayoutModifier_2 = new System.Windows.Forms.Label();
@@ -1885,10 +1887,15 @@ namespace Mahou
 			100,
 			0,
 			0,
-			-2147483648});
+			0});
 			this.nud_LangTTPositionY.Name = "nud_LangTTPositionY";
 			this.nud_LangTTPositionY.Size = new System.Drawing.Size(45, 23);
 			this.nud_LangTTPositionY.TabIndex = 3;
+			this.nud_LangTTPositionY.Value = new decimal(new int[] {
+			100,
+			0,
+			0,
+			0});
 			this.nud_LangTTPositionY.ValueChanged += new System.EventHandler(this.UpdateLDTemps);
 			// 
 			// lbl_LangTTPositionY
@@ -1907,10 +1914,15 @@ namespace Mahou
 			100,
 			0,
 			0,
-			-2147483648});
+			0});
 			this.nud_LangTTPositionX.Name = "nud_LangTTPositionX";
 			this.nud_LangTTPositionX.Size = new System.Drawing.Size(45, 23);
 			this.nud_LangTTPositionX.TabIndex = 1;
+			this.nud_LangTTPositionX.Value = new decimal(new int[] {
+			100,
+			0,
+			0,
+			0});
 			this.nud_LangTTPositionX.ValueChanged += new System.EventHandler(this.UpdateLDTemps);
 			// 
 			// lbl_LangTTPositionX
@@ -4061,6 +4073,7 @@ namespace Mahou
 			// 
 			this.tab_Hidden.AutoScroll = true;
 			this.tab_Hidden.BackColor = System.Drawing.Color.DarkSlateGray;
+			this.tab_Hidden.Controls.Add(this.Hchk_cmdbackfix);
 			this.tab_Hidden.Controls.Add(this.Hchk_DARK);
 			this.tab_Hidden.Controls.Add(this.Htxt_LayoutModifier_2);
 			this.tab_Hidden.Controls.Add(this.Hlbl_LayoutModifier_2);
@@ -4121,6 +4134,16 @@ namespace Mahou
 			this.tab_Hidden.Size = new System.Drawing.Size(559, 268);
 			this.tab_Hidden.TabIndex = 15;
 			this.tab_Hidden.Text = "[Hidden]";
+			// 
+			// Hchk_cmdbackfix
+			// 
+			this.Hchk_cmdbackfix.AutoSize = true;
+			this.Hchk_cmdbackfix.Location = new System.Drawing.Point(8, 821);
+			this.Hchk_cmdbackfix.Name = "Hchk_cmdbackfix";
+			this.Hchk_cmdbackfix.Size = new System.Drawing.Size(369, 19);
+			this.Hchk_cmdbackfix.TabIndex = 58;
+			this.Hchk_cmdbackfix.Text = "Enable cmd.exe convert last with Pause key BackSpace count fix. ";
+			this.Hchk_cmdbackfix.UseVisualStyleBackColor = true;
 			// 
 			// Hchk_DARK
 			// 
@@ -4690,7 +4713,7 @@ namespace Mahou
 			// 
 			// Hlbl_scrollpastcontent
 			// 
-			this.Hlbl_scrollpastcontent.Location = new System.Drawing.Point(234, 803);
+			this.Hlbl_scrollpastcontent.Location = new System.Drawing.Point(234, 829);
 			this.Hlbl_scrollpastcontent.Name = "Hlbl_scrollpastcontent";
 			this.Hlbl_scrollpastcontent.Size = new System.Drawing.Size(100, 23);
 			this.Hlbl_scrollpastcontent.TabIndex = 40;
