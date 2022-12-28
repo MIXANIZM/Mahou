@@ -1094,10 +1094,22 @@ namespace Mahou {
 			var matched = false;
 			var x2 = xx2; //&& aftsingleAS && !MahouUI.AutoSwitchSpaceAfter;
 			Logging.Log("[SNI] > Current snippet is [" + snip + "].");
+			var doublefirst = false;
+			if (String.IsNullOrEmpty(snip)) return matched;
 			for (int i = 0; i < snipps.Length; i++) {
-				if (snipps[i] == null) break;
-				if (snipps[i].StartsWith(IGNLAYSNIP, StringComparison.InvariantCulture)) {
-					var ignlaysnip = snipps[i].Replace(IGNLAYSNIP, "");
+				var snipi = snipps[i];
+				if (snipi == null) break;
+				if (snipi.StartsWith("D*", StringComparison.InvariantCulture)) {
+					Debug.WriteLine("snip ori: " + snipi);
+					snipi = snipi.Substring(2);
+					if (!String.IsNullOrEmpty(last_snip)) {
+						snip = last_snip + " " + snip;
+						doublefirst = true;
+					}
+					Debug.WriteLine("snip cut: " + snipi);
+				}
+				if (snipi.StartsWith(IGNLAYSNIP, StringComparison.InvariantCulture)) {
+					var ignlaysnip = snipi.Replace(IGNLAYSNIP, "");
 					if (ignlaysnip.Length != snip.Length) {
 						Debug.WriteLine("length mismatch, it would never match");
 						continue;
@@ -1129,16 +1141,16 @@ namespace Mahou {
 						Debug.WriteLine("input: ["+snip+"] actually equals snippet by characters exactly!: ["+ignlaysnip+"], no need to check key-equality.");
 					}
 					if (allok) {
-						Debug.WriteLine("All chars from ["+snip+"] are key-equally to snippet: ["+snipps[i]+"].");
+						Debug.WriteLine("All chars from ["+snip+"] are key-equally to snippet: ["+snipi+"].");
 						ExpandSnippet(snip, exps[i], MahouUI.SnippetSpaceAfter, MahouUI.SnippetsSwitchToGuessLayout, false, x2);
 						aftsingleAS = false;
 						break;
 					}
 				}
-				var igncase = snipps[i].EndsWith("/i", StringComparison.InvariantCulture);
-				if (snipps[i].StartsWith(REGEXSNIP, StringComparison.InvariantCulture) &&
-				    (snipps[i].EndsWith("/", StringComparison.InvariantCulture) || igncase)) {
-					var regex_r = snipps[i].Substring(6, snipps[i].Length-7 +(igncase ? -1 : 0));
+				var igncase = snipi.EndsWith("/i", StringComparison.InvariantCulture);
+				if (snipi.StartsWith(REGEXSNIP, StringComparison.InvariantCulture) &&
+				    (snipi.EndsWith("/", StringComparison.InvariantCulture) || igncase)) {
+					var regex_r = snipi.Substring(6, snipi.Length-7 +(igncase ? -1 : 0));
 					var repl = RegexREPLACEP(snip, regex_r, exps[i], igncase);
 					if (!String.IsNullOrEmpty(repl)) {
 						Logging.Log("[REEX] > Replaced: "+repl);
@@ -1150,9 +1162,9 @@ namespace Mahou {
 					  break;
 				    }
 				}
-				if (snipps[i].Contains(__ANY__)) {
+				if (snipi.Contains(__ANY__)) {
 					var any = "";
-					var pins = snipps[i];
+					var pins = snipi;
 					var len = pins.Length;
 					var at = pins.IndexOf(__ANY__, StringComparison.InvariantCulture);
 					var aft = at+__ANY__.Length;
@@ -1193,8 +1205,8 @@ namespace Mahou {
 					}
 //		    		Debug.WriteLine("ANY " + yay);
 			    }
-				if (snip.Length == snipps[i].Length) {
-					if (snip == snipps[i]) {
+				if (snip.Length == snipi.Length) {
+					if (snip == snipi) {
 						last_snipANY = false;
 						if (exps.Length > i) {
 	    					if (MahouUI.SoundOnSnippets)
@@ -1211,6 +1223,10 @@ namespace Mahou {
 						break;
 					}
 				}
+				doublefirst = false;
+			}
+			if (matched && doublefirst) {
+				last_snip = "";
 			}
 			return matched;
 		}
@@ -4351,7 +4367,8 @@ namespace Mahou {
 					if (len == -1)
 						len = endl-(k+2);
 					var sm = snippets.Substring(k+2, len).Replace("\r", "");
-					if (sm.Contains("|") && !(sm.StartsWith(REGEXSNIP, StringComparison.InvariantCulture) && 
+					if (sm.Contains("|") && !((sm.StartsWith(REGEXSNIP, StringComparison.InvariantCulture) ||
+					                           sm.StartsWith("D*"+REGEXSNIP, StringComparison.InvariantCulture)) &&
 					                          (sm.EndsWith("/",StringComparison.InvariantCulture) || 
 					                           sm.EndsWith("/i",StringComparison.InvariantCulture)))) {
 						var esm = sm.Replace("||", pipe_esc);
