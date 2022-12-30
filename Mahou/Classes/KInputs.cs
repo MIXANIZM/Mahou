@@ -13,7 +13,7 @@ namespace Mahou {
 		/// <returns>WinAPI.INPUT</returns>
 	    public static WinAPI.INPUT AddKey(Keys key, bool down) {
 	        var vk = (UInt16)key;
-	        var scan = (ushort)WinAPI.MapVirtualKey(vk, 0);
+	        var scan = (ushort)(WinAPI.MapVirtualKey(vk, 0) & 0xFF);
 	        //System.Diagnostics.Debug.WriteLine("ADDED VK: " +vk + " KEY: " + key + " scan: " + scan);
 	        var input = new WinAPI.INPUT {
 	            Type = WinAPI.INPUT_KEYBOARD,
@@ -62,7 +62,11 @@ namespace Mahou {
 				key == Keys.Cancel ||
 				key == Keys.Snapshot || 
 				key == Keys.Return || 
-				key == Keys.Divide;
+				key == Keys.Divide ||
+				key == Keys.LMenu ||
+				key == Keys.RMenu ||
+				key == Keys.Menu ||
+				key == Keys.ControlKey;
 	    }
 	    public static string GetWordByIndex(string LINE, int index) {
 	    	var WORDS = Mahou.KMHook.SplitWords(LINE);
@@ -131,6 +135,10 @@ namespace Mahou {
 	                    }
 	                }
 	            };
+	            if ((((UInt16)s) & 0xFF00) == 0xE000) {
+	                down.Data.Keyboard.Flags |= (UInt32)WinAPI.KEYEVENTF_EXTENDEDKEY;
+	                up.Data.Keyboard.Flags |= (UInt32)WinAPI.KEYEVENTF_EXTENDEDKEY;
+	            }
 	            if (s == '\n') {
 	                down = AddKey(Keys.Return, true);
 	                up = AddKey(Keys.Return, false);
