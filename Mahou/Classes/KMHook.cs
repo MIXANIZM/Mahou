@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Diagnostics;
 using System.Threading;
@@ -2946,10 +2947,13 @@ namespace Mahou {
 			}
 			return true;
 		}
-		public static string __dictReplace(DICT<string, string> d, string input, ref bool only_regex, bool reverse = false) {
+		public static string __dictReplace(DICT<string, string> d, string input, ref bool only_regex, bool reverse = false, bool donttouchagain = false) {
 			var ir = input.Replace("\r","");
 			var lines = ir.Split('\n');
 			var result = new StringBuilder();
+			List<string> listagain = null;
+			if (donttouchagain)
+				listagain = new List<string>();
 			for (int o = 0; o != lines.Length; o++) {
 				var line = lines[o];
 				for (int z = 0; z != d.len; z++) {
@@ -2964,9 +2968,22 @@ namespace Mahou {
 					}
 					if (!isRegex) {
 						if (line.Contains(repl)) {
-		                	line = line.Replace(repl, tore);
-		                	Debug.WriteLine("Replace: "+repl+" => "+tore + " ["+line+"]");
-							only_regex = false;
+							var replace_ok = true;
+							if (donttouchagain) {
+								if (listagain.Contains(repl)) {
+									Logging.Log("[CUSTOM] > Stopping, that one already replaced: " + repl);
+									replace_ok = false;
+								}
+							}
+							if (replace_ok) {
+								line = line.Replace(repl, tore);
+								if (donttouchagain) {
+									if (!listagain.Contains(tore))
+									listagain.Add(tore);
+								}
+								Debug.WriteLine("Replace: "+repl+" => "+tore + " ["+line+"]");
+								only_regex = false;
+							}
 						}
 					} else {
 						var spl = SplitNoEsc(repl, '/');
@@ -3010,7 +3027,11 @@ namespace Mahou {
 		public static string CustomReplaceText(string ClipStr) {
 			bool onre = false;
 			if (CustomConversionDICT == null) return ClipStr;
-			return __dictReplace(CustomConversionDICT, ClipStr, ref onre);
+			var ret = __dictReplace(CustomConversionDICT, ClipStr, ref onre, false, true);
+			if (ret.Equals(ClipStr)) {
+				ret = __dictReplace(CustomConversionDICT, ClipStr, ref onre, true, true);
+			}
+			return ret;
 		}
 		public static string TransliterateText(string ClipStr) {
 			if (String.IsNullOrEmpty(ClipStr)) {
