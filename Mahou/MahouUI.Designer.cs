@@ -348,6 +348,8 @@ namespace Mahou
 		private System.Windows.Forms.Label lbl_NCR;
 		private System.Windows.Forms.CheckBox Hchk_DARK;
 		private System.Windows.Forms.CheckBox Hchk_cmdbackfix;
+		private System.Windows.Forms.TextBox Htxt_LayoutModifier_D;
+		private System.Windows.Forms.Label Hlbl_LayoutModifier_D;
 		/// <summary>
 		/// Disposes resources used by the form.
 		/// </summary>
@@ -704,6 +706,8 @@ namespace Mahou
 			this.btn_OK = new System.Windows.Forms.Button();
 			this.btn_Cancel = new System.Windows.Forms.Button();
 			this.btn_Apply = new System.Windows.Forms.Button();
+			this.Htxt_LayoutModifier_D = new System.Windows.Forms.TextBox();
+			this.Hlbl_LayoutModifier_D = new System.Windows.Forms.Label();
 			this.tabs.SuspendLayout();
 			this.tab_functions.SuspendLayout();
 			this.tab_layouts.SuspendLayout();
@@ -4073,6 +4077,8 @@ namespace Mahou
 			// 
 			this.tab_Hidden.AutoScroll = true;
 			this.tab_Hidden.BackColor = System.Drawing.Color.DarkSlateGray;
+			this.tab_Hidden.Controls.Add(this.Htxt_LayoutModifier_D);
+			this.tab_Hidden.Controls.Add(this.Hlbl_LayoutModifier_D);
 			this.tab_Hidden.Controls.Add(this.Hchk_cmdbackfix);
 			this.tab_Hidden.Controls.Add(this.Hchk_DARK);
 			this.tab_Hidden.Controls.Add(this.Htxt_LayoutModifier_2);
@@ -4138,7 +4144,7 @@ namespace Mahou
 			// Hchk_cmdbackfix
 			// 
 			this.Hchk_cmdbackfix.AutoSize = true;
-			this.Hchk_cmdbackfix.Location = new System.Drawing.Point(8, 821);
+			this.Hchk_cmdbackfix.Location = new System.Drawing.Point(8, 848);
 			this.Hchk_cmdbackfix.Name = "Hchk_cmdbackfix";
 			this.Hchk_cmdbackfix.Size = new System.Drawing.Size(369, 19);
 			this.Hchk_cmdbackfix.TabIndex = 58;
@@ -4148,7 +4154,7 @@ namespace Mahou
 			// Hchk_DARK
 			// 
 			this.Hchk_DARK.AutoSize = true;
-			this.Hchk_DARK.Location = new System.Drawing.Point(8, 798);
+			this.Hchk_DARK.Location = new System.Drawing.Point(8, 825);
 			this.Hchk_DARK.Name = "Hchk_DARK";
 			this.Hchk_DARK.Size = new System.Drawing.Size(94, 19);
 			this.Hchk_DARK.TabIndex = 57;
@@ -4749,6 +4755,25 @@ namespace Mahou
 			this.btn_Apply.Text = "Apply";
 			this.btn_Apply.UseVisualStyleBackColor = true;
 			this.btn_Apply.Click += new System.EventHandler(this.Btn_ApplyClick);
+			// 
+			// Htxt_LayoutModifier_D
+			// 
+			this.Htxt_LayoutModifier_D.BackColor = System.Drawing.Color.Orange;
+			this.Htxt_LayoutModifier_D.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.Htxt_LayoutModifier_D.ForeColor = System.Drawing.Color.LightCyan;
+			this.Htxt_LayoutModifier_D.Location = new System.Drawing.Point(438, 801);
+			this.Htxt_LayoutModifier_D.Name = "Htxt_LayoutModifier_D";
+			this.Htxt_LayoutModifier_D.Size = new System.Drawing.Size(97, 23);
+			this.Htxt_LayoutModifier_D.TabIndex = 60;
+			// 
+			// Hlbl_LayoutModifier_D
+			// 
+			this.Hlbl_LayoutModifier_D.AutoSize = true;
+			this.Hlbl_LayoutModifier_D.Location = new System.Drawing.Point(8, 803);
+			this.Hlbl_LayoutModifier_D.Name = "Hlbl_LayoutModifier_D";
+			this.Hlbl_LayoutModifier_D.Size = new System.Drawing.Size(426, 15);
+			this.Hlbl_LayoutModifier_D.TabIndex = 59;
+			this.Hlbl_LayoutModifier_D.Text = "Layout #1/#2 modifier key: (change to either #1 or #2 while holding, 1 key only)";
 			// 
 			// MahouUI
 			// 

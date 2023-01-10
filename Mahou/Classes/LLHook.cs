@@ -53,23 +53,25 @@ namespace Mahou {
 				restarter_running = false;
 			}
 		}
-		public static bool[] LMod_act = {false,false};
-		public static uint[] LMod_layout_pre = {0,0};
+		public static bool[] LMod_act = {false,false,false};
+		public static uint[] LMod_layout_pre = {0,0,0};
 		public static bool LMod(Keys k, IntPtr wp) {
 			var br = false;
-			if (MahouUI.Layout1ModifierKey == 0 && MahouUI.Layout2ModifierKey == 0) return br;
+			if (MahouUI.Layout1ModifierKey == 0 && MahouUI.Layout2ModifierKey == 0 && MahouUI.LayoutDModifierKey == 0) return br;
 			Keys[] x = null;
 			try {
-			    x = new[]{(Keys)MahouUI.Layout1ModifierKey, (Keys)MahouUI.Layout2ModifierKey};
+				x = new[]{(Keys)MahouUI.Layout1ModifierKey, (Keys)MahouUI.Layout2ModifierKey, (Keys)MahouUI.LayoutDModifierKey};
 			} catch(Exception e) { Logging.Log("LMod error:" + e.Message); return br; }
-			for (int i = 0; i != 2; i++) {
+			for (int i = 0; i != 3; i++) {
 				if (k == x[i]) {
 					if ((wp == (IntPtr)WinAPI.WM_KEYDOWN ||
 					     wp == (IntPtr)WinAPI.WM_SYSKEYDOWN) && !LMod_act[i]) {
 						LMod_act[i] = true;
 						LMod_layout_pre[i] = MahouUI.UseJKL ? MahouUI.currentLayout : Locales.GetCurrentLocale();
 						Debug.WriteLine("pre layout saved:" + LMod_layout_pre[i] + " key: " + k);
-						KMHook.ChangeToLayout(Locales.ActiveWindow(), i == 0 ? MahouUI.MAIN_LAYOUT1 : MahouUI.MAIN_LAYOUT2);
+						KMHook.ChangeToLayout(Locales.ActiveWindow(), i == 0 ? MahouUI.MAIN_LAYOUT1 : 
+						                      						  i == 1 ? MahouUI.MAIN_LAYOUT2 : 
+	                      (LMod_layout_pre[i] == MahouUI.MAIN_LAYOUT1 ? MahouUI.MAIN_LAYOUT2 : MahouUI.MAIN_LAYOUT1));
 					} else if ((wp == (IntPtr)WinAPI.WM_KEYUP ||
 				         	    wp == (IntPtr)WinAPI.WM_SYSKEYUP) && LMod_act[i]){
 						LMod_act[i] = false;
