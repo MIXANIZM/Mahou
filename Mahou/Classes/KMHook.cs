@@ -1754,6 +1754,7 @@ namespace Mahou {
 				case "__if":
 					var sep = args[0];
 					argv = SplitEsc(args.Substring(1,args.Length-1), sep);
+					argv[0] = argv[0].Replace("__selection()", snip_selection);
 					if (argv[0].Length >=1 && argv.Length >=2) {
 						ExprAgainTestOrSend(argv[1], ref EXSN_result);
 					}
@@ -1761,6 +1762,7 @@ namespace Mahou {
 				case "__nif":
 					sep = args[0];
 					argv = SplitEsc(args.Substring(1,args.Length-1), sep);
+					argv[0] = argv[0].Replace("__selection()", snip_selection);
 					if (argv[0].Length ==0 && argv.Length >=2) {
 						 ExprAgainTestOrSend(argv[1], ref EXSN_result);
 					}
