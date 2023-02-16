@@ -79,7 +79,8 @@ namespace Mahou {
 		/// <summary> Translate Panel Colors</summary>
 		public static Color TrFore, TrBack, TrBorder;
 		public static Font TrText, TrTitle;
-		public static int TrTransparency, Layout1ModifierKey, Layout2ModifierKey, LayoutDModifierKey;
+		public static int TrTransparency, Layout1ModifierKey, Layout2ModifierKey, LayoutDModifierKey, LayoutSModifierKey;
+		public static uint LayoutSModifierLayout;
 		/// <summary> In memory settings, for timers/hooks.</summary>
 		public static bool DiffAppearenceForLayouts, LDForCaretOnChange, LDForMouseOnChange, ScrollTip, AddOneSpace,
 					TrayFlags, TrayText, SymIgnEnabled, TrayIconVisible, SnippetsEnabled, ChangeLayouByKey, EmulateLS,
@@ -1576,6 +1577,15 @@ namespace Mahou {
 					((int)KMHook.strparsekey(Htxt_LayoutModifier_D.Text)[0])
 				).ToString()); }
 			catch { Logging.Log("Layout modifier D parse error, can't recognize that key:"+Htxt_LayoutModifier_D.Text, 1); }
+			try { MMain.MyConfs.Write("Hidden", "Layout_S_Modifier_Key", (
+					String.IsNullOrEmpty(Htxt_LayoutModifier_S.Text)?0:
+					((int)KMHook.strparsekey(Htxt_LayoutModifier_S.Text)[0])
+				).ToString()); }
+			catch { Logging.Log("Layout modifier S parse error, can't recognize that key:"+Htxt_LayoutModifier_S.Text, 1); }
+			try { MMain.MyConfs.Write("Hidden", "Layout_S_Modifier_Layout", 
+					String.IsNullOrEmpty(Htxt_LayoutModifier_S_LAYOUT.Text)? "0" :
+					Htxt_LayoutModifier_S_LAYOUT.Text ); }
+			catch { Logging.Log("Layout modifier S layout parse error, can't recognize that layout:"+Htxt_LayoutModifier_S_LAYOUT.Text, 1); }
 //			NCS_destroy();
 		}
 		string KeynameReplace(string input) {
@@ -1626,6 +1636,11 @@ namespace Mahou {
 			Layout1ModifierKey = MMain.MyConfs.ReadInt("Hidden", "Layout_1_Modifier_Key");
 			Layout2ModifierKey = MMain.MyConfs.ReadInt("Hidden", "Layout_2_Modifier_Key");
 			LayoutDModifierKey = MMain.MyConfs.ReadInt("Hidden", "Layout_D_Modifier_Key");
+			LayoutSModifierKey = MMain.MyConfs.ReadInt("Hidden", "Layout_S_Modifier_Key");
+			Htxt_LayoutModifier_S_LAYOUT.Text = MMain.MyConfs.Read("Hidden", "Layout_S_Modifier_Layout");
+			int ti = 0;
+			Int32.TryParse(Regex.Replace(Htxt_LayoutModifier_S_LAYOUT.Text, @"[^0-9]+", ""), out ti);
+			LayoutSModifierLayout = (uint)ti;
 			if (MMain.MyConfs.ReadBool("Hidden", "DARKTHEME")) {
 				Hchk_DARK.Checked = true;
 			}
@@ -1633,6 +1648,7 @@ namespace Mahou {
 			try { var k = (Keys)Layout1ModifierKey; Htxt_LayoutModifier_1.Text = k==Keys.None?"":KeynameReplace(k.ToString()); } catch { Logging.Log("Layout modifier 1 key code is not valid key."); }
 			try { var k = (Keys)Layout2ModifierKey; Htxt_LayoutModifier_2.Text = k==Keys.None?"":KeynameReplace(k.ToString()); } catch { Logging.Log("Layout modifier 2 key code is not valid key."); }
 			try { var k = (Keys)LayoutDModifierKey; Htxt_LayoutModifier_D.Text = k==Keys.None?"":KeynameReplace(k.ToString()); } catch { Logging.Log("Layout modifier D key code is not valid key."); }
+			try { var k = (Keys)LayoutSModifierKey; Htxt_LayoutModifier_S.Text = k==Keys.None?"":KeynameReplace(k.ToString()); } catch { Logging.Log("Layout modifier D key code is not valid key."); }
 			parseRedefines();
 			Hnud_TrayHoverMM.Value = TrayHoverMahouMM;
 			if (!String.IsNullOrEmpty(OverlayExcluded)) {

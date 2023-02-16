@@ -212,6 +212,8 @@ namespace Mahou {
         	#region Hidden
 			CheckBool("Hidden", "cmdbackfix", "true");
 			CheckBool("Hidden", "DARKTHEME", "false");
+			CheckString("Hidden", "Layout_S_Modifier_Layout", "0");
+			CheckInt("Hidden", "Layout_S_Modifier_Key", "0");
 			CheckInt("Hidden", "Layout_D_Modifier_Key", "0");
 			CheckInt("Hidden", "Layout_2_Modifier_Key", "0");
 			CheckInt("Hidden", "Layout_1_Modifier_Key", "0");
