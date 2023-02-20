@@ -4155,9 +4155,9 @@ namespace Mahou
 			this.Htxt_LayoutModifier_S_LAYOUT.BackColor = System.Drawing.Color.Orange;
 			this.Htxt_LayoutModifier_S_LAYOUT.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Htxt_LayoutModifier_S_LAYOUT.ForeColor = System.Drawing.Color.LightCyan;
-			this.Htxt_LayoutModifier_S_LAYOUT.Location = new System.Drawing.Point(337, 827);
+			this.Htxt_LayoutModifier_S_LAYOUT.Location = new System.Drawing.Point(270, 827);
 			this.Htxt_LayoutModifier_S_LAYOUT.Name = "Htxt_LayoutModifier_S_LAYOUT";
-			this.Htxt_LayoutModifier_S_LAYOUT.Size = new System.Drawing.Size(97, 23);
+			this.Htxt_LayoutModifier_S_LAYOUT.Size = new System.Drawing.Size(164, 23);
 			this.Htxt_LayoutModifier_S_LAYOUT.TabIndex = 63;
 			this.Htxt_LayoutModifier_S_LAYOUT.Text = "0";
 			// 
