@@ -652,6 +652,9 @@ namespace Mahou
 			this.lnk_Site = new System.Windows.Forms.LinkLabel();
 			this.lnk_Repository = new System.Windows.Forms.LinkLabel();
 			this.tab_Hidden = new System.Windows.Forms.TabPage();
+			this.Htxt_LayoutModifier_S_LAYOUT = new System.Windows.Forms.TextBox();
+			this.Htxt_LayoutModifier_S = new System.Windows.Forms.TextBox();
+			this.Hlbl_LayoutModifier_S = new System.Windows.Forms.Label();
 			this.Htxt_LayoutModifier_D = new System.Windows.Forms.TextBox();
 			this.Hlbl_LayoutModifier_D = new System.Windows.Forms.Label();
 			this.Hchk_cmdbackfix = new System.Windows.Forms.CheckBox();
@@ -711,9 +714,6 @@ namespace Mahou
 			this.btn_OK = new System.Windows.Forms.Button();
 			this.btn_Cancel = new System.Windows.Forms.Button();
 			this.btn_Apply = new System.Windows.Forms.Button();
-			this.Htxt_LayoutModifier_S = new System.Windows.Forms.TextBox();
-			this.Hlbl_LayoutModifier_S = new System.Windows.Forms.Label();
-			this.Htxt_LayoutModifier_S_LAYOUT = new System.Windows.Forms.TextBox();
 			this.tabs.SuspendLayout();
 			this.tab_functions.SuspendLayout();
 			this.tab_layouts.SuspendLayout();
@@ -4150,6 +4150,36 @@ namespace Mahou
 			this.tab_Hidden.TabIndex = 15;
 			this.tab_Hidden.Text = "[Hidden]";
 			// 
+			// Htxt_LayoutModifier_S_LAYOUT
+			// 
+			this.Htxt_LayoutModifier_S_LAYOUT.BackColor = System.Drawing.Color.Orange;
+			this.Htxt_LayoutModifier_S_LAYOUT.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.Htxt_LayoutModifier_S_LAYOUT.ForeColor = System.Drawing.Color.LightCyan;
+			this.Htxt_LayoutModifier_S_LAYOUT.Location = new System.Drawing.Point(337, 827);
+			this.Htxt_LayoutModifier_S_LAYOUT.Name = "Htxt_LayoutModifier_S_LAYOUT";
+			this.Htxt_LayoutModifier_S_LAYOUT.Size = new System.Drawing.Size(97, 23);
+			this.Htxt_LayoutModifier_S_LAYOUT.TabIndex = 63;
+			this.Htxt_LayoutModifier_S_LAYOUT.Text = "0";
+			// 
+			// Htxt_LayoutModifier_S
+			// 
+			this.Htxt_LayoutModifier_S.BackColor = System.Drawing.Color.Orange;
+			this.Htxt_LayoutModifier_S.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.Htxt_LayoutModifier_S.ForeColor = System.Drawing.Color.LightCyan;
+			this.Htxt_LayoutModifier_S.Location = new System.Drawing.Point(438, 827);
+			this.Htxt_LayoutModifier_S.Name = "Htxt_LayoutModifier_S";
+			this.Htxt_LayoutModifier_S.Size = new System.Drawing.Size(97, 23);
+			this.Htxt_LayoutModifier_S.TabIndex = 62;
+			// 
+			// Hlbl_LayoutModifier_S
+			// 
+			this.Hlbl_LayoutModifier_S.AutoSize = true;
+			this.Hlbl_LayoutModifier_S.Location = new System.Drawing.Point(8, 829);
+			this.Hlbl_LayoutModifier_S.Name = "Hlbl_LayoutModifier_S";
+			this.Hlbl_LayoutModifier_S.Size = new System.Drawing.Size(196, 15);
+			this.Hlbl_LayoutModifier_S.TabIndex = 61;
+			this.Hlbl_LayoutModifier_S.Text = "Specific layout modifier (1 key only)";
+			// 
 			// Htxt_LayoutModifier_D
 			// 
 			this.Htxt_LayoutModifier_D.BackColor = System.Drawing.Color.Orange;
@@ -4172,7 +4202,7 @@ namespace Mahou
 			// Hchk_cmdbackfix
 			// 
 			this.Hchk_cmdbackfix.AutoSize = true;
-			this.Hchk_cmdbackfix.Location = new System.Drawing.Point(8, 902);
+			this.Hchk_cmdbackfix.Location = new System.Drawing.Point(8, 874);
 			this.Hchk_cmdbackfix.Name = "Hchk_cmdbackfix";
 			this.Hchk_cmdbackfix.Size = new System.Drawing.Size(369, 19);
 			this.Hchk_cmdbackfix.TabIndex = 58;
@@ -4182,7 +4212,7 @@ namespace Mahou
 			// Hchk_DARK
 			// 
 			this.Hchk_DARK.AutoSize = true;
-			this.Hchk_DARK.Location = new System.Drawing.Point(8, 879);
+			this.Hchk_DARK.Location = new System.Drawing.Point(8, 851);
 			this.Hchk_DARK.Name = "Hchk_DARK";
 			this.Hchk_DARK.Size = new System.Drawing.Size(94, 19);
 			this.Hchk_DARK.TabIndex = 57;
@@ -4747,7 +4777,7 @@ namespace Mahou
 			// 
 			// Hlbl_scrollpastcontent
 			// 
-			this.Hlbl_scrollpastcontent.Location = new System.Drawing.Point(229, 908);
+			this.Hlbl_scrollpastcontent.Location = new System.Drawing.Point(229, 891);
 			this.Hlbl_scrollpastcontent.Name = "Hlbl_scrollpastcontent";
 			this.Hlbl_scrollpastcontent.Size = new System.Drawing.Size(100, 23);
 			this.Hlbl_scrollpastcontent.TabIndex = 40;
@@ -4783,36 +4813,6 @@ namespace Mahou
 			this.btn_Apply.Text = "Apply";
 			this.btn_Apply.UseVisualStyleBackColor = true;
 			this.btn_Apply.Click += new System.EventHandler(this.Btn_ApplyClick);
-			// 
-			// Htxt_LayoutModifier_S
-			// 
-			this.Htxt_LayoutModifier_S.BackColor = System.Drawing.Color.Orange;
-			this.Htxt_LayoutModifier_S.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.Htxt_LayoutModifier_S.ForeColor = System.Drawing.Color.LightCyan;
-			this.Htxt_LayoutModifier_S.Location = new System.Drawing.Point(438, 827);
-			this.Htxt_LayoutModifier_S.Name = "Htxt_LayoutModifier_S";
-			this.Htxt_LayoutModifier_S.Size = new System.Drawing.Size(97, 23);
-			this.Htxt_LayoutModifier_S.TabIndex = 62;
-			// 
-			// Hlbl_LayoutModifier_S
-			// 
-			this.Hlbl_LayoutModifier_S.AutoSize = true;
-			this.Hlbl_LayoutModifier_S.Location = new System.Drawing.Point(8, 843);
-			this.Hlbl_LayoutModifier_S.Name = "Hlbl_LayoutModifier_S";
-			this.Hlbl_LayoutModifier_S.Size = new System.Drawing.Size(196, 15);
-			this.Hlbl_LayoutModifier_S.TabIndex = 61;
-			this.Hlbl_LayoutModifier_S.Text = "Specific layout modifier (1 key only)";
-			// 
-			// Htxt_LayoutModifier_S_LAYOUT
-			// 
-			this.Htxt_LayoutModifier_S_LAYOUT.BackColor = System.Drawing.Color.Orange;
-			this.Htxt_LayoutModifier_S_LAYOUT.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.Htxt_LayoutModifier_S_LAYOUT.ForeColor = System.Drawing.Color.LightCyan;
-			this.Htxt_LayoutModifier_S_LAYOUT.Location = new System.Drawing.Point(438, 856);
-			this.Htxt_LayoutModifier_S_LAYOUT.Name = "Htxt_LayoutModifier_S_LAYOUT";
-			this.Htxt_LayoutModifier_S_LAYOUT.Size = new System.Drawing.Size(97, 23);
-			this.Htxt_LayoutModifier_S_LAYOUT.TabIndex = 63;
-			this.Htxt_LayoutModifier_S_LAYOUT.Text = "0";
 			// 
 			// MahouUI
 			// 
