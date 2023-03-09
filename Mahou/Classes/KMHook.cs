@@ -4136,6 +4136,10 @@ namespace Mahou {
 						LLHook.SetModifier(WinAPI.MOD_ALT, false);
 						modsUP += "LAlt,";
 		       		}
+		       		var clsNM = Locales.ActiveWindowClassName(40, WinAPI.GetForegroundWindow());
+		       		if (clsNM.StartsWith("Qt5")) {
+		       			Thread.Sleep(75);
+		       		}
 				}
 		       	Logging.Log("Modifiers ["+((modsUP.Length >2) ? modsUP.Substring(0,modsUP.Length-1) : "")+ "] sent up.");
               }, "sendmodsup");
