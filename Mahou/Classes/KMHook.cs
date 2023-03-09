@@ -3220,11 +3220,20 @@ namespace Mahou {
 		static string MakeCopy()  {
 			Debug.WriteLine(">> MC");
 			ClearModifiers();
-			KInputs.MakeInput(KInputs.AddPress(Keys.Insert), (int)WinAPI.MOD_CONTROL);
+			var clsNM = Locales.ActiveWindowClassName(40, WinAPI.GetForegroundWindow());
+			var delay = 0;
+			if (clsNM.StartsWith("Qt5")) { delay = 40; }
+			KInputs.MakeInput(new[]{KInputs.AddKey(Keys.LControlKey, true)});
+			if (delay > 0 ) { Thread.Sleep(delay); }
+			KInputs.MakeInput(KInputs.AddPress(Keys.Insert));
+			KInputs.MakeInput(new[]{KInputs.AddKey(Keys.LControlKey, false)});
 			Thread.Sleep(30);
 			var txt = NativeClipboard.GetText();
 			if (string.IsNullOrEmpty(txt)) {
-				KInputs.MakeInput(KInputs.AddPress(Keys.C), (int)WinAPI.MOD_CONTROL);
+				KInputs.MakeInput(new[]{KInputs.AddKey(Keys.LControlKey, true)});
+				if (delay > 0 ) { Thread.Sleep(delay); }
+				KInputs.MakeInput(KInputs.AddPress(Keys.C));
+				KInputs.MakeInput(new[]{KInputs.AddKey(Keys.LControlKey, false)});
 				Thread.Sleep(30);
 				txt = NativeClipboard.GetText();
 			}
