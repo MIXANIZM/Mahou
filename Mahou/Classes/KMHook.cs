@@ -4043,7 +4043,9 @@ namespace Mahou {
 		/// <param name="flags">Flags(state) of key.</param>
 		public static void KeybdEvent(Keys key, int flags)  { // 			//Do not remove this line, it needed for "Left Control Switch Layout" to work properly
 //			Thread.Sleep(15);
-			WinAPI.keybd_event((byte)key, 0, flags | (KInputs.IsExtended(key) ? 1 : 0), 0);
+			var sc = (uint)WinAPI.MapVirtualKey((uint)key, 4);
+			Debug.WriteLine("scan" + (sc>>8));
+			WinAPI.keybd_event((byte)key, (byte)(sc & 0xff), flags | ((sc >> 8) != 0 ? 1 : 0), 0);
 		}
 		public static void RePressAfter(int mods) {
 			ctrlRP = Hotkey.ContainsModifier(mods, (int)WinAPI.MOD_CONTROL);
@@ -4066,11 +4068,13 @@ namespace Mahou {
 		/// Sends modifiers up by modstoup array. 
 		/// </summary>
 		/// <param name="modstoup">Array of modifiers which will be send up. 0 = ctrl, 1 = shift, 2 = alt.</param>
-		public static void SendModsUp(int modstoup, bool waitwin = true)  { //			//These three below are needed to release all modifiers, so even if you will still hold any of it
+		public static void SendModsUp(int modstoup, bool waitwin = false)  { //			//These three below are needed to release all modifiers, so even if you will still hold any of it
 			//it will skip them and do as it must.
 			if (modstoup <= 0) return;
 			Debug.WriteLine(">> SMU: " + Hotkey.GetMods(modstoup));
 			DoSelf(() => {
+       			byte[] state = new byte[256];
+       			WinAPI.GetKeyboardState(state);
 		       	var modsUP = "";
 				if (Hotkey.ContainsModifier(modstoup, (int)WinAPI.MOD_WIN)) {
 		       		if (waitwin){
@@ -4079,16 +4083,22 @@ namespace Mahou {
 						win = win_r = false;
 						LLHook.SetModifier(WinAPI.MOD_WIN, false);
 						LLHook.SetModifier(WinAPI.MOD_WIN, false, false);
+						state[(int)Keys.LWin] |= 0x80;
+						state[(int)Keys.RWin] |= 0x80;
 						modsUP += "LWin,RWin,";
 		       		} else {
 		       			if (IsKDown(Keys.LWin)) {
+		       				KInputs.MakeInput(KInputs.AddPress(Keys.LControlKey));
 							KMHook.KeybdEvent(Keys.LWin, 2); // Left Win Up
+							state[(int)Keys.LWin] |= 0x80;
 							win = false;
 							LLHook.SetModifier(WinAPI.MOD_WIN, false);
 							modsUP += "LWin,";
 		       			}
 		       			if (IsKDown(Keys.RWin)) {
+		       				KInputs.MakeInput(KInputs.AddPress(Keys.LControlKey));
 							KMHook.KeybdEvent(Keys.RWin, 2); // Right Win Up
+							state[(int)Keys.RWin] |= 0x80;
 							win_r = false;
 							LLHook.SetModifier(WinAPI.MOD_WIN, false, false);
 							modsUP += "RWin,";
@@ -4098,12 +4108,14 @@ namespace Mahou {
 				if (Hotkey.ContainsModifier(modstoup, (int)WinAPI.MOD_SHIFT)) {
 	       			if (IsKDown(Keys.RShiftKey)) {
 						KMHook.KeybdEvent(Keys.RShiftKey, 2); // Right Shift Up
+						state[(int)Keys.RShiftKey] |= 0x80;
 						shift_r = false;
 						LLHook.SetModifier(WinAPI.MOD_SHIFT, false, false);
 						modsUP += "RShift,";
 		       		}
 	       			if (IsKDown(Keys.LShiftKey)) {
 						KMHook.KeybdEvent(Keys.LShiftKey, 2); // Left Shift Up
+						state[(int)Keys.LShiftKey] |= 0x80;
 						LLHook.SetModifier(WinAPI.MOD_SHIFT, false);
 						shift = false;
 						modsUP += "LShift,";
@@ -4112,12 +4124,14 @@ namespace Mahou {
 				if (Hotkey.ContainsModifier(modstoup, (int)WinAPI.MOD_CONTROL)) {
 	       			if (IsKDown(Keys.RControlKey)) {
 						KMHook.KeybdEvent(Keys.RControlKey, 2); // Right Control Up
+						state[(int)Keys.RControlKey] |= 0x80;
 						ctrl_r = false;
 						LLHook.SetModifier(WinAPI.MOD_CONTROL, false);
 						modsUP += "RCtrl,";
 			       	}
 	       			if (IsKDown(Keys.LControlKey)) {
 						KMHook.KeybdEvent(Keys.LControlKey, 2); // Left Control Up
+						state[(int)Keys.LControlKey] |= 0x80;
 						ctrl = false;
 						LLHook.SetModifier(WinAPI.MOD_CONTROL, false, false);
 						modsUP += "LCtrl,";
@@ -4125,13 +4139,17 @@ namespace Mahou {
 				}
 				if (Hotkey.ContainsModifier(modstoup, (int)WinAPI.MOD_ALT)) {
 	       			if (IsKDown(Keys.RMenu)) {
+	       				KInputs.MakeInput(KInputs.AddPress(Keys.LControlKey));
 						KMHook.KeybdEvent(Keys.RMenu, 2); // Right Alt Up
+						state[(int)Keys.RMenu] |= 0x80;
 						alt_r = false;
 						LLHook.SetModifier(WinAPI.MOD_ALT, false, false);
 						modsUP += "RAlt,";
 		       		}
 	       			if (IsKDown(Keys.LMenu)) {
+	       				KInputs.MakeInput(KInputs.AddPress(Keys.LControlKey)); // stop menu focus
 						KMHook.KeybdEvent(Keys.LMenu, 2); // Left Alt Up
+						state[(int)Keys.LMenu] |= 0x80;
 						alt = false;
 						LLHook.SetModifier(WinAPI.MOD_ALT, false);
 						modsUP += "LAlt,";
@@ -4141,6 +4159,7 @@ namespace Mahou {
 		       			Thread.Sleep(75);
 		       		}
 				}
+				WinAPI.SetKeyboardState(state);
 		       	Logging.Log("Modifiers ["+((modsUP.Length >2) ? modsUP.Substring(0,modsUP.Length-1) : "")+ "] sent up.");
               }, "sendmodsup");
 		}

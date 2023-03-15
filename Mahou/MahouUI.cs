@@ -5227,10 +5227,12 @@ DEL ""ExtractASD.cmd""";
 				var cl = NativeClipboard.GetText();
 				if (string.IsNullOrEmpty(cl)) {
 					cl = NativeClipboard.GetText(WinAPI.CF_HTMLFORMAT, false);
-					var st = "<!--StartFragment-->";
-					var s = cl.IndexOf(st)+st.Length;
-					var e = cl.IndexOf("<!--EndFragment-->");
-					cl = cl.Substring(s,e-s);
+					if (!string.IsNullOrEmpty(cl)) {
+						var st = "<!--StartFragment-->";
+						var s = cl.IndexOf(st)+st.Length;
+						var e = cl.IndexOf("<!--EndFragment-->");
+						cl = cl.Substring(s,e-s);
+					}
 				}
 				if (!string.IsNullOrEmpty(cl)) {
 					if (MahouUI.ClipBackOnlyText) {

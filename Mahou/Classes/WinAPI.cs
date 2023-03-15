@@ -303,10 +303,17 @@ public static class WinAPI {
     public static extern int MapVirtualKey(uint uCode, uint uMapType);
     #endregion
     #region KMHook requires
+	[DllImport("user32.dll", SetLastError = true)]
+	[return: MarshalAs(UnmanagedType.Bool)]
+	public static extern bool GetKeyboardState(byte[] lpKeyState);
+	[DllImport("user32.dll")]
+	public static extern bool SetKeyboardState(byte[] lpKeyState);
 	[DllImport("user32.dll")]
 	public static extern ushort GetAsyncKeyState(int vKey);
 	[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
 	public static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int extraInfo);
+	[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+	public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, uint extraInfo);
 	[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 	public static extern IntPtr GetModuleHandle(string lpModuleName);
 	[return: MarshalAs(UnmanagedType.Bool)]
