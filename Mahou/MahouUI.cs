@@ -29,7 +29,7 @@ namespace Mahou {
 					hksOK, hklineOK, hkSIOK, hkExitOK, hkToglLPOK, hkShowTSOK, hkToggleMahouOK, hkUcOK, hklcOK, hkccOK,
 					hkSCCok, hkSCMUM;
 		public static string nPath = AppDomain.CurrentDomain.BaseDirectory, CustomSound, CustomSound2, Redefines;
-		public static int ACT_Match = 0, TrayHoverMahouMM = 0, explorer_pid;
+		public static int ACT_Match = 0, TrayHoverMahouMM = 0, explorer_pid, explorer_not_found_tries = 0;
 		public static bool LoggingEnabled, dummy, CapsLockDisablerTimer, LangPanelUpperArrow, mouseLTUpperArrow, caretLTUpperArrow,
 						   ShiftInHotkey, AltInHotkey, CtrlInHotkey, WinInHotkey, AutoStartAsAdmin, UseJKL, AutoSwitchEnabled, ReadOnlyNA,
 						   SoundEnabled, UseCustomSound, SoundOnAutoSwitch, SoundOnConvLast, SoundOnSnippets, SoundOnLayoutSwitch,
@@ -2409,8 +2409,16 @@ DEL "+restartMahouPath;
 				}
 //				Debug.WriteLine(p[0].Id + " " + force);
 				explorer_pid = p[0].Id;
+				explorer_not_found_tries = 0;
 			} catch(Exception e) {
 				fong = true;
+				explorer_not_found_tries++;
+			}
+			if (explorer_not_found_tries > 5) {
+				fong = false;
+				if (explorer_not_found_tries < 15) {
+					Logging.Log("explorer.exe process not found: "+explorer_not_found_tries +" times. Tray icon etc. unavailable.", 2);
+				}
 			}
 			if (fong) {
 				force = true;
