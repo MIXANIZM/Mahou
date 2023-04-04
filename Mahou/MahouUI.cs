@@ -5232,6 +5232,11 @@ DEL ""ExtractASD.cmd""";
 					}
 				}
 			} else if (act == "paste") {
+				if (MahouUI.ClipBackOnlyText) {
+					KMHook.lastClipText = NativeClipboard.GetText();
+				} else {
+					KMHook.lastClip = NativeClipboard.clip_get();
+				}
 				var cl = NativeClipboard.GetText();
 				if (string.IsNullOrEmpty(cl)) {
 					cl = NativeClipboard.GetText(WinAPI.CF_HTMLFORMAT, false);
@@ -5241,13 +5246,7 @@ DEL ""ExtractASD.cmd""";
 						var e = cl.IndexOf("<!--EndFragment-->");
 						cl = cl.Substring(s,e-s);
 					}
-				}
-				if (!string.IsNullOrEmpty(cl)) {
-					if (MahouUI.ClipBackOnlyText) {
-						KMHook.lastClipText = NativeClipboard.GetText();
-					} else {
-						KMHook.lastClip = NativeClipboard.clip_get();
-					}
+				} else {
 					KMHook.SendModsUp(15);
 					KMHook.PasteText(cl);
 					KMHook.RestoreClipBoard();
@@ -5270,6 +5269,10 @@ DEL ""ExtractASD.cmd""";
 					}
 				} else {
 					Logging.Log("Unknown expression called: " + arg, 2);
+				}
+			} else if (act == "input") {
+				if (!String.IsNullOrEmpty(arg)) {
+					KInputs.MakeInput(KInputs.AddString(arg));
 				}
 			} else {
 				MessageBox.Show("Unknown action: " + act, "No such action",MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
