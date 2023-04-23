@@ -324,6 +324,23 @@ public static class WinAPI {
 		StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
 	[DllImport("user32.dll", CharSet = CharSet.Unicode)]
 	public static extern short VkKeyScanEx(char ch, uint dwhkl);
+	/// <summary>
+	/// Retrieves the handle to the ancestor of the specified window.
+	/// </summary>
+	/// <param name="hwnd">A handle to the window whose ancestor is to be retrieved.
+	/// If this parameter is the desktop window, the function returns NULL. </param>
+	/// <param name="flags">The ancestor to be retrieved.</param>
+	/// <returns>The return value is the handle to the ancestor window.</returns>
+	[DllImport("user32.dll", ExactSpelling = true)]
+	public static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
+	public enum GetAncestorFlags {
+	    /// <summary> Retrieves the parent window. This does not include the owner, as it does with the GetParent function. </summary>
+	    GetParent = 1,
+	    /// <summary> Retrieves the root window by walking the chain of parent windows. </summary>
+	    GetRoot = 2,
+	    /// <summary> Retrieves the owned root window by walking the chain of parent and owner windows returned by GetParent. </summary>
+	    GetRootOwner = 3
+	}
     #endregion
 	#region Locales/CaretPos requires
 	[DllImport("user32.dll", SetLastError = true)]

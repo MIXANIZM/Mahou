@@ -141,10 +141,12 @@ namespace Mahou {
 			self_change = true;
 //			for (int i = 0; i!=MMain.PHLayouts; i++) {
 //				if (MMain.MahouActive()) return; // Else creates invalid culture 0 exception.
-				WinAPI.SendMessage(hwnd, (int)WinAPI.WM_INPUTLANGCHANGEREQUEST, 0, WinAPI.HKL_NEXT);
+				var root = WinAPI.GetAncestor(hwnd, WinAPI.GetAncestorFlags.GetRoot);
+				Logging.Log("Root window: " + root + " focus: " +hwnd);
+				WinAPI.SendMessage(root, (int)WinAPI.WM_INPUTLANGCHANGEREQUEST, 0, WinAPI.HKL_NEXT);
 //				Logging.Log("[JKL] > Cycle all: "+i+"/"+MMain.PHLayouts);
 //				Thread.Sleep(5);
-				WinAPI.SendMessage(hwnd, (int)WinAPI.WM_INPUTLANGCHANGEREQUEST, 0, WinAPI.HKL_PREV);
+				WinAPI.SendMessage(root, (int)WinAPI.WM_INPUTLANGCHANGEREQUEST, 0, WinAPI.HKL_PREV);
 //			}/
 			self_change = false;
 		}
