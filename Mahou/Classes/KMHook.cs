@@ -3774,7 +3774,7 @@ namespace Mahou {
 							Debug.WriteLine("SUS: "+sus + "evk.k "+ evt.k +" " + eve);
 							var kt = UInt32.Parse(sus);
 							Logging.Log("[EVT] Starting event #"+i+" on "+evt.k+" | (" +(xxl>>16)+ " == " +(kt>>16)+") => "+evt.v.Method.Name);
-							if (kt == xxl || (kt>>16) == (xxl>>16)) {
+							if (CompareLayouts(kt, xxl)) {
 								if (t >0) { DoLater(evt.v, t); }
 								else { evt.v(); }
 							}
