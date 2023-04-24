@@ -5654,7 +5654,7 @@ DEL ""ExtractASD.cmd""";
 				}
 				debuginfo.Append("\r\n</details>")
 				.Append("<details><summary>Mahou.ini</summary>\r\n\r\n```ini\r\n")
-					.Append(MMain.MyConfs.GetRawWithoutGroup("[Proxy]"))
+					.Append(MMain.MyConfs.GetRawWithoutGroup("[Proxy]")).Append("\r\n```")
 					.Append("\r\n</details>");
 				if (File.Exists(Path.Combine(nPath, "snippets.txt")))
 					debuginfo.Append("\r\n" + "<details><summary>Snippets</summary>\r\n\r\n```\r\n")
