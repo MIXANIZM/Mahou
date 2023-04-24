@@ -2006,14 +2006,14 @@ namespace Mahou {
 					chk_GetLayoutFromJKL.ForeColor = Color.Red;
 					HelpMeUnderstand.SetToolTip(chk_GetLayoutFromJKL, jklXHidServ.jklInfoStr);
 				} else {
-					chk_GetLayoutFromJKL.ForeColor = Color.FromKnownColor(KnownColor.WindowText);
+					chk_GetLayoutFromJKL.ForeColor = chk_AutoStart.ForeColor;
 					HelpMeUnderstand.SetToolTip(chk_GetLayoutFromJKL, MMain.Lang[Languages.Element.TT_UseJKL]);
 				}
 				jklXHidServ.Init();
 			}
 			else {
 				jklXHidServ.Destroy();
-				chk_GetLayoutFromJKL.ForeColor = Color.FromKnownColor(KnownColor.WindowText);
+				chk_GetLayoutFromJKL.ForeColor = chk_AutoStart.ForeColor;
 				HelpMeUnderstand.SetToolTip(chk_GetLayoutFromJKL, MMain.Lang[Languages.Element.TT_UseJKL]);
 			}
 			UnregisterHotkeys();
