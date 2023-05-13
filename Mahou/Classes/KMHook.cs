@@ -2181,15 +2181,17 @@ namespace Mahou {
 			return false;
 		}
 		public static void ResetPersistentTimer() {
-			if (MahouUI.PersistentLayoutForLayout1) {
-				Logging.Log("Reset persistent layout 1 timer.");
-				MMain.mahou.persistentLayout1Check.Stop();
-				MMain.mahou.persistentLayout1Check.Start();
-			}
-			if (MahouUI.PersistentLayoutForLayout2) {
-				Logging.Log("Reset persistent layout 2 timer.");
-				MMain.mahou.persistentLayout2Check.Stop();
-				MMain.mahou.persistentLayout2Check.Start();
+			if (!MahouUI.PersistentLayoutOnWindowChange) {
+				if (MahouUI.PersistentLayoutForLayout1) {
+					Logging.Log("Reset persistent layout 1 timer.");
+					MMain.mahou.persistentLayout1Check.Stop();
+					MMain.mahou.persistentLayout1Check.Start();
+				}
+				if (MahouUI.PersistentLayoutForLayout2) {
+					Logging.Log("Reset persistent layout 2 timer.");
+					MMain.mahou.persistentLayout2Check.Stop();
+					MMain.mahou.persistentLayout2Check.Start();
+				}
 			}
 		}
 		public static void AS_IGN_fun() {
