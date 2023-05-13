@@ -3160,7 +3160,9 @@ DEL "+restartMahouPath;
 			} catch(Exception e) { Logging.Log("Exception in Persistent layout("+Layout+") check, error messages & stack:\r\n"+e.Message+"+\r\n"+e.StackTrace, 1); }
 		}
 		void SetPersistentLayout(uint layout) {
-			uint CurrentLayout = Locales.GetCurrentLocale();
+			uint CurrentLayout = currentLayout;
+			if (!UseJKL || KMHook.JKLERR)
+				CurrentLayout = Locales.GetCurrentLocale();
 			Logging.Log("Checking current layout: ["+CurrentLayout+"] with selected persistent layout: ["+layout+"].");
 			if (CurrentLayout != layout) {
 				KMHook.ChangeToLayout(Locales.ActiveWindow(), layout);
