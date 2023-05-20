@@ -3839,7 +3839,7 @@ namespace Mahou {
 					Logging.Log("Layout change skipped, 0 is not layout.", 1);
 				} else {
 					// WM_INPUTLANCHANGEREQUEST should not be sent to non-root windows
-					var root = WinAPI.GetAncestor(hwnd, WinAPI.GetAncestorFlags.GetRoot);
+					var root = WinAPI.GetAncestor(hwnd, WinAPI.GetAncestorFlags.GetRootOwner);
 					Logging.Log("Root window: " + root + " focus: " +hwnd);
 					WinAPI.PostMessage(root, (int)WinAPI.WM_INPUTLANGCHANGEREQUEST, 0, LayoutId);
 				}
