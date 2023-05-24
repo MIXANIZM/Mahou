@@ -657,7 +657,8 @@ namespace Mahou {
 //					KMHook.ClearModifiers();
 				UpdateLDs();
 				// Fix for experimental alt-only + something;
-				KInputs.MakeInput(new []{KInputs.AddKey(Keys.LMenu, false)});
+				if (!ShiftInHotkey && !CtrlInHotkey && !WinInHotkey && AltInHotkey) // probably should've been like that
+					KInputs.MakeInput(new []{KInputs.AddKey(Keys.LMenu, false)});
 			}
 			base.WndProc(ref m);
 		}
