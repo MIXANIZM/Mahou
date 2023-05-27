@@ -254,6 +254,13 @@ public static class WinAPI {
 	public static uint MOD_WIN = 0x0008;
 	public static uint MOD_NO_REPEAT = 0x4000;
 	public static uint WM_HOTKEY = 0x312;
+	public static int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
+	public static uint SWP_DRAWFRAME = 0x0020;
+	public static uint SWP_NOMOVE = 0x0002;
+	public static uint SWP_NOSIZE = 0x0001;
+	public static uint SWP_NOZORDER = 0x0004;
+	[DllImport("user32.dll")]
+	public static extern bool UpdateWindow(IntPtr hWnd);
     [DllImport("Shell32.dll", EntryPoint = "ExtractIconExW", CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
     public static extern int ExtractIconEx(string sFile, int iIndex, out IntPtr piLargeVersion, out IntPtr piSmallVersion, int amountIcons);
 	#endregion

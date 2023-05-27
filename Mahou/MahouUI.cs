@@ -4840,6 +4840,16 @@ DEL ""ExtractASD.cmd""";
 		void ToggleDark(bool yes) {
 			var BGDARK = Color.FromArgb(51, 54, 58);
 			var FGDARK = Color.FromArgb(181, 181, 181);
+			int ix = yes ? 1 : 0;
+			System.Diagnostics.Debug.WriteLine("Enable IMMERSIVE dark" + ix);
+			WinAPI.DwmSetWindowAttribute(this.Handle, WinAPI.DWMWA_USE_IMMERSIVE_DARK_MODE, ref ix, sizeof(int));
+			WinAPI.SetWindowPos((int)this.Handle, (int)IntPtr.Zero, 0, 0, 0, 0, 
+			                    WinAPI.SWP_DRAWFRAME | 
+			                    WinAPI.SWP_NOACTIVATE | 
+			                    WinAPI.SWP_NOMOVE | 
+			                    WinAPI.SWP_NOSIZE | 
+			                    WinAPI.SWP_NOZORDER);
+			Invalidate();
 			if (yes) {
 				for(int ii = 0; ii != this.Controls.Count; ii++) {
 					this.Controls[ii].BackColor = BGDARK;
