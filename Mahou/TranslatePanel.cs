@@ -493,9 +493,13 @@ namespace Mahou {
 				var trsize = g.MeasureString(txt.Text, txt.Font);
 				slt.Width = (int)size.Width;
 				txt.Width = (int)trsize.Width;
+				var freewidth = pan.Width-slt.Width-2-btn.Width-2;
+				if (txt.Width > freewidth) {
+					txt.Width = freewidth;
+				}
 				mod = Math.Ceiling(trsize.Width / Width);
 				txt.Height = (int)(Math.Floor(trsize.Height)*mod);
-				var panh = (int)trsize.Height;
+				var panh = (int)txt.Height;
 				if (pan_h[c] < panh) { pan_h[c] = panh; }
 				int abw = 0;
 				if (!ab) {
