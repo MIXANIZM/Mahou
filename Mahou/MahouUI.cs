@@ -2568,12 +2568,18 @@ DEL "+restartMahouPath;
 						var fn = LDCaretFont_temp;
 						if (lcid == (MAIN_LAYOUT2>>16)) {
 							bg = Layout2Back_temp;
+							if (Layout2TransparentBack_temp) {
+								bg = Color.Transparent;
+							}
 							fg = Layout2Fore_temp;
 							fn = Layout2Font_temp;
 							if (!String.IsNullOrEmpty(Layout2TText)) t = Layout2TText;
 							n2 = false;	
 						} else if (lcid == (MAIN_LAYOUT1>>16)) {
 							bg = Layout1Back_temp;
+							if (Layout1TransparentBack_temp) {
+								bg = Color.Transparent;
+							}
 							fg = Layout1Fore_temp;
 							fn = Layout1Font_temp;
 							if (!String.IsNullOrEmpty(Layout1TText)) t = Layout1TText;
