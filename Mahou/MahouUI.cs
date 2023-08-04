@@ -3530,7 +3530,21 @@ DEL "+restartMahouPath;
 				}
 //				Debug.WriteLine("WCHI " + key + " rk:" +rk);
 			}
-			WinAPI.RegisterHotKey(h, id,mod, rk);
+			var mm = Hotkey.GetMods((int)(mod&0xfff));
+			if (mm == "Control") {
+				rk = (int)Keys.LControlKey;
+			}
+			if (mm == "Alt") {
+				rk = (int)Keys.LMenu;
+			}
+			if (mm == "Win") {
+				rk = (int)Keys.LWin;
+			}
+			if (mm == "Shift") {
+				rk = (int)Keys.LShiftKey;
+			}
+			var ok = WinAPI.RegisterHotKey(h, id,mod, rk);
+			Logging.Log("Registering: " + (Keys)rk + ", mod: " + mm + " ok: " + ok);
 		}
 		public void RegisterHotkeys() {
 			if (HKToggleMahou_tempEnabled)

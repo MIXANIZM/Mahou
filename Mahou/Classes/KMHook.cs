@@ -2228,268 +2228,199 @@ namespace Mahou {
 		}
 		static void SpecificKey(Keys Key, uint MSG, int vkCode = 0) {
 			Logging.Log("[SPKEY] > Check on key: ["+Key+"]"+" MSG: " +MSG.ToString());
-//			Debug.WriteLine("SPK:" + skip_spec_keys);
 			if (skip_spec_keys > 0) {
 				skip_spec_keys--;
 				if (skip_spec_keys < 0)
 					skip_spec_keys = 0;
 				return;
 			}
-//			Debug.WriteLine("Speekky->" + Key);
+			if (!MahouUI.ChangeLayoutInExcluded && ExcludedProgram()) return;
+			if ((MSG != WinAPI.WM_KEYUP && MSG != WinAPI.WM_SYSKEYUP && vkCode != 240)) return;
 			for (int i = 1; i!=5; i++) {
-				if ((MSG == WinAPI.WM_KEYUP || MSG == WinAPI.WM_SYSKEYUP || vkCode == 240)) {
-		       		var specificKey = (int)typeof(MahouUI).GetField("Key"+i).GetValue(MMain.mahou);
-					if (MahouUI.ChangeLayoutInExcluded || !ExcludedProgram()) {
-						#region Switch between layouts with one key
-						bool F18 = Key == Keys.F18;
-						bool GJIME = false;
-						var npre = ((int)preKey == (int)Keys.None || (int)preKey == (int)Key);
-						var altgr = (Key == Keys.RMenu && Key == Keys.LControlKey) || 
-							(Key == Keys.RMenu && Key == Keys.RControlKey) || 
-							(Key == Keys.LMenu && Key == Keys.LControlKey) || 
-							((ctrl && Key == Keys.RMenu) || (alt_r && Key == Keys.LControlKey)) ||
-							((ctrl && Key == Keys.LMenu) || (alt && Key == Keys.LControlKey)) || 
-							((ctrl_r && Key == Keys.RMenu) || (alt_r && Key == Keys.RControlKey)) ||
-							((ctrl_r && Key == Keys.LMenu) || (alt && Key == Keys.RControlKey));
-						if (specificKey == 8) // Shift+CapsLock
-							if (vkCode == 240) { // Google Japanese IME's  Shift+CapsLock repam fix
-								skip_spec_keys++; // Skip next CapsLock up event
-								GJIME = true;
-							}
-						if ((Key == Keys.CapsLock && !shift && !shift_r && !alt && !alt_r && !ctrl && !ctrl_r && !win && !win_r && specificKey == 1) ||
-						    (Key == Keys.CapsLock && (shift || shift_r) && !alt && !alt_r && !ctrl && !ctrl_r && !win && !win_r && specificKey == 8) )
-							if (Control.IsKeyLocked(Keys.CapsLock))
-								DoSelf(() => { KeybdEvent(Keys.CapsLock, 0); KeybdEvent(Keys.CapsLock, 2); }, "mod_and_caps_onoff");
-						var speclayout = (string)typeof(MahouUI).GetField("Layout"+i).GetValue(MMain.mahou);
-						if (String.IsNullOrEmpty(speclayout)) {
-						    Logging.Log("[SPKEY] > No layout for Layout"+i + " variable.");
-						    continue;
-					    }
-						if (speclayout == MMain.Lang[Languages.Element.SwitchBetween]) {
-							if (specificKey == 12 && Key == Keys.Tab && !ctrl && !ctrl_r && !shift_r && !shift && !win && !win_r && !alt && !alt_r) {
-								Logging.Log("[SPKEY] > Changing layout by Tab key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 11 && (
-								(Key == Keys.LShiftKey && ctrl) || (Key == Keys.RShiftKey && ctrl_r) || 
-								(Key == Keys.LControlKey && shift) || (Key == Keys.RControlKey && shift_r)) && !keyAfterCTRLSHIFT && !win && !win_r && !alt && !alt_r) {
-								Logging.Log("[SPKEY] > Changing layout by Ctrl+Shift key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 10 && (
-								(Key == Keys.LShiftKey && alt) || (Key == Keys.RShiftKey && alt_r) ||
-								(Key == Keys.LMenu && shift) || (Key == Keys.RMenu && shift_r)) && !keyAfterALTSHIFT && !win && !win_r && !ctrl && !ctrl_r) {
-								Logging.Log("[SPKEY] > Changing layout by Alt+Shift key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 8 && (Key == Keys.CapsLock || F18 || GJIME) && (shift || shift_r) && !alt && !alt_r && !ctrl && !ctrl_r) {
-								Logging.Log("[SPKEY] > Changing layout by Shift+CapsLock"+(GJIME?"(KeyCode: 240, Google Japanese IME's Shift+CapsLock remap)":"")+(F18?"(F18)":"")+" key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							} else 
-							if (!shift && !shift_r && !alt && !alt_r && !ctrl && !ctrl_r && !win && !win_r && specificKey == 1 && 
-								    (Key == Keys.CapsLock || F18)) {
-								ChangeLayout();
-								AS_IGN_fun();
-								Logging.Log("[SPKEY] > Changing layout by CapsLock"+(F18?"(F18)":"")+" key.");
-						    	return;
-							}
-							if (specificKey == 2 && Key == Keys.LControlKey && !keyAfterCTRL && npre) {
-								Logging.Log("[SPKEY] > Changing layout by L-Ctrl key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 3 && Key == Keys.RControlKey && !keyAfterCTRL && npre) {
-								Logging.Log("[SPKEY] > Changing layout by R-Ctrl key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 4 && Key == Keys.LShiftKey && !keyAfterSHIFT && npre) {
-								Logging.Log("[SPKEY] > Changing layout by L-Shift key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 5 && Key == Keys.RShiftKey && !keyAfterSHIFT && npre) {
-								Logging.Log("[SPKEY] > Changing layout by R-Shift key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 6 && Key == Keys.LMenu && !keyAfterALT && npre) {
-								Logging.Log("[SPKEY] > Changing layout by L-Alt key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 7 && Key == Keys.RMenu && !keyAfterALT && npre) {
-								Logging.Log("[SPKEY] > Changing layout by R-Alt key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 9 && altgr && !keyAfterALTGR) {
-								Logging.Log("[SPKEY] > Changing layout by AltGr key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 13 && ((Key == Keys.RShiftKey && shift) || (Key == Keys.LShiftKey && shift_r)) &&
-							   !alt && !alt_r && !ctrl_r && !ctrl && !win && !win_r) {
-								Logging.Log("[SPKEY] > Changing layout by LShift+RShift key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 14 && ((Key == Keys.LMenu && ctrl) || (Key == Keys.LControlKey && alt)) &&
-							   !alt_r && !ctrl_r && !win && !win_r && !(keyAfterALT&&keyAfterCTRL)) {
-								Logging.Log("[SPKEY] > Changing layout by LCtrl+LAlt key.");
-								ChangeLayout();
-								AS_IGN_fun();
-						    	return;
-							}
+	       		var specificKey = (int)typeof(MahouUI).GetField("Key"+i).GetValue(MMain.mahou);
+				#region Switch between layouts with one key
+				bool F18 = Key == Keys.F18;
+				bool GJIME = false;
+				var npre = ((int)preKey == (int)Keys.None || (int)preKey == (int)Key);
+				var altgr = (Key == Keys.RMenu && Key == Keys.LControlKey) || 
+					(Key == Keys.RMenu && Key == Keys.RControlKey) || 
+					(Key == Keys.LMenu && Key == Keys.LControlKey) || 
+					((ctrl && Key == Keys.RMenu) || (alt_r && Key == Keys.LControlKey)) ||
+					((ctrl && Key == Keys.LMenu) || (alt && Key == Keys.LControlKey)) || 
+					((ctrl_r && Key == Keys.RMenu) || (alt_r && Key == Keys.RControlKey)) ||
+					((ctrl_r && Key == Keys.LMenu) || (alt && Key == Keys.RControlKey));
+				if (specificKey == 8) // Shift+CapsLock
+					if (vkCode == 240) { // Google Japanese IME's  Shift+CapsLock repam fix
+						skip_spec_keys++; // Skip next CapsLock up event
+						GJIME = true;
+					}
+				if ((Key == Keys.CapsLock && !shift && !shift_r && !alt && !alt_r && !ctrl && !ctrl_r && !win && !win_r && specificKey == 1) ||
+				    (Key == Keys.CapsLock && (shift || shift_r) && !alt && !alt_r && !ctrl && !ctrl_r && !win && !win_r && specificKey == 8) )
+					if (Control.IsKeyLocked(Keys.CapsLock))
+						DoSelf(() => { KeybdEvent(Keys.CapsLock, 0); KeybdEvent(Keys.CapsLock, 2); }, "mod_and_caps_onoff");
+				var speclayout = (string)typeof(MahouUI).GetField("Layout"+i).GetValue(MMain.mahou);
+				if (String.IsNullOrEmpty(speclayout)) {
+				    Logging.Log("[SPKEY] > No layout for Layout"+i + " variable.");
+				    continue;
+			    }
+				var _mods = "";
+				_mods += "c" + (ctrl?1:0) + "," + (ctrl_r?1:0) + " a" + (alt?1:0) + "," + (alt_r?1:0) + " s" + (shift?1:0) + "," + (shift_r?1:0) + " w" + (win?1:0) + "," + (win_r?1:0);
+				var _good = false;
+				var _keys = new Dictionary<int, string>() {
+					{1, ("CapsLock"+(F18?"(F18)":"")) },
+					{8, ("Shift+CapsLock"+(GJIME?"(KeyCode: 240, Google Japanese IME's Shift+CapsLock remap)":"")+(F18?"(F18)":""))},
+					{2, "L-Ctrl"},         {3, "R-Ctrl"},
+					{4, "L-Shift"},        {5, "R-Shift"},
+					{6, "L-Alt"},          {7, "R-Alt"},
+					{9, "AltGr"},          {10, "Alt+Shift"},
+					{11, "Ctrl+Shift"},    {12, "Tab"},
+					{13, "LShift+RShift"}, {14, "LCtrl+LAlt"}
+				};
+				Logging.Log("[SPKEY] > Layout: " + speclayout + " Key: " + Key + " SpecKey: " + _keys[specificKey] + " Mods: " + _mods + " npre: " + npre + " keyafter: c" + keyAfterCTRL);
+				if (speclayout == MMain.Lang[Languages.Element.SwitchBetween]) {
+					if (specificKey == 12 && Key == Keys.Tab && !ctrl && !ctrl_r && !shift_r && !shift && !win && !win_r && !alt && !alt_r) {
+						_good = true;
+					}
+					else if (specificKey == 11 && (
+						(Key == Keys.LShiftKey && ctrl) || (Key == Keys.RShiftKey && ctrl_r) || 
+						(Key == Keys.LControlKey && shift) || (Key == Keys.RControlKey && shift_r)) && !keyAfterCTRLSHIFT && !win && !win_r && !alt && !alt_r) {
+						_good = true;
+					}
+					else if (specificKey == 10 && (
+						(Key == Keys.LShiftKey && alt) || (Key == Keys.RShiftKey && alt_r) ||
+						(Key == Keys.LMenu && shift) || (Key == Keys.RMenu && shift_r)) && !keyAfterALTSHIFT && !win && !win_r && !ctrl && !ctrl_r) {
+						_good = true;
+					}
+					else if (specificKey == 8 && (Key == Keys.CapsLock || F18 || GJIME) && (shift || shift_r) && !alt && !alt_r && !ctrl && !ctrl_r) {
+						_good = true;
+					} 
+					else if (!shift && !shift_r && !alt && !alt_r && !ctrl && !ctrl_r && !win && !win_r && specificKey == 1 && 
+						    (Key == Keys.CapsLock || F18)) {
+						_good = true;
+					}
+					else if (specificKey == 2 && Key == Keys.LControlKey && !keyAfterCTRL && npre) {
+						_good = true;
+					}
+					else if (specificKey == 3 && Key == Keys.RControlKey && !keyAfterCTRL && npre) {
+						_good = true;
+					}
+					else if (specificKey == 4 && Key == Keys.LShiftKey && !keyAfterSHIFT && npre) {
+						_good = true;
+					}
+					else if (specificKey == 5 && Key == Keys.RShiftKey && !keyAfterSHIFT && npre) {
+						_good = true;
+					}
+					else if (specificKey == 6 && Key == Keys.LMenu && !keyAfterALT && npre) {
+						_good = true;
+						DoSelf(()=>{ KeybdEvent(Keys.LMenu, 0); KeybdEvent(Keys.LMenu, 2); }, "lmenu_spkey");
+					}
+					else if (specificKey == 7 && Key == Keys.RMenu && !keyAfterALT && npre) {
+						_good = true;
+						DoSelf(()=>{ KeybdEvent(Keys.RMenu, 0); KeybdEvent(Keys.RMenu, 2); }, "rmenu_spkey");
+					}
+					else if (specificKey == 9 && altgr && !keyAfterALTGR) {
+						_good = true;
+						DoSelf(()=>{ KeybdEvent(Keys.RMenu, 0); KeybdEvent(Keys.RMenu, 2); }, "altgr_spkey");
+					}
+					else if (specificKey == 13 && ((Key == Keys.RShiftKey && shift) || (Key == Keys.LShiftKey && shift_r)) &&
+					   !alt && !alt_r && !ctrl_r && !ctrl && !win && !win_r) {
+						_good = true;
+					}
+					else if (specificKey == 14 && ((Key == Keys.LMenu && ctrl) || (Key == Keys.LControlKey && alt)) &&
+					   !alt_r && !ctrl_r && !win && !win_r && !(keyAfterALT&&keyAfterCTRL)) {
+						_good = true;
+					}
+					if (_good) {
+						Logging.Log("[SPKEY] > Changing layout by "+_keys[specificKey]+" key.");
+						ChangeLayout();
+						AS_IGN_fun();
+				    	return;
+					}
 //							if (catched) {
 //			       			    if (Key == Keys.LMenu)
 //									DoSelf(()=>{ Thread.Sleep(150); KeybdEvent(Keys.LMenu, 0); KeybdEvent(Keys.LMenu, 2); });
 //			       			    if (Key == Keys.RMenu)
 //									DoSelf(()=>{ Thread.Sleep(150); KeybdEvent(Keys.RMenu, 0); KeybdEvent(Keys.RMenu, 2); });
 //							}
-							#endregion
-						} else {
-							#region By layout switch
-							var matched = false;
-							if (specificKey == 12 && Key == Keys.Tab && !ctrl && !ctrl_r && !shift_r && !shift && !win && !win_r && !alt && !alt_r) {
-								Logging.Log("[SPKEY] > Switching to specific layout by Tab key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 11 && (
-								(Key == Keys.LShiftKey && ctrl) || (Key == Keys.RShiftKey && ctrl_r) || 
-								(Key == Keys.LControlKey && shift) || (Key == Keys.RControlKey && shift_r)) && !keyAfterCTRLSHIFT && !win && !win_r && !alt && !alt_r) {
-								Logging.Log("[SPKEY] > Switching to specific layout by Ctrl+Shift key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 10 && (
-								(Key == Keys.LShiftKey && alt) || (Key == Keys.RShiftKey && alt_r) ||
-								(Key == Keys.LMenu && shift) || (Key == Keys.RMenu && shift_r)) && !keyAfterALTSHIFT && !win && !win_r && !ctrl && !ctrl_r) {
-								Logging.Log("[SPKEY] > Switching to specific layout by Alt+Shift key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 8 && (Key == Keys.CapsLock || F18 || GJIME) && (shift || shift_r) && !alt && !alt_r && !ctrl && !ctrl_r) {
-								Logging.Log("[SPKEY] > Switching to specific layout by Shift+CapsLock"+(GJIME?"(KeyCode: 240, Google Japanese IME's Shift+CapsLock remap)":"")+(F18?"(F18)":"")+" key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-						    	return;
-							} else
-							if (specificKey == 1 && (Key == Keys.CapsLock || F18)) {
-								Logging.Log("[SPKEY] > Switching to specific layout by Caps Lock"+(F18?"(F18)":"")+" key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 2 && Key == Keys.LControlKey && !keyAfterCTRL && npre) {
-								Logging.Log("[SPKEY] > Switching to specific layout by  L-Ctrl key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 3 && Key == Keys.RControlKey && !keyAfterCTRL && npre) {
-								Logging.Log("[SPKEY] > Switching to specific layout by R-Ctrl key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 4 && Key == Keys.LShiftKey && !keyAfterSHIFT && npre) {
-								Logging.Log("[SPKEY] > Switching to specific layout by L-Shift key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 5 && Key == Keys.RShiftKey && !keyAfterSHIFT && npre) {
-								Logging.Log("[SPKEY] > Switching to specific layout by R-Shift key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 6 && Key == Keys.LMenu && !keyAfterALT && npre) {
-								Logging.Log("[SPKEY] > Switching to specific layout by L-Alt key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);	
-								matched = true;
-								AS_IGN_fun();
-								DoSelf(()=>{ KeybdEvent(Keys.LMenu, 0); KeybdEvent(Keys.LMenu, 2); }, "lmenu_spkey");
-						    	return;
-							}
-							if (specificKey == 7 && Key == Keys.RMenu && !keyAfterALT && npre) {
-								Logging.Log("[SPKEY] > Switching to specific layout by R-Alt key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-								DoSelf(()=>{ KeybdEvent(Keys.RMenu, 0); KeybdEvent(Keys.RMenu, 2); }, "rmenu_spkey");
-						    	return;
-							}
-							if (specificKey == 9 && altgr && !keyAfterALTGR) {
-								Logging.Log("[SPKEY] > Switching to specific layout by AltGr key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-								DoSelf(()=>{ KeybdEvent(Keys.RMenu, 0); KeybdEvent(Keys.RMenu, 2); }, "altgr_spkey");
-						    	return;
-							}
-							if (specificKey == 13 && ((Key == Keys.RShiftKey && shift) || (Key == Keys.LShiftKey && shift_r)) &&
-							   !alt && !alt_r && !ctrl_r && !ctrl && !win && !win_r) {
-								Logging.Log("[SPKEY] > Switching to specific layout by LShift+RShift key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-						    	return;
-							}
-							if (specificKey == 14 && ((Key == Keys.LMenu && ctrl) || (Key == Keys.LControlKey && alt)) &&
-							    !alt_r && !ctrl_r && !win && !win_r && !(keyAfterALT&&keyAfterCTRL)) {
-								Logging.Log("[SPKEY] > Switching to specific layout by LCtrl+LAlt key.");
-								ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
-								matched = true;
-								AS_IGN_fun();
-						    	return;
-							}
-							try {
-								if (matched) {
-									Logging.Log("[SPKEY] > Available layout from string ["+speclayout+"] & id ["+i+"].");
-									//Fix for alt-show-menu in programs
+					#endregion
+				} else {
+					#region By layout switch
+					var matched = false;
+					if (specificKey == 12 && Key == Keys.Tab && !ctrl && !ctrl_r && !shift_r && !shift && !win && !win_r && !alt && !alt_r) {
+						_good = true;
+					}
+					else if (specificKey == 11 && (
+						(Key == Keys.LShiftKey && ctrl) || (Key == Keys.RShiftKey && ctrl_r) || 
+						(Key == Keys.LControlKey && shift) || (Key == Keys.RControlKey && shift_r)) && !keyAfterCTRLSHIFT && !win && !win_r && !alt && !alt_r) {
+						_good = true;
+					}
+					else if (specificKey == 10 && (
+						(Key == Keys.LShiftKey && alt) || (Key == Keys.RShiftKey && alt_r) ||
+						(Key == Keys.LMenu && shift) || (Key == Keys.RMenu && shift_r)) && !keyAfterALTSHIFT && !win && !win_r && !ctrl && !ctrl_r) {
+						_good = true;
+					}
+					else if (specificKey == 8 && (Key == Keys.CapsLock || F18 || GJIME) && (shift || shift_r) && !alt && !alt_r && !ctrl && !ctrl_r) {
+						_good = true;
+					}
+					else if (specificKey == 1 && (Key == Keys.CapsLock || F18)) {
+						_good = true;
+					}
+					else if (specificKey == 2 && Key == Keys.LControlKey && !keyAfterCTRL && npre) {
+						_good = true;
+					}
+					else if (specificKey == 3 && Key == Keys.RControlKey && !keyAfterCTRL && npre) {
+						_good = true;
+					}
+					else if (specificKey == 4 && Key == Keys.LShiftKey && !keyAfterSHIFT && npre) {
+						_good = true;
+					}
+					else if (specificKey == 5 && Key == Keys.RShiftKey && !keyAfterSHIFT && npre) {
+						_good = true;
+					}
+					else if (specificKey == 6 && Key == Keys.LMenu && !keyAfterALT && npre) {
+						_good = true;
+						DoSelf(()=>{ KeybdEvent(Keys.LMenu, 0); KeybdEvent(Keys.LMenu, 2); }, "lmenu_spkey");
+				    	return;
+					}
+					else if (specificKey == 7 && Key == Keys.RMenu && !keyAfterALT && npre) {
+						_good = true;
+						DoSelf(()=>{ KeybdEvent(Keys.RMenu, 0); KeybdEvent(Keys.RMenu, 2); }, "rmenu_spkey");
+				    	return;
+					}
+					else if (specificKey == 9 && altgr && !keyAfterALTGR) {
+						_good = true;
+						DoSelf(()=>{ KeybdEvent(Keys.RMenu, 0); KeybdEvent(Keys.RMenu, 2); }, "altgr_spkey");
+				    	return;
+					}
+					else if (specificKey == 13 && ((Key == Keys.RShiftKey && shift) || (Key == Keys.LShiftKey && shift_r)) &&
+					   !alt && !alt_r && !ctrl_r && !ctrl && !win && !win_r) {
+						_good = true;
+					}
+					else if (specificKey == 14 && ((Key == Keys.LMenu && ctrl) || (Key == Keys.LControlKey && alt)) &&
+					    !alt_r && !ctrl_r && !win && !win_r && !(keyAfterALT&&keyAfterCTRL)) {
+						_good = true;
+					}
+					if (_good) {
+						Logging.Log("[SPKEY] > Switching to specific layout by "+_keys[specificKey]+" key.");
+						ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(speclayout).uId);
+						matched = true;
+						AS_IGN_fun();
+				    	return;
+					}
+					try {
+						if (matched) {
+							Logging.Log("[SPKEY] > Available layout from string ["+speclayout+"] & id ["+i+"].");
+							//Fix for alt-show-menu in programs
 //				       			    if (Key == Keys.LMenu)
 //										DoSelf(()=>{ KeybdEvent(Keys.LMenu, 0); KeybdEvent(Keys.LMenu, 2); });
 //				       			    if (Key == Keys.RMenu)
 //										DoSelf(()=>{ KeybdEvent(Keys.RMenu, 0); KeybdEvent(Keys.RMenu, 2); });
-								}
-							} catch { 
-								Logging.Log("[SPKEY] > No layout available from string ["+speclayout+"] & id ["+i+"]."); 
-							}
 						}
-						#endregion
-				    }
-          		}
+					} catch { 
+						Logging.Log("[SPKEY] > No layout available from string ["+speclayout+"] & id ["+i+"]."); 
+					}
+				}
+				#endregion
 			}
 			ctrl = IsKDown(Keys.LControlKey);
 			ctrl_r = IsKDown(Keys.RControlKey);
