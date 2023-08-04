@@ -2267,6 +2267,7 @@ namespace Mahou {
 				_mods += "c" + (ctrl?1:0) + "," + (ctrl_r?1:0) + " a" + (alt?1:0) + "," + (alt_r?1:0) + " s" + (shift?1:0) + "," + (shift_r?1:0) + " w" + (win?1:0) + "," + (win_r?1:0);
 				var _good = false;
 				var _keys = new Dictionary<int, string>() {
+					{0, "None"},
 					{1, ("CapsLock"+(F18?"(F18)":"")) },
 					{8, ("Shift+CapsLock"+(GJIME?"(KeyCode: 240, Google Japanese IME's Shift+CapsLock remap)":"")+(F18?"(F18)":""))},
 					{2, "L-Ctrl"},         {3, "R-Ctrl"},
