@@ -4991,6 +4991,16 @@ DEL ""ExtractASD.cmd""";
 		    }
 		}
 		#endregion
+		#region Link + Different cursor
+		public class LinkLabelNew : LinkLabel {
+	        static readonly Cursor SysHandCursor = new Cursor(WinAPI.LoadCursor(IntPtr.Zero, WinAPI.IDC_HAND));
+	        protected override void OnMouseMove(MouseEventArgs e) {
+	            base.OnMouseMove(e);
+	            if(OverrideCursor == Cursors.Hand)
+	                OverrideCursor = SysHandCursor;
+	        }
+		}
+		#endregion
 		#region Textbox + Ctrl+A
 		public class TextBoxCA : TextBox {
 			protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {

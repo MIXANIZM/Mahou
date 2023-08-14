@@ -248,6 +248,23 @@ public static class WinAPI {
 	public static uint WM_SYSKEYUP = 0x0105;
 	#endregion
 	#region MahouUI requirements
+	public static int
+		IDC_ARROW = 32512,
+		IDC_IBEAM = 32513,
+		IDC_WAIT = 32514,
+		IDC_CROSS = 32515,
+		IDC_UPARROW = 32516,
+		IDC_SIZE = 32640,
+		IDC_ICON = 32641,
+		IDC_SIZENWSE = 32642,
+		IDC_SIZENESW = 32643,
+		IDC_SIZEWE = 32644,
+		IDC_SIZENS = 32645,
+		IDC_SIZEALL = 32646,
+		IDC_NO = 32648,
+		IDC_HAND = 32649,
+		IDC_APPSTARTING = 32650,
+		IDC_HELP = 32651;
 	public static uint MOD_ALT = 0x0001;
 	public static uint MOD_CONTROL = 0x0002;
 	public static uint MOD_SHIFT = 0x0004;
@@ -260,7 +277,9 @@ public static class WinAPI {
 	public static uint SWP_NOSIZE = 0x0001;
 	public static uint SWP_NOZORDER = 0x0004;
 	[DllImport("user32.dll")]
-	public static extern bool UpdateWindow(IntPtr hWnd);
+	public static extern bool UpdateWindow(IntPtr hWnd);        
+	[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
     [DllImport("Shell32.dll", EntryPoint = "ExtractIconExW", CharSet = CharSet.Unicode, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
     public static extern int ExtractIconEx(string sFile, int iIndex, out IntPtr piLargeVersion, out IntPtr piSmallVersion, int amountIcons);
 	#endregion
