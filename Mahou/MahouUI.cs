@@ -66,7 +66,7 @@ namespace Mahou {
 		public static string ReselectCustoms, AutoCopyTranslation = "", onlySnippetsExcluded = "", onlyAutoSwitchExcluded = "", CycleCaseBase;
 		static string CycleCaseOrder = "TULSR", OverlayExcluded, tas, ncs;
 		static int OverlayExcludedInerval, arm;
-		static Timer armt;
+		static Timer armt = new Timer();
 		#endregion
 		static uint lastTrayFlagLayout = 0;
 		public static Bitmap FLAG, ITEXT;
