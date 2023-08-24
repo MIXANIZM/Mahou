@@ -628,7 +628,7 @@ namespace Mahou {
 					Hotkey.CallHotkey(HKCLine, id, ref hklineOK, ConvertLastLine);
 				}
 				if (!KMHook.ExcludedProgram() && !specific) {
-					Hotkey.CallHotkey(HKCycleCase, id, ref hkccOK, CycleCase);
+					Hotkey.CallHotkey(HKCycleCase, id, ref hkccOK, ()=>CycleCase());
 					Hotkey.CallHotkey(HKTitleCase, id, ref hksTTCOK, ()=>KMHook.SelectionConversion(KMHook.ConvT.Title));
 					Hotkey.CallHotkey(HKSwapCase, id, ref hksTSCOK, ()=>KMHook.SelectionConversion(KMHook.ConvT.Swap));
 					Hotkey.CallHotkey(HKUpperCase, id, ref hkUcOK, ()=>KMHook.SelectionConversion(KMHook.ConvT.Upper));
@@ -742,10 +742,11 @@ namespace Mahou {
 			}
 		}
 		public static int CCPos = 0;
-		public void CycleCase() {
+		public void CycleCase(bool hotkey=true) {
 			if (CCPos >= CycleCaseOrder.Length)
 				CCPos = 0;
 			var a = char.ToUpper(CycleCaseOrder[CCPos]);
+			var done = false;
 			switch (a) {
 				case 'T':
 					KMHook.SelectionConversion(KMHook.ConvT.Title); break;
@@ -761,9 +762,12 @@ namespace Mahou {
 					var cbe = String.IsNullOrEmpty(CycleCaseBase);
 					var r = CycleCaseSaveBase?(cbe?"Emtpy, needs saving first":"???"):"not enabled";
 					if (!CycleCaseSaveBase || cbe) { 
-						Debug.WriteLine("Skip CC [B]: "+r); 
-						CCPos++;
-						CycleCase();
+						if (hotkey) {
+							Debug.WriteLine("Skip CC [B]: "+r);
+							CCPos++;
+							CycleCase(hotkey);
+							done = true;
+						}
 						break;
 					}
 					if (!cbe) {
@@ -783,7 +787,7 @@ namespace Mahou {
 					Logging.Log("I have no idea what: " + a + " means..."); break;
 			}
 			Debug.WriteLine("Hail to the ["+a+"]");
-			CCPos++;
+			if (!done) CCPos++;
 		}
 		public static Point last_CR = new Point(0, 0);
 		public void ToggleMahou() {
@@ -5235,7 +5239,7 @@ DEL ""ExtractASD.cmd""";
 								KMHook.SelectionConversion((KMHook.ConvT)x);
 							else {
 								if (x==7) KMHook.ConvertSelection();
-								if (x==8) MMain.mahou.CycleCase();
+								if (x==8) MMain.mahou.CycleCase(false);
 								if (x==9) ShowSelectionTranslation();	
 							}
 						}
