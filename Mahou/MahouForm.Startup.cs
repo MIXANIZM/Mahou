@@ -5,6 +5,9 @@ namespace Mahou
 {
     public partial class MahouForm
     {
+        private bool autorunStateBeforeLegacyApply;
+        private bool autorunBridgeActive;
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -21,19 +24,22 @@ namespace Mahou
 
         private void WireStartupRegistryBridge()
         {
-            btnApply.Click -= StartupRegistryBridge_Click;
-            btnOK.Click -= StartupRegistryBridge_Click;
-            btnApply.Click += StartupRegistryBridge_Click;
-            btnOK.Click += StartupRegistryBridge_Click;
+            btnApply.MouseDown -= StartupRegistryBridgeBeforeLegacyApply;
+            btnOK.MouseDown -= StartupRegistryBridgeBeforeLegacyApply;
+            btnApply.MouseDown += StartupRegistryBridgeBeforeLegacyApply;
+            btnOK.MouseDown += StartupRegistryBridgeBeforeLegacyApply;
         }
 
-        private void StartupRegistryBridge_Click(object sender, EventArgs e)
+        private void StartupRegistryBridgeBeforeLegacyApply(object sender, MouseEventArgs e)
         {
-            ApplyStartupRegistryState();
+            ApplyStartupRegistryStateBeforeLegacyShortcutCode();
         }
 
         private void RefreshStartupCheckboxFromRegistry()
         {
+            if (autorunBridgeActive)
+                return;
+
             try
             {
                 cbAutorun.Checked = StartupManager.IsEnabled();
@@ -43,17 +49,31 @@ namespace Mahou
             }
         }
 
-        private void ApplyStartupRegistryState()
+        private void ApplyStartupRegistryStateBeforeLegacyShortcutCode()
         {
             try
             {
-                if (cbAutorun.Checked)
+                autorunBridgeActive = true;
+                autorunStateBeforeLegacyApply = cbAutorun.Checked;
+
+                if (autorunStateBeforeLegacyApply)
                     StartupManager.Enable();
                 else
                     StartupManager.Disable();
+
+                // The original Apply() method still contains old Startup-folder .lnk code.
+                // Force that legacy branch to DeleteShortcut() so Windows Script Host / COM is not required.
+                cbAutorun.Checked = false;
+
+                BeginInvoke(new Action(delegate
+                {
+                    cbAutorun.Checked = StartupManager.IsEnabled() || autorunStateBeforeLegacyApply;
+                    autorunBridgeActive = false;
+                }));
             }
             catch (Exception ex)
             {
+                autorunBridgeActive = false;
                 MessageBox.Show(ex.Message, "MIXANIZM Mahou", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
