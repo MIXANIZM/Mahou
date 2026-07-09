@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,14 +9,14 @@ namespace Mahou
 {
     class Configs
     {
-        //Path where Mahou is now + Mahou.ini
-        public static readonly string filePath = Path.Combine(Update.nPath, "Mahou.ini");
+        public const string DataDirectoryName = "MIXANIZM Mahou";
+        public static readonly string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), DataDirectoryName);
+        public static readonly string legacyFilePath = Path.Combine(Update.nPath, "Mahou.ini");
+        public static readonly string filePath = Path.Combine(dataPath, "Mahou.ini");
+
         public Configs()//Initializes settings, if some of elements or settinhs file, not exists it creates them with default value
         {
-            if (!File.Exists(filePath)) //Create an UTF-16 configuration file
-            {
-                File.WriteAllText(filePath, "!Unicode(✔), Mahou settings file", Encoding.Unicode);
-            }
+            EnsureConfigLocation();
             int it = 0;      //int temp
             uint uit = 0;    //uint temp
             bool bt = false; //bool temp
@@ -199,6 +199,26 @@ namespace Mahou
             if (!Int32.TryParse(this.Read("DoubleKey", "Delay"), out it))
                 this.Write("DoubleKey", "Delay", "350");
         }
+
+        private static void EnsureConfigLocation()
+        {
+            Directory.CreateDirectory(dataPath);
+            if (!File.Exists(filePath) && File.Exists(legacyFilePath))
+            {
+                try
+                {
+                    File.Copy(legacyFilePath, filePath, false);
+                }
+                catch
+                {
+                    // If migration fails, create a clean AppData config instead of writing near the executable.
+                }
+            }
+
+            if (!File.Exists(filePath)) //Create an UTF-16 configuration file
+                File.WriteAllText(filePath, "!Unicode(✔), Mahou settings file", Encoding.Unicode);
+        }
+
         public void Write(string section, string key, string value) //Writes "value" to "key" in "section"
         {
             WritePrivateProfileString(section, key, value, filePath);
