@@ -1,0 +1,433 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Mahou
+{
+    internal static class AdaptiveLayoutLearning
+    {
+        private const string DataDirectoryName = "MIXANIZM Mahou";
+        private const string RulesFileName = "layout-learning.tsv";
+        private static readonly object Sync = new object();
+        private static readonly Dictionary<string, Rule> Rules = new Dictionary<string, Rule>();
+        private static readonly KMHook.LowLevelProc Proc = HookCallback;
+        private static IntPtr hookId = IntPtr.Zero;
+        private static bool loaded;
+        private static DateTime ignoreUntilUtc = DateTime.MinValue;
+
+        public static void Start()
+        {
+            if (!Enabled() || hookId != IntPtr.Zero)
+                return;
+
+            EnsureConfigDefaults();
+            EnsureLoaded();
+            hookId = KMHook.SetHook(Proc, (int)KMHook.KMMessages.WH_KEYBOARD_LL);
+        }
+
+        public static void Stop()
+        {
+            if (hookId == IntPtr.Zero)
+                return;
+
+            KMHook.UnhookWindowsHookEx(hookId);
+            hookId = IntPtr.Zero;
+        }
+
+        public static void ClearRules()
+        {
+            lock (Sync)
+            {
+                Rules.Clear();
+                loaded = true;
+                var file = RulesFilePath();
+                if (File.Exists(file))
+                    File.Delete(file);
+            }
+        }
+
+        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && !KMHook.self)
+            {
+                try
+                {
+                    var message = (KMHook.KMMessages)(int)wParam;
+                    int vkCode = Marshal.ReadInt32(lParam);
+                    var key = (Keys)vkCode;
+
+                    if (DateTime.UtcNow < ignoreUntilUtc)
+                        return KMHook.CallNextHookEx(hookId, nCode, wParam, lParam);
+
+                    if (IsConvertLastKeyUp(message, vkCode))
+                        RecordManualCorrection();
+
+                    if (IsAutoTrigger(message, key) && ShouldAutoConvertCurrentWord())
+                    {
+                        SendConvertLastHotkeyAndOriginalKey(key);
+                        return (IntPtr)1;
+                    }
+                }
+                catch
+                {
+                    // Adaptive learning must never break the original keyboard hook chain.
+                }
+            }
+
+            return KMHook.CallNextHookEx(hookId, nCode, wParam, lParam);
+        }
+
+        private static bool IsConvertLastKeyUp(KMHook.KMMessages message, int vkCode)
+        {
+            if (message != KMHook.KMMessages.WM_KEYUP && message != KMHook.KMMessages.WM_SYSKEYUP)
+                return false;
+
+            if (!SafeReadBool("EnabledHotkeys", "HKCLEnabled", true))
+                return false;
+
+            var hotkey = new Hotkey(NormalizeVkCode(vkCode), CurrentModifiers());
+            return hotkey.Equals(MMain.mahou.HKCLast);
+        }
+
+        private static bool IsAutoTrigger(KMHook.KMMessages message, Keys key)
+        {
+            if (!AutoConvertOnSpace())
+                return false;
+
+            if (Control.ModifierKeys != Keys.None)
+                return false;
+
+            if (message != KMHook.KMMessages.WM_KEYDOWN && message != KMHook.KMMessages.WM_SYSKEYDOWN)
+                return false;
+
+            return key == Keys.Space || key == Keys.Enter || key == Keys.Return;
+        }
+
+        private static void RecordManualCorrection()
+        {
+            var snapshot = CaptureCurrentWord();
+            if (snapshot == null)
+                return;
+
+            lock (Sync)
+            {
+                EnsureLoaded();
+                Rule rule;
+                if (!Rules.TryGetValue(snapshot.Key, out rule))
+                {
+                    rule = new Rule
+                    {
+                        Key = snapshot.Key,
+                        SourceLocale = snapshot.SourceLocale,
+                        Signature = snapshot.Signature,
+                        AppName = snapshot.AppName,
+                        SourcePreview = snapshot.SourcePreview,
+                        Hits = 0,
+                        AutoEnabled = false,
+                        LastUsedUtc = DateTime.UtcNow
+                    };
+                    Rules[rule.Key] = rule;
+                }
+
+                rule.Hits++;
+                rule.SourcePreview = snapshot.SourcePreview;
+                rule.LastUsedUtc = DateTime.UtcNow;
+                rule.AutoEnabled = rule.Hits >= ConfirmationsToEnable();
+                SaveRules();
+            }
+        }
+
+        private static bool ShouldAutoConvertCurrentWord()
+        {
+            var snapshot = CaptureCurrentWord();
+            if (snapshot == null)
+                return false;
+
+            lock (Sync)
+            {
+                EnsureLoaded();
+                Rule rule;
+                return Rules.TryGetValue(snapshot.Key, out rule) && rule.AutoEnabled && rule.Hits >= ConfirmationsToEnable();
+            }
+        }
+
+        private static Snapshot CaptureCurrentWord()
+        {
+            if (MMain.c_word == null || MMain.c_word.Count < MinWordLength())
+                return null;
+
+            if (!IsLearnable(MMain.c_word))
+                return null;
+
+            uint locale = Locales.GetCurrentLocale();
+            string signature = WordSignature(MMain.c_word);
+            string appName = PerAppRules() ? ActiveProcessName() : String.Empty;
+
+            return new Snapshot
+            {
+                Key = MakeRuleKey(locale, signature, appName),
+                SourceLocale = locale,
+                Signature = signature,
+                AppName = appName,
+                SourcePreview = WordPreview(MMain.c_word)
+            };
+        }
+
+        private static bool IsLearnable(IList<KMHook.YuKey> word)
+        {
+            foreach (var key in word)
+            {
+                if (key.altnum || key.yukey == Keys.Space)
+                    return false;
+            }
+            return true;
+        }
+
+        private static string WordSignature(IList<KMHook.YuKey> word)
+        {
+            var result = new StringBuilder();
+            foreach (var key in word)
+                result.Append((int)key.yukey).Append(':').Append(key.upper ? '1' : '0').Append(';');
+            return result.ToString();
+        }
+
+        private static string WordPreview(IList<KMHook.YuKey> word)
+        {
+            var result = new StringBuilder();
+            foreach (var key in word)
+                result.Append(key.yukey).Append(' ');
+            return result.ToString().Trim();
+        }
+
+        private static void SendConvertLastHotkeyAndOriginalKey(Keys originalKey)
+        {
+            ignoreUntilUtc = DateTime.UtcNow.AddMilliseconds(500);
+
+            var inputs = new List<KInputs.INPUT>();
+            var mods = Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLMods"));
+            var keyCode = (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey");
+
+            if (mods[0]) inputs.Add(KInputs.AddKey(Keys.LControlKey, true));
+            if (mods[1]) inputs.Add(KInputs.AddKey(Keys.LShiftKey, true));
+            if (mods[2]) inputs.Add(KInputs.AddKey(Keys.LMenu, true));
+
+            inputs.Add(KInputs.AddKey(keyCode, true));
+            inputs.Add(KInputs.AddKey(keyCode, false));
+
+            if (mods[2]) inputs.Add(KInputs.AddKey(Keys.LMenu, false));
+            if (mods[1]) inputs.Add(KInputs.AddKey(Keys.LShiftKey, false));
+            if (mods[0]) inputs.Add(KInputs.AddKey(Keys.LControlKey, false));
+
+            inputs.Add(KInputs.AddKey(originalKey, true));
+            inputs.Add(KInputs.AddKey(originalKey, false));
+
+            KInputs.MakeInput(inputs.ToArray());
+        }
+
+        private static int NormalizeVkCode(int vkCode)
+        {
+            if (vkCode == 160 || vkCode == 161) return 16;
+            if (vkCode == 162 || vkCode == 163) return 17;
+            if (vkCode == 164 || vkCode == 165) return 18;
+            if (vkCode == 240) return 20;
+            return vkCode;
+        }
+
+        private static bool[] CurrentModifiers()
+        {
+            var modifiers = Control.ModifierKeys;
+            return new[]
+            {
+                (modifiers & Keys.Control) == Keys.Control,
+                (modifiers & Keys.Shift) == Keys.Shift,
+                (modifiers & Keys.Alt) == Keys.Alt
+            };
+        }
+
+        private static bool Enabled()
+        {
+            return SafeReadBool("LayoutLearning", "Enabled", true);
+        }
+
+        private static bool AutoConvertOnSpace()
+        {
+            return SafeReadBool("LayoutLearning", "AutoConvertOnSpace", false);
+        }
+
+        private static bool PerAppRules()
+        {
+            return SafeReadBool("LayoutLearning", "PerAppRules", false);
+        }
+
+        private static int MinWordLength()
+        {
+            return Math.Max(1, SafeReadInt("LayoutLearning", "MinWordLength", 4));
+        }
+
+        private static int ConfirmationsToEnable()
+        {
+            return Math.Max(1, SafeReadInt("LayoutLearning", "ConfirmationsToEnable", 2));
+        }
+
+        private static void EnsureConfigDefaults()
+        {
+            EnsureBool("LayoutLearning", "Enabled", true);
+            EnsureBool("LayoutLearning", "AutoConvertOnSpace", false);
+            EnsureBool("LayoutLearning", "PerAppRules", false);
+            EnsureInt("LayoutLearning", "MinWordLength", 4);
+            EnsureInt("LayoutLearning", "ConfirmationsToEnable", 2);
+        }
+
+        private static void EnsureBool(string section, string key, bool defaultValue)
+        {
+            bool value;
+            if (!Boolean.TryParse(MMain.MyConfs.Read(section, key), out value))
+                MMain.MyConfs.Write(section, key, defaultValue.ToString());
+        }
+
+        private static void EnsureInt(string section, string key, int defaultValue)
+        {
+            int value;
+            if (!Int32.TryParse(MMain.MyConfs.Read(section, key), out value))
+                MMain.MyConfs.Write(section, key, defaultValue.ToString());
+        }
+
+        private static bool SafeReadBool(string section, string key, bool defaultValue)
+        {
+            bool value;
+            return Boolean.TryParse(MMain.MyConfs.Read(section, key), out value) ? value : defaultValue;
+        }
+
+        private static int SafeReadInt(string section, string key, int defaultValue)
+        {
+            int value;
+            return Int32.TryParse(MMain.MyConfs.Read(section, key), out value) ? value : defaultValue;
+        }
+
+        private static void EnsureLoaded()
+        {
+            if (loaded)
+                return;
+
+            loaded = true;
+            var file = RulesFilePath();
+            if (!File.Exists(file))
+                return;
+
+            foreach (var line in File.ReadAllLines(file, Encoding.UTF8))
+            {
+                if (String.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+                    continue;
+
+                var parts = line.Split('\t');
+                uint locale;
+                int hits;
+                bool autoEnabled;
+                DateTime lastUsedUtc;
+                if (parts.Length != 7 || !UInt32.TryParse(parts[0], out locale) ||
+                    !Int32.TryParse(parts[4], out hits) || !Boolean.TryParse(parts[5], out autoEnabled) ||
+                    !DateTime.TryParse(parts[6], out lastUsedUtc))
+                    continue;
+
+                var key = MakeRuleKey(locale, parts[1], parts[2]);
+                Rules[key] = new Rule
+                {
+                    Key = key,
+                    SourceLocale = locale,
+                    Signature = parts[1],
+                    AppName = parts[2],
+                    SourcePreview = Decode(parts[3]),
+                    Hits = hits,
+                    AutoEnabled = autoEnabled,
+                    LastUsedUtc = lastUsedUtc
+                };
+            }
+        }
+
+        private static void SaveRules()
+        {
+            Directory.CreateDirectory(DataDirectoryPath());
+            var lines = new List<string> { "# sourceLocale\tsignature\tappName\tsourcePreviewBase64\thits\tautoEnabled\tlastUsedUtc" };
+            foreach (var rule in Rules.Values)
+            {
+                lines.Add(String.Join("\t", new[]
+                {
+                    rule.SourceLocale.ToString(),
+                    rule.Signature,
+                    rule.AppName ?? String.Empty,
+                    Encode(rule.SourcePreview),
+                    rule.Hits.ToString(),
+                    rule.AutoEnabled.ToString(),
+                    rule.LastUsedUtc.ToString("o")
+                }));
+            }
+            File.WriteAllLines(RulesFilePath(), lines.ToArray(), Encoding.UTF8);
+        }
+
+        private static string MakeRuleKey(uint locale, string signature, string appName)
+        {
+            return locale + "|" + appName + "|" + signature;
+        }
+
+        private static string DataDirectoryPath()
+        {
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), DataDirectoryName);
+        }
+
+        private static string RulesFilePath()
+        {
+            return Path.Combine(DataDirectoryPath(), RulesFileName);
+        }
+
+        private static string Encode(string value)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(value ?? String.Empty));
+        }
+
+        private static string Decode(string value)
+        {
+            try { return Encoding.UTF8.GetString(Convert.FromBase64String(value)); }
+            catch { return String.Empty; }
+        }
+
+        private static string ActiveProcessName()
+        {
+            try
+            {
+                uint processId;
+                GetWindowThreadProcessId(GetForegroundWindow(), out processId);
+                return Process.GetProcessById((int)processId).ProcessName.ToLowerInvariant();
+            }
+            catch
+            {
+                return String.Empty;
+            }
+        }
+
+        private class Snapshot
+        {
+            public string Key;
+            public uint SourceLocale;
+            public string Signature;
+            public string AppName;
+            public string SourcePreview;
+        }
+
+        private class Rule : Snapshot
+        {
+            public int Hits;
+            public bool AutoEnabled;
+            public DateTime LastUsedUtc;
+        }
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern uint GetWindowThreadProcessId(IntPtr windowHandle, out uint processId);
+    }
+}
