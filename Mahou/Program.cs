@@ -37,7 +37,7 @@ namespace Mahou {
 		public static void Main(string[] args) {
 			LogHelper.ConfigureNlog();
 			log.Trace("Program start");
-			using(var mutex = new Mutex(false, "Global\" + appGUid)) {
+			using(var mutex = new Mutex(false, "Global\\" + appGUid)) {
 				log.Trace("Mutex created");
 				if(!mutex.WaitOne(0, false)) {
 					KMHook.PostMessage((IntPtr)0xffff, ao, 0, 0);
