@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
@@ -37,7 +37,7 @@ namespace Mahou {
 		public static void Main(string[] args) {
 			LogHelper.ConfigureNlog();
 			log.Trace("Program start");
-			using(var mutex = new Mutex(false, "Global\\" + appGUid)) {
+			using(var mutex = new Mutex(false, "Global\" + appGUid)) {
 				log.Trace("Mutex created");
 				if(!mutex.WaitOne(0, false)) {
 					KMHook.PostMessage((IntPtr)0xffff, ao, 0, 0);
@@ -47,6 +47,7 @@ namespace Mahou {
 					Locales.IfLessThan2();
 				} else {
 					mahou = new MahouForm();
+					StartupManager.MigrateLegacyShortcutSafe();
 					InitLanguage();
 					//Refreshes icon text language at startup
 					mahou.icon.RefreshText(MMain.UI[44], MMain.UI[42], MMain.UI[43]);
@@ -58,6 +59,7 @@ namespace Mahou {
 							MessageBox.Show(Msgs[0], Msgs[1], MessageBoxButtons.OK, MessageBoxIcon.Information);
 						}
 					StartHook();
+					AdaptiveLayoutLearning.Start();
 					//for first run, add your locale 1 & locale 2 to settings
 					if(MyConfs.Read("Locales", "locale1Lang") == "" && MyConfs.Read("Locales", "locale2Lang") == "") {
 						MyConfs.Write("Locales", "locale1uId", locales[0].uId.ToString());
@@ -71,6 +73,7 @@ namespace Mahou {
 					} catch(Exception ex) {
 						log.Fatal(ex, "Global error handler caught the exception in app");
 					}
+					AdaptiveLayoutLearning.Stop();
 					StopHook();
 				}
 			}
