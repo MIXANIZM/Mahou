@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -12,9 +13,11 @@ namespace Mahou
     {
         private const string DataDirectoryName = "MIXANIZM Mahou";
         private const string RulesFileName = "layout-learning.tsv";
+        private const int MaxRules = 5000;
         private static readonly object Sync = new object();
         private static readonly Dictionary<string, Rule> Rules = new Dictionary<string, Rule>();
         private static readonly KMHook.LowLevelProc Proc = HookCallback;
+        private static readonly MethodInfo ConvertLastMethod = typeof(KMHook).GetMethod("ConvertLast", BindingFlags.NonPublic | BindingFlags.Static);
         private static IntPtr hookId = IntPtr.Zero;
         private static bool loaded;
         private static DateTime ignoreUntilUtc = DateTime.MinValue;
@@ -60,16 +63,13 @@ namespace Mahou
                     int vkCode = Marshal.ReadInt32(lParam);
                     var key = (Keys)vkCode;
 
-                    if (DateTime.UtcNow < ignoreUntilUtc)
-                        return KMHook.CallNextHookEx(hookId, nCode, wParam, lParam);
-
-                    if (IsConvertLastKeyUp(message, vkCode))
-                        RecordManualCorrection();
-
-                    if (IsAutoTrigger(message, key) && ShouldAutoConvertCurrentWord())
+                    if (DateTime.UtcNow >= ignoreUntilUtc)
                     {
-                        SendConvertLastHotkeyAndOriginalKey(key);
-                        return (IntPtr)1;
+                        if (IsConvertLastKeyUp(message, vkCode))
+                            RecordManualCorrection();
+
+                        if (IsAutoTrigger(message, key) && ShouldAutoConvertCurrentWord())
+                            ConvertCurrentWordWithoutEatingTrigger();
                     }
                 }
                 catch
@@ -137,7 +137,8 @@ namespace Mahou
                 rule.SourcePreview = snapshot.SourcePreview;
                 rule.LastUsedUtc = DateTime.UtcNow;
                 rule.AutoEnabled = rule.Hits >= ConfirmationsToEnable();
-                SaveRules();
+                TrimRulesIfNeeded();
+                SaveRulesAtomically();
             }
         }
 
@@ -153,6 +154,15 @@ namespace Mahou
                 Rule rule;
                 return Rules.TryGetValue(snapshot.Key, out rule) && rule.AutoEnabled && rule.Hits >= ConfirmationsToEnable();
             }
+        }
+
+        private static void ConvertCurrentWordWithoutEatingTrigger()
+        {
+            if (ConvertLastMethod == null || MMain.c_word == null || MMain.c_word.Count == 0)
+                return;
+
+            ignoreUntilUtc = DateTime.UtcNow.AddMilliseconds(250);
+            ConvertLastMethod.Invoke(null, new object[] { MMain.c_word });
         }
 
         private static Snapshot CaptureCurrentWord()
@@ -201,31 +211,6 @@ namespace Mahou
             foreach (var key in word)
                 result.Append(key.yukey).Append(' ');
             return result.ToString().Trim();
-        }
-
-        private static void SendConvertLastHotkeyAndOriginalKey(Keys originalKey)
-        {
-            ignoreUntilUtc = DateTime.UtcNow.AddMilliseconds(500);
-
-            var inputs = new List<KInputs.INPUT>();
-            var mods = Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLMods"));
-            var keyCode = (Keys)MMain.MyConfs.ReadInt("Hotkeys", "HKCLKey");
-
-            if (mods[0]) inputs.Add(KInputs.AddKey(Keys.LControlKey, true));
-            if (mods[1]) inputs.Add(KInputs.AddKey(Keys.LShiftKey, true));
-            if (mods[2]) inputs.Add(KInputs.AddKey(Keys.LMenu, true));
-
-            inputs.Add(KInputs.AddKey(keyCode, true));
-            inputs.Add(KInputs.AddKey(keyCode, false));
-
-            if (mods[2]) inputs.Add(KInputs.AddKey(Keys.LMenu, false));
-            if (mods[1]) inputs.Add(KInputs.AddKey(Keys.LShiftKey, false));
-            if (mods[0]) inputs.Add(KInputs.AddKey(Keys.LControlKey, false));
-
-            inputs.Add(KInputs.AddKey(originalKey, true));
-            inputs.Add(KInputs.AddKey(originalKey, false));
-
-            KInputs.MakeInput(inputs.ToArray());
         }
 
         private static int NormalizeVkCode(int vkCode)
@@ -348,9 +333,32 @@ namespace Mahou
             }
         }
 
-        private static void SaveRules()
+        private static void TrimRulesIfNeeded()
+        {
+            if (Rules.Count <= MaxRules)
+                return;
+
+            var oldestKey = String.Empty;
+            var oldestDate = DateTime.MaxValue;
+            foreach (var pair in Rules)
+            {
+                if (pair.Value.LastUsedUtc < oldestDate)
+                {
+                    oldestKey = pair.Key;
+                    oldestDate = pair.Value.LastUsedUtc;
+                }
+            }
+
+            if (!String.IsNullOrEmpty(oldestKey))
+                Rules.Remove(oldestKey);
+        }
+
+        private static void SaveRulesAtomically()
         {
             Directory.CreateDirectory(DataDirectoryPath());
+            var file = RulesFilePath();
+            var tempFile = file + ".tmp";
+            var backupFile = file + ".bak";
             var lines = new List<string> { "# sourceLocale\tsignature\tappName\tsourcePreviewBase64\thits\tautoEnabled\tlastUsedUtc" };
             foreach (var rule in Rules.Values)
             {
@@ -365,7 +373,12 @@ namespace Mahou
                     rule.LastUsedUtc.ToString("o")
                 }));
             }
-            File.WriteAllLines(RulesFilePath(), lines.ToArray(), Encoding.UTF8);
+
+            File.WriteAllLines(tempFile, lines.ToArray(), Encoding.UTF8);
+            if (File.Exists(file))
+                File.Replace(tempFile, file, backupFile, true);
+            else
+                File.Move(tempFile, file);
         }
 
         private static string MakeRuleKey(uint locale, string signature, string appName)
