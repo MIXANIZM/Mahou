@@ -46,6 +46,7 @@ namespace Mahou {
 				if(locales.Length < 2) {
 					Locales.IfLessThan2();
 				} else {
+					MyConfs.Write("Functions", "UpdatesEnabled", "false"); // Disable legacy updater until signed MIXANIZM releases are implemented.
 					mahou = new MahouForm();
 					StartupManager.MigrateLegacyShortcutSafe();
 					InitLanguage();
