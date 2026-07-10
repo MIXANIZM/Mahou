@@ -31,7 +31,7 @@ namespace Mahou
             MaximizeBox = false;
             MinimizeBox = false;
             ShowIcon = false;
-            ClientSize = new Size(470, 330);
+            ClientSize = new Size(520, 385);
             AutoScaleMode = AutoScaleMode.Font;
 
             var title = new Label
@@ -39,36 +39,46 @@ namespace Mahou
                 AutoSize = false,
                 Font = new Font(Font, FontStyle.Bold),
                 Location = new Point(16, 14),
-                Size = new Size(438, 38),
+                Size = new Size(486, 42),
                 Text = russian
-                    ? "Mahou запоминает только ваши ручные исправления последнего слова."
-                    : "Mahou learns only your explicit last-word corrections."
+                    ? "Обучение выключено по умолчанию и включается только с вашего согласия."
+                    : "Learning is off by default and starts only after your explicit consent."
+            };
+
+            var privacy = new Label
+            {
+                AutoSize = false,
+                Location = new Point(16, 55),
+                Size = new Size(486, 52),
+                Text = russian
+                    ? "Слова не сохраняются. На диске хранится только защищённый необратимый идентификатор правила. Браузеры, терминалы, RDP и известные менеджеры паролей исключены."
+                    : "Words are not stored. Only a protected one-way rule identifier is written to disk. Browsers, terminals, RDP and known password managers are excluded."
             };
 
             enabled.AutoSize = true;
-            enabled.Location = new Point(18, 59);
-            enabled.Text = russian ? "Включить обучение" : "Enable learning";
+            enabled.Location = new Point(18, 113);
+            enabled.Text = russian ? "Я согласен включить обучение" : "I consent to enable learning";
             enabled.CheckedChanged += delegate { RefreshEnabledState(); };
 
             autoConvert.AutoSize = true;
-            autoConvert.Location = new Point(18, 87);
+            autoConvert.Location = new Point(18, 141);
             autoConvert.Text = russian
                 ? "Автоматически исправлять на пробеле или Enter"
                 : "Auto-correct on Space or Enter";
 
             perAppRules.AutoSize = true;
-            perAppRules.Location = new Point(18, 115);
+            perAppRules.Location = new Point(18, 169);
             perAppRules.Text = russian
-                ? "Отдельные правила для каждой программы"
-                : "Use separate rules for each application";
+                ? "Отдельные правила для каждой разрешённой программы"
+                : "Use separate rules for each permitted application";
 
             var confirmationsLabel = new Label
             {
                 AutoSize = true,
-                Location = new Point(18, 151),
+                Location = new Point(18, 205),
                 Text = russian ? "Ручных исправлений до активации правила:" : "Manual corrections before a rule activates:"
             };
-            confirmations.Location = new Point(356, 147);
+            confirmations.Location = new Point(405, 201);
             confirmations.Size = new Size(80, 22);
             confirmations.Minimum = 1;
             confirmations.Maximum = 20;
@@ -76,37 +86,37 @@ namespace Mahou
             var minLengthLabel = new Label
             {
                 AutoSize = true,
-                Location = new Point(18, 184),
+                Location = new Point(18, 238),
                 Text = russian ? "Минимальная длина слова:" : "Minimum word length:"
             };
-            minWordLength.Location = new Point(356, 180);
+            minWordLength.Location = new Point(405, 234);
             minWordLength.Size = new Size(80, 22);
-            minWordLength.Minimum = 1;
+            minWordLength.Minimum = 2;
             minWordLength.Maximum = 64;
 
             rulesInfo.AutoSize = false;
-            rulesInfo.Location = new Point(18, 217);
-            rulesInfo.Size = new Size(418, 22);
+            rulesInfo.Location = new Point(18, 271);
+            rulesInfo.Size = new Size(467, 22);
 
             var clear = new Button
             {
-                Location = new Point(18, 248),
-                Size = new Size(150, 28),
-                Text = russian ? "Очистить память" : "Clear learned rules"
+                Location = new Point(18, 302),
+                Size = new Size(170, 28),
+                Text = russian ? "Удалить всю память" : "Delete all learned data"
             };
             clear.Click += ClearRules_Click;
 
             var openFolder = new Button
             {
-                Location = new Point(176, 248),
-                Size = new Size(135, 28),
-                Text = russian ? "Открыть папку" : "Open data folder"
+                Location = new Point(196, 302),
+                Size = new Size(150, 28),
+                Text = russian ? "Открыть папку данных" : "Open data folder"
             };
             openFolder.Click += OpenFolder_Click;
 
             var save = new Button
             {
-                Location = new Point(298, 291),
+                Location = new Point(348, 346),
                 Size = new Size(75, 27),
                 Text = russian ? "Сохранить" : "Save",
                 DialogResult = DialogResult.None
@@ -115,13 +125,14 @@ namespace Mahou
 
             var cancel = new Button
             {
-                Location = new Point(379, 291),
+                Location = new Point(429, 346),
                 Size = new Size(75, 27),
                 Text = russian ? "Отмена" : "Cancel",
                 DialogResult = DialogResult.Cancel
             };
 
             Controls.Add(title);
+            Controls.Add(privacy);
             Controls.Add(enabled);
             Controls.Add(autoConvert);
             Controls.Add(perAppRules);
@@ -141,7 +152,7 @@ namespace Mahou
 
         private void LoadSettings()
         {
-            enabled.Checked = ReadBool("Enabled", true);
+            enabled.Checked = ReadBool("Enabled", false);
             autoConvert.Checked = ReadBool("AutoConvertOnSpace", false);
             perAppRules.Checked = ReadBool("PerAppRules", false);
             confirmations.Value = Clamp(ReadInt("ConfirmationsToEnable", 2), confirmations.Minimum, confirmations.Maximum);
@@ -156,19 +167,19 @@ namespace Mahou
             perAppRules.Enabled = enabled.Checked;
             confirmations.Enabled = enabled.Checked;
             minWordLength.Enabled = enabled.Checked;
+            if (!enabled.Checked)
+                autoConvert.Checked = false;
         }
 
         private void Save_Click(object sender, EventArgs e)
         {
             MMain.MyConfs.Write("LayoutLearning", "Enabled", enabled.Checked.ToString());
-            MMain.MyConfs.Write("LayoutLearning", "AutoConvertOnSpace", autoConvert.Checked.ToString());
-            MMain.MyConfs.Write("LayoutLearning", "PerAppRules", perAppRules.Checked.ToString());
+            MMain.MyConfs.Write("LayoutLearning", "AutoConvertOnSpace", (enabled.Checked && autoConvert.Checked).ToString());
+            MMain.MyConfs.Write("LayoutLearning", "PerAppRules", (enabled.Checked && perAppRules.Checked).ToString());
             MMain.MyConfs.Write("LayoutLearning", "ConfirmationsToEnable", confirmations.Value.ToString());
             MMain.MyConfs.Write("LayoutLearning", "MinWordLength", minWordLength.Value.ToString());
 
-            AdaptiveLayoutLearning.Stop();
             AdaptiveLayoutLearning.Start();
-
             DialogResult = DialogResult.OK;
             Close();
         }
@@ -176,7 +187,7 @@ namespace Mahou
         private void ClearRules_Click(object sender, EventArgs e)
         {
             var answer = MessageBox.Show(
-                russian ? "Удалить все выученные правила?" : "Delete all learned rules?",
+                russian ? "Удалить правила, резервные файлы и локальный ключ обучения?" : "Delete rules, backups and the local learning key?",
                 Text,
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -208,21 +219,12 @@ namespace Mahou
             try
             {
                 if (File.Exists(file))
-                {
                     foreach (var line in File.ReadLines(file))
-                    {
-                        if (!String.IsNullOrWhiteSpace(line) && !line.StartsWith("#"))
-                            count++;
-                    }
-                }
+                        if (!String.IsNullOrWhiteSpace(line) && !line.StartsWith("#")) count++;
             }
-            catch
-            {
-            }
+            catch { }
 
-            rulesInfo.Text = russian
-                ? "Сохранено правил: " + count + ". Менеджеры паролей исключены автоматически."
-                : "Saved rules: " + count + ". Password managers are excluded automatically.";
+            rulesInfo.Text = russian ? "Сохранено обезличенных правил: " + count : "Stored privacy-preserving rules: " + count;
         }
 
         private static bool ReadBool(string key, bool defaultValue)
