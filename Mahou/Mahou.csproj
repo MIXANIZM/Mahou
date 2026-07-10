@@ -113,6 +113,7 @@
     <Compile Include="Classes\Hotkey.cs" />
     <Compile Include="Classes\ICheckings.cs" />
     <Compile Include="Classes\KMHook.cs" />
+    <Compile Include="Classes\InputOperationQueue.cs" />
     <Compile Include="Classes\KInputs.cs" />
     <Compile Include="Classes\Locales.cs" />
     <Compile Include="Classes\NativeClipboard.cs" />

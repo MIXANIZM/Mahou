@@ -70,6 +70,7 @@ namespace Mahou
                     return;
                 }
 
+                InputOperationQueue.Start();
                 AdaptiveLayoutLearning.Start();
 
                 if (MyConfs.Read("Locales", "locale1Lang") == "" && MyConfs.Read("Locales", "locale2Lang") == "")
@@ -91,6 +92,7 @@ namespace Mahou
                 finally
                 {
                     AdaptiveLayoutLearning.Stop();
+                    InputOperationQueue.Stop();
                     StopHook();
                 }
             }
