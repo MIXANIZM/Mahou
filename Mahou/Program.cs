@@ -48,6 +48,7 @@ namespace Mahou {
 				} else {
 					MyConfs.Write("Functions", "UpdatesEnabled", "false"); // Disable legacy updater until signed MIXANIZM releases are implemented.
 					mahou = new MahouForm();
+					UserDataPaths.MigrateSnippets(mahou.moreConfigs);
 					StartupManager.MigrateLegacyShortcutSafe();
 					InitLanguage();
 					//Refreshes icon text language at startup
