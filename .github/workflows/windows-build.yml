@@ -1,4 +1,4 @@
-name: Apply KMHook adaptive integration
+name: Diagnose KMHook adaptive integration
 
 on:
   pull_request:
@@ -6,15 +6,14 @@ on:
       - master
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: kmhook-integration-${{ github.event.pull_request.number }}
+  group: kmhook-diagnostics-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
-  patch:
-    if: github.event.pull_request.head.repo.full_name == github.repository
+  diagnose:
     runs-on: windows-2022
     timeout-minutes: 5
 
@@ -23,75 +22,38 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: mixanizm-adaptive-layout-learning
-          fetch-depth: 0
 
-      - name: Apply guarded KMHook patch
+      - name: Count guarded patch locations
         shell: pwsh
         run: |
           @'
           from pathlib import Path
           import re
 
-          path = Path("Mahou/Classes/KMHook.cs")
-          text = path.read_text(encoding="utf-8-sig")
+          text = Path("Mahou/Classes/KMHook.cs").read_text(encoding="utf-8-sig")
+          patterns = [
+              ("manual correction", r'^(?P<i>[ \t]*)IfKeyIsMod\(Key\);\n(?P=i)var t = new Task\(new Action\(\(\) => ConvertLast\(MMain\.c_word\)\)\);$'),
+              ("backspace", r'^(?P<i>[ \t]*)if\(Key == Keys\.Back\) \{ //Removes last item from current word when user press Backspace$'),
+              ("navigation boundary", r'^(?P<i>[ \t]*)\(ctrl && Key != Keys\.None\)\) \{ //Ctrl modifier \+ Any key will clear word too\n(?P=i)MMain\.c_word\.Clear\(\);$'),
+              ("space boundary", r'^(?P<i>[ \t]*)if\(Key == Keys\.Space\) \{\n(?P=i)\tMMain\.c_words\[MMain\.c_words\.Count - 1\]\.Add\(new YuKey\(\) \{ yukey = Keys\.Space \}\);$'),
+              ("mouse boundary", r'^(?P<i>[ \t]*)MMain\.c_word\.Clear\(\);\n(?P=i)MMain\.c_words\.Clear\(\);\n(?P=i)if\(MMain\.MyConfs\.ReadBool\("Functions", "Snippets"\)\) \{$')
+          ]
 
-          def replace_regex(pattern, replacement, name):
-              global text
-              text, count = re.subn(pattern, replacement, text, count=1, flags=re.MULTILINE)
-              if count != 1:
-                  raise SystemExit(f"{name}: expected exactly one match, found {count}")
-              print(f"patched: {name}")
+          lines = []
+          for name, pattern in patterns:
+              count = len(list(re.finditer(pattern, text, flags=re.MULTILINE)))
+              lines.append(f"{name}: {count}")
 
-          replace_regex(
-              r'^(?P<i>[ \t]*)IfKeyIsMod\(Key\);\n(?P=i)var t = new Task\(new Action\(\(\) => ConvertLast\(MMain\.c_word\)\)\);$',
-              lambda m: m.group(0).replace(
-                  "var t = new Task",
-                  "AdaptiveLayoutLearning.RecordManualCorrection(new List<YuKey>(MMain.c_word));\n" + m.group("i") + "var t = new Task"),
-              "manual correction integration")
+          Path("patch-diagnostics.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+          print("\n".join(lines))
+          '@ | Set-Content -Path diagnose_kmhook.py -Encoding UTF8
+          python diagnose_kmhook.py
 
-          replace_regex(
-              r'^(?P<i>[ \t]*)if\(Key == Keys\.Back\) \{ //Removes last item from current word when user press Backspace$',
-              lambda m: m.group(0) + "\n" + m.group("i") + "\tAdaptiveLayoutLearning.OnBackspace();",
-              "backspace integration")
-
-          replace_regex(
-              r'^(?P<i>[ \t]*)\(ctrl && Key != Keys\.None\)\) \{ //Ctrl modifier \+ Any key will clear word too\n(?P=i)MMain\.c_word\.Clear\(\);$',
-              lambda m: m.group(1) + "(ctrl && Key != Keys.None)) { //Ctrl modifier + Any key will clear word too\n" +
-                  m.group("i") + "if(Key == Keys.Enter && AdaptiveLayoutLearning.ShouldAutoConvert(MMain.c_word))\n" +
-                  m.group("i") + "\tConvertLast(MMain.c_word);\n" +
-                  m.group("i") + "AdaptiveLayoutLearning.OnBoundary();\n" +
-                  m.group("i") + "MMain.c_word.Clear();",
-              "navigation boundary integration")
-
-          replace_regex(
-              r'^(?P<i>[ \t]*)if\(Key == Keys\.Space\) \{\n(?P=i)\tMMain\.c_words\[MMain\.c_words\.Count - 1\]\.Add\(new YuKey\(\) \{ yukey = Keys\.Space \}\);$',
-              lambda m: m.group("i") + "if(Key == Keys.Space) {\n" +
-                  m.group("i") + "\tif(AdaptiveLayoutLearning.ShouldAutoConvert(MMain.c_word))\n" +
-                  m.group("i") + "\t\tConvertLast(MMain.c_word);\n" +
-                  m.group("i") + "\tAdaptiveLayoutLearning.OnBoundary();\n" +
-                  m.group("i") + "\tMMain.c_words[MMain.c_words.Count - 1].Add(new YuKey() { yukey = Keys.Space });",
-              "space boundary integration")
-
-          replace_regex(
-              r'^(?P<i>[ \t]*)MMain\.c_word\.Clear\(\);\n(?P=i)MMain\.c_words\.Clear\(\);\n(?P=i)if\(MMain\.MyConfs\.ReadBool\("Functions", "Snippets"\)\) \{$',
-              lambda m: m.group("i") + "MMain.c_word.Clear();\n" +
-                  m.group("i") + "MMain.c_words.Clear();\n" +
-                  m.group("i") + "AdaptiveLayoutLearning.OnBoundary();\n" +
-                  m.group("i") + "if(MMain.MyConfs.ReadBool(\"Functions\", \"Snippets\")) {",
-              "mouse boundary integration")
-
-          with path.open("w", encoding="utf-8-sig", newline="\r\n") as handle:
-              handle.write(text)
-          '@ | Set-Content -Path apply_kmhook_patch.py -Encoding UTF8
-          python apply_kmhook_patch.py
-          Remove-Item apply_kmhook_patch.py
-
-      - name: Commit integration
-        shell: pwsh
-        run: |
-          git config user.name "MIXANIZM CI"
-          git config user.email "actions@users.noreply.github.com"
-          git add Mahou/Classes/KMHook.cs
-          git diff --cached --check
-          git commit -m "Integrate adaptive learning into primary KMHook"
-          git push origin HEAD:mixanizm-adaptive-layout-learning
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kmhook-patch-diagnostics
+          path: patch-diagnostics.txt
+          if-no-files-found: error
+          retention-days: 1
