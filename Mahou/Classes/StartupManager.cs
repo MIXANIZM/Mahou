@@ -17,12 +17,12 @@ namespace Mahou
 
         public static void Enable()
         {
-            using (var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, true))
+            using (var key = Registry.CurrentUser.CreateSubKey(RunKeyPath))
             {
                 if (key == null)
-                    throw new InvalidOperationException("Cannot open the current-user Run registry key.");
+                    throw new InvalidOperationException("Cannot create or open the current-user Run registry key.");
 
-                key.SetValue(ValueName, Quote(Assembly.GetExecutingAssembly().Location), RegistryValueKind.String);
+                key.SetValue(ValueName, Quote(CurrentExecutablePath()), RegistryValueKind.String);
             }
 
             RemoveLegacyShortcutSafe();
@@ -55,7 +55,16 @@ namespace Mahou
         private static bool IsRegistryRunEnabled()
         {
             using (var key = Registry.CurrentUser.OpenSubKey(RunKeyPath, false))
-                return key != null && key.GetValue(ValueName) != null;
+            {
+                if (key == null)
+                    return false;
+
+                var value = key.GetValue(ValueName) as string;
+                if (String.IsNullOrWhiteSpace(value))
+                    return false;
+
+                return value.IndexOf(CurrentExecutablePath(), StringComparison.OrdinalIgnoreCase) >= 0;
+            }
         }
 
         private static bool LegacyShortcutExists()
@@ -75,6 +84,11 @@ namespace Mahou
             {
                 // If Windows temporarily locks the shortcut, registry startup is already enough.
             }
+        }
+
+        private static string CurrentExecutablePath()
+        {
+            return Path.GetFullPath(Assembly.GetExecutingAssembly().Location);
         }
 
         private static string LegacyShortcutPath()
