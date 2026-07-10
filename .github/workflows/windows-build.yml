@@ -27,4 +27,26 @@ jobs:
         run: nuget restore Mahou/Mahou.sln -NonInteractive
 
       - name: Build Release x86
-        run: msbuild Mahou/Mahou.sln /m /p:Configuration=Release /p:Platform=x86 /v:minimal
+        id: build
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          msbuild Mahou/Mahou.sln /m /p:Configuration=Release /p:Platform=x86 /v:minimal /fl /flp:"logfile=msbuild.log;verbosity=normal"
+          Set-Content -Path build-exit-code.txt -Value $LASTEXITCODE
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build-log
+          path: |
+            msbuild.log
+            build-exit-code.txt
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Fail job when build failed
+        if: steps.build.outcome == 'failure'
+        shell: pwsh
+        run: exit 1
