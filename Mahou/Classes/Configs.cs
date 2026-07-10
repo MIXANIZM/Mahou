@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -12,6 +13,9 @@ namespace Mahou
         public static readonly string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), DataDirectoryName);
         public static readonly string legacyFilePath = Path.Combine(Update.nPath, "Mahou.ini");
         public static readonly string filePath = Path.Combine(dataPath, "Mahou.ini");
+
+        private readonly object cacheSync = new object();
+        private readonly Dictionary<string, string> valueCache = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public Configs()
         {
@@ -99,35 +103,57 @@ namespace Mahou
 
         public void Write(string section, string key, string value)
         {
-            string storedValue = value ?? String.Empty;
+            string plainValue = value ?? String.Empty;
+            string storedValue = plainValue;
             if (SecretProtector.IsProxyPassword(section, key))
                 storedValue = SecretProtector.Protect(storedValue);
 
             if (!WritePrivateProfileString(section, key, storedValue, filePath))
                 throw new IOException("Mahou could not save setting [" + section + "] " + key + ".");
+
+            lock (cacheSync)
+                valueCache[CacheKey(section, key)] = plainValue;
         }
 
         public string Read(string section, string key)
         {
+            string cacheKey = CacheKey(section, key);
+            lock (cacheSync)
+            {
+                string cached;
+                if (valueCache.TryGetValue(cacheKey, out cached))
+                    return cached;
+            }
+
             var buffer = new StringBuilder(4096);
             GetPrivateProfileString(section, key, String.Empty, buffer, buffer.Capacity, filePath);
             string rawValue = buffer.ToString();
+            string plainValue = rawValue;
 
-            if (!SecretProtector.IsProxyPassword(section, key))
-                return rawValue;
-
-            string plaintext;
-            if (SecretProtector.TryUnprotect(rawValue, out plaintext))
-                return plaintext;
-
-            if (!String.IsNullOrEmpty(rawValue) && !SecretProtector.IsProtectedValue(rawValue))
+            if (SecretProtector.IsProxyPassword(section, key))
             {
-                Write(section, key, rawValue);
-                ScrubLegacyProxyPassword();
-                return rawValue;
+                string plaintext;
+                if (SecretProtector.TryUnprotect(rawValue, out plaintext))
+                {
+                    plainValue = plaintext;
+                }
+                else if (!String.IsNullOrEmpty(rawValue) && !SecretProtector.IsProtectedValue(rawValue))
+                {
+                    plainValue = rawValue;
+                    Write(section, key, rawValue);
+                    ScrubLegacyProxyPassword();
+                    return plainValue;
+                }
+                else
+                {
+                    plainValue = String.Empty;
+                }
             }
 
-            return String.Empty;
+            lock (cacheSync)
+                valueCache[cacheKey] = plainValue;
+
+            return plainValue;
         }
 
         public int ReadInt(string section, string key)
@@ -140,6 +166,17 @@ namespace Mahou
         {
             bool value;
             return Boolean.TryParse(Read(section, key), out value) && value;
+        }
+
+        public void ReloadFromDisk()
+        {
+            lock (cacheSync)
+                valueCache.Clear();
+        }
+
+        private static string CacheKey(string section, string key)
+        {
+            return (section ?? String.Empty) + "\u001f" + (key ?? String.Empty);
         }
 
         private void EnsureLanguage()
