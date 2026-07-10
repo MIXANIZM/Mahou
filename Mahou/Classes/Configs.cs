@@ -221,25 +221,49 @@ namespace Mahou
 
         public void Write(string section, string key, string value) //Writes "value" to "key" in "section"
         {
-            WritePrivateProfileString(section, key, value, filePath);
+            string storedValue = value ?? String.Empty;
+            if (SecretProtector.IsProxyPassword(section, key))
+                storedValue = SecretProtector.Protect(storedValue);
+
+            WritePrivateProfileString(section, key, storedValue, filePath);
         }
+
         public string Read(string section, string key) //Returns "key" value in "section" as string
         {
-            var SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
-            return SB.ToString();
+            var buffer = new StringBuilder(4096);
+            GetPrivateProfileString(section, key, "", buffer, buffer.Capacity, filePath);
+            string rawValue = buffer.ToString();
+
+            if (!SecretProtector.IsProxyPassword(section, key))
+                return rawValue;
+
+            string plaintext;
+            if (SecretProtector.TryUnprotect(rawValue, out plaintext))
+                return plaintext;
+
+            if (!String.IsNullOrEmpty(rawValue) && !SecretProtector.IsProtectedValue(rawValue))
+            {
+                try
+                {
+                    Write(section, key, rawValue); // Migrate an old plaintext proxy password to DPAPI.
+                }
+                catch
+                {
+                }
+                return rawValue;
+            }
+
+            return String.Empty;
         }
+
         public int ReadInt(string section, string key) //Returns "key" value in "section" as int
         {
-            var SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
-            return Int32.Parse(SB.ToString());
+            return Int32.Parse(Read(section, key));
         }
+
         public bool ReadBool(string section, string key) //Returns "key" value in "section" as bool
         {
-            var SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
-            return Boolean.Parse(SB.ToString().ToLower());
+            return Boolean.Parse(Read(section, key).ToLower());
         }
         #region Dll imports
         [DllImport("kernel32", CharSet = CharSet.Unicode)]
