@@ -1,4 +1,4 @@
-name: Diagnose KMHook adaptive integration
+name: Inspect KMHook patch anchors
 
 on:
   pull_request:
@@ -9,11 +9,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: kmhook-diagnostics-${{ github.event.pull_request.number }}
+  group: kmhook-anchor-inspection-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
-  diagnose:
+  inspect:
     runs-on: windows-2022
     timeout-minutes: 5
 
@@ -23,37 +23,39 @@ jobs:
         with:
           ref: mixanizm-adaptive-layout-learning
 
-      - name: Count guarded patch locations
+      - name: Extract anchor context
         shell: pwsh
         run: |
           @'
           from pathlib import Path
-          import re
 
           text = Path("Mahou/Classes/KMHook.cs").read_text(encoding="utf-8-sig")
-          patterns = [
-              ("manual correction", r'^(?P<i>[ \t]*)IfKeyIsMod\(Key\);\n(?P=i)var t = new Task\(new Action\(\(\) => ConvertLast\(MMain\.c_word\)\)\);$'),
-              ("backspace", r'^(?P<i>[ \t]*)if\(Key == Keys\.Back\) \{ //Removes last item from current word when user press Backspace$'),
-              ("navigation boundary", r'^(?P<i>[ \t]*)\(ctrl && Key != Keys\.None\)\) \{ //Ctrl modifier \+ Any key will clear word too\n(?P=i)MMain\.c_word\.Clear\(\);$'),
-              ("space boundary", r'^(?P<i>[ \t]*)if\(Key == Keys\.Space\) \{\n(?P=i)\tMMain\.c_words\[MMain\.c_words\.Count - 1\]\.Add\(new YuKey\(\) \{ yukey = Keys\.Space \}\);$'),
-              ("mouse boundary", r'^(?P<i>[ \t]*)MMain\.c_word\.Clear\(\);\n(?P=i)MMain\.c_words\.Clear\(\);\n(?P=i)if\(MMain\.MyConfs\.ReadBool\("Functions", "Snippets"\)\) \{$')
+          anchors = [
+              "IfKeyIsMod(Key);",
+              "(ctrl && Key != Keys.None))",
+              "if(Key == Keys.Space)",
+              "MMain.c_words.Clear();"
           ]
 
-          lines = []
-          for name, pattern in patterns:
-              count = len(list(re.finditer(pattern, text, flags=re.MULTILINE)))
-              lines.append(f"{name}: {count}")
+          output = []
+          for anchor in anchors:
+              index = text.find(anchor)
+              output.append("ANCHOR: " + anchor)
+              output.append("INDEX: " + str(index))
+              if index >= 0:
+                  start = max(0, index - 180)
+                  end = min(len(text), index + 360)
+                  output.append(repr(text[start:end]))
+              output.append("")
 
-          Path("patch-diagnostics.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
-          print("\n".join(lines))
-          '@ | Set-Content -Path diagnose_kmhook.py -Encoding UTF8
-          python diagnose_kmhook.py
+          Path("patch-anchor-context.txt").write_text("\n".join(output), encoding="utf-8")
+          '@ | Set-Content -Path inspect_kmhook.py -Encoding UTF8
+          python inspect_kmhook.py
 
-      - name: Upload diagnostics
-        if: always()
+      - name: Upload anchor context
         uses: actions/upload-artifact@v4
         with:
-          name: kmhook-patch-diagnostics
-          path: patch-diagnostics.txt
+          name: kmhook-anchor-context
+          path: patch-anchor-context.txt
           if-no-files-found: error
           retention-days: 1
