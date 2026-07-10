@@ -1,9 +1,10 @@
 name: Patch unified Insert
 
 on:
-  push:
+  pull_request:
     branches:
-      - mixanizm-adaptive-layout-learning
+      - master
+  workflow_dispatch:
 
 permissions:
   contents: write
