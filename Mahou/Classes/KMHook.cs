@@ -173,6 +173,7 @@ namespace Mahou {
 								}
 								SendModsUp(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLMods")));
 								IfKeyIsMod(Key);
+								AdaptiveLayoutLearning.RecordManualCorrection(new List<YuKey>(MMain.c_word));
 								var t = new Task(new Action(() => ConvertLast(MMain.c_word)));
 								t.RunSynchronously();
 							}
@@ -386,6 +387,7 @@ namespace Mahou {
 			#region Other, when KeyDown
 			if(nCode >= 0 && wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN && !self && !waitfornum) {
 				if(Key == Keys.Back) { //Removes last item from current word when user press Backspace
+					AdaptiveLayoutLearning.OnBackspace();
 					if(MMain.c_word.Count != 0) {
 						MMain.c_word.RemoveAt(MMain.c_word.Count - 1);
 					}
@@ -434,6 +436,9 @@ namespace Mahou {
 						Key == Keys.Tab || Key == Keys.PageDown || Key == Keys.PageUp ||
 						Key == Keys.Left || Key == Keys.Right || Key == Keys.Down || Key == Keys.Up ||
 						(ctrl && Key != Keys.None)) { //Ctrl modifier + Any key will clear word too
+						if(Key == Keys.Enter && AdaptiveLayoutLearning.ShouldAutoConvert(MMain.c_word))
+							ConvertLast(MMain.c_word);
+						AdaptiveLayoutLearning.OnBoundary();
 						MMain.c_word.Clear();
 						if(MMain.MyConfs.ReadBool("Functions", "Snippets")) {
 							c_snip.Clear();
@@ -445,6 +450,9 @@ namespace Mahou {
 				}
 				try {
 					if(Key == Keys.Space) {
+						if(AdaptiveLayoutLearning.ShouldAutoConvert(MMain.c_word))
+							ConvertLast(MMain.c_word);
+						AdaptiveLayoutLearning.OnBoundary();
 						MMain.c_words[MMain.c_words.Count - 1].Add(new YuKey() { yukey = Keys.Space });
 						MMain.c_words.Add(new List<YuKey>());
 						if(MMain.MyConfs.ReadBool("Functions", "EatOneSpace") && MMain.c_word.Count != 0 &&
@@ -537,6 +545,7 @@ namespace Mahou {
 				if((KMMessages.WM_LBUTTONDOWN == (KMMessages)(int)wParam) || KMMessages.WM_RBUTTONDOWN == (KMMessages)(int)wParam) {
 					MMain.c_word.Clear();
 					MMain.c_words.Clear();
+					AdaptiveLayoutLearning.OnBoundary();
 					if(MMain.MyConfs.ReadBool("Functions", "Snippets")) {
 						c_snip.Clear();
 					}
