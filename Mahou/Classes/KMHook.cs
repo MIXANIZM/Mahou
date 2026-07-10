@@ -67,6 +67,8 @@ namespace Mahou {
 			if(!self && InputOperationQueue.TryCaptureKey(Key, wParam))
 				return (IntPtr)1;
 			bool suppressCurrentEvent = false;
+			Action queuedOperation = null;
+			Keys? queuedBoundary = null;
 			// All other printables
 			bool allOtherPrintables = Key >= Keys.Oem1 && Key <= Keys.OemBackslash;
 			// This is 0-9 & A-Z
@@ -91,7 +93,7 @@ namespace Mahou {
 					} catch {
 						//						Application.Exit();
 					}
-					InputOperationQueue.Enqueue(() => ConvertLast(words));
+					queuedOperation = () => ConvertLast(words);
 				}
 			}
 			if(MMain.c_words.Count == 0) {
@@ -157,7 +159,7 @@ namespace Mahou {
 								}
 								SendModsUp(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCSMods")));
 								IfKeyIsMod(Key);
-								InputOperationQueue.Enqueue(ConvertSelection);
+								queuedOperation = ConvertSelection;
 							}
 						}
 						if(thishk.Equals(MMain.mahou.HKCSelection) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
@@ -180,7 +182,7 @@ namespace Mahou {
 								IfKeyIsMod(Key);
 								var word = new List<YuKey>(MMain.c_word);
 								AdaptiveLayoutLearning.RecordManualCorrection(word);
-								InputOperationQueue.Enqueue(() => ConvertLast(word));
+								queuedOperation = () => ConvertLast(word);
 							}
 						}
 						if(thishk.Equals(MMain.mahou.HKCLast) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
@@ -205,7 +207,7 @@ namespace Mahou {
 								foreach(var word in MMain.c_words) {
 									line.AddRange(word);
 								}
-								InputOperationQueue.Enqueue(() => ConvertLast(line));
+								queuedOperation = () => ConvertLast(line);
 							}
 						}
 						if(thishk.Equals(MMain.mahou.HKCLine) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
@@ -272,7 +274,7 @@ namespace Mahou {
 								string originalSnippet = snip;
 								string replacement = exps[i];
 								int removeCount = c_snip.Count + 1;
-								InputOperationQueue.Enqueue(() => ExpandSnippet(originalSnippet, replacement, removeCount));
+								queuedOperation = () => ExpandSnippet(originalSnippet, replacement, removeCount);
 								break;
 							}
 						}
@@ -427,7 +429,8 @@ namespace Mahou {
 						(ctrl && Key != Keys.None)) { //Ctrl modifier + Any key will clear word too
 						if(Key == Keys.Enter && AdaptiveLayoutLearning.ShouldAutoConvert(MMain.c_word)) {
 							var autoWord = new List<YuKey>(MMain.c_word);
-							InputOperationQueue.EnqueueBoundary(() => ConvertLast(autoWord), Keys.Enter);
+							queuedOperation = () => ConvertLast(autoWord);
+							queuedBoundary = Keys.Enter;
 							suppressCurrentEvent = true;
 						}
 						AdaptiveLayoutLearning.OnBoundary();
@@ -444,7 +447,8 @@ namespace Mahou {
 					if(Key == Keys.Space) {
 						if(AdaptiveLayoutLearning.ShouldAutoConvert(MMain.c_word)) {
 							var autoWord = new List<YuKey>(MMain.c_word);
-							InputOperationQueue.EnqueueBoundary(() => ConvertLast(autoWord), Keys.Space);
+							queuedOperation = () => ConvertLast(autoWord);
+							queuedBoundary = Keys.Space;
 							suppressCurrentEvent = true;
 							if(MMain.MyConfs.ReadBool("Functions", "Snippets"))
 								c_snip.Clear();
@@ -535,9 +539,17 @@ namespace Mahou {
 				}
 			}
 			#endregion
-			if(suppressCurrentEvent)
-				return (IntPtr)1;
-			return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
+			IntPtr hookResult = suppressCurrentEvent
+				? (IntPtr)1
+				: CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
+
+			if(queuedOperation != null) {
+				if(queuedBoundary.HasValue)
+					InputOperationQueue.EnqueueBoundary(queuedOperation, queuedBoundary.Value);
+				else
+					InputOperationQueue.Enqueue(queuedOperation);
+			}
+			return hookResult;
 		}
 		public static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam) {
 			if(nCode >= 0) {
