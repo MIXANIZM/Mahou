@@ -120,9 +120,16 @@
     <Compile Include="LangDisplay.Designer.cs">
       <DependentUpon>LangDisplay.cs</DependentUpon>
     </Compile>
+    <Compile Include="LayoutLearningSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="LogHelper.cs" />
     <Compile Include="MoreConfigs.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MoreConfigs.LayoutLearning.cs">
+      <SubType>Form</SubType>
+      <DependentUpon>MoreConfigs.cs</DependentUpon>
     </Compile>
     <Compile Include="MoreConfigs.Designer.cs">
       <DependentUpon>MoreConfigs.cs</DependentUpon>
