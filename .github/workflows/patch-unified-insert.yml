@@ -1,0 +1,83 @@
+name: Patch unified Insert
+
+on:
+  push:
+    branches:
+      - mixanizm-adaptive-layout-learning
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: mixanizm-adaptive-layout-learning
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Patch project and hotkey defaults
+        shell: pwsh
+        run: |
+          @'
+          from pathlib import Path
+
+          def read(path):
+              raw = Path(path).read_bytes()
+              bom = raw.startswith(b'\xef\xbb\xbf')
+              text = raw.decode('utf-8-sig')
+              return text, bom
+
+          def write(path, text, bom):
+              data = text.encode('utf-8')
+              if bom:
+                  data = b'\xef\xbb\xbf' + data
+              Path(path).write_bytes(data)
+
+          configs_path = 'Mahou/Classes/Configs.cs'
+          configs, configs_bom = read(configs_path)
+          configs = configs.replace('EnsureInt("Hotkeys", "HKCLKey", 19, 0, 255);', 'EnsureInt("Hotkeys", "HKCLKey", 45, 0, 255);', 1)
+          configs = configs.replace('EnsureString("Hotkeys", "OnlyKeyLayoutSwicth", "CapsLock");', 'EnsureString("Hotkeys", "OnlyKeyLayoutSwicth", "None");\n            MigrateInputDefaults();', 1)
+          marker = '        private void EnsureLanguage()\n'
+          method = '''        private void MigrateInputDefaults()\n        {\n            const string marker = "InsertWordSelectionV1";\n            if (ReadBool("Migration", marker))\n                return;\n\n            if (ReadInt("Hotkeys", "HKCLKey") == 19 &&\n                String.Equals(Read("Hotkeys", "HKCLMods"), "None", StringComparison.OrdinalIgnoreCase))\n            {\n                Write("Hotkeys", "HKCLKey", ((int)System.Windows.Forms.Keys.Insert).ToString());\n            }\n\n            Write("Hotkeys", "OnlyKeyLayoutSwicth", "None");\n            Write("Migration", marker, "true");\n        }\n\n'''
+          if marker not in configs:
+              raise SystemExit('Configs insertion marker not found')
+          configs = configs.replace(marker, method + marker, 1)
+          write(configs_path, configs, configs_bom)
+
+          hook_path = 'Mahou/Classes/KMHook.cs'
+          hook, hook_bom = read(hook_path)
+          hotkey_line = '\t\t\tvar thishk = new Hotkey(vkCode, new[] { ctrl, shift, alt });\n'
+          unified = '''\t\t\tvar thishk = new Hotkey(vkCode, new[] { ctrl, shift, alt });\n\t\t\tbool unifiedWordSelectionHotkey = !MMain.mahou.Focused && !self &&\n\t\t\t\tMMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled") &&\n\t\t\t\tthishk.Equals(MMain.mahou.HKCLast);\n\t\t\tif(unifiedWordSelectionHotkey &&\n\t\t\t\t(wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN || wParam == (IntPtr)(int)KMMessages.WM_SYSKEYDOWN)) {\n\t\t\t\tsuppressCurrentEvent = true;\n\t\t\t}\n\t\t\tif(unifiedWordSelectionHotkey &&\n\t\t\t\t(wParam == (IntPtr)(int)KMMessages.WM_KEYUP || wParam == (IntPtr)(int)KMMessages.WM_SYSKEYUP)) {\n\t\t\t\tsuppressCurrentEvent = true;\n\t\t\t\tvar unifiedWord = new List<YuKey>(MMain.c_word);\n\t\t\t\tAdaptiveLayoutLearning.RecordManualCorrection(unifiedWord);\n\t\t\t\tqueuedOperation = () => UnifiedTextConverter.ConvertSelectionOrLast(unifiedWord);\n\t\t\t}\n'''
+          if hook.count(hotkey_line) != 1:
+              raise SystemExit('Hotkey insertion point count is not one')
+          hook = hook.replace(hotkey_line, unified, 1)
+          old_condition = 'if(thishk.Equals(MMain.mahou.HKCLast) && hklOK && !csdoing) {'
+          new_condition = 'if(!unifiedWordSelectionHotkey && thishk.Equals(MMain.mahou.HKCLast) && hklOK && !csdoing) {'
+          if hook.count(old_condition) != 1:
+              raise SystemExit('Legacy last-word condition count is not one')
+          hook = hook.replace(old_condition, new_condition, 1)
+          write(hook_path, hook, hook_bom)
+
+          project_path = 'Mahou/Mahou.csproj'
+          project, project_bom = read(project_path)
+          anchor = '    <Compile Include="Classes\\DpiAccessibility.cs" />\n'
+          addition = anchor + '    <Compile Include="Classes\\UnifiedTextConverter.cs" />\n'
+          if project.count(anchor) != 1:
+              raise SystemExit('Project insertion point count is not one')
+          project = project.replace(anchor, addition, 1)
+          write(project_path, project, project_bom)
+          '@ | python -
+
+      - name: Remove patch workflow and commit
+        shell: pwsh
+        run: |
+          Remove-Item .github/workflows/patch-unified-insert.yml -Force
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Mahou/Classes/Configs.cs Mahou/Classes/KMHook.cs Mahou/Classes/UnifiedTextConverter.cs Mahou/Mahou.csproj .github/workflows/patch-unified-insert.yml
+          git commit -m "Use Insert for word or selected text and restore CapsLock"
+          git push origin HEAD:mixanizm-adaptive-layout-learning
