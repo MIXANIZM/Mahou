@@ -1,24 +1,23 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using NLog;
+using ComIDataObject = System.Runtime.InteropServices.ComTypes.IDataObject;
 
 namespace Mahou
 {
     internal static class UnifiedTextConverter
     {
         private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-        private const int ClipboardRetries = 10;
-        private const int ClipboardRetryDelayMs = 40;
-        private const int SelectionWaitAttempts = 20;
-        private const int SelectionWaitDelayMs = 25;
+        private const int ClipboardRetries = 5;
+        private const int ClipboardRetryDelayMs = 5;
+        private const int SelectionWaitAttempts = 10;
+        private const int SelectionWaitDelayMs = 6;
+        private const uint EM_GETSEL = 0x00B0;
 
         internal static void ConvertSelectionOrLast(List<KMHook.YuKey> word)
         {
@@ -102,53 +101,99 @@ namespace Mahou
         private static bool TryReadSelectedText(out string selectedText)
         {
             selectedText = null;
-            ClipboardSnapshot snapshot;
-            if (!ClipboardSnapshot.TryCapture(out snapshot))
+
+            bool nativeHasSelection;
+            if (TryDetermineNativeSelection(out nativeHasSelection) && !nativeHasSelection)
+                return false;
+
+            OleClipboardSnapshot snapshot;
+            if (!OleClipboardSnapshot.TryCapture(out snapshot))
             {
-                Log.Warn("Selection conversion skipped because the clipboard could not be copied safely");
+                Log.Warn("Selection detection skipped because the clipboard data object could not be retained");
                 return false;
             }
 
-            string marker = "MIXANIZM-MAHOU-SELECTION-" + Guid.NewGuid().ToString("N");
             bool clipboardChanged = false;
+            bool restored = false;
+            string marker = "MIXANIZM-MAHOU-SELECTION-" + Guid.NewGuid().ToString("N");
+
             try
             {
-                if (!RetryClipboard(delegate { Clipboard.SetText(marker, TextDataFormat.UnicodeText); }))
-                    return false;
-
-                uint markerSequence = GetClipboardSequenceNumber();
-                KInputs.MakeInput(new[]
+                if (RetryClipboard(delegate { Clipboard.SetText(marker, TextDataFormat.UnicodeText); }))
                 {
-                    KInputs.AddKey(Keys.RControlKey, true),
-                    KInputs.AddKey(Keys.Insert, true),
-                    KInputs.AddKey(Keys.Insert, false),
-                    KInputs.AddKey(Keys.RControlKey, false)
-                });
-
-                for (int attempt = 0; attempt < SelectionWaitAttempts; attempt++)
-                {
-                    Thread.Sleep(SelectionWaitDelayMs);
-                    if (GetClipboardSequenceNumber() == markerSequence)
-                        continue;
-
-                    clipboardChanged = true;
-                    string value = null;
-                    if (RetryClipboard(delegate { value = Clipboard.ContainsText() ? Clipboard.GetText(TextDataFormat.UnicodeText) : null; }) &&
-                        !String.IsNullOrEmpty(value) &&
-                        !String.Equals(value, marker, StringComparison.Ordinal))
+                    uint markerSequence = GetClipboardSequenceNumber();
+                    KInputs.MakeInput(new[]
                     {
-                        selectedText = value;
+                        KInputs.AddKey(Keys.RControlKey, true),
+                        KInputs.AddKey(Keys.Insert, true),
+                        KInputs.AddKey(Keys.Insert, false),
+                        KInputs.AddKey(Keys.RControlKey, false)
+                    });
+
+                    for (int attempt = 0; attempt < SelectionWaitAttempts; attempt++)
+                    {
+                        if (attempt > 0)
+                            Thread.Sleep(SelectionWaitDelayMs);
+
+                        if (GetClipboardSequenceNumber() == markerSequence)
+                            continue;
+
+                        clipboardChanged = true;
+                        string value = null;
+                        bool textRead = RetryClipboard(delegate
+                        {
+                            value = Clipboard.ContainsText(TextDataFormat.UnicodeText)
+                                ? Clipboard.GetText(TextDataFormat.UnicodeText)
+                                : null;
+                        });
+
+                        if (textRead && !String.IsNullOrEmpty(value) && !String.Equals(value, marker, StringComparison.Ordinal))
+                            selectedText = value;
+                        break;
                     }
-                    break;
                 }
             }
             finally
             {
-                if (!snapshot.Restore())
-                    Log.Error("Could not restore the clipboard after selection detection");
+                restored = snapshot.Restore();
+                snapshot.Dispose();
+                if (!restored)
+                    Log.Error("Could not restore the original clipboard data object after selection detection");
+            }
+
+            if (!restored)
+            {
+                selectedText = null;
+                return false;
             }
 
             return clipboardChanged && !String.IsNullOrEmpty(selectedText);
+        }
+
+        private static bool TryDetermineNativeSelection(out bool hasSelection)
+        {
+            hasSelection = false;
+            var info = new GUITHREADINFO();
+            info.cbSize = Marshal.SizeOf(typeof(GUITHREADINFO));
+            if (!GetGUIThreadInfo(0, ref info) || info.hwndFocus == IntPtr.Zero)
+                return false;
+
+            var className = new StringBuilder(128);
+            if (GetClassName(info.hwndFocus, className, className.Capacity) <= 0)
+                return false;
+
+            string value = className.ToString();
+            bool supported = value.IndexOf("Edit", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                value.IndexOf("RichEdit", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                value.IndexOf("Scintilla", StringComparison.OrdinalIgnoreCase) >= 0;
+            if (!supported)
+                return false;
+
+            int start;
+            int end;
+            SendMessage(info.hwndFocus, EM_GETSEL, out start, out end);
+            hasSelection = start != end;
+            return true;
         }
 
         private static string ConvertText(string text)
@@ -207,7 +252,7 @@ namespace Mahou
             for (int attempt = 0; attempt < 4 && Locales.GetCurrentLocale() != target; attempt++)
             {
                 KMHook.PostMessage(activeWindow, KInputs.WM_INPUTLANGCHANGEREQUEST, 0, target);
-                Thread.Sleep(50);
+                Thread.Sleep(25);
             }
         }
 
@@ -249,114 +294,94 @@ namespace Mahou
             return false;
         }
 
-        private sealed class ClipboardSnapshot
+        private sealed class OleClipboardSnapshot : IDisposable
         {
-            private readonly DataObject data;
-            private readonly bool wasEmpty;
+            private ComIDataObject dataObject;
 
-            private ClipboardSnapshot(DataObject data, bool wasEmpty)
+            private OleClipboardSnapshot(ComIDataObject dataObject)
             {
-                this.data = data;
-                this.wasEmpty = wasEmpty;
+                this.dataObject = dataObject;
             }
 
-            internal static bool TryCapture(out ClipboardSnapshot snapshot)
+            internal static bool TryCapture(out OleClipboardSnapshot snapshot)
             {
                 snapshot = null;
-                DataObject copy = null;
-                bool empty = false;
-                bool success = RetryClipboard(delegate
+                for (int attempt = 0; attempt < ClipboardRetries; attempt++)
                 {
-                    IDataObject source = Clipboard.GetDataObject();
-                    if (source == null)
+                    ComIDataObject current;
+                    int result = OleGetClipboard(out current);
+                    if (result >= 0 && current != null)
                     {
-                        empty = true;
-                        copy = new DataObject();
-                        return;
+                        snapshot = new OleClipboardSnapshot(current);
+                        return true;
                     }
-
-                    copy = new DataObject();
-                    string[] formats = source.GetFormats(false);
-                    if (formats == null || formats.Length == 0)
-                    {
-                        empty = true;
-                        return;
-                    }
-
-                    foreach (string format in formats)
-                    {
-                        object value = source.GetData(format, false);
-                        if (value == null)
-                            throw new InvalidOperationException("Clipboard format could not be rendered: " + format);
-                        copy.SetData(format, false, CloneClipboardValue(value));
-                    }
-                });
-
-                if (!success || copy == null)
-                    return false;
-
-                snapshot = new ClipboardSnapshot(copy, empty);
-                return true;
+                    Thread.Sleep(ClipboardRetryDelayMs);
+                }
+                return false;
             }
 
             internal bool Restore()
             {
-                return RetryClipboard(delegate
-                {
-                    if (wasEmpty)
-                        Clipboard.Clear();
-                    else
-                        Clipboard.SetDataObject(data, true, ClipboardRetries, ClipboardRetryDelayMs);
-                });
+                return dataObject != null && OleSetClipboard(dataObject) >= 0;
             }
 
-            private static object CloneClipboardValue(object value)
+            public void Dispose()
             {
-                var bytes = value as byte[];
-                if (bytes != null) return (byte[])bytes.Clone();
+                if (dataObject == null)
+                    return;
 
-                var strings = value as string[];
-                if (strings != null) return (string[])strings.Clone();
-
-                var stringCollection = value as StringCollection;
-                if (stringCollection != null)
+                try
                 {
-                    var clone = new StringCollection();
-                    clone.AddRange(ToArray(stringCollection));
-                    return clone;
+                    if (Marshal.IsComObject(dataObject))
+                        Marshal.ReleaseComObject(dataObject);
                 }
-
-                var bitmap = value as Bitmap;
-                if (bitmap != null) return new Bitmap(bitmap);
-
-                var image = value as Image;
-                if (image != null) return image.Clone();
-
-                var stream = value as Stream;
-                if (stream != null)
+                catch
                 {
-                    long originalPosition = stream.CanSeek ? stream.Position : 0;
-                    if (stream.CanSeek) stream.Position = 0;
-                    var clone = new MemoryStream();
-                    stream.CopyTo(clone);
-                    clone.Position = 0;
-                    if (stream.CanSeek) stream.Position = originalPosition;
-                    return clone;
                 }
-
-                return value;
-            }
-
-            private static string[] ToArray(StringCollection collection)
-            {
-                var values = new string[collection.Count];
-                collection.CopyTo(values, 0);
-                return values;
+                dataObject = null;
             }
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        private struct GUITHREADINFO
+        {
+            public int cbSize;
+            public uint flags;
+            public IntPtr hwndActive;
+            public IntPtr hwndFocus;
+            public IntPtr hwndCapture;
+            public IntPtr hwndMenuOwner;
+            public IntPtr hwndMoveSize;
+            public IntPtr hwndCaret;
+            public RECT rcCaret;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        [DllImport("ole32.dll")]
+        private static extern int OleGetClipboard([MarshalAs(UnmanagedType.Interface)] out ComIDataObject dataObject);
+
+        [DllImport("ole32.dll")]
+        private static extern int OleSetClipboard([MarshalAs(UnmanagedType.Interface)] ComIDataObject dataObject);
+
         [DllImport("user32.dll")]
         private static extern uint GetClipboardSequenceNumber();
+
+        [DllImport("user32.dll")]
+        private static extern bool GetGUIThreadInfo(uint threadId, ref GUITHREADINFO info);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern int GetClassName(IntPtr window, StringBuilder className, int maxCount);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr window, uint message, out int start, out int end);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern short VkKeyScanEx(char ch, IntPtr keyboardLayout);
