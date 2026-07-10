@@ -312,9 +312,8 @@ namespace Mahou {
 			#region Switch only key
 			if(!self && !shift && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" &&
 				Key == Keys.CapsLock && wParam == (IntPtr)(int)KMMessages.WM_KEYUP) {
-				self = true;
-				ChangeLayout();
-				self = false;
+				if(queuedOperation == null)
+					queuedOperation = ChangeLayout;
 			}
 			if(!self && !shift && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" &&
 				Key == Keys.CapsLock && wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN) {
@@ -343,34 +342,40 @@ namespace Mahou {
 			if(!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "Left Control" &&
 				Key == Keys.LControlKey && wParam == (IntPtr)(int)KMMessages.WM_KEYUP &&
 				!MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls")) {
-				self = true;
-				if(MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch")) {
-					KeybdEvent(Keys.LControlKey, 2); // Sends it up to make it work when using "EmulateLayoutSwitch" 
+				bool emulateSwitch = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
+				if(queuedOperation == null) {
+					queuedOperation = delegate {
+						if(emulateSwitch)
+							KeybdEvent(Keys.LControlKey, 2);
+						ChangeLayout();
+						KeybdEvent(Keys.LControlKey, 2);
+					};
 				}
-				ChangeLayout();
-				KeybdEvent(Keys.LControlKey, 2); //fix for PostMessage, it somehow o_0 sends another ctrl...
-
-				self = false;
 			}
 			if(!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "Right Control" &&
 				Key == Keys.RControlKey && wParam == (IntPtr)(int)KMMessages.WM_KEYUP &&
 				!MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls")) {
-				self = true;
-				if(MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch")) {
-					KeybdEvent(Keys.RControlKey, 2); // Sends it up to make it work when using "EmulateLayoutSwitch" 
+				bool emulateSwitch = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
+				if(queuedOperation == null) {
+					queuedOperation = delegate {
+						if(emulateSwitch)
+							KeybdEvent(Keys.RControlKey, 2);
+						ChangeLayout();
+					};
 				}
-				ChangeLayout();
-				self = false;
 			}
 			#endregion
 			#region By Ctrls switch
 			keyAfterCTRL |= !self && wParam == (IntPtr)(int)KMMessages.WM_KEYUP && ctrl;
 			if(!self && MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls") && wParam == (IntPtr)(int)KMMessages.WM_KEYUP && !keyAfterCTRL) {
-				if(Key == Keys.RControlKey) {
-					PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, (uint)MMain.MyConfs.ReadInt("ExtCtrls", "RCLocale"));
-				}
-				if(Key == Keys.LControlKey) {
-					PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, (uint)MMain.MyConfs.ReadInt("ExtCtrls", "LCLocale"));
+				uint targetLocale = 0;
+				if(Key == Keys.RControlKey)
+					targetLocale = (uint)MMain.MyConfs.ReadInt("ExtCtrls", "RCLocale");
+				if(Key == Keys.LControlKey)
+					targetLocale = (uint)MMain.MyConfs.ReadInt("ExtCtrls", "LCLocale");
+				if(targetLocale != 0 && queuedOperation == null) {
+					uint requestedLocale = targetLocale;
+					queuedOperation = () => ChangeLayoutTo(requestedLocale);
 				}
 			}
 			keyAfterCTRL &= self || wParam != (IntPtr)(int)KMMessages.WM_KEYUP || (Key != Keys.LControlKey && Key != Keys.RControlKey);
@@ -875,6 +880,20 @@ namespace Mahou {
 			} else
 				return false;
 		}
+		static void ChangeLayoutTo(uint targetLocale)
+		{
+			if(targetLocale == 0 || Locales.GetCurrentLocale() == targetLocale)
+				return;
+
+			IntPtr activeWindow = Locales.ActiveWindow();
+			for(int tries = 0; tries < 3 && Locales.GetCurrentLocale() != targetLocale; tries++) {
+				PostMessage(activeWindow, KInputs.WM_INPUTLANGCHANGEREQUEST, 0, targetLocale);
+				Thread.Sleep(50);
+			}
+			if(Locales.GetCurrentLocale() != targetLocale)
+				log.Warn("Could not switch to requested locale {0}", targetLocale);
+		}
+
 		static void ChangeLayout() //Changes current layout
 		{
 			var nowLocale = Locales.GetCurrentLocale();
