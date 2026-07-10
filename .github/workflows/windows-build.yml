@@ -1,61 +1,65 @@
-name: Inspect KMHook patch anchors
+name: Windows build
 
 on:
   pull_request:
     branches:
       - master
-
-permissions:
-  contents: read
+  workflow_dispatch:
 
 concurrency:
-  group: kmhook-anchor-inspection-${{ github.event.pull_request.number }}
+  group: windows-build-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  inspect:
+  build:
     runs-on: windows-2022
-    timeout-minutes: 5
+    timeout-minutes: 15
 
     steps:
-      - name: Checkout feature branch
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: mixanizm-adaptive-layout-learning
 
-      - name: Extract anchor context
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore packages
+        run: nuget restore Mahou/Mahou.sln -NonInteractive
+
+      - name: Build Release x86
+        id: build
+        continue-on-error: true
         shell: pwsh
         run: |
-          @'
-          from pathlib import Path
+          msbuild Mahou/Mahou.sln /m /p:Configuration=Release /p:Platform=x86 /v:minimal /fl /flp:"logfile=msbuild.log;verbosity=normal"
+          Set-Content -Path build-exit-code.txt -Value $LASTEXITCODE
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-          text = Path("Mahou/Classes/KMHook.cs").read_text(encoding="utf-8-sig")
-          anchors = [
-              "IfKeyIsMod(Key);",
-              "(ctrl && Key != Keys.None))",
-              "if(Key == Keys.Space)",
-              "MMain.c_words.Clear();"
-          ]
-
-          output = []
-          for anchor in anchors:
-              index = text.find(anchor)
-              output.append("ANCHOR: " + anchor)
-              output.append("INDEX: " + str(index))
-              if index >= 0:
-                  start = max(0, index - 180)
-                  end = min(len(text), index + 360)
-                  output.append(repr(text[start:end]))
-              output.append("")
-
-          Path("patch-anchor-context.txt").write_text("\n".join(output), encoding="utf-8")
-          '@ | Set-Content -Path inspect_kmhook.py -Encoding UTF8
-          python inspect_kmhook.py
-
-      - name: Upload anchor context
+      - name: Upload build log
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: kmhook-anchor-context
-          path: patch-anchor-context.txt
+          name: windows-build-log
+          path: |
+            msbuild.log
+            build-exit-code.txt
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Windows build
+        if: steps.build.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MIXANIZM-Mahou-windows-x86
+          path: |
+            Mahou/bin/Release/Mahou.exe
+            Mahou/bin/Release/Mahou.exe.config
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 14
+
+      - name: Fail job when build failed
+        if: steps.build.outcome == 'failure'
+        shell: pwsh
+        run: exit 1
