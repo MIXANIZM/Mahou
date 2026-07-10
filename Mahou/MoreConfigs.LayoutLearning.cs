@@ -7,11 +7,50 @@ namespace Mahou
     public partial class MoreConfigs
     {
         private Button layoutLearningButton;
+        private bool safetyEventsWired;
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             EnsureLayoutLearningButton();
+            WireSafetyEvents();
+            ApplyDisabledUpdatePolicy();
+        }
+
+        private void WireSafetyEvents()
+        {
+            if (safetyEventsWired)
+                return;
+
+            safetyEventsWired = true;
+            VisibleChanged += RestoreSettingsWhenShown;
+            btnNO.Click += RestoreSettingsAfterCancel;
+        }
+
+        private void RestoreSettingsWhenShown(object sender, EventArgs e)
+        {
+            if (!Visible)
+                return;
+
+            load();
+            tmpRestore();
+            ApplyDisabledUpdatePolicy();
+            DisEna();
+        }
+
+        private void RestoreSettingsAfterCancel(object sender, EventArgs e)
+        {
+            load();
+            tmpRestore();
+            ApplyDisabledUpdatePolicy();
+            DisEna();
+        }
+
+        private void ApplyDisabledUpdatePolicy()
+        {
+            cbCheckForUPD.Checked = false;
+            cbCheckForUPD.Enabled = false;
+            cbCheckForUPD.AccessibleDescription = "Automatic updates are disabled until signed packages and rollback are implemented.";
         }
 
         private void EnsureLayoutLearningButton()
