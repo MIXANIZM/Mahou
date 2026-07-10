@@ -13,7 +13,7 @@ concurrency:
 jobs:
   build:
     runs-on: windows-2022
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
       CHECKOUT_COMMIT: ${{ github.sha }}
@@ -48,35 +48,41 @@ jobs:
       - name: Restore packages
         run: nuget restore Mahou/Mahou.sln -NonInteractive
 
-      - name: Build Release x86
+      - name: Build Release x86 - clean environment 1
         id: build
         continue-on-error: true
         shell: pwsh
         run: |
-          msbuild Mahou/Mahou.sln /m /p:Configuration=Release /p:Platform=x86 /p:Deterministic=true /v:minimal /fl /flp:"logfile=msbuild.log;verbosity=normal"
+          $build1 = "$env:GITHUB_WORKSPACE\artifacts\build1\"
+          $obj1 = "$env:GITHUB_WORKSPACE\artifacts\obj1\"
+          New-Item -ItemType Directory -Force -Path $build1, $obj1 | Out-Null
+
+          & msbuild Mahou/Mahou.sln /m /p:Configuration=Release /p:Platform=x86 /p:Deterministic=true "/p:OutputPath=$build1" "/p:IntermediateOutputPath=$obj1" /v:minimal /fl /flp:"logfile=msbuild-build1.log;verbosity=normal"
           Set-Content -Path build-exit-code.txt -Value $LASTEXITCODE
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Verify deterministic rebuild
+      - name: Verify independent deterministic build
         id: deterministic
         if: steps.build.outcome == 'success'
         continue-on-error: true
         shell: pwsh
         run: |
-          $exePath = "Mahou/bin/Release/Mahou.exe"
-          $configPath = "Mahou/bin/Release/Mahou.exe.config"
-          $firstExeHash = (Get-FileHash -Path $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
-          $firstConfigHash = (Get-FileHash -Path $configPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $build1 = "$env:GITHUB_WORKSPACE\artifacts\build1\"
+          $build2 = "$env:GITHUB_WORKSPACE\artifacts\build2\"
+          $obj2 = "$env:GITHUB_WORKSPACE\artifacts\obj2\"
+          New-Item -ItemType Directory -Force -Path $build2, $obj2 | Out-Null
 
-          msbuild Mahou/Mahou.sln /t:Rebuild /m /p:Configuration=Release /p:Platform=x86 /p:Deterministic=true /v:minimal /fl /flp:"logfile=msbuild-rebuild.log;verbosity=normal"
-          $rebuildExitCode = $LASTEXITCODE
-          if ($rebuildExitCode -ne 0) {
-            Set-Content -Path deterministic-build.txt -Value "rebuild_failed=$rebuildExitCode"
-            exit $rebuildExitCode
+          & msbuild Mahou/Mahou.sln /m /p:Configuration=Release /p:Platform=x86 /p:Deterministic=true "/p:OutputPath=$build2" "/p:IntermediateOutputPath=$obj2" /v:minimal /fl /flp:"logfile=msbuild-build2.log;verbosity=normal"
+          $secondExitCode = $LASTEXITCODE
+          if ($secondExitCode -ne 0) {
+            Set-Content -Path deterministic-build.txt -Value "second_build_failed=$secondExitCode"
+            exit $secondExitCode
           }
 
-          $secondExeHash = (Get-FileHash -Path $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
-          $secondConfigHash = (Get-FileHash -Path $configPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $firstExeHash = (Get-FileHash -Path (Join-Path $build1 "Mahou.exe") -Algorithm SHA256).Hash.ToLowerInvariant()
+          $secondExeHash = (Get-FileHash -Path (Join-Path $build2 "Mahou.exe") -Algorithm SHA256).Hash.ToLowerInvariant()
+          $firstConfigHash = (Get-FileHash -Path (Join-Path $build1 "Mahou.exe.config") -Algorithm SHA256).Hash.ToLowerInvariant()
+          $secondConfigHash = (Get-FileHash -Path (Join-Path $build2 "Mahou.exe.config") -Algorithm SHA256).Hash.ToLowerInvariant()
 
           @(
             "first_exe_sha256=$firstExeHash",
@@ -88,9 +94,13 @@ jobs:
           ) | Set-Content -Path deterministic-build.txt -Encoding utf8
 
           if ($firstExeHash -ne $secondExeHash -or $firstConfigHash -ne $secondConfigHash) {
-            Write-Error "The second build did not reproduce the first build byte-for-byte."
+            Write-Error "Two isolated clean builds did not reproduce byte-for-byte."
             exit 1
           }
+
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          Copy-Item (Join-Path $build1 "Mahou.exe") release/Mahou.exe -Force
+          Copy-Item (Join-Path $build1 "Mahou.exe.config") release/Mahou.exe.config -Force
 
       - name: Generate hashes, manifest and SBOM
         if: steps.build.outcome == 'success' && steps.deterministic.outcome == 'success'
@@ -98,8 +108,8 @@ jobs:
         run: |
           $shortSha = $env:SOURCE_COMMIT.Substring(0, 12)
           $version = "$env:VERSION_BASE-mixanizm+$shortSha"
-          $exePath = "Mahou/bin/Release/Mahou.exe"
-          $configPath = "Mahou/bin/Release/Mahou.exe.config"
+          $exePath = "release/Mahou.exe"
+          $configPath = "release/Mahou.exe.config"
           $exeHash = (Get-FileHash -Path $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
           $configHash = (Get-FileHash -Path $configPath -Algorithm SHA256).Hash.ToLowerInvariant()
 
@@ -163,12 +173,26 @@ jobs:
         with:
           name: windows-build-log
           path: |
-            msbuild.log
-            msbuild-rebuild.log
+            msbuild-build1.log
+            msbuild-build2.log
             build-exit-code.txt
             deterministic-build.txt
           if-no-files-found: warn
           retention-days: 7
+
+      - name: Upload deterministic diagnostics
+        if: steps.deterministic.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: deterministic-build-diagnostics
+          path: |
+            artifacts/build1/Mahou.exe
+            artifacts/build1/Mahou.exe.config
+            artifacts/build2/Mahou.exe
+            artifacts/build2/Mahou.exe.config
+            deterministic-build.txt
+          if-no-files-found: warn
+          retention-days: 3
 
       - name: Upload Windows build
         if: steps.build.outcome == 'success' && steps.deterministic.outcome == 'success'
@@ -176,8 +200,8 @@ jobs:
         with:
           name: MIXANIZM-Mahou-windows-x86
           path: |
-            Mahou/bin/Release/Mahou.exe
-            Mahou/bin/Release/Mahou.exe.config
+            release/Mahou.exe
+            release/Mahou.exe.config
             SHA256SUMS.txt
             build-manifest.json
             sbom.cdx.json
