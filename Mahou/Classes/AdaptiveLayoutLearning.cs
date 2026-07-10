@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace Mahou
 {
@@ -15,55 +13,119 @@ namespace Mahou
     {
         private const string RulesFileName = "layout-learning.tsv";
         private const string KeyFileName = "layout-learning.key";
+        private const string RulesHeader = "# MIXANIZM-LAYOUT-LEARNING-V2";
         private const int MaxRules = 5000;
+
         private static readonly object Sync = new object();
+        private static readonly object SaveIoSync = new object();
         private static readonly Dictionary<string, Rule> Rules = new Dictionary<string, Rule>();
-        private static readonly KMHook.LowLevelProc Proc = HookCallback;
-        private static readonly MethodInfo ConvertLastMethod = typeof(KMHook).GetMethod("ConvertLast", BindingFlags.NonPublic | BindingFlags.Static);
         private static readonly string[] SensitiveProcesses =
         {
             "keepass", "keepassxc", "1password", "bitwarden", "lastpass", "dashlane", "enpass",
             "chrome", "msedge", "firefox", "brave", "opera", "vivaldi", "iexplore",
-            "credentialui", "logonui", "mstsc", "rdpclip", "cmd", "powershell", "pwsh", "conhost", "windowsterminal", "wt"
+            "credentialui", "logonui", "mstsc", "rdpclip", "cmd", "powershell", "pwsh", "conhost",
+            "windowsterminal", "wt"
         };
 
-        private static IntPtr hookId = IntPtr.Zero;
+        private static System.Threading.Timer foregroundTimer;
+        private static byte[] hmacKey;
         private static bool loaded;
         private static bool suppressCurrentWord;
-        private static DateTime ignoreUntilUtc = DateTime.MinValue;
-        private static byte[] hmacKey;
+        private static int saveQueued;
 
-        // Immutable-for-hook settings snapshot. Refreshed only by Start().
-        private static bool enabled;
-        private static bool autoConvertOnSpace;
-        private static bool perAppRules;
-        private static bool convertHotkeyEnabled;
-        private static bool blockControl;
-        private static bool doubleKey;
-        private static bool hotkeyUsesControl;
-        private static int minWordLength;
-        private static int confirmationsToEnable;
-        private static Hotkey convertHotkey;
+        private static volatile bool enabled;
+        private static volatile bool autoConvertOnSpace;
+        private static volatile bool perAppRules;
+        private static volatile bool sensitiveContext = true;
+        private static volatile int minWordLength = 4;
+        private static volatile int confirmationsToEnable = 2;
+        private static string activeProcessName = String.Empty;
 
         public static void Start()
         {
             Stop();
             EnsureConfigDefaults();
             LoadSettingsSnapshot();
+            suppressCurrentWord = false;
+
             if (!enabled)
                 return;
 
+            EnsureLearningKey();
             EnsureLoaded();
-            hookId = KMHook.SetHook(Proc, (int)KMHook.KMMessages.WH_KEYBOARD_LL);
+            UpdateForegroundContext(null);
+            foregroundTimer = new System.Threading.Timer(UpdateForegroundContext, null, 500, 500);
         }
 
         public static void Stop()
         {
-            if (hookId == IntPtr.Zero)
+            var timer = foregroundTimer;
+            foregroundTimer = null;
+            if (timer != null)
+                timer.Dispose();
+
+            FlushPendingSave();
+        }
+
+        public static void OnBackspace()
+        {
+            if (enabled)
+                suppressCurrentWord = true;
+        }
+
+        public static void OnBoundary()
+        {
+            suppressCurrentWord = false;
+        }
+
+        public static void RecordManualCorrection(IList<KMHook.YuKey> word)
+        {
+            if (!enabled || sensitiveContext || suppressCurrentWord)
                 return;
 
-            KMHook.UnhookWindowsHookEx(hookId);
-            hookId = IntPtr.Zero;
+            string hash = CaptureHash(word);
+            if (String.IsNullOrEmpty(hash))
+                return;
+
+            lock (Sync)
+            {
+                Rule rule;
+                if (!Rules.TryGetValue(hash, out rule))
+                {
+                    rule = new Rule
+                    {
+                        Hash = hash,
+                        Hits = 0,
+                        AutoEnabled = false,
+                        LastUsedUtc = DateTime.UtcNow
+                    };
+                    Rules[hash] = rule;
+                }
+
+                rule.Hits++;
+                rule.AutoEnabled = rule.Hits >= confirmationsToEnable;
+                rule.LastUsedUtc = DateTime.UtcNow;
+                TrimRulesIfNeeded();
+            }
+
+            QueueSave();
+        }
+
+        public static bool ShouldAutoConvert(IList<KMHook.YuKey> word)
+        {
+            if (!enabled || !autoConvertOnSpace || sensitiveContext || suppressCurrentWord)
+                return false;
+
+            string hash = CaptureHash(word);
+            if (String.IsNullOrEmpty(hash))
+                return false;
+
+            lock (Sync)
+            {
+                Rule rule;
+                return Rules.TryGetValue(hash, out rule) &&
+                    rule.AutoEnabled && rule.Hits >= confirmationsToEnable;
+            }
         }
 
         public static void ClearRules()
@@ -73,150 +135,74 @@ namespace Mahou
                 Rules.Clear();
                 loaded = false;
                 hmacKey = null;
+            }
+
+            Interlocked.Exchange(ref saveQueued, 0);
+            lock (SaveIoSync)
+            {
                 DeleteIfExists(RulesFilePath());
                 DeleteIfExists(RulesFilePath() + ".tmp");
                 DeleteIfExists(RulesFilePath() + ".bak");
                 DeleteIfExists(KeyFilePath());
             }
-        }
 
-        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
-        {
-            if (nCode < 0)
-                return KMHook.CallNextHookEx(hookId, nCode, wParam, lParam);
-
-            if (!KMHook.self)
+            if (enabled)
             {
-                try
-                {
-                    var message = (KMHook.KMMessages)(int)wParam;
-                    int vkCode = Marshal.ReadInt32(lParam);
-                    var key = (Keys)vkCode;
-
-                    if (DateTime.UtcNow >= ignoreUntilUtc)
-                    {
-                        if (IsKeyDown(message) && key == Keys.Back)
-                            suppressCurrentWord = true;
-
-                        if (IsConvertLastKeyUp(message, vkCode) && !suppressCurrentWord)
-                        {
-                            var snapshot = CaptureCurrentWord();
-                            if (snapshot != null)
-                                ThreadPool.QueueUserWorkItem(delegate { RecordManualCorrection(snapshot); });
-                        }
-
-                        if (IsAutoTrigger(message, key) && !suppressCurrentWord && ShouldAutoConvertCurrentWord())
-                            ConvertCurrentWordWithoutEatingTrigger();
-
-                        if (IsKeyDown(message) && IsWordBoundary(key))
-                            suppressCurrentWord = false;
-                    }
-                }
-                catch
-                {
-                    // Never break the global input chain.
-                }
-            }
-
-            return KMHook.CallNextHookEx(hookId, nCode, wParam, lParam);
-        }
-
-        private static bool IsConvertLastKeyUp(KMHook.KMMessages message, int vkCode)
-        {
-            if (!convertHotkeyEnabled || convertHotkey == null || MMain.mahou == null || KMHook.csdoing)
-                return false;
-
-            if (message != KMHook.KMMessages.WM_KEYUP && message != KMHook.KMMessages.WM_SYSKEYUP)
-                return false;
-
-            if (MMain.mahou.Active || MMain.mahou.moreConfigs.Active)
-                return false;
-
-            if (blockControl && hotkeyUsesControl)
-                return false;
-
-            if (doubleKey && !KMHook.hklOK)
-                return false;
-
-            return new Hotkey(NormalizeVkCode(vkCode), CurrentModifiers()).Equals(convertHotkey);
-        }
-
-        private static bool IsAutoTrigger(KMHook.KMMessages message, Keys key)
-        {
-            if (!autoConvertOnSpace || MMain.mahou == null || MMain.mahou.Active || MMain.mahou.moreConfigs.Active)
-                return false;
-            if (Control.ModifierKeys != Keys.None || !IsKeyDown(message))
-                return false;
-            return key == Keys.Space || key == Keys.Enter || key == Keys.Return;
-        }
-
-        private static bool IsKeyDown(KMHook.KMMessages message)
-        {
-            return message == KMHook.KMMessages.WM_KEYDOWN || message == KMHook.KMMessages.WM_SYSKEYDOWN;
-        }
-
-        private static bool IsWordBoundary(Keys key)
-        {
-            return key == Keys.Space || key == Keys.Enter || key == Keys.Return || key == Keys.Tab ||
-                key == Keys.Home || key == Keys.End || key == Keys.Left || key == Keys.Right ||
-                key == Keys.Up || key == Keys.Down || key == Keys.PageUp || key == Keys.PageDown;
-        }
-
-        private static void RecordManualCorrection(Snapshot snapshot)
-        {
-            lock (Sync)
-            {
-                EnsureLoaded();
-                Rule rule;
-                if (!Rules.TryGetValue(snapshot.Hash, out rule))
-                {
-                    rule = new Rule { Hash = snapshot.Hash, Hits = 0, AutoEnabled = false, LastUsedUtc = DateTime.UtcNow };
-                    Rules[rule.Hash] = rule;
-                }
-
-                rule.Hits++;
-                rule.LastUsedUtc = DateTime.UtcNow;
-                rule.AutoEnabled = rule.Hits >= confirmationsToEnable;
-                TrimRulesIfNeeded();
-                SaveRulesAtomically();
+                EnsureLearningKey();
+                loaded = true;
             }
         }
 
-        private static bool ShouldAutoConvertCurrentWord()
+        private static string CaptureHash(IList<KMHook.YuKey> word)
         {
-            var snapshot = CaptureCurrentWord();
-            if (snapshot == null)
-                return false;
-
-            lock (Sync)
-            {
-                Rule rule;
-                return Rules.TryGetValue(snapshot.Hash, out rule) && rule.AutoEnabled && rule.Hits >= confirmationsToEnable;
-            }
-        }
-
-        private static void ConvertCurrentWordWithoutEatingTrigger()
-        {
-            if (ConvertLastMethod == null || MMain.c_word == null || MMain.c_word.Count == 0)
-                return;
-
-            ignoreUntilUtc = DateTime.UtcNow.AddMilliseconds(250);
-            ConvertLastMethod.Invoke(null, new object[] { MMain.c_word });
-        }
-
-        private static Snapshot CaptureCurrentWord()
-        {
-            if (MMain.c_word == null || MMain.c_word.Count < minWordLength || !IsLearnable(MMain.c_word))
+            if (word == null || word.Count < minWordLength || hmacKey == null)
                 return null;
 
-            string activeApp = ActiveProcessName();
-            if (IsSensitiveProcess(activeApp))
-                return null;
+            var material = new StringBuilder(64 + word.Count * 8);
+            material.Append(Locales.GetCurrentLocale()).Append('|');
+            if (perAppRules)
+                material.Append(activeProcessName ?? String.Empty);
+            material.Append('|');
 
-            string signature = WordSignature(MMain.c_word);
-            string appScope = perAppRules ? activeApp : String.Empty;
-            string material = Locales.GetCurrentLocale() + "|" + appScope + "|" + signature;
-            return new Snapshot { Hash = ComputeHash(material) };
+            foreach (var key in word)
+            {
+                if (key.altnum || key.yukey == System.Windows.Forms.Keys.Space)
+                    return null;
+
+                material.Append((int)key.yukey)
+                    .Append(':')
+                    .Append(key.upper ? '1' : '0')
+                    .Append(';');
+            }
+
+            byte[] keyCopy = hmacKey;
+            using (var hmac = new HMACSHA256(keyCopy))
+                return Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(material.ToString())));
+        }
+
+        private static void UpdateForegroundContext(object state)
+        {
+            string processName = ActiveProcessName();
+            activeProcessName = processName;
+            sensitiveContext = IsSensitiveProcess(processName);
+        }
+
+        private static string ActiveProcessName()
+        {
+            try
+            {
+                uint processId;
+                GetWindowThreadProcessId(GetForegroundWindow(), out processId);
+                if (processId == 0)
+                    return String.Empty;
+
+                using (var process = Process.GetProcessById((int)processId))
+                    return process.ProcessName.ToLowerInvariant();
+            }
+            catch
+            {
+                return String.Empty;
+            }
         }
 
         private static bool IsSensitiveProcess(string processName)
@@ -224,60 +210,11 @@ namespace Mahou
             if (String.IsNullOrWhiteSpace(processName))
                 return true;
 
-            foreach (var item in SensitiveProcesses)
+            foreach (string item in SensitiveProcesses)
                 if (processName.IndexOf(item, StringComparison.OrdinalIgnoreCase) >= 0)
                     return true;
+
             return false;
-        }
-
-        private static bool IsLearnable(IList<KMHook.YuKey> word)
-        {
-            foreach (var key in word)
-                if (key.altnum || key.yukey == Keys.Space)
-                    return false;
-            return true;
-        }
-
-        private static string WordSignature(IList<KMHook.YuKey> word)
-        {
-            var result = new StringBuilder();
-            foreach (var key in word)
-                result.Append((int)key.yukey).Append(':').Append(key.upper ? '1' : '0').Append(';');
-            return result.ToString();
-        }
-
-        private static string ComputeHash(string material)
-        {
-            EnsureLearningKey();
-            using (var hmac = new HMACSHA256(hmacKey))
-                return Convert.ToBase64String(hmac.ComputeHash(Encoding.UTF8.GetBytes(material)));
-        }
-
-        private static void EnsureLearningKey()
-        {
-            if (hmacKey != null)
-                return;
-
-            Directory.CreateDirectory(Configs.dataPath);
-            var path = KeyFilePath();
-            if (File.Exists(path))
-            {
-                try
-                {
-                    var protectedBytes = File.ReadAllBytes(path);
-                    hmacKey = ProtectedData.Unprotect(protectedBytes, null, DataProtectionScope.CurrentUser);
-                    if (hmacKey.Length >= 32)
-                        return;
-                }
-                catch
-                {
-                }
-            }
-
-            hmacKey = new byte[32];
-            using (var rng = new RNGCryptoServiceProvider())
-                rng.GetBytes(hmacKey);
-            File.WriteAllBytes(path, ProtectedData.Protect(hmacKey, null, DataProtectionScope.CurrentUser));
         }
 
         private static void LoadSettingsSnapshot()
@@ -287,13 +224,6 @@ namespace Mahou
             perAppRules = SafeReadBool("LayoutLearning", "PerAppRules", false);
             minWordLength = Clamp(SafeReadInt("LayoutLearning", "MinWordLength", 4), 2, 64);
             confirmationsToEnable = Clamp(SafeReadInt("LayoutLearning", "ConfirmationsToEnable", 2), 1, 20);
-            convertHotkeyEnabled = SafeReadBool("EnabledHotkeys", "HKCLEnabled", true);
-            blockControl = SafeReadBool("Functions", "BlockCTRL", false);
-            doubleKey = SafeReadBool("DoubleKey", "Use", false);
-            var modsText = MMain.MyConfs.Read("Hotkeys", "HKCLMods");
-            hotkeyUsesControl = modsText.IndexOf("Control", StringComparison.OrdinalIgnoreCase) >= 0;
-            int keyCode = SafeReadInt("Hotkeys", "HKCLKey", 19);
-            convertHotkey = new Hotkey(keyCode, Hotkey.GetMods(modsText));
         }
 
         private static void EnsureConfigDefaults()
@@ -336,24 +266,37 @@ namespace Mahou
             return value < minimum ? minimum : value > maximum ? maximum : value;
         }
 
-        private static int NormalizeVkCode(int vkCode)
+        private static void EnsureLearningKey()
         {
-            if (vkCode == 160 || vkCode == 161) return 16;
-            if (vkCode == 162 || vkCode == 163) return 17;
-            if (vkCode == 164 || vkCode == 165) return 18;
-            if (vkCode == 240) return 20;
-            return vkCode;
-        }
+            if (hmacKey != null)
+                return;
 
-        private static bool[] CurrentModifiers()
-        {
-            var modifiers = Control.ModifierKeys;
-            return new[]
+            Directory.CreateDirectory(Configs.dataPath);
+            string path = KeyFilePath();
+            if (File.Exists(path))
             {
-                (modifiers & Keys.Control) == Keys.Control,
-                (modifiers & Keys.Shift) == Keys.Shift,
-                (modifiers & Keys.Alt) == Keys.Alt
-            };
+                try
+                {
+                    byte[] protectedBytes = File.ReadAllBytes(path);
+                    byte[] candidate = ProtectedData.Unprotect(protectedBytes, null, DataProtectionScope.CurrentUser);
+                    if (candidate != null && candidate.Length >= 32)
+                    {
+                        hmacKey = candidate;
+                        return;
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            var newKey = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+                rng.GetBytes(newKey);
+
+            byte[] protectedKey = ProtectedData.Protect(newKey, null, DataProtectionScope.CurrentUser);
+            WriteBytesAtomically(path, protectedKey);
+            hmacKey = newKey;
         }
 
         private static void EnsureLoaded()
@@ -365,12 +308,21 @@ namespace Mahou
 
                 loaded = true;
                 Rules.Clear();
-                var file = RulesFilePath();
+                string file = RulesFilePath();
                 if (!File.Exists(file))
                     return;
 
-                var lines = File.ReadAllLines(file, Encoding.UTF8);
-                if (lines.Length > 0 && !lines[0].StartsWith("# hash\t"))
+                string[] lines;
+                try
+                {
+                    lines = File.ReadAllLines(file, Encoding.UTF8);
+                }
+                catch
+                {
+                    return;
+                }
+
+                if (lines.Length == 0 || !String.Equals(lines[0], RulesHeader, StringComparison.Ordinal))
                 {
                     DeleteIfExists(file);
                     DeleteIfExists(file + ".tmp");
@@ -378,27 +330,107 @@ namespace Mahou
                     return;
                 }
 
-                foreach (var line in lines)
+                for (int i = 1; i < lines.Length; i++)
                 {
-                    if (String.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+                    string line = lines[i];
+                    if (String.IsNullOrWhiteSpace(line))
                         continue;
 
-                    var parts = line.Split('\t');
+                    string[] parts = line.Split('\t');
                     int hits;
                     bool autoEnabled;
                     DateTime lastUsedUtc;
-                    if (parts.Length != 4 || !Int32.TryParse(parts[1], out hits) ||
-                        !Boolean.TryParse(parts[2], out autoEnabled) || !DateTime.TryParse(parts[3], out lastUsedUtc))
+                    if (parts.Length != 4 || String.IsNullOrWhiteSpace(parts[0]) ||
+                        !Int32.TryParse(parts[1], out hits) ||
+                        !Boolean.TryParse(parts[2], out autoEnabled) ||
+                        !DateTime.TryParse(parts[3], out lastUsedUtc))
                         continue;
 
                     Rules[parts[0]] = new Rule
                     {
-                        Hash = parts[0], Hits = Math.Max(0, hits), AutoEnabled = autoEnabled, LastUsedUtc = lastUsedUtc
+                        Hash = parts[0],
+                        Hits = Math.Max(0, hits),
+                        AutoEnabled = autoEnabled,
+                        LastUsedUtc = lastUsedUtc.ToUniversalTime()
                     };
                 }
 
                 while (Rules.Count > MaxRules)
                     TrimRulesIfNeeded();
+            }
+        }
+
+        private static void QueueSave()
+        {
+            if (Interlocked.Exchange(ref saveQueued, 1) != 0)
+                return;
+
+            ThreadPool.QueueUserWorkItem(delegate
+            {
+                while (Interlocked.Exchange(ref saveQueued, 0) != 0)
+                    SaveRulesSnapshot();
+            });
+        }
+
+        private static void FlushPendingSave()
+        {
+            if (Interlocked.Exchange(ref saveQueued, 0) != 0)
+                SaveRulesSnapshot();
+        }
+
+        private static void SaveRulesSnapshot()
+        {
+            List<Rule> snapshot;
+            lock (Sync)
+            {
+                snapshot = new List<Rule>(Rules.Count);
+                foreach (Rule rule in Rules.Values)
+                {
+                    snapshot.Add(new Rule
+                    {
+                        Hash = rule.Hash,
+                        Hits = rule.Hits,
+                        AutoEnabled = rule.AutoEnabled,
+                        LastUsedUtc = rule.LastUsedUtc
+                    });
+                }
+            }
+
+            var lines = new List<string>(snapshot.Count + 1) { RulesHeader };
+            foreach (Rule rule in snapshot)
+            {
+                lines.Add(String.Join("\t", new[]
+                {
+                    rule.Hash,
+                    rule.Hits.ToString(),
+                    rule.AutoEnabled.ToString(),
+                    rule.LastUsedUtc.ToString("o")
+                }));
+            }
+
+            lock (SaveIoSync)
+            {
+                Directory.CreateDirectory(Configs.dataPath);
+                string file = RulesFilePath();
+                string temp = file + ".tmp";
+                string backup = file + ".bak";
+                File.WriteAllLines(temp, lines.ToArray(), Encoding.UTF8);
+
+                if (!File.Exists(file))
+                {
+                    File.Move(temp, file);
+                    return;
+                }
+
+                try
+                {
+                    File.Replace(temp, file, backup, true);
+                }
+                catch
+                {
+                    File.Copy(temp, file, true);
+                    File.Delete(temp);
+                }
             }
         }
 
@@ -409,47 +441,50 @@ namespace Mahou
 
             string oldestKey = null;
             DateTime oldestDate = DateTime.MaxValue;
-            foreach (var pair in Rules)
-                if (pair.Value.LastUsedUtc < oldestDate) { oldestKey = pair.Key; oldestDate = pair.Value.LastUsedUtc; }
-            if (oldestKey != null)
+            foreach (KeyValuePair<string, Rule> pair in Rules)
+            {
+                if (pair.Value.LastUsedUtc < oldestDate)
+                {
+                    oldestDate = pair.Value.LastUsedUtc;
+                    oldestKey = pair.Key;
+                }
+            }
+
+            if (!String.IsNullOrEmpty(oldestKey))
                 Rules.Remove(oldestKey);
         }
 
-        private static void SaveRulesAtomically()
+        private static void WriteBytesAtomically(string path, byte[] bytes)
         {
-            Directory.CreateDirectory(Configs.dataPath);
-            var file = RulesFilePath();
-            var tempFile = file + ".tmp";
-            var backupFile = file + ".bak";
-            var lines = new List<string> { "# hash\thits\tautoEnabled\tlastUsedUtc" };
-            foreach (var rule in Rules.Values)
-                lines.Add(String.Join("\t", rule.Hash, rule.Hits, rule.AutoEnabled, rule.LastUsedUtc.ToString("o")));
-
-            File.WriteAllLines(tempFile, lines.ToArray(), Encoding.UTF8);
-            if (!File.Exists(file)) { File.Move(tempFile, file); return; }
-            File.Replace(tempFile, file, backupFile, true);
+            string temp = path + ".tmp";
+            File.WriteAllBytes(temp, bytes);
+            if (File.Exists(path))
+                File.Delete(path);
+            File.Move(temp, path);
         }
 
         private static void DeleteIfExists(string path)
         {
-            try { if (File.Exists(path)) File.Delete(path); } catch { }
-        }
-
-        private static string RulesFilePath() { return Path.Combine(Configs.dataPath, RulesFileName); }
-        private static string KeyFilePath() { return Path.Combine(Configs.dataPath, KeyFileName); }
-
-        private static string ActiveProcessName()
-        {
             try
             {
-                uint processId;
-                GetWindowThreadProcessId(GetForegroundWindow(), out processId);
-                return Process.GetProcessById((int)processId).ProcessName.ToLowerInvariant();
+                if (File.Exists(path))
+                    File.Delete(path);
             }
-            catch { return String.Empty; }
+            catch
+            {
+            }
         }
 
-        private sealed class Snapshot { public string Hash; }
+        private static string RulesFilePath()
+        {
+            return Path.Combine(Configs.dataPath, RulesFileName);
+        }
+
+        private static string KeyFilePath()
+        {
+            return Path.Combine(Configs.dataPath, KeyFileName);
+        }
+
         private sealed class Rule
         {
             public string Hash;
