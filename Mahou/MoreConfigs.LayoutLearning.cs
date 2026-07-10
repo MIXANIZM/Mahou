@@ -12,6 +12,7 @@ namespace Mahou
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            DpiAccessibility.Apply(this, "MIXANIZM Mahou advanced settings", "btnOK", "btnNO");
             EnsureLayoutLearningButton();
             WireSafetyEvents();
             ApplyDisabledUpdatePolicy();
@@ -50,6 +51,7 @@ namespace Mahou
         {
             cbCheckForUPD.Checked = false;
             cbCheckForUPD.Enabled = false;
+            cbCheckForUPD.AccessibleName = "Automatic update checks";
             cbCheckForUPD.AccessibleDescription = "Automatic updates are disabled until signed packages and rollback are implemented.";
         }
 
@@ -65,6 +67,7 @@ namespace Mahou
                 Location = new Point(10, 122),
                 Size = new Size(258, 32),
                 Text = russian ? "Адаптивное исправление раскладки…" : "Adaptive layout correction…",
+                AccessibleName = russian ? "Настройки адаптивного исправления раскладки" : "Adaptive layout correction settings",
                 UseVisualStyleBackColor = true,
                 TabIndex = 10
             };
