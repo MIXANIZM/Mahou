@@ -1,30 +1,62 @@
-﻿using NLog;
+using System;
+using System.IO;
+using NLog;
 using NLog.Config;
 using NLog.Targets;
 
-namespace Mahou {
-    internal class LogHelper {
-        public static void ConfigureNlog() {         // Step 1. Create configuration object 
-            var config = new LoggingConfiguration();
+namespace Mahou
+{
+    internal static class LogHelper
+    {
+        private const long MaxLogFileBytes = 5L * 1024L * 1024L;
+        private const int MaxArchiveFiles = 10;
 
-            // Step 2. Create targets and add them to the configuration 
-            var fileTarget = new FileTarget();
-            config.AddTarget("file", fileTarget);
+        public static string LogDirectory
+        {
+            get
+            {
+                return Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    Configs.DataDirectoryName,
+                    "Logs");
+            }
+        }
 
-            // Step 3. Set target properties 
-            fileTarget.FileName = "${basedir}/logs/${shortdate}.log";
-            fileTarget.Layout = @"${longdate} ${uppercase:${level}} ${message} ${exception:format=toString}";
+        public static void ConfigureNlog()
+        {
+            try
+            {
+                Directory.CreateDirectory(LogDirectory);
+                string archiveDirectory = Path.Combine(LogDirectory, "Archive");
+                Directory.CreateDirectory(archiveDirectory);
 
-            LoggingRule rule2;
+                var config = new LoggingConfiguration();
+                var fileTarget = new FileTarget
+                {
+                    FileName = Path.Combine(LogDirectory, "${shortdate}.log"),
+                    Layout = "${longdate} ${uppercase:${level}} ${message} ${exception:format=toString}",
+                    ArchiveFileName = Path.Combine(archiveDirectory, "mahou.{#}.log"),
+                    ArchiveAboveSize = MaxLogFileBytes,
+                    MaxArchiveFiles = MaxArchiveFiles,
+                    KeepFileOpen = false,
+                    EnableFileDelete = true
+                };
+
+                config.AddTarget("file", fileTarget);
+
 #if DEBUG
-            rule2 = new LoggingRule("*", LogLevel.Trace, fileTarget);
+                var rule = new LoggingRule("*", LogLevel.Trace, fileTarget);
 #else
-            rule2= new LoggingRule("*", LogLevel.Warn, fileTarget);
+                var rule = new LoggingRule("*", LogLevel.Warn, fileTarget);
 #endif
-            config.LoggingRules.Add(rule2);
-
-            // Step 5. Activate the configuration
-            LogManager.Configuration = config;
+                config.LoggingRules.Add(rule);
+                LogManager.Configuration = config;
+            }
+            catch
+            {
+                // Logging must never prevent the keyboard utility from starting.
+                LogManager.Configuration = new LoggingConfiguration();
+            }
         }
     }
 }

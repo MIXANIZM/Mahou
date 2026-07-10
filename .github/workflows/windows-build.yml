@@ -1,0 +1,215 @@
+name: Windows build
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: windows-build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 25
+    env:
+      SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      CHECKOUT_COMMIT: ${{ github.sha }}
+      VERSION_BASE: 1.4.3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate build metadata
+        shell: pwsh
+        run: |
+          $shortSha = $env:SOURCE_COMMIT.Substring(0, 12)
+          $version = "$env:VERSION_BASE-mixanizm+$shortSha"
+          $source = @"
+          using System.Reflection;
+
+          [assembly: AssemblyInformationalVersion("$version")]
+          [assembly: AssemblyMetadata("RepositoryUrl", "https://github.com/$env:GITHUB_REPOSITORY")]
+          [assembly: AssemblyMetadata("BuildCommit", "$env:SOURCE_COMMIT")]
+          [assembly: AssemblyMetadata("CheckoutCommit", "$env:CHECKOUT_COMMIT")]
+          [assembly: AssemblyMetadata("BuildChannel", "github-actions")]
+          "@
+          Set-Content -Path Mahou/Properties/BuildInfo.cs -Value $source -Encoding utf8
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore packages
+        run: nuget restore Mahou/Mahou.sln -NonInteractive
+
+      - name: Build Release x86 - clean environment 1
+        id: build
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $build1 = "$env:GITHUB_WORKSPACE\artifacts\build1\"
+          $obj1 = "$env:GITHUB_WORKSPACE\artifacts\obj1\"
+          New-Item -ItemType Directory -Force -Path $build1, $obj1 | Out-Null
+
+          & msbuild Mahou/Mahou.sln /m /p:Configuration=Release /p:Platform=x86 /p:Deterministic=true "/p:OutputPath=$build1" "/p:IntermediateOutputPath=$obj1" /v:minimal /fl /flp:"logfile=msbuild-build1.log;verbosity=normal"
+          Set-Content -Path build-exit-code.txt -Value $LASTEXITCODE
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Verify independent deterministic build
+        id: deterministic
+        if: steps.build.outcome == 'success'
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $build1 = "$env:GITHUB_WORKSPACE\artifacts\build1\"
+          $build2 = "$env:GITHUB_WORKSPACE\artifacts\build2\"
+          $obj2 = "$env:GITHUB_WORKSPACE\artifacts\obj2\"
+          New-Item -ItemType Directory -Force -Path $build2, $obj2 | Out-Null
+
+          & msbuild Mahou/Mahou.sln /m /p:Configuration=Release /p:Platform=x86 /p:Deterministic=true "/p:OutputPath=$build2" "/p:IntermediateOutputPath=$obj2" /v:minimal /fl /flp:"logfile=msbuild-build2.log;verbosity=normal"
+          $secondExitCode = $LASTEXITCODE
+          if ($secondExitCode -ne 0) {
+            Set-Content -Path deterministic-build.txt -Value "second_build_failed=$secondExitCode"
+            exit $secondExitCode
+          }
+
+          $firstExeHash = (Get-FileHash -Path (Join-Path $build1 "Mahou.exe") -Algorithm SHA256).Hash.ToLowerInvariant()
+          $secondExeHash = (Get-FileHash -Path (Join-Path $build2 "Mahou.exe") -Algorithm SHA256).Hash.ToLowerInvariant()
+          $firstConfigHash = (Get-FileHash -Path (Join-Path $build1 "Mahou.exe.config") -Algorithm SHA256).Hash.ToLowerInvariant()
+          $secondConfigHash = (Get-FileHash -Path (Join-Path $build2 "Mahou.exe.config") -Algorithm SHA256).Hash.ToLowerInvariant()
+
+          @(
+            "first_exe_sha256=$firstExeHash",
+            "second_exe_sha256=$secondExeHash",
+            "first_config_sha256=$firstConfigHash",
+            "second_config_sha256=$secondConfigHash",
+            "exe_match=$($firstExeHash -eq $secondExeHash)",
+            "config_match=$($firstConfigHash -eq $secondConfigHash)"
+          ) | Set-Content -Path deterministic-build.txt -Encoding utf8
+
+          if ($firstExeHash -ne $secondExeHash -or $firstConfigHash -ne $secondConfigHash) {
+            Write-Error "Two isolated clean builds did not reproduce byte-for-byte."
+            exit 1
+          }
+
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          Copy-Item (Join-Path $build1 "Mahou.exe") release/Mahou.exe -Force
+          Copy-Item (Join-Path $build1 "Mahou.exe.config") release/Mahou.exe.config -Force
+
+      - name: Generate hashes, manifest and SBOM
+        if: steps.build.outcome == 'success' && steps.deterministic.outcome == 'success'
+        shell: pwsh
+        run: |
+          $shortSha = $env:SOURCE_COMMIT.Substring(0, 12)
+          $version = "$env:VERSION_BASE-mixanizm+$shortSha"
+          $exePath = "release/Mahou.exe"
+          $configPath = "release/Mahou.exe.config"
+          $exeHash = (Get-FileHash -Path $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $configHash = (Get-FileHash -Path $configPath -Algorithm SHA256).Hash.ToLowerInvariant()
+
+          @(
+            "$exeHash *Mahou.exe",
+            "$configHash *Mahou.exe.config"
+          ) | Set-Content -Path SHA256SUMS.txt -Encoding utf8
+
+          $manifest = [ordered]@{
+            schema_version = 1
+            product = "MIXANIZM Mahou"
+            version = $version
+            repository = "https://github.com/$env:GITHUB_REPOSITORY"
+            source_commit = $env:SOURCE_COMMIT
+            checkout_commit = $env:CHECKOUT_COMMIT
+            workflow_run_id = $env:GITHUB_RUN_ID
+            target_framework = ".NET Framework 4.8"
+            platform = "x86"
+            deterministic_rebuild_verified = $true
+            dependencies = [ordered]@{
+              NLog = "6.1.3"
+              Fody = "6.9.3"
+              Costura_Fody = "6.2.0"
+            }
+            files = @(
+              [ordered]@{ path = "Mahou.exe"; sha256 = $exeHash },
+              [ordered]@{ path = "Mahou.exe.config"; sha256 = $configHash }
+            )
+          }
+          $manifest | ConvertTo-Json -Depth 8 | Set-Content -Path build-manifest.json -Encoding utf8
+
+          $sbom = [ordered]@{
+            bomFormat = "CycloneDX"
+            specVersion = "1.5"
+            version = 1
+            metadata = [ordered]@{
+              component = [ordered]@{
+                type = "application"
+                name = "MIXANIZM Mahou"
+                version = $version
+                properties = @(
+                  [ordered]@{ name = "mixanizm:source-commit"; value = $env:SOURCE_COMMIT },
+                  [ordered]@{ name = "mixanizm:checkout-commit"; value = $env:CHECKOUT_COMMIT },
+                  [ordered]@{ name = "mixanizm:target-framework"; value = ".NET Framework 4.8" },
+                  [ordered]@{ name = "mixanizm:platform"; value = "x86" },
+                  [ordered]@{ name = "mixanizm:deterministic-rebuild"; value = "verified" }
+                )
+              }
+            }
+            components = @(
+              [ordered]@{ type = "library"; name = "NLog"; version = "6.1.3"; scope = "required"; purl = "pkg:nuget/NLog@6.1.3" },
+              [ordered]@{ type = "library"; name = "Fody"; version = "6.9.3"; scope = "excluded"; purl = "pkg:nuget/Fody@6.9.3" },
+              [ordered]@{ type = "library"; name = "Costura.Fody"; version = "6.2.0"; scope = "excluded"; purl = "pkg:nuget/Costura.Fody@6.2.0" }
+            )
+          }
+          $sbom | ConvertTo-Json -Depth 10 | Set-Content -Path sbom.cdx.json -Encoding utf8
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build-log
+          path: |
+            msbuild-build1.log
+            msbuild-build2.log
+            build-exit-code.txt
+            deterministic-build.txt
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload deterministic diagnostics
+        if: steps.deterministic.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: deterministic-build-diagnostics
+          path: |
+            artifacts/build1/Mahou.exe
+            artifacts/build1/Mahou.exe.config
+            artifacts/build2/Mahou.exe
+            artifacts/build2/Mahou.exe.config
+            deterministic-build.txt
+          if-no-files-found: warn
+          retention-days: 3
+
+      - name: Upload Windows build
+        if: steps.build.outcome == 'success' && steps.deterministic.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MIXANIZM-Mahou-windows-x86
+          path: |
+            release/Mahou.exe
+            release/Mahou.exe.config
+            SHA256SUMS.txt
+            build-manifest.json
+            sbom.cdx.json
+            deterministic-build.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Fail job when build validation failed
+        if: steps.build.outcome == 'failure' || steps.deterministic.outcome == 'failure'
+        shell: pwsh
+        run: exit 1

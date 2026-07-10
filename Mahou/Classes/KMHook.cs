@@ -34,7 +34,8 @@ namespace Mahou {
 			WM_SYSKEYDOWN = 0x0104,
 			WM_SYSKEYUP = 0x0105
 		}
-		public static bool self, win, alt, ctrl, shift,
+		public static volatile bool self;
+		public static bool win, alt, ctrl, shift,
 			shiftRP, ctrlRP, altRP, //RP = Re-Press
 			awas, swas, cwas, afterEOS, //*was = alt/shift/ctrl was
 			keyAfterCTRL, hklOK, hksOK, hklineOK, hkSIOK,
@@ -58,8 +59,16 @@ namespace Mahou {
 			}
 		}
 		public static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam) {
+			if(nCode < 0)
+				return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
+
 			int vkCode = Marshal.ReadInt32(lParam);
 			var Key = (Keys)vkCode; // "Key" will further be used instead of "(Keys)vkCode"
+			if(!self && InputOperationQueue.TryCaptureKey(Key, wParam))
+				return (IntPtr)1;
+			bool suppressCurrentEvent = false;
+			Action queuedOperation = null;
+			Keys? queuedBoundary = null;
 			// All other printables
 			bool allOtherPrintables = Key >= Keys.Oem1 && Key <= Keys.OemBackslash;
 			// This is 0-9 & A-Z
@@ -84,8 +93,7 @@ namespace Mahou {
 					} catch {
 						//						Application.Exit();
 					}
-					var t = new Task(new Action(() => ConvertLast(words)));
-					t.RunSynchronously();
+					queuedOperation = () => ConvertLast(words);
 				}
 			}
 			if(MMain.c_words.Count == 0) {
@@ -114,6 +122,20 @@ namespace Mahou {
 			if(vkCode == 240)
 				vkCode = 20;
 			var thishk = new Hotkey(vkCode, new[] { ctrl, shift, alt });
+			bool unifiedWordSelectionHotkey = !MMain.mahou.ContainsFocus && !MMain.mahou.moreConfigs.ContainsFocus && !self &&
+				MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled") &&
+				thishk.Equals(MMain.mahou.HKCLast);
+			if(unifiedWordSelectionHotkey &&
+				(wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN || wParam == (IntPtr)(int)KMMessages.WM_SYSKEYDOWN)) {
+				suppressCurrentEvent = true;
+			}
+			if(unifiedWordSelectionHotkey &&
+				(wParam == (IntPtr)(int)KMMessages.WM_KEYUP || wParam == (IntPtr)(int)KMMessages.WM_SYSKEYUP)) {
+				suppressCurrentEvent = true;
+				var unifiedWord = new List<YuKey>(MMain.c_word);
+				AdaptiveLayoutLearning.RecordManualCorrection(unifiedWord);
+				queuedOperation = () => UnifiedTextConverter.ConvertSelectionOrLast(unifiedWord);
+			}
 			//			Console.WriteLine(MMain.mahou.HKCLast.keyCode + "\t" + thishk.keyCode);
 			//			Console.WriteLine(MMain.mahou.HKCLast.modifs[0] + "\t" + thishk.modifs[0]);
 			//			Console.WriteLine(MMain.mahou.HKCLast.modifs[1] + "\t" + thishk.modifs[1]);
@@ -151,8 +173,7 @@ namespace Mahou {
 								}
 								SendModsUp(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCSMods")));
 								IfKeyIsMod(Key);
-								var t = new Task(ConvertSelection);
-								t.RunSynchronously();
+								queuedOperation = ConvertSelection;
 							}
 						}
 						if(thishk.Equals(MMain.mahou.HKCSelection) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
@@ -162,7 +183,7 @@ namespace Mahou {
 						}
 					}
 					if(MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled")) {
-						if(thishk.Equals(MMain.mahou.HKCLast) && hklOK && !csdoing) {
+						if(!unifiedWordSelectionHotkey && thishk.Equals(MMain.mahou.HKCLast) && hklOK && !csdoing) {
 							if(MMain.MyConfs.ReadBool("Functions", "BlockCTRL") &&
 								MMain.MyConfs.Read("Hotkeys", "HKCLMods").Contains("Control")) {
 							} else {
@@ -173,8 +194,9 @@ namespace Mahou {
 								}
 								SendModsUp(Hotkey.GetMods(MMain.MyConfs.Read("Hotkeys", "HKCLMods")));
 								IfKeyIsMod(Key);
-								var t = new Task(new Action(() => ConvertLast(MMain.c_word)));
-								t.RunSynchronously();
+								var word = new List<YuKey>(MMain.c_word);
+								AdaptiveLayoutLearning.RecordManualCorrection(word);
+								queuedOperation = () => ConvertLast(word);
 							}
 						}
 						if(thishk.Equals(MMain.mahou.HKCLast) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
@@ -199,8 +221,7 @@ namespace Mahou {
 								foreach(var word in MMain.c_words) {
 									line.AddRange(word);
 								}
-								var t = new Task(new Action(() => ConvertLast(line)));
-								t.RunSynchronously();
+								queuedOperation = () => ConvertLast(line);
 							}
 						}
 						if(thishk.Equals(MMain.mahou.HKCLine) && MMain.MyConfs.ReadBool("DoubleKey", "Use")) {
@@ -264,26 +285,11 @@ namespace Mahou {
 						for(int i = 0; i < snipps.Length; i++) {
 							//					Console.WriteLine("!Current is = " + snipps[i]);
 							if(snip == snipps[i]) {
-								//						Console.WriteLine("ITISEQ!");
-								//							Console.WriteLine(c_snip.Count);
-								self = true;
-								for(int e = -1; e < c_snip.Count; e++) {
-									KInputs.MakeInput(new[] { KInputs.AddKey(Keys.Back, true),
-									KInputs.AddKey(Keys.Back, false)
-								});
-								}
-								//							Console.WriteLine(exps[0]);
-								//							Console.WriteLine(snipps.Length);
-								//							Console.WriteLine(exps.Length);
-								try {
-									KInputs.MakeInput(KInputs.AddString(exps[i]));
-								} catch {
-									// If not use TASK, form won't accept the keys(Enter/Escape/Alt+F4).
-									var tsk = new Task(() => MessageBox.Show(MMain.Msgs[10], MMain.Msgs[11], MessageBoxButtons.OK, MessageBoxIcon.Error));
-									tsk.Start();
-									KInputs.MakeInput(KInputs.AddString(snip));
-								}
-								self = false;
+								string originalSnippet = snip;
+								string replacement = exps[i];
+								int removeCount = c_snip.Count + 1;
+								queuedOperation = () => ExpandSnippet(originalSnippet, replacement, removeCount);
+								break;
 							}
 						}
 						c_snip.Clear();
@@ -320,9 +326,8 @@ namespace Mahou {
 			#region Switch only key
 			if(!self && !shift && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" &&
 				Key == Keys.CapsLock && wParam == (IntPtr)(int)KMMessages.WM_KEYUP) {
-				self = true;
-				ChangeLayout();
-				self = false;
+				if(queuedOperation == null)
+					queuedOperation = ChangeLayout;
 			}
 			if(!self && !shift && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "CapsLock" &&
 				Key == Keys.CapsLock && wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN) {
@@ -351,34 +356,40 @@ namespace Mahou {
 			if(!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "Left Control" &&
 				Key == Keys.LControlKey && wParam == (IntPtr)(int)KMMessages.WM_KEYUP &&
 				!MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls")) {
-				self = true;
-				if(MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch")) {
-					KeybdEvent(Keys.LControlKey, 2); // Sends it up to make it work when using "EmulateLayoutSwitch" 
+				bool emulateSwitch = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
+				if(queuedOperation == null) {
+					queuedOperation = delegate {
+						if(emulateSwitch)
+							KeybdEvent(Keys.LControlKey, 2);
+						ChangeLayout();
+						KeybdEvent(Keys.LControlKey, 2);
+					};
 				}
-				ChangeLayout();
-				KeybdEvent(Keys.LControlKey, 2); //fix for PostMessage, it somehow o_0 sends another ctrl...
-
-				self = false;
 			}
 			if(!self && MMain.MyConfs.Read("HotKeys", "OnlyKeyLayoutSwicth") == "Right Control" &&
 				Key == Keys.RControlKey && wParam == (IntPtr)(int)KMMessages.WM_KEYUP &&
 				!MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls")) {
-				self = true;
-				if(MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch")) {
-					KeybdEvent(Keys.RControlKey, 2); // Sends it up to make it work when using "EmulateLayoutSwitch" 
+				bool emulateSwitch = MMain.MyConfs.ReadBool("Functions", "EmulateLayoutSwitch");
+				if(queuedOperation == null) {
+					queuedOperation = delegate {
+						if(emulateSwitch)
+							KeybdEvent(Keys.RControlKey, 2);
+						ChangeLayout();
+					};
 				}
-				ChangeLayout();
-				self = false;
 			}
 			#endregion
 			#region By Ctrls switch
 			keyAfterCTRL |= !self && wParam == (IntPtr)(int)KMMessages.WM_KEYUP && ctrl;
 			if(!self && MMain.MyConfs.ReadBool("ExtCtrls", "UseExtCtrls") && wParam == (IntPtr)(int)KMMessages.WM_KEYUP && !keyAfterCTRL) {
-				if(Key == Keys.RControlKey) {
-					PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, (uint)MMain.MyConfs.ReadInt("ExtCtrls", "RCLocale"));
-				}
-				if(Key == Keys.LControlKey) {
-					PostMessage(Locales.ActiveWindow(), KInputs.WM_INPUTLANGCHANGEREQUEST, 0, (uint)MMain.MyConfs.ReadInt("ExtCtrls", "LCLocale"));
+				uint targetLocale = 0;
+				if(Key == Keys.RControlKey)
+					targetLocale = (uint)MMain.MyConfs.ReadInt("ExtCtrls", "RCLocale");
+				if(Key == Keys.LControlKey)
+					targetLocale = (uint)MMain.MyConfs.ReadInt("ExtCtrls", "LCLocale");
+				if(targetLocale != 0 && queuedOperation == null) {
+					uint requestedLocale = targetLocale;
+					queuedOperation = () => ChangeLayoutTo(requestedLocale);
 				}
 			}
 			keyAfterCTRL &= self || wParam != (IntPtr)(int)KMMessages.WM_KEYUP || (Key != Keys.LControlKey && Key != Keys.RControlKey);
@@ -386,6 +397,7 @@ namespace Mahou {
 			#region Other, when KeyDown
 			if(nCode >= 0 && wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN && !self && !waitfornum) {
 				if(Key == Keys.Back) { //Removes last item from current word when user press Backspace
+					AdaptiveLayoutLearning.OnBackspace();
 					if(MMain.c_word.Count != 0) {
 						MMain.c_word.RemoveAt(MMain.c_word.Count - 1);
 					}
@@ -434,6 +446,13 @@ namespace Mahou {
 						Key == Keys.Tab || Key == Keys.PageDown || Key == Keys.PageUp ||
 						Key == Keys.Left || Key == Keys.Right || Key == Keys.Down || Key == Keys.Up ||
 						(ctrl && Key != Keys.None)) { //Ctrl modifier + Any key will clear word too
+						if(Key == Keys.Enter && AdaptiveLayoutLearning.ShouldAutoConvert(MMain.c_word)) {
+							var autoWord = new List<YuKey>(MMain.c_word);
+							queuedOperation = () => ConvertLast(autoWord);
+							queuedBoundary = Keys.Enter;
+							suppressCurrentEvent = true;
+						}
+						AdaptiveLayoutLearning.OnBoundary();
 						MMain.c_word.Clear();
 						if(MMain.MyConfs.ReadBool("Functions", "Snippets")) {
 							c_snip.Clear();
@@ -445,6 +464,15 @@ namespace Mahou {
 				}
 				try {
 					if(Key == Keys.Space) {
+						if(AdaptiveLayoutLearning.ShouldAutoConvert(MMain.c_word)) {
+							var autoWord = new List<YuKey>(MMain.c_word);
+							queuedOperation = () => ConvertLast(autoWord);
+							queuedBoundary = Keys.Space;
+							suppressCurrentEvent = true;
+							if(MMain.MyConfs.ReadBool("Functions", "Snippets"))
+								c_snip.Clear();
+						}
+						AdaptiveLayoutLearning.OnBoundary();
 						MMain.c_words[MMain.c_words.Count - 1].Add(new YuKey() { yukey = Keys.Space });
 						MMain.c_words.Add(new List<YuKey>());
 						if(MMain.MyConfs.ReadBool("Functions", "EatOneSpace") && MMain.c_word.Count != 0 &&
@@ -530,13 +558,24 @@ namespace Mahou {
 				}
 			}
 			#endregion
-			return CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
+			IntPtr hookResult = suppressCurrentEvent
+				? (IntPtr)1
+				: CallNextHookEx(MMain._hookID, nCode, wParam, lParam);
+
+			if(queuedOperation != null) {
+				if(queuedBoundary.HasValue)
+					InputOperationQueue.EnqueueBoundary(queuedOperation, queuedBoundary.Value);
+				else
+					InputOperationQueue.Enqueue(queuedOperation);
+			}
+			return hookResult;
 		}
 		public static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam) {
 			if(nCode >= 0) {
 				if((KMMessages.WM_LBUTTONDOWN == (KMMessages)(int)wParam) || KMMessages.WM_RBUTTONDOWN == (KMMessages)(int)wParam) {
 					MMain.c_word.Clear();
 					MMain.c_words.Clear();
+					AdaptiveLayoutLearning.OnBoundary();
 					if(MMain.MyConfs.ReadBool("Functions", "Snippets")) {
 						c_snip.Clear();
 					}
@@ -546,6 +585,25 @@ namespace Mahou {
 		}
 		#endregion
 		#region Functions/Struct
+		static void ExpandSnippet(string originalSnippet, string replacement, int removeCount)
+		{
+			for(int i = 0; i < removeCount; i++) {
+				KInputs.MakeInput(new[] {
+					KInputs.AddKey(Keys.Back, true),
+					KInputs.AddKey(Keys.Back, false)
+				});
+			}
+
+			try {
+				KInputs.MakeInput(KInputs.AddString(replacement));
+			} catch(Exception ex) {
+				log.Error(ex, "Cannot expand snippet");
+				ThreadPool.QueueUserWorkItem(delegate {
+					MessageBox.Show(MMain.Msgs[10], MMain.Msgs[11], MessageBoxButtons.OK, MessageBoxIcon.Error);
+				});
+				KInputs.MakeInput(KInputs.AddString(originalSnippet));
+			}
+		}
 		static void ConvertSelection() //Converts selected text
 		{
 			Locales.IfLessThan2();
@@ -836,6 +894,20 @@ namespace Mahou {
 			} else
 				return false;
 		}
+		static void ChangeLayoutTo(uint targetLocale)
+		{
+			if(targetLocale == 0 || Locales.GetCurrentLocale() == targetLocale)
+				return;
+
+			IntPtr activeWindow = Locales.ActiveWindow();
+			for(int tries = 0; tries < 3 && Locales.GetCurrentLocale() != targetLocale; tries++) {
+				PostMessage(activeWindow, KInputs.WM_INPUTLANGCHANGEREQUEST, 0, targetLocale);
+				Thread.Sleep(50);
+			}
+			if(Locales.GetCurrentLocale() != targetLocale)
+				log.Warn("Could not switch to requested locale {0}", targetLocale);
+		}
+
 		static void ChangeLayout() //Changes current layout
 		{
 			var nowLocale = Locales.GetCurrentLocale();

@@ -1,7 +1,7 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -9,226 +9,275 @@ namespace Mahou
 {
     class Configs
     {
-        //Path where Mahou is now + Mahou.ini
-        public static readonly string filePath = Path.Combine(Update.nPath, "Mahou.ini");
-        public Configs()//Initializes settings, if some of elements or settinhs file, not exists it creates them with default value
+        public const string DataDirectoryName = "MIXANIZM Mahou";
+        public static readonly string dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), DataDirectoryName);
+        public static readonly string legacyFilePath = Path.Combine(Update.nPath, "Mahou.ini");
+        public static readonly string filePath = Path.Combine(dataPath, "Mahou.ini");
+
+        private readonly object cacheSync = new object();
+        private readonly Dictionary<string, string> valueCache = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        public Configs()
         {
-            if (!File.Exists(filePath)) //Create an UTF-16 configuration file
+            EnsureConfigLocation();
+
+            EnsureInt("Hotkeys", "HKCLKey", 45, 0, 255);
+            EnsureString("Hotkeys", "HKCLMods", "None");
+            EnsureInt("Hotkeys", "HKCSKey", 145, 0, 255);
+            EnsureString("Hotkeys", "HKCSMods", "None");
+            EnsureInt("Hotkeys", "HKCLineKey", 19, 0, 255);
+            EnsureString("Hotkeys", "HKCLineMods", "Shift");
+            EnsureString("Hotkeys", "OnlyKeyLayoutSwicth", "None");
+            MigrateInputDefaults();
+            EnsureInt("Hotkeys", "HKSymIgnKey", 122, 0, 255);
+            EnsureString("Hotkeys", "HKSymIgnMods", "Shift + Control + Alt");
+            EnsureInt("Hotkeys", "HKConvertMore", 122, 0, 255);
+            EnsureString("Hotkeys", "HKConvertMoreMods", "Shift + Control");
+
+            EnsureOptionalUInt("Locales", "locale1uId");
+            EnsureOptionalUInt("Locales", "locale2uId");
+            EnsureStringAllowEmpty("Locales", "locale1Lang", String.Empty);
+            EnsureStringAllowEmpty("Locales", "locale2Lang", String.Empty);
+            EnsureLanguage();
+
+            EnsureBool("Functions", "IconVisibility", true);
+            EnsureBool("Functions", "CycleMode", false);
+            EnsureBool("Functions", "EmulateLayoutSwitch", false);
+            EnsureInt("Functions", "ELSType", 0, 0, 2);
+            EnsureBool("Functions", "CSSwitch", true);
+            EnsureBool("Functions", "BlockCTRL", false);
+            EnsureBool("Functions", "RePress", true);
+            EnsureBool("Functions", "EatOneSpace", false);
+            EnsureBool("Functions", "ReSelect", true);
+            EnsureBool("Functions", "SymIgnModeEnabled", false);
+            EnsureBool("Functions", "MoreTries", true);
+            EnsureInt("Functions", "TriesCount", 5, 1, 50);
+            EnsureBool("Functions", "DisplayLang", false);
+            EnsureInt("Functions", "DLRefreshRate", 50, 10, 5000);
+            EnsureColor("Functions", "DLForeColor", "#FFFFFF");
+            EnsureColor("Functions", "DLBackColor", "#000000");
+            EnsureBool("Functions", "ExperimentalCSSwitch", false);
+            EnsureBool("Functions", "Snippets", false);
+            EnsureBool("Functions", "DTTOnChange", false);
+            EnsureBool("Functions", "ScrollTip", false);
+            Write("Functions", "UpdatesEnabled", "false");
+
+            EnsureBool("EnabledHotkeys", "HKCLEnabled", true);
+            // Temporarily disabled: the legacy selection converter cannot preserve every clipboard format.
+            Write("EnabledHotkeys", "HKCSEnabled", "false");
+            EnsureBool("EnabledHotkeys", "HKCLineEnabled", true);
+            EnsureBool("EnabledHotkeys", "HKSymIgnEnabled", true);
+
+            EnsureBool("ExtCtrls", "UseExtCtrls", false);
+            EnsureOptionalInt("ExtCtrls", "LCLocale");
+            EnsureStringAllowEmpty("ExtCtrls", "LCLocaleName", String.Empty);
+            EnsureOptionalInt("ExtCtrls", "RCLocale");
+            EnsureStringAllowEmpty("ExtCtrls", "RCLocaleName", String.Empty);
+
+            EnsureStringAllowEmpty("Proxy", "ServerPort", String.Empty);
+            EnsureStringAllowEmpty("Proxy", "UserName", String.Empty);
+            EnsureStringAllowEmpty("Proxy", "Password", String.Empty);
+
+            EnsureInt("TTipUI", "Height", 14, 1, 500);
+            EnsureInt("TTipUI", "Width", 16, 1, 500);
+            EnsureFont("TTipUI", "Font", "Georgia; 8pt");
+            EnsureInt("TTipUI", "xpos", 8, -10000, 10000);
+            EnsureInt("TTipUI", "ypos", 0, -10000, 10000);
+            EnsureBool("TTipUI", "TransparentBack", false);
+
+            EnsureBool("DoubleKey", "Use", false);
+            EnsureInt("DoubleKey", "Delay", 350, 50, 5000);
+        }
+
+        private static void EnsureConfigLocation()
+        {
+            Directory.CreateDirectory(dataPath);
+            if (!File.Exists(filePath) && File.Exists(legacyFilePath))
             {
-                File.WriteAllText(filePath, "!Unicode(✔), Mahou settings file", Encoding.Unicode);
+                try { File.Copy(legacyFilePath, filePath, false); }
+                catch { }
             }
-            int it = 0;      //int temp
-            uint uit = 0;    //uint temp
-            bool bt = false; //bool temp
-            //Hotkeys section
-            if (!Int32.TryParse(this.Read("Hotkeys", "HKCLKey"), out it))
-                this.Write("Hotkeys", "HKCLKey", "19"); //Hotkey convert last word
 
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKCLMods")))
-                this.Write("Hotkeys", "HKCLMods", "None"); //Hotkey convert last word modifiers
-
-            if (!Int32.TryParse(this.Read("Hotkeys", "HKCSKey"), out it))
-                this.Write("Hotkeys", "HKCSKey", "145"); //Hotkey convert selection
-
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKCSMods")))
-                this.Write("Hotkeys", "HKCSMods", "None"); //Hotkey convert selection modifiers
-
-            if (!Int32.TryParse(this.Read("Hotkeys", "HKCLineKey"), out it))
-                this.Write("Hotkeys", "HKCLineKey", "19"); //Hotkey convert line
-
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKCLineMods"))) //Hotkey convert line modifiers
-                this.Write("Hotkeys", "HKCLineMods", "Shift");
-
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "OnlyKeyLayoutSwicth")))
-                this.Write("Hotkeys", "OnlyKeyLayoutSwicth", "CapsLock"); //One key to switch layout
-
-            if (!Int32.TryParse(this.Read("Hotkeys", "HKSymIgnKey"), out it))
-                this.Write("Hotkeys", "HKSymIgnKey", "122"); //Hotkey Symbol ignore mode
-
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKSymIgnMods"))) //Hotkey Symbol ignore mode modifiers
-                this.Write("Hotkeys", "HKSymIgnMods", "Shift + Control + Alt");
-
-            if (!Int32.TryParse(this.Read("Hotkeys", "HKConvertMore"), out it))
-                this.Write("Hotkeys", "HKConvertMore", "122"); //Hotkey Convert more words
-
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKConvertMoreMods"))) //Hotkey Convert more words modifiers
-                this.Write("Hotkeys", "HKConvertMoreMods", "Shift + Control");
-
-            //Locales section
-            if (!UInt32.TryParse(this.Read("Locales", "locale1uId"), out uit))
-                this.Write("Locales", "locale1uId", ""); //Locale 1 id
-
-            if (String.IsNullOrEmpty(this.Read("Locales", "locale1Lang")))
-                this.Write("Locales", "locale1Lang", ""); //Locale 1 name
-
-            if (!UInt32.TryParse(this.Read("Locales", "locale2uId"), out uit))
-                this.Write("Locales", "locale2uId", ""); //Locale 2 id
-
-            if (String.IsNullOrEmpty(this.Read("Locales", "locale2Lang")))
-                this.Write("Locales", "locale2Lang", ""); //Locale 2 name
-
-            if (String.IsNullOrEmpty(this.Read("Locales", "LANGUAGE")))
-                this.Write("Locales", "LANGUAGE", "EN"); //Language of user interface, messages etc.
-
-            //Functions section
-            if (!Boolean.TryParse(this.Read("Functions", "IconVisibility"), out bt))
-                this.Write("Functions", "IconVisibility", "true"); //Tray icon visibility
-
-            if (!Boolean.TryParse(this.Read("Functions", "CycleMode"), out bt))
-                this.Write("Functions", "CycleMode", "false");
-
-            if (!Boolean.TryParse(this.Read("Functions", "EmulateLayoutSwitch"), out bt))
-                this.Write("Functions", "EmulateLayoutSwitch", "false");
-
-            if (!Int32.TryParse(this.Read("Functions", "ELSType"), out it))
-                this.Write("Functions", "ELSType", "0");
-
-            if (!Boolean.TryParse(this.Read("Functions", "CSSwitch"), out bt))
-                this.Write("Functions", "CSSwitch", "true");
-
-            if (!Boolean.TryParse(this.Read("Functions", "BlockCTRL"), out bt))
-                this.Write("Functions", "BlockCTRL", "false");
-
-            if (!Boolean.TryParse(this.Read("Functions", "RePress"), out bt))
-                this.Write("Functions", "RePress", "true");
-
-            if (!Boolean.TryParse(this.Read("Functions", "EatOneSpace"), out bt))
-                this.Write("Functions", "EatOneSpace", "false");
-            
-            if (!Boolean.TryParse(this.Read("Functions", "ReSelect"), out bt))
-                this.Write("Functions", "ReSelect", "true");
-
-            if (!Boolean.TryParse(this.Read("Functions", "SymIgnModeEnabled"), out bt))
-                this.Write("Functions", "SymIgnModeEnabled", "false");
-
-            if (!Boolean.TryParse(this.Read("Functions", "MoreTries"), out bt))
-                this.Write("Functions", "MoreTries", "true");
-
-            if (!Int32.TryParse(this.Read("Functions", "TriesCount"), out it))
-                this.Write("Functions", "TriesCount", "5");
-
-            if (!Boolean.TryParse(this.Read("Functions", "DisplayLang"), out bt))
-                this.Write("Functions", "DisplayLang", "false");
-
-            if (!Int32.TryParse(this.Read("Functions", "DLRefreshRate"), out it))
-                this.Write("Functions", "DLRefreshRate", "50");
-            
-            if (String.IsNullOrEmpty(this.Read("Functions", "DLForeColor")))
-                this.Write("Functions", "DLForeColor", "#FFFFFF");
-
-            if (String.IsNullOrEmpty(this.Read("Functions", "DLBackColor")))
-                this.Write("Functions", "DLBackColor", "#000000");
-
-            if (!Boolean.TryParse(this.Read("Functions", "ExperimentalCSSwitch"), out bt))
-                this.Write("Functions", "ExperimentalCSSwitch", "false");
-            
-            if (!Boolean.TryParse(this.Read("Functions", "Snippets"), out bt))
-                this.Write("Functions", "Snippets", "false");
-            
-            if (!Boolean.TryParse(this.Read("Functions", "DTTOnChange"), out bt))
-                this.Write("Functions", "DTTOnChange", "false");
-            
-            if (!Boolean.TryParse(this.Read("Functions", "ScrollTip"), out bt))
-                this.Write("Functions", "ScrollTip", "false");
-            
-            if (!Boolean.TryParse(this.Read("Functions", "UpdatesEnabled"), out bt))
-                this.Write("Functions", "UpdatesEnabled", "true");
-
-            //EnabledHotkeys section
-            if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLEnabled"), out bt))
-                this.Write("EnabledHotkeys", "HKCLEnabled", "true"); //Hotkey convert last word enabled
-
-            if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCSEnabled"), out bt))
-                this.Write("EnabledHotkeys", "HKCSEnabled", "true"); //Hotkey convert selection enabled
-
-            if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLineEnabled"), out bt))
-                this.Write("EnabledHotkeys", "HKCLineEnabled", "true"); //Hotkey convert line enabled
-
-            if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKSymIgnEnabled"), out bt))
-                this.Write("EnabledHotkeys", "HKSymIgnEnabled", "true"); //Hotkey symbol ignore enabled
-
-            //ExtCtrls section
-            if (!Boolean.TryParse(this.Read("ExtCtrls", "UseExtCtrls"), out bt))
-                this.Write("ExtCtrls", "UseExtCtrls", "false"); //Use extended CTRLs feature
-
-            if (!Int32.TryParse(this.Read("ExtCtrls", "LCLocale"), out it))
-                this.Write("ExtCtrls", "LCLocale", ""); //Left CTRL switch to locale
-
-            if (String.IsNullOrEmpty(this.Read("ExtCtrls", "LCLocaleName")))
-                this.Write("ExtCtrls", "LCLocaleName", "");
-
-            if (!Int32.TryParse(this.Read("ExtCtrls", "RCLocale"), out it))
-                this.Write("ExtCtrls", "RCLocale", ""); //Right CTRL switch to locale
-
-            if (String.IsNullOrEmpty(this.Read("ExtCtrls", "RCLocaleName")))
-                this.Write("ExtCtrls", "RCLocaleName", "");
-            
-            //Proxy section
-            if (String.IsNullOrEmpty(this.Read("Proxy", "ServerPort")))
-                this.Write("Proxy", "ServerPort", "");
-            
-            if (String.IsNullOrEmpty(this.Read("Proxy", "UserName")))
-                this.Write("Proxy", "UserName", "");
-            
-            if (String.IsNullOrEmpty(this.Read("Proxy", "Password")))
-                this.Write("Proxy", "Password", "");
-            
-            //Tooltip UI sections
-            if (!Int32.TryParse(this.Read("TTipUI", "Height"), out it))
-                this.Write("TTipUI", "Height", "14"); //Lang Tooltip height
-            
-            if (!Int32.TryParse(this.Read("TTipUI", "Width"), out it))
-                this.Write("TTipUI", "Width", "16"); //Lang Tooltip width
-            
-            if (String.IsNullOrEmpty(this.Read("TTipUI", "Font")))
-                this.Write("TTipUI", "Font", "Georgia; 8pt"); //Lang Tooltip font & it size
-            
-            if (!Int32.TryParse(this.Read("TTipUI", "xpos"), out it))
-                this.Write("TTipUI", "xpos", "8"); //Lang Tooltip x pos
-            
-            if (!Int32.TryParse(this.Read("TTipUI", "ypos"), out it))
-                this.Write("TTipUI", "ypos", "0"); //Lang Tooltip y pos
-            
-            if (!Boolean.TryParse(this.Read("TTipUI", "TransparentBack"), out bt))
-                this.Write("TTipUI", "TransparentBack", "false"); //Transparent Background in tooltip
-            
-            //DoubleKey section
-            if (String.IsNullOrEmpty(this.Read("DoubleKey", "Use")))
-                this.Write("DoubleKey", "Use", "false");
-            
-            if (!Int32.TryParse(this.Read("DoubleKey", "Delay"), out it))
-                this.Write("DoubleKey", "Delay", "350");
+            if (!File.Exists(filePath))
+                File.WriteAllText(filePath, "!Unicode(✔), Mahou settings file", Encoding.Unicode);
         }
-        public void Write(string section, string key, string value) //Writes "value" to "key" in "section"
+
+        public void Write(string section, string key, string value)
         {
-            WritePrivateProfileString(section, key, value, filePath);
+            string plainValue = value ?? String.Empty;
+            string storedValue = plainValue;
+            if (SecretProtector.IsProxyPassword(section, key))
+                storedValue = SecretProtector.Protect(storedValue);
+
+            if (!WritePrivateProfileString(section, key, storedValue, filePath))
+                throw new IOException("Mahou could not save setting [" + section + "] " + key + ".");
+
+            lock (cacheSync)
+                valueCache[CacheKey(section, key)] = plainValue;
         }
-        public string Read(string section, string key) //Returns "key" value in "section" as string
+
+        public string Read(string section, string key)
         {
-            var SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
-            return SB.ToString();
+            string cacheKey = CacheKey(section, key);
+            lock (cacheSync)
+            {
+                string cached;
+                if (valueCache.TryGetValue(cacheKey, out cached))
+                    return cached;
+            }
+
+            var buffer = new StringBuilder(4096);
+            GetPrivateProfileString(section, key, String.Empty, buffer, buffer.Capacity, filePath);
+            string rawValue = buffer.ToString();
+            string plainValue = rawValue;
+
+            if (SecretProtector.IsProxyPassword(section, key))
+            {
+                string plaintext;
+                if (SecretProtector.TryUnprotect(rawValue, out plaintext))
+                {
+                    plainValue = plaintext;
+                }
+                else if (!String.IsNullOrEmpty(rawValue) && !SecretProtector.IsProtectedValue(rawValue))
+                {
+                    plainValue = rawValue;
+                    Write(section, key, rawValue);
+                    ScrubLegacyProxyPassword();
+                    return plainValue;
+                }
+                else
+                {
+                    plainValue = String.Empty;
+                }
+            }
+
+            lock (cacheSync)
+                valueCache[cacheKey] = plainValue;
+
+            return plainValue;
         }
-        public int ReadInt(string section, string key) //Returns "key" value in "section" as int
+
+        public int ReadInt(string section, string key)
         {
-            var SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
-            return Int32.Parse(SB.ToString());
+            int value;
+            return Int32.TryParse(Read(section, key), out value) ? value : 0;
         }
-        public bool ReadBool(string section, string key) //Returns "key" value in "section" as bool
+
+        public bool ReadBool(string section, string key)
         {
-            var SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
-            return Boolean.Parse(SB.ToString().ToLower());
+            bool value;
+            return Boolean.TryParse(Read(section, key), out value) && value;
         }
-        #region Dll imports
-        [DllImport("kernel32", CharSet = CharSet.Unicode)]
-        static extern long WritePrivateProfileString(string section,
-        string key, string val, string filePath);
+
+        public void ReloadFromDisk()
+        {
+            lock (cacheSync)
+                valueCache.Clear();
+        }
+
+        private static string CacheKey(string section, string key)
+        {
+            return (section ?? String.Empty) + "\u001f" + (key ?? String.Empty);
+        }
+
+        private void MigrateInputDefaults()
+        {
+            const string marker = "InsertWordSelectionV1";
+            if (ReadBool("Migration", marker))
+                return;
+
+            if (ReadInt("Hotkeys", "HKCLKey") == 19 &&
+                String.Equals(Read("Hotkeys", "HKCLMods"), "None", StringComparison.OrdinalIgnoreCase))
+            {
+                Write("Hotkeys", "HKCLKey", ((int)System.Windows.Forms.Keys.Insert).ToString());
+            }
+
+            Write("Hotkeys", "OnlyKeyLayoutSwicth", "None");
+            Write("Migration", marker, "true");
+        }
+
+        private void EnsureLanguage()
+        {
+            string language = Read("Locales", "LANGUAGE");
+            if (!String.Equals(language, "RU", StringComparison.OrdinalIgnoreCase) &&
+                !String.Equals(language, "EN", StringComparison.OrdinalIgnoreCase))
+                Write("Locales", "LANGUAGE", "EN");
+        }
+
+        private void EnsureBool(string section, string key, bool defaultValue)
+        {
+            bool value;
+            if (!Boolean.TryParse(Read(section, key), out value))
+                Write(section, key, defaultValue.ToString());
+        }
+
+        private void EnsureInt(string section, string key, int defaultValue, int minimum, int maximum)
+        {
+            int value;
+            if (!Int32.TryParse(Read(section, key), out value) || value < minimum || value > maximum)
+                Write(section, key, defaultValue.ToString());
+        }
+
+        private void EnsureOptionalInt(string section, string key)
+        {
+            string raw = Read(section, key);
+            int value;
+            if (!String.IsNullOrEmpty(raw) && !Int32.TryParse(raw, out value))
+                Write(section, key, String.Empty);
+        }
+
+        private void EnsureOptionalUInt(string section, string key)
+        {
+            string raw = Read(section, key);
+            uint value;
+            if (!String.IsNullOrEmpty(raw) && !UInt32.TryParse(raw, out value))
+                Write(section, key, String.Empty);
+        }
+
+        private void EnsureString(string section, string key, string defaultValue)
+        {
+            if (String.IsNullOrWhiteSpace(Read(section, key)))
+                Write(section, key, defaultValue);
+        }
+
+        private void EnsureStringAllowEmpty(string section, string key, string defaultValue)
+        {
+            if (Read(section, key) == null)
+                Write(section, key, defaultValue);
+        }
+
+        private void EnsureColor(string section, string key, string defaultValue)
+        {
+            try { ColorTranslator.FromHtml(Read(section, key)); }
+            catch { Write(section, key, defaultValue); }
+        }
+
+        private void EnsureFont(string section, string key, string defaultValue)
+        {
+            try
+            {
+                var converter = new FontConverter();
+                var font = converter.ConvertFromInvariantString(Read(section, key)) as Font;
+                if (font == null) throw new FormatException();
+                font.Dispose();
+            }
+            catch { Write(section, key, defaultValue); }
+        }
+
+        private static void ScrubLegacyProxyPassword()
+        {
+            try
+            {
+                if (File.Exists(legacyFilePath))
+                    WritePrivateProfileString("Proxy", "Password", String.Empty, legacyFilePath);
+            }
+            catch { }
+        }
+
+        [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern bool WritePrivateProfileString(string section, string key, string value, string path);
 
         [DllImport("kernel32", CharSet = CharSet.Unicode)]
-        static extern int GetPrivateProfileString(string section,
-        string key, string def, StringBuilder retVal, int size, string filePath);
-        #endregion
+        private static extern int GetPrivateProfileString(string section, string key, string defaultValue, StringBuilder result, int size, string path);
     }
 }
