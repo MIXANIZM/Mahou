@@ -1,0 +1,79 @@
+name: Apply KMHook adaptive integration
+
+on:
+  push:
+    branches:
+      - mixanizm-adaptive-layout-learning
+    paths:
+      - .github/workflows/apply-kmhook-integration.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: windows-2022
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-adaptive-layout-learning
+
+      - name: Apply exact KMHook patch
+        shell: pwsh
+        run: |
+          @'
+          from pathlib import Path
+
+          path = Path("Mahou/Classes/KMHook.cs")
+          text = path.read_text(encoding="utf-8-sig")
+
+          def replace_once(old, new, name):
+              global text
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{name}: expected exactly one match, found {count}")
+              text = text.replace(old, new, 1)
+
+          replace_once(
+              "\t\t\t\t\t\t\t\tIfKeyIsMod(Key);\n\t\t\t\t\t\t\t\tvar t = new Task(new Action(() => ConvertLast(MMain.c_word)));",
+              "\t\t\t\t\t\t\t\tIfKeyIsMod(Key);\n\t\t\t\t\t\t\t\tAdaptiveLayoutLearning.RecordManualCorrection(new List<YuKey>(MMain.c_word));\n\t\t\t\t\t\t\t\tvar t = new Task(new Action(() => ConvertLast(MMain.c_word)));",
+              "manual correction integration")
+
+          replace_once(
+              "\t\t\t\tif(Key == Keys.Back) { //Removes last item from current word when user press Backspace\n",
+              "\t\t\t\tif(Key == Keys.Back) { //Removes last item from current word when user press Backspace\n\t\t\t\t\tAdaptiveLayoutLearning.OnBackspace();\n",
+              "backspace integration")
+
+          replace_once(
+              "\t\t\t\t\t\t(ctrl && Key != Keys.None)) { //Ctrl modifier + Any key will clear word too\n\t\t\t\t\t\tMMain.c_word.Clear();",
+              "\t\t\t\t\t\t(ctrl && Key != Keys.None)) { //Ctrl modifier + Any key will clear word too\n\t\t\t\t\t\tif(Key == Keys.Enter && AdaptiveLayoutLearning.ShouldAutoConvert(MMain.c_word))\n\t\t\t\t\t\t\tConvertLast(MMain.c_word);\n\t\t\t\t\t\tAdaptiveLayoutLearning.OnBoundary();\n\t\t\t\t\t\tMMain.c_word.Clear();",
+              "navigation boundary integration")
+
+          replace_once(
+              "\t\t\t\t\tif(Key == Keys.Space) {\n\t\t\t\t\t\tMMain.c_words[MMain.c_words.Count - 1].Add(new YuKey() { yukey = Keys.Space });",
+              "\t\t\t\t\tif(Key == Keys.Space) {\n\t\t\t\t\t\tif(AdaptiveLayoutLearning.ShouldAutoConvert(MMain.c_word))\n\t\t\t\t\t\t\tConvertLast(MMain.c_word);\n\t\t\t\t\t\tAdaptiveLayoutLearning.OnBoundary();\n\t\t\t\t\t\tMMain.c_words[MMain.c_words.Count - 1].Add(new YuKey() { yukey = Keys.Space });",
+              "space boundary integration")
+
+          replace_once(
+              "\t\t\t\t\tMMain.c_word.Clear();\n\t\t\t\t\tMMain.c_words.Clear();\n\t\t\t\t\tif(MMain.MyConfs.ReadBool(\"Functions\", \"Snippets\")) {",
+              "\t\t\t\t\tMMain.c_word.Clear();\n\t\t\t\t\tMMain.c_words.Clear();\n\t\t\t\t\tAdaptiveLayoutLearning.OnBoundary();\n\t\t\t\t\tif(MMain.MyConfs.ReadBool(\"Functions\", \"Snippets\")) {",
+              "mouse boundary integration")
+
+          with path.open("w", encoding="utf-8-sig", newline="\r\n") as handle:
+              handle.write(text)
+          '@ | Set-Content -Path apply_kmhook_patch.py -Encoding UTF8
+          python apply_kmhook_patch.py
+          Remove-Item apply_kmhook_patch.py
+
+      - name: Commit exact integration patch
+        shell: pwsh
+        run: |
+          git config user.name "MIXANIZM CI"
+          git config user.email "actions@users.noreply.github.com"
+          git add Mahou/Classes/KMHook.cs
+          git diff --cached --check
+          git commit -m "Integrate adaptive learning into primary KMHook"
+          git push origin HEAD:mixanizm-adaptive-layout-learning
