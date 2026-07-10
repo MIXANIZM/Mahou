@@ -13,7 +13,7 @@ concurrency:
 jobs:
   build:
     runs-on: windows-2022
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
       CHECKOUT_COMMIT: ${{ github.sha }}
@@ -57,8 +57,43 @@ jobs:
           Set-Content -Path build-exit-code.txt -Value $LASTEXITCODE
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Generate hashes, manifest and SBOM
+      - name: Verify deterministic rebuild
+        id: deterministic
         if: steps.build.outcome == 'success'
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $exePath = "Mahou/bin/Release/Mahou.exe"
+          $configPath = "Mahou/bin/Release/Mahou.exe.config"
+          $firstExeHash = (Get-FileHash -Path $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $firstConfigHash = (Get-FileHash -Path $configPath -Algorithm SHA256).Hash.ToLowerInvariant()
+
+          msbuild Mahou/Mahou.sln /t:Rebuild /m /p:Configuration=Release /p:Platform=x86 /p:Deterministic=true /v:minimal /fl /flp:"logfile=msbuild-rebuild.log;verbosity=normal"
+          $rebuildExitCode = $LASTEXITCODE
+          if ($rebuildExitCode -ne 0) {
+            Set-Content -Path deterministic-build.txt -Value "rebuild_failed=$rebuildExitCode"
+            exit $rebuildExitCode
+          }
+
+          $secondExeHash = (Get-FileHash -Path $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $secondConfigHash = (Get-FileHash -Path $configPath -Algorithm SHA256).Hash.ToLowerInvariant()
+
+          @(
+            "first_exe_sha256=$firstExeHash",
+            "second_exe_sha256=$secondExeHash",
+            "first_config_sha256=$firstConfigHash",
+            "second_config_sha256=$secondConfigHash",
+            "exe_match=$($firstExeHash -eq $secondExeHash)",
+            "config_match=$($firstConfigHash -eq $secondConfigHash)"
+          ) | Set-Content -Path deterministic-build.txt -Encoding utf8
+
+          if ($firstExeHash -ne $secondExeHash -or $firstConfigHash -ne $secondConfigHash) {
+            Write-Error "The second build did not reproduce the first build byte-for-byte."
+            exit 1
+          }
+
+      - name: Generate hashes, manifest and SBOM
+        if: steps.build.outcome == 'success' && steps.deterministic.outcome == 'success'
         shell: pwsh
         run: |
           $shortSha = $env:SOURCE_COMMIT.Substring(0, 12)
@@ -83,6 +118,7 @@ jobs:
             workflow_run_id = $env:GITHUB_RUN_ID
             target_framework = ".NET Framework 4.8"
             platform = "x86"
+            deterministic_rebuild_verified = $true
             dependencies = [ordered]@{
               NLog = "6.1.3"
               Fody = "6.9.3"
@@ -108,7 +144,8 @@ jobs:
                   [ordered]@{ name = "mixanizm:source-commit"; value = $env:SOURCE_COMMIT },
                   [ordered]@{ name = "mixanizm:checkout-commit"; value = $env:CHECKOUT_COMMIT },
                   [ordered]@{ name = "mixanizm:target-framework"; value = ".NET Framework 4.8" },
-                  [ordered]@{ name = "mixanizm:platform"; value = "x86" }
+                  [ordered]@{ name = "mixanizm:platform"; value = "x86" },
+                  [ordered]@{ name = "mixanizm:deterministic-rebuild"; value = "verified" }
                 )
               }
             }
@@ -127,12 +164,14 @@ jobs:
           name: windows-build-log
           path: |
             msbuild.log
+            msbuild-rebuild.log
             build-exit-code.txt
+            deterministic-build.txt
           if-no-files-found: warn
           retention-days: 7
 
       - name: Upload Windows build
-        if: steps.build.outcome == 'success'
+        if: steps.build.outcome == 'success' && steps.deterministic.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: MIXANIZM-Mahou-windows-x86
@@ -142,10 +181,11 @@ jobs:
             SHA256SUMS.txt
             build-manifest.json
             sbom.cdx.json
+            deterministic-build.txt
           if-no-files-found: error
           retention-days: 14
 
-      - name: Fail job when build failed
-        if: steps.build.outcome == 'failure'
+      - name: Fail job when build validation failed
+        if: steps.build.outcome == 'failure' || steps.deterministic.outcome == 'failure'
         shell: pwsh
         run: exit 1
