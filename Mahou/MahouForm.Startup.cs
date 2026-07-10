@@ -5,7 +5,6 @@ namespace Mahou
 {
     public partial class MahouForm
     {
-        private bool autorunStateBeforeLegacyApply;
         private bool autorunBridgeActive;
 
         protected override void OnLoad(EventArgs e)
@@ -22,6 +21,20 @@ namespace Mahou
                 RefreshStartupCheckboxFromRegistry();
         }
 
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            var keyCode = keyData & Keys.KeyCode;
+            bool enterWillApply = keyCode == Keys.Enter &&
+                (btnApply.Focused || btnOK.Focused || AcceptButton == btnOK);
+            bool spaceWillApply = keyCode == Keys.Space &&
+                (btnApply.Focused || btnOK.Focused);
+
+            if (!autorunBridgeActive && (enterWillApply || spaceWillApply))
+                ApplyStartupRegistryStateBeforeLegacyShortcutCode();
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         private void WireStartupRegistryBridge()
         {
             btnApply.MouseDown -= StartupRegistryBridgeBeforeLegacyApply;
@@ -32,7 +45,8 @@ namespace Mahou
 
         private void StartupRegistryBridgeBeforeLegacyApply(object sender, MouseEventArgs e)
         {
-            ApplyStartupRegistryStateBeforeLegacyShortcutCode();
+            if (!autorunBridgeActive)
+                ApplyStartupRegistryStateBeforeLegacyShortcutCode();
         }
 
         private void RefreshStartupCheckboxFromRegistry()
@@ -54,9 +68,9 @@ namespace Mahou
             try
             {
                 autorunBridgeActive = true;
-                autorunStateBeforeLegacyApply = cbAutorun.Checked;
+                bool requestedState = cbAutorun.Checked;
 
-                if (autorunStateBeforeLegacyApply)
+                if (requestedState)
                     StartupManager.Enable();
                 else
                     StartupManager.Disable();
@@ -67,7 +81,7 @@ namespace Mahou
 
                 BeginInvoke(new Action(delegate
                 {
-                    cbAutorun.Checked = StartupManager.IsEnabled() || autorunStateBeforeLegacyApply;
+                    cbAutorun.Checked = StartupManager.IsEnabled();
                     autorunBridgeActive = false;
                 }));
             }
