@@ -11,6 +11,7 @@ namespace Mahou
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            DpiAccessibility.Apply(this, "MIXANIZM Mahou settings", "btnOK", "btnCancel");
             ApplySecurityPolicyUi();
             ReplaceLegacyApplyHandlers();
             ReplaceLegacyRepositoryLink();
@@ -101,8 +102,10 @@ namespace Mahou
         {
             cbCSActive.Checked = false;
             cbCSActive.Enabled = false;
+            cbCSActive.AccessibleName = "Convert selected text";
             cbCSActive.AccessibleDescription = "Disabled until clipboard preservation is safe for all formats.";
             tbCSHK.Enabled = false;
+            tbCSHK.AccessibleName = "Convert selected text hotkey";
         }
 
         private void RefreshStartupCheckboxFromRegistry()
