@@ -15,6 +15,7 @@ namespace Mahou
                 return;
 
             form.AutoScroll = true;
+            form.AccessibleRole = AccessibleRole.Dialog;
             if (String.IsNullOrWhiteSpace(form.AccessibleName))
                 form.AccessibleName = String.IsNullOrWhiteSpace(accessibleName) ? CleanText(form.Text) : accessibleName;
 
@@ -25,7 +26,14 @@ namespace Mahou
 
             try
             {
-                Log.Info("UI form {0} opened at {1} DPI; high contrast={2}", form.Name, form.DeviceDpi, SystemInformation.HighContrast);
+                Log.Info(
+                    "UI form {0} opened at {1} DPI; scale mode={2}; client={3}x{4}; high contrast={5}",
+                    form.Name,
+                    form.DeviceDpi,
+                    form.AutoScaleMode,
+                    form.ClientSize.Width,
+                    form.ClientSize.Height,
+                    SystemInformation.HighContrast);
             }
             catch
             {
@@ -44,7 +52,15 @@ namespace Mahou
                         label.AutoEllipsis = true;
                 }
 
-                if (String.IsNullOrWhiteSpace(control.AccessibleName))
+                var group = control as GroupBox;
+                if (group != null)
+                    group.TabStop = false;
+
+                var link = control as LinkLabel;
+                if (link != null)
+                    link.AccessibleRole = AccessibleRole.Link;
+
+                if (ShouldExposeName(control) && String.IsNullOrWhiteSpace(control.AccessibleName))
                 {
                     string candidate = CleanText(control.Text);
                     if (String.IsNullOrWhiteSpace(candidate))
@@ -56,6 +72,19 @@ namespace Mahou
                 if (control.HasChildren)
                     ApplyRecursive(control);
             }
+        }
+
+        private static bool ShouldExposeName(Control control)
+        {
+            return control is Button ||
+                control is CheckBox ||
+                control is RadioButton ||
+                control is TextBoxBase ||
+                control is ComboBox ||
+                control is NumericUpDown ||
+                control is LinkLabel ||
+                control is GroupBox ||
+                control is Label;
         }
 
         private static void SetDialogButtons(Form form, string acceptControlName, string cancelControlName)
@@ -96,7 +125,7 @@ namespace Mahou
                 return String.Empty;
 
             string source = value;
-            string[] prefixes = { "btn", "cb", "tb", "lb", "lbl", "nud", "gb", "pE" };
+            string[] prefixes = { "btn", "cb", "tb", "lb", "lbl", "nud", "gb" };
             foreach (string prefix in prefixes)
             {
                 if (source.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && source.Length > prefix.Length)
