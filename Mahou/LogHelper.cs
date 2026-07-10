@@ -37,9 +37,7 @@ namespace Mahou
                     Layout = "${longdate} ${uppercase:${level}} ${message} ${exception:format=toString}",
                     ArchiveFileName = Path.Combine(archiveDirectory, "mahou.{#}.log"),
                     ArchiveAboveSize = MaxLogFileBytes,
-                    ArchiveNumbering = ArchiveNumberingMode.Sequence,
                     MaxArchiveFiles = MaxArchiveFiles,
-                    ConcurrentWrites = true,
                     KeepFileOpen = false,
                     EnableFileDelete = true
                 };
