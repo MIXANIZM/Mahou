@@ -42,18 +42,15 @@ namespace Mahou
             AutoScaleMode = AutoScaleMode.None;
             StartPosition = FormStartPosition.CenterScreen;
 
-            const int targetWidth = 460;
-            const int targetHeight = 380;
-            float widthScale = ClientSize.Width > 0 ? targetWidth / (float)ClientSize.Width : 1.0f;
-            float heightScale = ClientSize.Height > 0 ? targetHeight / (float)ClientSize.Height : 1.0f;
-            float scale = Math.Max(1.0f, Math.Min(1.45f, Math.Max(widthScale, heightScale)));
+            const float requestedScale = 2.5f;
+            Size originalClientSize = ClientSize;
 
-            if (scale > 1.01f)
-            {
-                SuspendLayout();
-                Scale(new SizeF(scale, scale));
-                ResumeLayout(true);
-            }
+            SuspendLayout();
+            Scale(new SizeF(requestedScale, requestedScale));
+            ClientSize = new Size(
+                Math.Max(1, (int)Math.Round(originalClientSize.Width * requestedScale)),
+                Math.Max(1, (int)Math.Round(originalClientSize.Height * requestedScale)));
+            ResumeLayout(true);
 
             MinimumSize = Size;
             MaximumSize = Size;
