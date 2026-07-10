@@ -27,6 +27,8 @@ namespace Mahou
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern IntPtr GlobalAlloc(uint uFlags, UIntPtr dwBytes);
         [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr GlobalFree(IntPtr hMem);
+        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern UIntPtr GlobalSize(IntPtr hMem);
         [DllImport("kernel32.dll")]
         static extern uint EnumClipboardFormats(uint format);
@@ -96,7 +98,7 @@ namespace Mahou
             }
         }
 
-        public static ClipboardData GetClipboardDatas() // Gets all clipboard datas, but only text-based datas supported...
+        public static ClipboardData GetClipboardDatas() // Gets supported clipboard data.
         {
             var cd = new ClipboardData()
             {
@@ -117,7 +119,7 @@ namespace Mahou
 
                     UIntPtr length = GlobalSize(pos);
                     var byteCount = length.ToUInt32();
-                    if (byteCount == 0)
+                    if (byteCount == 0 || byteCount > Int32.MaxValue)
                         continue;
 
                     IntPtr gLock = GlobalLock(pos);
@@ -126,7 +128,7 @@ namespace Mahou
 
                     try
                     {
-                        byte[] data = new byte[byteCount];
+                        byte[] data = new byte[(int)byteCount];
                         Marshal.Copy(gLock, data, 0, data.Length);
                         cd.data.Add(data);
                         cd.format.Add(fmt);
@@ -145,7 +147,7 @@ namespace Mahou
             return cd;
         }
 
-        public static void RestoreData(ClipboardData datas) // Places all datas to clipboard, but only text-based datas supported...
+        public static void RestoreData(ClipboardData datas) // Places supported data back to clipboard.
         {
             if (datas.data == null || datas.format == null || datas.data.Count != datas.format.Count)
                 return;
@@ -155,7 +157,9 @@ namespace Mahou
 
             try
             {
-                EmptyClipboard();
+                if (!EmptyClipboard())
+                    return;
+
                 for (int i = 0; i != datas.data.Count; i++)
                 {
                     var data = datas.data[i];
@@ -166,14 +170,30 @@ namespace Mahou
                     if (alloc == IntPtr.Zero)
                         continue;
 
-                    var glock = GlobalLock(alloc);
-                    if (glock == IntPtr.Zero)
-                        continue;
+                    bool ownershipTransferred = false;
+                    try
+                    {
+                        var glock = GlobalLock(alloc);
+                        if (glock == IntPtr.Zero)
+                            continue;
 
-                    var fmt = datas.format[i];
-                    Marshal.Copy(data, 0, glock, data.Length);
-                    GlobalUnlock(alloc);
-                    SetClipboardData(fmt, alloc);
+                        try
+                        {
+                            Marshal.Copy(data, 0, glock, data.Length);
+                        }
+                        finally
+                        {
+                            GlobalUnlock(alloc);
+                        }
+
+                        var fmt = datas.format[i];
+                        ownershipTransferred = SetClipboardData(fmt, alloc) != IntPtr.Zero;
+                    }
+                    finally
+                    {
+                        if (!ownershipTransferred)
+                            GlobalFree(alloc);
+                    }
                 }
             }
             finally
