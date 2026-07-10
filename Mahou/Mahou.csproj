@@ -110,6 +110,7 @@
     <Compile Include="Classes\TrayIcon.cs" />
     <Compile Include="Classes\Configs.cs" />
     <Compile Include="Classes\StartupManager.cs" />
+    <Compile Include="Classes\UserDataPaths.cs" />
     <Compile Include="Classes\AdaptiveLayoutLearning.cs" />
     <Compile Include="LangDisplay.cs">
       <SubType>Form</SubType>
@@ -178,7 +179,7 @@
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 %28клиентский профиль%29</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
