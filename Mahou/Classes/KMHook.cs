@@ -122,7 +122,7 @@ namespace Mahou {
 			if(vkCode == 240)
 				vkCode = 20;
 			var thishk = new Hotkey(vkCode, new[] { ctrl, shift, alt });
-			bool unifiedWordSelectionHotkey = !MMain.mahou.Focused && !self &&
+			bool unifiedWordSelectionHotkey = !MMain.mahou.ContainsFocus && !MMain.mahou.moreConfigs.ContainsFocus && !self &&
 				MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled") &&
 				thishk.Equals(MMain.mahou.HKCLast);
 			if(unifiedWordSelectionHotkey &&
