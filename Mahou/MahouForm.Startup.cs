@@ -9,6 +9,7 @@ namespace Mahou
     {
         private bool safeApplyActive;
         private bool legacyLayoutNormalized;
+        private bool languagePolicyWired;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -16,6 +17,7 @@ namespace Mahou
             NormalizeLegacyWindowLayout();
             DpiAccessibility.Apply(this, "MIXANIZM Mahou settings", "btnOK", "btnCancel");
             ApplySecurityPolicyUi();
+            WireLanguagePolicyRefresh();
             ReplaceLegacyApplyHandlers();
             ReplaceLegacyRepositoryLink();
             RefreshStartupCheckboxFromRegistry();
@@ -56,6 +58,18 @@ namespace Mahou
             MinimumSize = Size;
             MaximumSize = Size;
             AutoScroll = true;
+        }
+
+        private void WireLanguagePolicyRefresh()
+        {
+            if (languagePolicyWired)
+                return;
+
+            languagePolicyWired = true;
+            btnLangChange.Click += delegate
+            {
+                BeginInvoke((Action)ApplySecurityPolicyUi);
+            };
         }
 
         private void ReplaceLegacyApplyHandlers()
