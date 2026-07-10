@@ -21,13 +21,14 @@ namespace Mahou
         {
             EnsureConfigLocation();
 
-            EnsureInt("Hotkeys", "HKCLKey", 19, 0, 255);
+            EnsureInt("Hotkeys", "HKCLKey", 45, 0, 255);
             EnsureString("Hotkeys", "HKCLMods", "None");
             EnsureInt("Hotkeys", "HKCSKey", 145, 0, 255);
             EnsureString("Hotkeys", "HKCSMods", "None");
             EnsureInt("Hotkeys", "HKCLineKey", 19, 0, 255);
             EnsureString("Hotkeys", "HKCLineMods", "Shift");
-            EnsureString("Hotkeys", "OnlyKeyLayoutSwicth", "CapsLock");
+            EnsureString("Hotkeys", "OnlyKeyLayoutSwicth", "None");
+            MigrateInputDefaults();
             EnsureInt("Hotkeys", "HKSymIgnKey", 122, 0, 255);
             EnsureString("Hotkeys", "HKSymIgnMods", "Shift + Control + Alt");
             EnsureInt("Hotkeys", "HKConvertMore", 122, 0, 255);
@@ -177,6 +178,22 @@ namespace Mahou
         private static string CacheKey(string section, string key)
         {
             return (section ?? String.Empty) + "\u001f" + (key ?? String.Empty);
+        }
+
+        private void MigrateInputDefaults()
+        {
+            const string marker = "InsertWordSelectionV1";
+            if (ReadBool("Migration", marker))
+                return;
+
+            if (ReadInt("Hotkeys", "HKCLKey") == 19 &&
+                String.Equals(Read("Hotkeys", "HKCLMods"), "None", StringComparison.OrdinalIgnoreCase))
+            {
+                Write("Hotkeys", "HKCLKey", ((int)System.Windows.Forms.Keys.Insert).ToString());
+            }
+
+            Write("Hotkeys", "OnlyKeyLayoutSwicth", "None");
+            Write("Migration", marker, "true");
         }
 
         private void EnsureLanguage()

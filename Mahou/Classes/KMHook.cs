@@ -122,6 +122,20 @@ namespace Mahou {
 			if(vkCode == 240)
 				vkCode = 20;
 			var thishk = new Hotkey(vkCode, new[] { ctrl, shift, alt });
+			bool unifiedWordSelectionHotkey = !MMain.mahou.Focused && !self &&
+				MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled") &&
+				thishk.Equals(MMain.mahou.HKCLast);
+			if(unifiedWordSelectionHotkey &&
+				(wParam == (IntPtr)(int)KMMessages.WM_KEYDOWN || wParam == (IntPtr)(int)KMMessages.WM_SYSKEYDOWN)) {
+				suppressCurrentEvent = true;
+			}
+			if(unifiedWordSelectionHotkey &&
+				(wParam == (IntPtr)(int)KMMessages.WM_KEYUP || wParam == (IntPtr)(int)KMMessages.WM_SYSKEYUP)) {
+				suppressCurrentEvent = true;
+				var unifiedWord = new List<YuKey>(MMain.c_word);
+				AdaptiveLayoutLearning.RecordManualCorrection(unifiedWord);
+				queuedOperation = () => UnifiedTextConverter.ConvertSelectionOrLast(unifiedWord);
+			}
 			//			Console.WriteLine(MMain.mahou.HKCLast.keyCode + "\t" + thishk.keyCode);
 			//			Console.WriteLine(MMain.mahou.HKCLast.modifs[0] + "\t" + thishk.modifs[0]);
 			//			Console.WriteLine(MMain.mahou.HKCLast.modifs[1] + "\t" + thishk.modifs[1]);
@@ -169,7 +183,7 @@ namespace Mahou {
 						}
 					}
 					if(MMain.MyConfs.ReadBool("EnabledHotkeys", "HKCLEnabled")) {
-						if(thishk.Equals(MMain.mahou.HKCLast) && hklOK && !csdoing) {
+						if(!unifiedWordSelectionHotkey && thishk.Equals(MMain.mahou.HKCLast) && hklOK && !csdoing) {
 							if(MMain.MyConfs.ReadBool("Functions", "BlockCTRL") &&
 								MMain.MyConfs.Read("Hotkeys", "HKCLMods").Contains("Control")) {
 							} else {

@@ -122,6 +122,7 @@
     <Compile Include="Classes\TrayIcon.cs" />
     <Compile Include="Classes\Configs.cs" />
     <Compile Include="Classes\DpiAccessibility.cs" />
+    <Compile Include="Classes\UnifiedTextConverter.cs" />
     <Compile Include="Classes\SecretProtector.cs" />
     <Compile Include="Classes\StartupManager.cs" />
     <Compile Include="Classes\UserDataPaths.cs" />
