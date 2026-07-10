@@ -25,9 +25,10 @@ namespace Mahou
         {
             lock (Sync)
             {
-                if (worker != null)
+                if (worker != null && worker.IsAlive)
                     return;
 
+                worker = null;
                 stopping = false;
                 worker = new Thread(WorkerLoop)
                 {
@@ -60,11 +61,7 @@ namespace Mahou
             {
                 if (worker == thread)
                     worker = null;
-                capturing = false;
-                Work.Clear();
-                BufferedKeys.Clear();
-                swallowPhysicalKeyUp = null;
-                swallowPhysicalKeyUpUntilUtc = DateTime.MinValue;
+                ReleaseCaptureUnsafe();
             }
         }
 
@@ -134,6 +131,24 @@ namespace Mahou
         }
 
         private static void WorkerLoop()
+        {
+            try
+            {
+                WorkerLoopCore();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Input operation worker stopped unexpectedly; releasing captured input");
+                lock (Sync)
+                {
+                    if (worker == Thread.CurrentThread)
+                        worker = null;
+                    ReleaseCaptureUnsafe();
+                }
+            }
+        }
+
+        private static void WorkerLoopCore()
         {
             while (true)
             {
@@ -246,6 +261,15 @@ namespace Mahou
                     KMHook.self = previousSelf;
                 }
             }
+        }
+
+        private static void ReleaseCaptureUnsafe()
+        {
+            capturing = false;
+            Work.Clear();
+            BufferedKeys.Clear();
+            swallowPhysicalKeyUp = null;
+            swallowPhysicalKeyUpUntilUtc = DateTime.MinValue;
         }
 
         private sealed class WorkItem
