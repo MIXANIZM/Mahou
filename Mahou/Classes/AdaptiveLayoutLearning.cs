@@ -18,16 +18,21 @@ namespace Mahou
         private static readonly Dictionary<string, Rule> Rules = new Dictionary<string, Rule>();
         private static readonly KMHook.LowLevelProc Proc = HookCallback;
         private static readonly MethodInfo ConvertLastMethod = typeof(KMHook).GetMethod("ConvertLast", BindingFlags.NonPublic | BindingFlags.Static);
+        private static readonly string[] SensitiveProcesses =
+        {
+            "keepass", "keepassxc", "1password", "bitwarden", "lastpass", "dashlane", "enpass"
+        };
         private static IntPtr hookId = IntPtr.Zero;
         private static bool loaded;
+        private static bool suppressCurrentWord;
         private static DateTime ignoreUntilUtc = DateTime.MinValue;
 
         public static void Start()
         {
+            EnsureConfigDefaults();
             if (!Enabled() || hookId != IntPtr.Zero)
                 return;
 
-            EnsureConfigDefaults();
             EnsureLoaded();
             hookId = KMHook.SetHook(Proc, (int)KMHook.KMMessages.WH_KEYBOARD_LL);
         }
@@ -47,9 +52,9 @@ namespace Mahou
             {
                 Rules.Clear();
                 loaded = true;
-                var file = RulesFilePath();
-                if (File.Exists(file))
-                    File.Delete(file);
+                DeleteIfExists(RulesFilePath());
+                DeleteIfExists(RulesFilePath() + ".tmp");
+                DeleteIfExists(RulesFilePath() + ".bak");
             }
         }
 
@@ -65,11 +70,17 @@ namespace Mahou
 
                     if (DateTime.UtcNow >= ignoreUntilUtc)
                     {
-                        if (IsConvertLastKeyUp(message, vkCode))
+                        if (IsKeyDown(message) && key == Keys.Back)
+                            suppressCurrentWord = true;
+
+                        if (IsConvertLastKeyUp(message, vkCode) && !suppressCurrentWord)
                             RecordManualCorrection();
 
-                        if (IsAutoTrigger(message, key) && ShouldAutoConvertCurrentWord())
+                        if (IsAutoTrigger(message, key) && !suppressCurrentWord && ShouldAutoConvertCurrentWord())
                             ConvertCurrentWordWithoutEatingTrigger();
+
+                        if (IsKeyDown(message) && IsWordBoundary(key))
+                            suppressCurrentWord = false;
                     }
                 }
                 catch
@@ -86,7 +97,17 @@ namespace Mahou
             if (message != KMHook.KMMessages.WM_KEYUP && message != KMHook.KMMessages.WM_SYSKEYUP)
                 return false;
 
-            if (!SafeReadBool("EnabledHotkeys", "HKCLEnabled", true))
+            if (!SafeReadBool("EnabledHotkeys", "HKCLEnabled", true) || MMain.mahou == null || KMHook.csdoing)
+                return false;
+
+            if (MMain.mahou.Active || MMain.mahou.moreConfigs.Active)
+                return false;
+
+            if (SafeReadBool("Functions", "BlockCTRL", false) &&
+                MMain.MyConfs.Read("Hotkeys", "HKCLMods").IndexOf("Control", StringComparison.OrdinalIgnoreCase) >= 0)
+                return false;
+
+            if (SafeReadBool("DoubleKey", "Use", false) && !KMHook.hklOK)
                 return false;
 
             var hotkey = new Hotkey(NormalizeVkCode(vkCode), CurrentModifiers());
@@ -98,13 +119,28 @@ namespace Mahou
             if (!AutoConvertOnSpace())
                 return false;
 
+            if (MMain.mahou == null || MMain.mahou.Active || MMain.mahou.moreConfigs.Active)
+                return false;
+
             if (Control.ModifierKeys != Keys.None)
                 return false;
 
-            if (message != KMHook.KMMessages.WM_KEYDOWN && message != KMHook.KMMessages.WM_SYSKEYDOWN)
+            if (!IsKeyDown(message))
                 return false;
 
             return key == Keys.Space || key == Keys.Enter || key == Keys.Return;
+        }
+
+        private static bool IsKeyDown(KMHook.KMMessages message)
+        {
+            return message == KMHook.KMMessages.WM_KEYDOWN || message == KMHook.KMMessages.WM_SYSKEYDOWN;
+        }
+
+        private static bool IsWordBoundary(Keys key)
+        {
+            return key == Keys.Space || key == Keys.Enter || key == Keys.Return || key == Keys.Tab ||
+                key == Keys.Home || key == Keys.End || key == Keys.Left || key == Keys.Right ||
+                key == Keys.Up || key == Keys.Down || key == Keys.PageUp || key == Keys.PageDown;
         }
 
         private static void RecordManualCorrection()
@@ -173,9 +209,13 @@ namespace Mahou
             if (!IsLearnable(MMain.c_word))
                 return null;
 
+            string activeApp = ActiveProcessName();
+            if (IsSensitiveProcess(activeApp))
+                return null;
+
             uint locale = Locales.GetCurrentLocale();
             string signature = WordSignature(MMain.c_word);
-            string appName = PerAppRules() ? ActiveProcessName() : String.Empty;
+            string appName = PerAppRules() ? activeApp : String.Empty;
 
             return new Snapshot
             {
@@ -185,6 +225,19 @@ namespace Mahou
                 AppName = appName,
                 SourcePreview = WordPreview(MMain.c_word)
             };
+        }
+
+        private static bool IsSensitiveProcess(string processName)
+        {
+            if (String.IsNullOrWhiteSpace(processName))
+                return false;
+
+            foreach (var item in SensitiveProcesses)
+            {
+                if (processName.IndexOf(item, StringComparison.OrdinalIgnoreCase) >= 0)
+                    return true;
+            }
+            return false;
         }
 
         private static bool IsLearnable(IList<KMHook.YuKey> word)
@@ -331,6 +384,9 @@ namespace Mahou
                     LastUsedUtc = lastUsedUtc
                 };
             }
+
+            while (Rules.Count > MaxRules)
+                TrimRulesIfNeeded();
         }
 
         private static void TrimRulesIfNeeded()
@@ -375,10 +431,33 @@ namespace Mahou
             }
 
             File.WriteAllLines(tempFile, lines.ToArray(), Encoding.UTF8);
-            if (File.Exists(file))
-                File.Replace(tempFile, file, backupFile, true);
-            else
+            if (!File.Exists(file))
+            {
                 File.Move(tempFile, file);
+                return;
+            }
+
+            try
+            {
+                File.Replace(tempFile, file, backupFile, true);
+            }
+            catch
+            {
+                File.Copy(tempFile, file, true);
+                File.Delete(tempFile);
+            }
+        }
+
+        private static void DeleteIfExists(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+            catch
+            {
+            }
         }
 
         private static string MakeRuleKey(uint locale, string signature, string appName)
