@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Mahou
@@ -7,10 +8,12 @@ namespace Mahou
     public partial class MahouForm
     {
         private bool safeApplyActive;
+        private bool legacyLayoutNormalized;
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            NormalizeLegacyWindowLayout();
             DpiAccessibility.Apply(this, "MIXANIZM Mahou settings", "btnOK", "btnCancel");
             ApplySecurityPolicyUi();
             ReplaceLegacyApplyHandlers();
@@ -26,6 +29,33 @@ namespace Mahou
                 ApplySecurityPolicyUi();
                 RefreshStartupCheckboxFromRegistry();
             }
+        }
+
+        private void NormalizeLegacyWindowLayout()
+        {
+            if (legacyLayoutNormalized)
+                return;
+
+            legacyLayoutNormalized = true;
+            AutoScaleMode = AutoScaleMode.None;
+            StartPosition = FormStartPosition.CenterScreen;
+
+            const int targetWidth = 460;
+            const int targetHeight = 380;
+            float widthScale = ClientSize.Width > 0 ? targetWidth / (float)ClientSize.Width : 1.0f;
+            float heightScale = ClientSize.Height > 0 ? targetHeight / (float)ClientSize.Height : 1.0f;
+            float scale = Math.Max(1.0f, Math.Min(1.45f, Math.Max(widthScale, heightScale)));
+
+            if (scale > 1.01f)
+            {
+                SuspendLayout();
+                Scale(new SizeF(scale, scale));
+                ResumeLayout(true);
+            }
+
+            MinimumSize = Size;
+            MaximumSize = Size;
+            AutoScroll = true;
         }
 
         private void ReplaceLegacyApplyHandlers()
@@ -79,8 +109,6 @@ namespace Mahou
                 else
                     StartupManager.Disable();
 
-                // The legacy Apply() method still has old .lnk logic. Keep its branch on delete-only;
-                // the single source of truth is StartupManager/HKCU Run.
                 cbAutorun.Checked = false;
                 Apply();
                 return true;
@@ -100,12 +128,21 @@ namespace Mahou
 
         private void ApplySecurityPolicyUi()
         {
+            bool russian = String.Equals(MMain.MyConfs.Read("Locales", "LANGUAGE"), "RU", StringComparison.OrdinalIgnoreCase);
+
+            cbCLActive.Text = russian ? "Слово или выделение:" : "Word or selection:";
+            cbCLActive.AccessibleName = russian ? "Изменить раскладку слова или выделения" : "Convert word or selection";
+            tbCLHK.AccessibleName = russian ? "Горячая клавиша слова или выделения" : "Word or selection hotkey";
+
             cbCSActive.Checked = false;
-            cbCSActive.Enabled = false;
-            cbCSActive.AccessibleName = "Convert selected text";
-            cbCSActive.AccessibleDescription = "Disabled until clipboard preservation is safe for all formats.";
-            tbCSHK.Enabled = false;
-            tbCSHK.AccessibleName = "Convert selected text hotkey";
+            cbCSActive.Visible = false;
+            tbCSHK.Visible = false;
+
+            cbSwitchLayoutKeys.Text = "None";
+            cbSwitchLayoutKeys.Visible = false;
+            lbswithlayout.Visible = false;
+
+            btnDDD.AccessibleName = russian ? "Дополнительные настройки" : "Advanced settings";
         }
 
         private void RefreshStartupCheckboxFromRegistry()
