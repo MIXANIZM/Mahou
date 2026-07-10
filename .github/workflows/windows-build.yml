@@ -14,10 +14,30 @@ jobs:
   build:
     runs-on: windows-2022
     timeout-minutes: 15
+    env:
+      SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+      CHECKOUT_COMMIT: ${{ github.sha }}
+      VERSION_BASE: 1.4.3
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Generate build metadata
+        shell: pwsh
+        run: |
+          $shortSha = $env:SOURCE_COMMIT.Substring(0, 12)
+          $version = "$env:VERSION_BASE-mixanizm+$shortSha"
+          $source = @"
+          using System.Reflection;
+
+          [assembly: AssemblyInformationalVersion("$version")]
+          [assembly: AssemblyMetadata("RepositoryUrl", "https://github.com/$env:GITHUB_REPOSITORY")]
+          [assembly: AssemblyMetadata("BuildCommit", "$env:SOURCE_COMMIT")]
+          [assembly: AssemblyMetadata("CheckoutCommit", "$env:CHECKOUT_COMMIT")]
+          [assembly: AssemblyMetadata("BuildChannel", "github-actions")]
+          "@
+          Set-Content -Path Mahou/Properties/BuildInfo.cs -Value $source -Encoding utf8
 
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v2
@@ -33,9 +53,72 @@ jobs:
         continue-on-error: true
         shell: pwsh
         run: |
-          msbuild Mahou/Mahou.sln /m /p:Configuration=Release /p:Platform=x86 /v:minimal /fl /flp:"logfile=msbuild.log;verbosity=normal"
+          msbuild Mahou/Mahou.sln /m /p:Configuration=Release /p:Platform=x86 /p:Deterministic=true /v:minimal /fl /flp:"logfile=msbuild.log;verbosity=normal"
           Set-Content -Path build-exit-code.txt -Value $LASTEXITCODE
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Generate hashes, manifest and SBOM
+        if: steps.build.outcome == 'success'
+        shell: pwsh
+        run: |
+          $shortSha = $env:SOURCE_COMMIT.Substring(0, 12)
+          $version = "$env:VERSION_BASE-mixanizm+$shortSha"
+          $exePath = "Mahou/bin/Release/Mahou.exe"
+          $configPath = "Mahou/bin/Release/Mahou.exe.config"
+          $exeHash = (Get-FileHash -Path $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          $configHash = (Get-FileHash -Path $configPath -Algorithm SHA256).Hash.ToLowerInvariant()
+
+          @(
+            "$exeHash *Mahou.exe",
+            "$configHash *Mahou.exe.config"
+          ) | Set-Content -Path SHA256SUMS.txt -Encoding utf8
+
+          $manifest = [ordered]@{
+            schema_version = 1
+            product = "MIXANIZM Mahou"
+            version = $version
+            repository = "https://github.com/$env:GITHUB_REPOSITORY"
+            source_commit = $env:SOURCE_COMMIT
+            checkout_commit = $env:CHECKOUT_COMMIT
+            workflow_run_id = $env:GITHUB_RUN_ID
+            target_framework = ".NET Framework 4.8"
+            platform = "x86"
+            dependencies = [ordered]@{
+              NLog = "6.1.3"
+              Fody = "6.9.3"
+              Costura_Fody = "6.2.0"
+            }
+            files = @(
+              [ordered]@{ path = "Mahou.exe"; sha256 = $exeHash },
+              [ordered]@{ path = "Mahou.exe.config"; sha256 = $configHash }
+            )
+          }
+          $manifest | ConvertTo-Json -Depth 8 | Set-Content -Path build-manifest.json -Encoding utf8
+
+          $sbom = [ordered]@{
+            bomFormat = "CycloneDX"
+            specVersion = "1.5"
+            version = 1
+            metadata = [ordered]@{
+              component = [ordered]@{
+                type = "application"
+                name = "MIXANIZM Mahou"
+                version = $version
+                properties = @(
+                  [ordered]@{ name = "mixanizm:source-commit"; value = $env:SOURCE_COMMIT },
+                  [ordered]@{ name = "mixanizm:checkout-commit"; value = $env:CHECKOUT_COMMIT },
+                  [ordered]@{ name = "mixanizm:target-framework"; value = ".NET Framework 4.8" },
+                  [ordered]@{ name = "mixanizm:platform"; value = "x86" }
+                )
+              }
+            }
+            components = @(
+              [ordered]@{ type = "library"; name = "NLog"; version = "6.1.3"; scope = "required"; purl = "pkg:nuget/NLog@6.1.3" },
+              [ordered]@{ type = "library"; name = "Fody"; version = "6.9.3"; scope = "excluded"; purl = "pkg:nuget/Fody@6.9.3" },
+              [ordered]@{ type = "library"; name = "Costura.Fody"; version = "6.2.0"; scope = "excluded"; purl = "pkg:nuget/Costura.Fody@6.2.0" }
+            )
+          }
+          $sbom | ConvertTo-Json -Depth 10 | Set-Content -Path sbom.cdx.json -Encoding utf8
 
       - name: Upload build log
         if: always()
@@ -56,6 +139,9 @@ jobs:
           path: |
             Mahou/bin/Release/Mahou.exe
             Mahou/bin/Release/Mahou.exe.config
+            SHA256SUMS.txt
+            build-manifest.json
+            sbom.cdx.json
           if-no-files-found: error
           retention-days: 14
 
