@@ -92,8 +92,8 @@ namespace Mahou
                 finally
                 {
                     AdaptiveLayoutLearning.Stop();
-                    InputOperationQueue.Stop();
                     StopHook();
+                    InputOperationQueue.Stop();
                 }
             }
         }
