@@ -5,13 +5,13 @@ namespace Mahou
 {
     public partial class MahouForm
     {
-        private bool autorunBridgeActive;
+        private bool safeApplyActive;
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             ApplySecurityPolicyUi();
-            WireStartupRegistryBridge();
+            ReplaceLegacyApplyHandlers();
             RefreshStartupCheckboxFromRegistry();
         }
 
@@ -25,18 +25,58 @@ namespace Mahou
             }
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        private void ReplaceLegacyApplyHandlers()
         {
-            var keyCode = keyData & Keys.KeyCode;
-            bool enterWillApply = keyCode == Keys.Enter &&
-                (btnApply.Focused || btnOK.Focused || AcceptButton == btnOK);
-            bool spaceWillApply = keyCode == Keys.Space &&
-                (btnApply.Focused || btnOK.Focused);
+            btnApply.Click -= btnApply_Click;
+            btnOK.Click -= btnOK_Click;
+            btnApply.Click -= SafeApply_Click;
+            btnOK.Click -= SafeOk_Click;
+            btnApply.Click += SafeApply_Click;
+            btnOK.Click += SafeOk_Click;
+        }
 
-            if (!autorunBridgeActive && (enterWillApply || spaceWillApply))
-                ApplyStartupRegistryStateBeforeLegacyShortcutCode();
+        private void SafeApply_Click(object sender, EventArgs e)
+        {
+            ApplyWithRegistryStartup(false);
+        }
 
-            return base.ProcessCmdKey(ref msg, keyData);
+        private void SafeOk_Click(object sender, EventArgs e)
+        {
+            if (ApplyWithRegistryStartup(true))
+                ToggleVisibility();
+        }
+
+        private bool ApplyWithRegistryStartup(bool closing)
+        {
+            if (safeApplyActive)
+                return false;
+
+            bool requestedAutorun = cbAutorun.Checked;
+            try
+            {
+                safeApplyActive = true;
+                if (requestedAutorun)
+                    StartupManager.Enable();
+                else
+                    StartupManager.Disable();
+
+                // The legacy Apply() method still has old .lnk logic. Keep its branch on delete-only;
+                // the single source of truth is StartupManager/HKCU Run.
+                cbAutorun.Checked = false;
+                Apply();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "MIXANIZM Mahou", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+            finally
+            {
+                cbAutorun.Checked = StartupManager.IsEnabled();
+                safeApplyActive = false;
+                ApplySecurityPolicyUi();
+            }
         }
 
         private void ApplySecurityPolicyUi()
@@ -47,56 +87,13 @@ namespace Mahou
             tbCSHK.Enabled = false;
         }
 
-        private void WireStartupRegistryBridge()
-        {
-            btnApply.MouseDown -= StartupRegistryBridgeBeforeLegacyApply;
-            btnOK.MouseDown -= StartupRegistryBridgeBeforeLegacyApply;
-            btnApply.MouseDown += StartupRegistryBridgeBeforeLegacyApply;
-            btnOK.MouseDown += StartupRegistryBridgeBeforeLegacyApply;
-        }
-
-        private void StartupRegistryBridgeBeforeLegacyApply(object sender, MouseEventArgs e)
-        {
-            if (!autorunBridgeActive)
-                ApplyStartupRegistryStateBeforeLegacyShortcutCode();
-        }
-
         private void RefreshStartupCheckboxFromRegistry()
         {
-            if (autorunBridgeActive)
+            if (safeApplyActive)
                 return;
 
             try { cbAutorun.Checked = StartupManager.IsEnabled(); }
             catch { }
-        }
-
-        private void ApplyStartupRegistryStateBeforeLegacyShortcutCode()
-        {
-            try
-            {
-                autorunBridgeActive = true;
-                bool requestedState = cbAutorun.Checked;
-
-                if (requestedState)
-                    StartupManager.Enable();
-                else
-                    StartupManager.Disable();
-
-                // Keep the old Apply() path from creating a COM/WScript shortcut.
-                cbAutorun.Checked = false;
-
-                BeginInvoke(new Action(delegate
-                {
-                    cbAutorun.Checked = StartupManager.IsEnabled();
-                    autorunBridgeActive = false;
-                    ApplySecurityPolicyUi();
-                }));
-            }
-            catch (Exception ex)
-            {
-                autorunBridgeActive = false;
-                MessageBox.Show(ex.Message, "MIXANIZM Mahou", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
         }
     }
 }
