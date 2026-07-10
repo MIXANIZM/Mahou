@@ -10,6 +10,7 @@ namespace Mahou
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            ApplySecurityPolicyUi();
             WireStartupRegistryBridge();
             RefreshStartupCheckboxFromRegistry();
         }
@@ -18,7 +19,10 @@ namespace Mahou
         {
             base.OnVisibleChanged(e);
             if (Visible)
+            {
+                ApplySecurityPolicyUi();
                 RefreshStartupCheckboxFromRegistry();
+            }
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -33,6 +37,14 @@ namespace Mahou
                 ApplyStartupRegistryStateBeforeLegacyShortcutCode();
 
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void ApplySecurityPolicyUi()
+        {
+            cbCSActive.Checked = false;
+            cbCSActive.Enabled = false;
+            cbCSActive.AccessibleDescription = "Disabled until clipboard preservation is safe for all formats.";
+            tbCSHK.Enabled = false;
         }
 
         private void WireStartupRegistryBridge()
@@ -54,13 +66,8 @@ namespace Mahou
             if (autorunBridgeActive)
                 return;
 
-            try
-            {
-                cbAutorun.Checked = StartupManager.IsEnabled();
-            }
-            catch
-            {
-            }
+            try { cbAutorun.Checked = StartupManager.IsEnabled(); }
+            catch { }
         }
 
         private void ApplyStartupRegistryStateBeforeLegacyShortcutCode()
@@ -75,14 +82,14 @@ namespace Mahou
                 else
                     StartupManager.Disable();
 
-                // The original Apply() method still contains old Startup-folder .lnk code.
-                // Force that legacy branch to DeleteShortcut() so Windows Script Host / COM is not required.
+                // Keep the old Apply() path from creating a COM/WScript shortcut.
                 cbAutorun.Checked = false;
 
                 BeginInvoke(new Action(delegate
                 {
                     cbAutorun.Checked = StartupManager.IsEnabled();
                     autorunBridgeActive = false;
+                    ApplySecurityPolicyUi();
                 }));
             }
             catch (Exception ex)
