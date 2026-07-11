@@ -47,7 +47,9 @@ required = {
                   "bounded retries"],
     "hook": ["CaptureClipboardBackup", "EnsureClipboardBackup", "EnsureClipboardRestored",
              "Temporary clipboard replacement refused because no full backup exists",
-             "ConvertSelectionOrLastWord", "SelectionProbe.GetState"],
+             "ConvertSelectionOrLastWord", "SelectionProbe.GetState",
+             "selected text length=", "input length=", "argument length=",
+             "Current snippet length:", "Snippet rewrite completed; source length="],
     "secrets": ["ProtectedData.Protect", "ProtectedData.Unprotect", "DataProtectionScope.CurrentUser"],
     "startup": ["CurrentVersion\\Run", "MIXANIZM Mahou", "/Delete /TN"],
     "paths": ["MIXANIZM Mahou", "Environment.SpecialFolder.ApplicationData"],
@@ -58,6 +60,25 @@ for key, needles in required.items():
     for needle in needles:
         if needle not in source:
             errors.append("required hardening marker missing in %s: %s" % (key, needle))
+
+# Diagnostic logs must never serialize user-entered snippets, selected text,
+# transformed output, dictionary entries, executable arguments, or raw expressions.
+privacy_forbidden = [
+    'Starting conversion of [" + ClipStr',
+    'Conversion of string [" + ClipStr',
+    'Set snip to [" + args',
+    'Set last snip to [" + args',
+    'with args: [" + args',
+    'Executing: executable: ["+fil',
+    'Expanding snippet [" + snip',
+    'Current snippet is [" + snip',
+    'Inputting ["+output',
+    'Snip rewrite: " + rewr',
+    'Wrong Dictionary, line #"+i+", => " +line',
+]
+for needle in privacy_forbidden:
+    if needle in files["hook"]:
+        errors.append("plaintext diagnostic logging returned in hook: %s" % needle)
 
 # No executable distribution scripts in the application tree.
 for pattern in ("*.cmd", "*.bat", "*.vbs", "*.ps1"):
