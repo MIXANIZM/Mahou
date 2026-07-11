@@ -1,1 +1,1 @@
-Run the integrated hardening job, then remove this marker.
+Execute the simplified integrated hardening pipeline now.
