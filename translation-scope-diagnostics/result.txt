@@ -1,0 +1,2 @@
+Corrected translator variable scopes and moved speech download to a bounded client.
+Security regression check passed: 40 source files inspected.

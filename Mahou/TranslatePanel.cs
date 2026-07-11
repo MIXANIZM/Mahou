@@ -333,7 +333,7 @@ namespace Mahou {
 				slt.BorderStyle = txt.BorderStyle = 0;
 				slt.Location = new Point(1, 0);
 				slt.Text = (gtr.auto_detect ? "" : gtr.src_lang+"/")+gtr.targ_lang+":";
-				using (var g = CreateGraphics()) {
+				var g = CreateGraphics();
 				var size = g.MeasureString(slt.Text, slt.Font);
 				slt.Width = (int)size.Width;
 				txt.Name = "TR_TXT"+gtr.targ_lang;
@@ -363,7 +363,7 @@ namespace Mahou {
 						pan.Controls.Add(txttrc);
 					}
 				}
-				}
+				g.Dispose();
 				btn.Location = new Point(pan.Width-14-1, 1);
 				pan.Controls.Add(btn);
 				txt.Width = pan.Width-slt.Width-2-btn.Width-2-trcw;
@@ -485,7 +485,7 @@ namespace Mahou {
 			Width = pan_Translations.Width = 0; // Minify
 			pant_y = txt_Source.Height = 0;
 			// 1st find max width
-			using (var g = CreateGraphics()) {
+			var g = CreateGraphics();
 			SetAboveTitleWidth();
 			var s = g.MeasureString(txt_Source.Text, txt_Source.Font);
 			var sw = Convert.ToInt32(s.Width);
@@ -581,7 +581,7 @@ namespace Mahou {
 				}
 				c++;
 			}
-			}
+			g.Dispose();
 			pan_Translations.Width = Width-2;
 			// 2nd set right positions
 			c = 0;
@@ -769,8 +769,10 @@ namespace Mahou {
 			    if (!Directory.Exists(speech_dir)) 
 			    	Directory.CreateDirectory(speech_dir);
 			    try {
-				if (!File.Exists(speech_file))
-	    			client.DownloadFile(gtr.speech_url, speech_file);
+				if (!File.Exists(speech_file)) {
+					using (var client = CreateTranslationClient())
+						client.DownloadFile(gtr.speech_url, speech_file);
+				}
 			    } catch (Exception x) {
 			    	Logging.Log("Network exception: " + x.Message);
 			    }
