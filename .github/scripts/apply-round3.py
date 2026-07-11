@@ -14,14 +14,20 @@ expected_encoded_length = 24680
 expected_encoded_sha256 = "7da27a8c708c555517d2d22d03b50e9915da0912336c6ea7a09982852ee28f67"
 expected_patch_size = 18510
 expected_patch_sha256 = "ae0eb34751924e48b8bd948c89972af640366292e2952999191aea2ce705e97c"
+expected_names = [
+    "r3small.00",
+    "r3small.01a", "r3small.01b", "r3small.01c", "r3small.01d",
+    "r3small.02",
+    "r3small.03a", "r3small.03b", "r3small.03c", "r3small.03d",
+    "r3small.04", "r3small.05", "r3small.06",
+]
 
 try:
-    parts = sorted(migrations.glob("r3small.*"))
-    if len(parts) < 7:
-        print("Round 3 waiting for all chunks: %d/7" % len(parts))
+    parts = [migrations / name for name in expected_names]
+    present = [part for part in parts if part.exists()]
+    if len(present) < len(parts):
+        print("Round 3 waiting for exact chunks: %d/%d" % (len(present), len(parts)))
         raise SystemExit(0)
-    if len(parts) != 7:
-        raise RuntimeError("Expected exactly seven round3 migration chunks, found %d" % len(parts))
 
     lines = ["parts=" + str(len(parts))]
     for part in parts:
@@ -56,8 +62,8 @@ try:
 
     subprocess.run(["git", "apply", "--whitespace=nowarn", str(patch_path)], cwd=str(root), check=True)
 
-    for part in parts:
-        part.unlink()
+    for staged in migrations.glob("r3small.*"):
+        staged.unlink()
     for old_part in migrations.glob("round3.b64.*"):
         old_part.unlink()
     patch_path.unlink()
