@@ -1,0 +1,194 @@
++			Logging.Log("HKCU Run startup disabled.");
+ 		}
++
+ 		void PreExit(bool hideicon = true, int noglobal = 0) {
+ 			if (UseJKL && !KMHook.JKLERR)
+ 				jklXHidServ.Destroy();
+@@ -3459,21 +3287,12 @@ DEL "+restartMahouPath;
+ 		/// <summary>Exits Mahou.</summary>
+ 		public void ExitProgram() {
+ 			Logging.Log("Exit by user demand.");
+-			PreExit();
+-			if (!KMHook.IfNW7())
+-				System.Threading.Thread.Sleep(100);
+ 			try {
+-				var piKill = new ProcessStartInfo() {
+-					FileName = "taskkill",
+-					Arguments = "/IM Mahou.exe /F", 
+-					WindowStyle = ProcessWindowStyle.Hidden };
+-				Process.Start(piKill);
+-				piKill.Arguments = "/PID " + Process.GetCurrentProcess().Id + " /F";
+-				Process.Start(piKill);
++				PreExit();
+ 			} catch (Exception e) {
+-				Logging.Log("Taskkill error, try exit normally...", 1);
+-				Application.Exit();
++				Logging.Log("Cleanup during exit failed: " + e.Message, 2);
+ 			}
++			Application.Exit();
+ 		}
+ 		/// <summary>
+ 		/// Registers keys 1->9 & 0 on keyboard as hotkey to be used as word count selector for Convert Multiple Words Count.
+@@ -4242,207 +4061,29 @@ DEL "+restartMahouPath;
+ 		}
+ 		#region Updates functions
+ 		void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) {
+-			if (isold)
+-				_progress = e.ProgressPercentage;
+-			prb_UpdateDownloadProgress.Value = progress = e.ProgressPercentage;
+-			//Below in "if" is AUTO-UPDATE feature ;)
+-			if (e.ProgressPercentage == 100 && !was) {
+-				Logging.Log("Download of Mahou update [" + UpdInfo[3] +"] finished.");
+-				int MahouPID = Process.GetCurrentProcess().Id;
+-				//Downloaded archive
+-				var arch = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
+-				PreExit();
+-				DeleteOldJKL();
+-				//Batch script to create other script o.0,
+-				//which shutdown running Mahou,
+-				//delete old version,
+-				//unzip downloaded one, and start it.
+-				var silent = MMain.MyConfs.ReadBool("Functions", "SilentUpdate");
+-				var UpdateMahou =
+-					@"@ECHO OFF
+-chcp 65001
+-SET MAHOUDIR=" + AppDomain.CurrentDomain.BaseDirectory + @"
+-SET Mahou=" + AppDomain.CurrentDomain.FriendlyName + @"
+-TASKKILL /PID " + MahouPID + @" /F
+-TASKKILL /IM %Mahou% /F
+-set i=1
+-:loop
+-DEL /Q /F /A ""%MAHOUDIR%%Mahou%""
+-set /a i=%i%+1
+-if %i% == 333 goto continue
+-if not exist ""%MAHOUDIR%%Mahou%"" goto continue
+-goto loop
+-:continue
+-echo %i%
+-ECHO x0 = replace(Wscript.Arguments(0), ""\\"", ""\"") > ""%TEMP%\unzip.vbs""
+-ECHO x1 = replace(Wscript.Arguments(1), ""\\"", ""\"") >> ""%TEMP%\unzip.vbs""
+-ECHO With CreateObject(""Shell.Application"") >> ""%TEMP%\unzip.vbs""
+-ECHO    .NameSpace(x1).CopyHere .NameSpace(x0).items, 20 >> ""%TEMP%\unzip.vbs""
+-ECHO End With >> ""%TEMP%\unzip.vbs""
+-
+-CSCRIPT ""%TEMP%\unzip.vbs"" ""%TEMP%\" + arch + @""" ""%MAHOUDIR%""
+-
+-START """" ""%MAHOUDIR%Mahou.exe"" "+ (!silent ? "\"_!_updated_!_\"" : "\"_!_silent_updated_!_\"") + @"
+-DEL /Q /F /A ""%TEMP%\" + arch + @"""
+-DEL /Q /F /A ""%TEMP%\unzip.vbs""
+-DEL /Q /F /A ""%TEMP%\UpdateMahou.cmd""";
+-				//Save Batch script
+-				Logging.Log("Writing update script.");
+-				var fn = Path.Combine(Path.GetTempPath(), "UpdateMahou.cmd");
+-				File.WriteAllText(fn, UpdateMahou);
+-				var piUpdateMahou = new ProcessStartInfo();
+-				piUpdateMahou.FileName = fn;
+-				//Make UpdateMahou.cmd's startup hidden
+-				piUpdateMahou.WindowStyle = ProcessWindowStyle.Hidden;
+-				//Start updating(unzipping)
+-				Logging.Log("Starting update script.");
+-				Process.Start(piUpdateMahou);
+-				was = true;
+-				ExitProgram();
+-			}
++			// Legacy self-update is intentionally disabled.
+ 		}
++
+ 		string getASD_RemoteSize(bool InZip = false) {
+ 			try {
+-				if (InZip) {
+-					var data = getResponce("https://github.com/BladeMight/Mahou/releases/latest-commit"); 
+-					if (!String.IsNullOrEmpty(data)) {
+-						var siz = Regex.Match(data, "<small class=\"text-gray float-right\">(.+)</small>").Groups[1].Value;
+-						Logging.Log("Remote size of AS_dict: " + siz);
+-						return siz;
+-					} else throw new Exception(MMain.Lang[Languages.Element.NetError]);
+-				} 
+-				var request = (HttpWebRequest)WebRequest.Create("https://raw.githubusercontent.com/BladeMight/Mahou/master/AS_dict.txt");
+-				if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
+-					request.Proxy = MakeProxy();
+-				}
+-				request.Method = "HEAD";
+-				request.AllowAutoRedirect = false;
+-				using (var r = (HttpWebResponse)request.GetResponse()) {
+-					var type = " B";
+-					var D = Convert.ToDouble(r.ContentLength);
+-					if(D /1024 != 0 && D / 1024 >= 1) {
+-				        D /= 1024;
+-				        type = " KB";
+-				        if(D /1024 != 0 && D / 1024 >= 1) {
+-			                D /= 1024;
+-			                type = " MB";
+-				        }
+-					}
+-					return D.ToString("0.00") + type;
+-				}
+-			} catch (Exception e) {
+-				Logging.Log("Getting remote size of AS_dict failed, details: " + e.Message, 1);
+-				return MMain.Lang[Languages.Element.Error]; 
+-			}
++				var source = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AS_dict.txt");
++				if (!File.Exists(source)) return MMain.Lang[Languages.Element.Error];
++				var length = new FileInfo(source).Length;
++				return (length / 1024d / 1024d).ToString("0.00") + " MB";
++			} catch { return MMain.Lang[Languages.Element.Error]; }
+ 		}
++
+ 		string getResponce(string url) {
+-			try {
+-				var request = (HttpWebRequest)WebRequest.Create(url);
+-				request.UserAgent = "request";
+-				// For proxy
+-				if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
+-					request.Proxy = MakeProxy();
+-				}
+-				request.ServicePoint.SetTcpKeepAlive(true, 5000, 1000);
+-				var response = (HttpWebResponse)request.GetResponse();
+-                if (response.StatusCode == HttpStatusCode.OK) {
+-					var sr = new StreamReader(response.GetResponseStream(), true);
+-					var data = sr.ReadToEnd();
+-					sr.Dispose();
+-					response.Close();
+-					Logging.Log("Responce of url [" + url + "] succeded.");
+-					return data;
+-				}
+-			    response.Close();
+-			} catch(Exception e) {
+-				Logging.Log("Responce of url [" + url + "] done with error, message:\r\n" + e.Message + e.StackTrace, 1);
+-			}
+-		    return null;
+-			
++			Logging.Log("Blocked legacy network request: " + url, 2);
++			return null;
+ 		}
+-		void btn_UpdateAutoSwitchDictionary_Click(object sender, EventArgs e) {
+-			var resp = "";
+-			if (check_ASD_size) {
+-				var size = getASD_RemoteSize(Dowload_ASD_InZip);
+-				if (size == MMain.Lang[Languages.Element.Error]) {
+-					btn_UpdateAutoSwitchDictionary.ForeColor = Color.OrangeRed;
+-					btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.Error];
+-					tmr.Tick += (o, oo) => { 
+-						btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.AutoSwitchUpdateDictionary];
+-						btn_UpdateAutoSwitchDictionary.ForeColor = Color.FromKnownColor(KnownColor.ControlText);
+-						tmr.Stop(); 
+-					};
+-					tmr.Interval = 350;
+-					tmr.Start();
+-					return;
+-				}
+-				check_ASD_size = false;
+-				var name = "AS_dict.txt";
+-				if (Dowload_ASD_InZip)
+-					name = "AS_dict.zip";
+-				btn_UpdateAutoSwitchDictionary.Text = name + " " + size + " " + MMain.Lang[Languages.Element.Download]+ "?";
+-				return;
+-			}
+-			check_ASD_size = true;
+-			if (Dowload_ASD_InZip) {
+-				var zip = Path.Combine(Path.GetTempPath(), "AS_dict.zip");
+-					using (var wc = new WebClient()) {
+-						// For proxy
+-						if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
+-							wc.Proxy = MakeProxy();
+-						}
