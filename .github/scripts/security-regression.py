@@ -22,6 +22,7 @@ files = {
     "program": text("Mahou/Program.cs"),
     "lang_display": text("Mahou/LangDisplay.cs"),
     "lang_panel": text("Mahou/LangPanel.cs"),
+    "translate": text("Mahou/TranslatePanel.cs"),
 }
 errors = []
 
@@ -31,7 +32,10 @@ forbidden = {
            "FillRectangle(new SolidBrush(BG)", "DrawRectangle(new Pen(TAB_BORDERS)",
            "FillRectangle(new SolidBrush(TAB_FOCUS_BG)", "DrawString(t, i.Font, new SolidBrush(FG)",
            "MMain.MyConfs._INI.Raw =", "FLAG = new Bitmap(Image.FromFile(flagpth))",
-           "flagicon = Icon.FromHandle(b.GetHicon())", "DestroyIcon(flagicon.Handle)"],
+           "flagicon = Icon.FromHandle(b.GetHicon())", "DestroyIcon(flagicon.Handle)",
+           "t.Icon = Icon.FromHandle(icons_on[v].GetHicon())",
+           "t.Icon = Icon.FromHandle(icons[v].GetHicon())",
+           "Image.FromHbitmap(b.GetHbitmap())"],
     "startup": ["/Create /TN", "Startup\\Mahou.lnk"],
     "program": ["taskkill", "RestartMahou.cmd", "RestartMahou.vbs"],
     "configs": ["AllowSnippetExecute", "var inini = _INI.Raw;", "File.WriteAllText(temp, _INI.Raw"],
@@ -44,6 +48,9 @@ forbidden = {
                      "Icon.FromHandle((", "DestroyIcon(fi.Handle)"],
     "lang_panel": ["Graphics g = CreateGraphics();", "var pn = new Pen(Color.Black);",
                    "pn = new Pen(CurrentAeroColor())"],
+    "translate": ["Graphics g = CreateGraphics();\n\t\t\tvar pn = new Pen(Color.Black);",
+                  "pn = new Pen(CurrentAeroColor())",
+                  "g.DrawRectangle(pn"],
 }
 for key, needles in forbidden.items():
     source = files[key].lower()
@@ -100,6 +107,9 @@ required = {
                      "previousBackground.Dispose()", "SetTrayIconFromBitmap(trayBitmap)"],
     "lang_panel": ["using (var pen = new Pen(borderColor))", "e.Graphics.DrawRectangle",
                    "previousFlag.Dispose()"],
+    "translate": ["var borderColor = AeroEnabled && MahouUI.TrBorderAero",
+                  "using (var pen = new Pen(borderColor))",
+                  "e.Graphics.DrawRectangle(pen"],
     "ui": ["using (var backgroundBrush = new SolidBrush(BG))",
            "using (var borderPen = new Pen(Color.FromArgb(255, 133, 158, 191), 1))",
            "using (var tabBorderPen = new Pen(TAB_BORDERS))",
@@ -113,7 +123,16 @@ required = {
            "if (nativeHandle != IntPtr.Zero) WinAPI.DestroyIcon(nativeHandle);",
            "if (previous != null) previous.Dispose();",
            "using (var loadedFlag = Image.FromFile(flagpth))",
-           "SetStaticTrayIcon(Mahou.Properties.Resources.MahouTrayHD)"],
+           "SetStaticTrayIcon(Mahou.Properties.Resources.MahouTrayHD)",
+           "static Icon[] TOwnedIcons;",
+           "static void SetNcsTrayIcon(int index, Bitmap source)",
+           "SetNcsTrayIcon(v, Tstates[v] ? icons_on[v] : icons[v]);",
+           "SetNcsTrayIcon(v, tTstates[v] ? icons_on[v] : icons[v]);",
+           "TOwnedIcons[v].Dispose();",
+           "using (var extractedIcon = GetPathIcon(ffd))",
+           "var selectedIcon = large != IntPtr.Zero ? large : small;",
+           "if (large != IntPtr.Zero) WinAPI.DestroyIcon(large);",
+           "if (small != IntPtr.Zero && small != large) WinAPI.DestroyIcon(small);"],
 }
 for key, needles in required.items():
     source = files[key]
