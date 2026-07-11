@@ -29,12 +29,26 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mkdir -p hardening-diagnostics
           cat .github/hardening-parts/part-*.patch > /tmp/modern-hardening.patch
-          git apply --check /tmp/modern-hardening.patch
+          cp /tmp/modern-hardening.patch hardening-diagnostics/modern-hardening.patch
+          if ! git apply --check /tmp/modern-hardening.patch > hardening-diagnostics/apply-check.txt 2>&1; then
+            cat hardening-diagnostics/apply-check.txt
+            exit 1
+          fi
           git apply --whitespace=nowarn /tmp/modern-hardening.patch
           rm -rf .github/hardening-parts
           rm -f .github/workflows/apply-modern-hardening.yml
           git diff --check
+
+      - name: Upload patch diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: modern-hardening-diagnostics
+          path: hardening-diagnostics
+          if-no-files-found: warn
+          retention-days: 3
 
       - name: Commit hardened modern baseline
         shell: bash
