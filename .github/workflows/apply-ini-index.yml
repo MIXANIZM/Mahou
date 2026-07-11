@@ -52,6 +52,17 @@ jobs:
           path.write_text(source.replace(old, new, 1), encoding='utf-8')
           PY
           python3 "$script" 2>&1 | tee ini-index-diagnostics/result.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path('Mahou/Classes/Configs.cs')
+          data = path.read_bytes()
+          pattern = rb'(?m)^[ \t]*var inini = _INI\.GetRawSnapshot\(\);(?=\r?$)'
+          data, count = re.subn(pattern, b'\t\t\tvar inini = _INI.GetRawSnapshot();', data)
+          if count != 1:
+              raise RuntimeError('Configs.cs: expected one GetRawSnapshot indentation target, found %d' % count)
+          path.write_bytes(data)
+          PY
           python3 .github/scripts/security-regression.py 2>&1 | tee -a ini-index-diagnostics/result.txt
           git config core.whitespace cr-at-eol
           git diff --check 2>&1 | tee -a ini-index-diagnostics/result.txt
