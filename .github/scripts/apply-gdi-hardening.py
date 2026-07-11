@@ -77,21 +77,19 @@ replace_eol(
 
 replace_eol(
     "Mahou/MahouUI.cs",
-    "\t\t\t\t\t\tif(Enabled)\n"
-    "\t\t\t\t\t\t\tmyBuffer.Graphics.FillRectangle(new SolidBrush(BG), r);\n",
-    "\t\t\t\t\t\tif(Enabled) {\n"
-    "\t\t\t\t\t\t\tusing (var backgroundBrush = new SolidBrush(BG))\n"
-    "\t\t\t\t\t\t\t\tmyBuffer.Graphics.FillRectangle(backgroundBrush, r);\n"
-    "\t\t\t\t\t\t}\n",
+    "\t\t                if(Enabled)\n"
+    "\t\t                    myBuffer.Graphics.FillRectangle(new SolidBrush(BG), r);\n",
+    "\t\t                if(Enabled)\n"
+    "\t\t                    using (var backgroundBrush = new SolidBrush(BG))\n"
+    "\t\t                        myBuffer.Graphics.FillRectangle(backgroundBrush, r);\n",
 )
 replace_eol(
     "Mahou/MahouUI.cs",
-    "\t\t\t\t\t\tif(Enabled)\n"
-    "\t\t\t\t\t\t\tmyBuffer.Graphics.DrawRectangle(new Pen(Color.FromArgb(255, 133, 158, 191), 1), r);\n",
-    "\t\t\t\t\t\tif(Enabled) {\n"
-    "\t\t\t\t\t\t\tusing (var borderPen = new Pen(Color.FromArgb(255, 133, 158, 191), 1))\n"
-    "\t\t\t\t\t\t\t\tmyBuffer.Graphics.DrawRectangle(borderPen, r);\n"
-    "\t\t\t\t\t\t}\n",
+    "\t\t                if(Enabled)\n"
+    "\t\t                    myBuffer.Graphics.DrawRectangle(new Pen(Color.FromArgb(255, 133, 158, 191), 1), r);\n",
+    "\t\t                if(Enabled)\n"
+    "\t\t                    using (var borderPen = new Pen(Color.FromArgb(255, 133, 158, 191), 1))\n"
+    "\t\t                        myBuffer.Graphics.DrawRectangle(borderPen, r);\n",
 )
 replace_eol(
     "Mahou/MahouUI.cs",
