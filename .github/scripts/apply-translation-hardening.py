@@ -140,10 +140,18 @@ replace_eol(
     "\t\t\tSpecialShow();\n",
 )
 replace_eol(
+    "\t\t\t\tslt.Location = new Point(1, 0);\n"
+    "\t\t\t\tslt.Text = (gtr.auto_detect ? \"\" : gtr.src_lang+\"/\")+gtr.targ_lang+\":\";\n"
     "\t\t\t\tvar g = CreateGraphics();\n"
-    "\t\t\t\tvar size = g.MeasureString(slt.Text, slt.Font);\n",
+    "\t\t\t\tvar size = g.MeasureString(slt.Text, slt.Font);\n"
+    "\t\t\t\tslt.Width = (int)size.Width;\n"
+    "\t\t\t\ttxt.Name = \"TR_TXT\"+gtr.targ_lang;\n",
+    "\t\t\t\tslt.Location = new Point(1, 0);\n"
+    "\t\t\t\tslt.Text = (gtr.auto_detect ? \"\" : gtr.src_lang+\"/\")+gtr.targ_lang+\":\";\n"
     "\t\t\t\tusing (var g = CreateGraphics()) {\n"
-    "\t\t\t\tvar size = g.MeasureString(slt.Text, slt.Font);\n",
+    "\t\t\t\tvar size = g.MeasureString(slt.Text, slt.Font);\n"
+    "\t\t\t\tslt.Width = (int)size.Width;\n"
+    "\t\t\t\ttxt.Name = \"TR_TXT\"+gtr.targ_lang;\n",
 )
 replace_eol(
     "\t\t\t\tg.Dispose();\n"
