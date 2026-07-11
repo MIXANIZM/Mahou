@@ -37,7 +37,7 @@ namespace Mahou {
 		public static uint last_switch_layout = 0;
 		static uint cs_layout_last = 0;
 		static string busy_on = "", lastLWClearReason = "";
-		public static NativeClipboard.clip lastClip;
+		public static NativeClipboard.OleSnapshot lastClip;
 		public static string lastClipText;
 		public static string symbolclear;
 		static List<Keys> tempNumpads = new List<Keys>();
@@ -1893,6 +1893,10 @@ namespace Mahou {
 			}
 		}
 		static void Execute(string args) {
+			if (!MMain.MyConfs.ReadBool("Hidden", "AllowSnippetExecute")) {
+				Logging.Log("[EXPR] __execute blocked by security policy.", 2);
+				return;
+			}
 			string fil = "", arg ="";
 			bool fil_get = false;
 			for (int i = 0; i < args.Length; i++) {
@@ -2579,7 +2583,14 @@ namespace Mahou {
 		/// <summary>
 		/// Converts selected text.
 		/// </summary>
+		static bool selectionConversionSucceeded;
+		public static void ConvertSelectionOrLastWord() {
+			selectionConversionSucceeded = false;
+			ConvertSelection();
+			if (!selectionConversionSucceeded) ConvertLast(MMain.c_word);
+		}
 		public static void ConvertSelection() {
+			selectionConversionSucceeded = false;
 			Debug.WriteLine("Start CS");
 			try { //Used to catch errors
 				DoSelf(() => {
@@ -2587,6 +2598,7 @@ namespace Mahou {
 					string ClipStr = GetClipStr();
 					if (!String.IsNullOrEmpty(ClipStr)) {
 						csdoing = true;
+                        selectionConversionSucceeded = true;
 						Logging.Log("[CS] > Starting conversion of [" + ClipStr + "].");
 						KInputs.MakeInput(KInputs.AddPress(Keys.Back));
 						var result = "";
@@ -3104,19 +3116,16 @@ namespace Mahou {
 		}
 		static bool WaitForClip2BeFree() {
 			Debug.WriteLine(">> WFC2F");
-			IntPtr CB_Blocker = IntPtr.Zero;
-			int tries = 0;
-			do { 
-				CB_Blocker = WinAPI.GetOpenClipboardWindow();
-				if (CB_Blocker == IntPtr.Zero) break;
-				Logging.Log("Clipboard blocked by process id ["+WinAPI.GetWindowThreadProcessId(CB_Blocker, IntPtr.Zero) +"].", 2);
-				tries ++;
-				if (tries > 3000) {
-					Logging.Log("3000 Tries to wait for clipboard blocker ended, blocker didn't free'd clipboard |_|.", 2); return false;
-				}
-			} while (CB_Blocker != IntPtr.Zero);
-			Debug.WriteLine(">> WFC2F t: " + tries);
-			return true;
+			for (var tries = 0; tries < 50; tries++) {
+				var blocker = WinAPI.GetOpenClipboardWindow();
+				if (blocker == IntPtr.Zero) return true;
+				if (tries == 0)
+					Logging.Log("Clipboard is temporarily blocked by process id [" +
+						WinAPI.GetWindowThreadProcessId(blocker, IntPtr.Zero) + "].", 2);
+				Thread.Sleep(10);
+			}
+			Logging.Log("Clipboard remained blocked for 500 ms; operation cancelled.", 2);
+			return false;
 		}
 		public static bool RestoreClipBoard(string special = "") {
 			Debug.WriteLine(">> RC");
@@ -3127,16 +3136,16 @@ namespace Mahou {
 					restore = lastClipText;
 					spc = false;
 				} else {
-					NativeClipboard.clip_set(lastClip);
-					return true;
+					var snapshot = lastClip;
+					lastClip = null;
+					if (snapshot == null) return false;
+					try { return snapshot.Restore(); }
+					finally { snapshot.Dispose(); }
 				}
 			}
-			Logging.Log((spc?"Force-Text ":"")+"Restoring clipboard text: ["+restore+"].");
-			if (WaitForClip2BeFree()) {
-				try { Clipboard.SetDataObject(restore, true, 5, 120); return true; } 
-				catch { Logging.Log("Error during clipboard "+(spc?"Special ":"")+"text restore after 5 tries.", 2); return false; }
-			}
-			return false;
+			Logging.Log((spc?"Force-Text ":"")+"Restoring clipboard text.");
+			if (!WaitForClip2BeFree()) return false;
+			return NativeClipboard.SetText(restore);
 		}
 		public static string GetClipboard(int tries = 1, int timeout = 5) {
 			var txt = NativeClipboard.GetText();
@@ -3184,7 +3193,12 @@ namespace Mahou {
 			if (MahouUI.ClipBackOnlyText) {
 				lastClipText = NativeClipboard.GetText();
 			} else {
-				lastClip = NativeClipboard.clip_get();
+				if (lastClip != null) lastClip.Dispose();
+				lastClip = NativeClipboard.CaptureOleSnapshot();
+				if (lastClip == null) {
+					Logging.Log("Selected-text operation cancelled because the original clipboard could not be preserved.", 2);
+					return String.Empty;
+				}
 			}
 			
 //			Thread.Sleep(50);
@@ -3192,7 +3206,11 @@ namespace Mahou {
 //				lastClipText = Clipboard.GetText();
 //			This prevents from converting text that already exist in Clipboard
 //			by pressing "Convert Selection hotkey" without selected text.
-			NativeClipboard.Clear();
+			if (!NativeClipboard.Clear()) {
+				Logging.Log("Selected-text operation cancelled because the clipboard could not be cleared.", 2);
+				RestoreClipBoard();
+				return String.Empty;
+			}
 			Logging.Log("Getting selected text.");
 			if (MahouUI.SelectedTextGetMoreTries)
 				for (int i = 0; i != MMain.mahou.SelectedTextGetMoreTriesCount; i++) {

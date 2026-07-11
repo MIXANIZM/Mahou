@@ -4,6 +4,7 @@ using System.Threading;
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 namespace Mahou
 {
 	class MMain {
@@ -42,6 +43,8 @@ namespace Mahou
         public static void Main(string[] args) {
 			Application.EnableVisualStyles(); // at first enable styles.
 			SetProcessDPIAware();
+			WaitForRestartParent(args);
+			UserDataPaths.Initialize(args);
 			//Catch any error during program runtime
 			AppDomain.CurrentDomain.UnhandledException += (obj, arg) => {
 				var e = (Exception)arg.ExceptionObject;
@@ -51,8 +54,8 @@ namespace Mahou
 			if (System.Globalization.CultureInfo.InstalledUICulture.TwoLetterISOLanguageName == "ru")
 				Lang = Languages.Russian;
 			MyConfs = new Configs();
-			if (Configs.forceAppData && Configs.fine)
-				MyConfs.Write("Functions", "AppDataConfigs", "true");
+			MyConfs.Write("Functions", "AppDataConfigs", "true");
+			StartupManager.MigrateLegacyStartup();
 			Logging.Log("Mahou started.");
 			var ind = 0;
 			using (var mutex = new Mutex(false, GGPU_Mutex)) {
@@ -68,40 +71,6 @@ namespace Mahou
 					WinAPI.PostMessage((IntPtr)0xffff, ao, 0, 0);
 					return;
 				}
-				if (args.Length > ind) {
-					var arg1 = args[ind].ToUpper();
-					if (arg1.StartsWith("/C") || arg1.StartsWith("-C") || arg1.StartsWith("C")) {
-						if (args.Length > ind+1) {
-							var ok = false;
-							if (Directory.Exists(args[ind+1])) {
-								ok = true;
-							} else {
-								try {
-									Directory.CreateDirectory(args[ind+1]);
-									ok = true;
-								} catch (Exception e) {
-									Logging.Log("Can't create directory: "+args[ind+1]);
-								}
-							}
-							if (ok) {
-								Logging.Log("Switching config directory to : " + args[ind+1]);
-						    	MahouUI.nPath = args[ind+1];
-						    	C_SWITCH = true;
-							}
-						}
-					}
-				}
-				if (MMain.MyConfs.ReadBool("Functions", "AppDataConfigs")) {
-					var mahou_folder_appd = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Mahou");
-					if (!Directory.Exists(mahou_folder_appd))
-						Directory.CreateDirectory(mahou_folder_appd);
-					if (!File.Exists(Path.Combine(mahou_folder_appd, "Mahou.ini"))) // Copy main configs to appdata
-						File.Copy(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Mahou.ini"),
-						          Path.Combine(mahou_folder_appd, "Mahou.ini"), true);
-					Configs.filePath = Path.Combine(mahou_folder_appd, "Mahou.ini");
-					MyConfs = new Configs();
-				} else 
-					Configs.filePath = Path.Combine(MahouUI.nPath, "Mahou.ini");
 				MahouUI.latest_save_dir = Configs.filePath;
 				if (MyConfs.ReadBool("FirstStart", "First")) {
 					if (System.Globalization.CultureInfo.InstalledUICulture.TwoLetterISOLanguageName == "ru") {
@@ -159,6 +128,25 @@ namespace Mahou
 				if (!string.IsNullOrEmpty(MahouUI.MainLayout1))
 					MahouUI.GlobalLayout = MahouUI.currentLayout = Locales.GetLocaleFromString(MahouUI.MainLayout1).uId;
 				Application.Run();
+			}
+		}
+		static void WaitForRestartParent(string[] args) {
+			const string prefix = "--restart-wait=";
+			if (args == null) return;
+			foreach (var arg in args) {
+				if (String.IsNullOrEmpty(arg) || !arg.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) continue;
+				int processId;
+				if (!Int32.TryParse(arg.Substring(prefix.Length), out processId) || processId <= 0) return;
+				try {
+					using (var process = Process.GetProcessById(processId)) {
+						if (!process.HasExited) process.WaitForExit(5000);
+					}
+				} catch (ArgumentException) {
+					// The old process already exited.
+				} catch (Exception e) {
+					Debug.WriteLine("Restart wait failed: " + e.Message);
+				}
+				return;
 			}
 		}
         public static void RefreshLCnMID() {

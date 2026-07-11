@@ -195,7 +195,7 @@ namespace Mahou {
 		public static FontConverter fcv = new FontConverter();
 		public static string snipfile = Path.Combine(MahouUI.nPath, "snippets.txt");
 		public static string AS_dictfile = Path.Combine(MahouUI.nPath, "AS_dict.txt");
-		public static string mahou_folder_appd = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Mahou");
+		public static string mahou_folder_appd = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MIXANIZM Mahou");
 		public static string latest_save_dir = "";
 		public static string AutoSwitchDictionaryRaw = "";
 		public static bool AutoSwitchDictionaryTooBig = false;
@@ -229,6 +229,7 @@ namespace Mahou {
 			ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
 			nud_LangTTPositionX.Minimum = nud_LangTTPositionY.Minimum = -100;
            	LoadConfigs();
+			ApplySecurityPolicy();
 			InitializeListBoxes();
 			// Set minnimum values because they're ALWAYS restores to 0 after Form Editor is used.
 		    nud_CapsLockRefreshRate.Minimum = nud_DoubleHK2ndPressWaitTime.Minimum =
@@ -575,7 +576,7 @@ namespace Mahou {
 								HKCSelection_tempKey == HKCLast_tempKey && 
 								HKCLast_tempEnabled && HKCSelection_tempEnabled;
 					if (clcs && HKCSelection_tempDouble == HKCLast_tempDouble)
-						Hotkey.CallHotkey(HKCLast, id, ref hksOK, KMHook.ConvertSelection); // Use HKCLast id for cs if hotkeys are the same
+						Hotkey.CallHotkey(HKCLast, id, ref hksOK, KMHook.ConvertSelectionOrLastWord);
 					else 
 						Hotkey.CallHotkey(HKCSelection, id, ref hksOK, KMHook.ConvertSelection);
 					var clcl = false; // Convert Line + Convert Last
@@ -605,7 +606,7 @@ namespace Mahou {
 							stimer.Start();
 						}
 					}
-					if (!clcl) {
+					if (!clcl && !(clcs && HKCSelection_tempDouble == HKCLast_tempDouble)) {
 						if (clcs && HKCSelection_tempDouble && !HKCLast_tempDouble) {
 							if (!hklOK) {
 								hklOK = true;
@@ -1132,38 +1133,24 @@ namespace Mahou {
 		/// Update save paths for logs, snippets, autoswitch dictionary, configs.
 		/// </summary>
 		void UpdateSaveLoadPaths(bool appdata = false) {
-			if (!MMain.C_SWITCH) { 
-				if (Configs.forceAppData || appdata)
-					nPath = mahou_folder_appd;
-			}
-			snipfile = Path.Combine(nPath, "snippets.txt");
-			AS_dictfile = Path.Combine(nPath, "AS_dict.txt");
-			Logging.logdir = Path.Combine(nPath, "Logs");
-			Logging.log = Path.Combine(Logging.logdir, DateTime.Today.ToString("yyyy.MM.dd") + ".txt");
-			Configs.filePath = Path.Combine(nPath, "Mahou.ini");
+			nPath = UserDataPaths.DataRoot + Path.DirectorySeparatorChar;
+			mahou_folder_appd = UserDataPaths.DataRoot;
+			snipfile = Path.Combine(UserDataPaths.DataRoot, "snippets.txt");
+			AS_dictfile = Path.Combine(UserDataPaths.DataRoot, "AS_dict.txt");
+			Configs.filePath = Path.Combine(UserDataPaths.DataRoot, "Mahou.ini");
+			Logging.SetDirectory(Path.Combine(UserDataPaths.LocalRoot, "Logs"));
 			MMain.MyConfs = new Configs();
 		}
 		/// <summary>
 		/// Saves current settings to INI.
 		/// </summary>
 		void SaveConfigs() {
-			if (Configs.forceAppData && !chk_AppDataConfigs.Checked) {
-				try { 
-					File.Delete(Path.Combine(mahou_folder_appd, ".force"));
-					Configs.forceAppData = false;
-				} catch { Logging.Log("Force AppData file was missing...", 2); }
-			}
+			chk_AppDataConfigs.Checked = true;
+			Configs.forceAppData = !UserDataPaths.UsesCustomPath;
 			bool only_load = false;
-			if (!MMain.C_SWITCH) {
-				if (chk_AppDataConfigs.Checked) {
-					if (!Directory.Exists(mahou_folder_appd))
-						Directory.CreateDirectory(mahou_folder_appd);
-					nPath = mahou_folder_appd;
-				}
-				else {
-					nPath = AppDomain.CurrentDomain.BaseDirectory;
-				}
-			}
+			nPath = UserDataPaths.DataRoot + Path.DirectorySeparatorChar;
+			mahou_folder_appd = UserDataPaths.DataRoot;
+			Directory.CreateDirectory(UserDataPaths.DataRoot);
 			Logging.Log("Base path: " + nPath);
 			AutoStartAsAdmin = (cbb_AutostartType.SelectedIndex != 0);
 			if (chk_AutoStart.Checked) {
@@ -1344,7 +1331,7 @@ namespace Mahou {
 				#region Proxy
 				MMain.MyConfs.Write("Proxy", "ServerPort", txt_ProxyServerPort.Text);
 				MMain.MyConfs.Write("Proxy", "UserName", txt_ProxyLogin.Text);
-				MMain.MyConfs.Write("Proxy", "Password", Convert.ToBase64String(Encoding.Unicode.GetBytes(txt_ProxyPassword.Text)));
+				MMain.MyConfs.Write("Proxy", "Password", txt_ProxyPassword.Text);
 				#endregion
 				#region Sounds
 				MMain.MyConfs.Write("Sounds", "Enabled", chk_EnableSnd.Checked.ToString());
@@ -1925,9 +1912,7 @@ namespace Mahou {
 			#region Proxy
 			txt_ProxyServerPort.Text = MMain.MyConfs.Read("Proxy", "ServerPort");
 			txt_ProxyLogin.Text = MMain.MyConfs.Read("Proxy", "UserName");
-			try {
-				txt_ProxyPassword.Text = Encoding.Unicode.GetString(Convert.FromBase64String(MMain.MyConfs.Read("Proxy", "Password")));
-			} catch { Logging.Log("Password invalidly encoded, reset to none.", 2); }
+			txt_ProxyPassword.Text = MMain.MyConfs.Read("Proxy", "Password");
 			#endregion
 			#region Sounds
 			SoundEnabled = chk_EnableSnd.Checked = MMain.MyConfs.ReadBool("Sounds", "Enabled");
@@ -2380,27 +2365,20 @@ namespace Mahou {
 		/// Restarts Mahou.
 		/// </summary>
 		public void Restart() {
-			int MahouPID = Process.GetCurrentProcess().Id;
-			PreExit();
-			var restartMahouPath = Path.Combine(new string[] {
-				nPath,
-				"RestartMahou.cmd"
-            });
-			//Batch script to restart Mahou.
-			var restartMahou =
-				@"@ECHO OFF
-REM You should never see this file, if you are it means during restarting Mahou something went wrong. 
-chcp 65001
-SET MAHOUDIR=" + AppDomain.CurrentDomain.BaseDirectory + @"
-TASKKILL /PID " + MahouPID + @" /F
-TASKKILL /IM Mahou.exe /F
-START """" ""%MAHOUDIR%Mahou.exe""
-DEL "+restartMahouPath;
-			Logging.Log("Writing restart script.");
-			File.WriteAllText(restartMahouPath, restartMahou);
-			var piRestartMahou = new ProcessStartInfo() { FileName = restartMahouPath, WindowStyle = ProcessWindowStyle.Hidden };
-			Logging.Log("Starting restart script.");
-			Process.Start(piRestartMahou);
+			try {
+				var psi = new ProcessStartInfo {
+					FileName = Application.ExecutablePath,
+					Arguments = "--restart-wait=" + Process.GetCurrentProcess().Id,
+					WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
+					UseShellExecute = true
+				};
+				Process.Start(psi);
+				ExitProgram();
+			} catch (Exception e) {
+				Logging.Log("Cannot restart Mahou safely: " + e.Message, 1);
+				MessageBox.Show(this, "MIXANIZM Mahou could not restart automatically. Please close and start it manually.\r\n\r\n" + e.Message,
+					"MIXANIZM Mahou", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 		/// <summary>
 		/// Refreshes all icon's images and tray icon visibility.
@@ -3223,69 +3201,9 @@ DEL "+restartMahouPath;
 				langPanelRefresh.Dispose();
 		}
 		void AutoStartTask(bool deleteonly = false) {
-			var xml = @"<?xml version=""1.0"" encoding=""UTF-16""?>
-<Task version=""1.2"" xmlns=""http://schemas.microsoft.com/windows/2004/02/mit/task"">
-  <RegistrationInfo>
-    <Date>2017-08-16T15:11:10.596</Date>
-    <Author>Kirin\BladeMight</Author>
-    <Description>Starts Mahou with highest priveleges.</Description>
-  </RegistrationInfo>
-  <Triggers>
-    <LogonTrigger>
-      <Enabled>true</Enabled>
-    </LogonTrigger>
-    <BootTrigger>
-      <Enabled>true</Enabled>
-    </BootTrigger>
-  </Triggers>
-  <Principals>
-    <Principal id=""Author"">
-      <UserId>" + Environment.UserDomainName + "\\" + Environment.UserName + @"</UserId>
-      <LogonType>InteractiveToken</LogonType>
-      <RunLevel>HighestAvailable</RunLevel>
-    </Principal>
-  </Principals>
-  <Settings>
-    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
-    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
-    <StopIfGoingOnBatteries>true</StopIfGoingOnBatteries>
-    <AllowHardTerminate>true</AllowHardTerminate>
-    <StartWhenAvailable>true</StartWhenAvailable>
-    <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>
-    <IdleSettings>
-      <StopOnIdleEnd>true</StopOnIdleEnd>
-      <RestartOnIdle>false</RestartOnIdle>
-    </IdleSettings>
-    <AllowStartOnDemand>true</AllowStartOnDemand>
-    <Enabled>true</Enabled>
-    <Hidden>false</Hidden>
-    <RunOnlyIfIdle>false</RunOnlyIfIdle>
-    <WakeToRun>false</WakeToRun>
-    <ExecutionTimeLimit>PT0S</ExecutionTimeLimit>
-    <Priority>7</Priority>
-  </Settings>
-  <Actions Context=""Author"">
-    <Exec>
-      <Command>" + "\"" + Assembly.GetExecutingAssembly().Location + "\"" + @"</Command>
-    </Exec>
-  </Actions>
-</Task>";
-			var xml_path = Path.Combine(Path.GetTempPath(), "MahouStartup+.xml");
-			System.Threading.Tasks.Task.Factory.StartNew(() => File.WriteAllText(xml_path, xml)).Wait();
-			var pif = new ProcessStartInfo { 
-				FileName = "schtasks.exe",
-				WindowStyle = ProcessWindowStyle.Hidden,
-				Arguments = "/delete /TN MahouAutostart+ /f",
-				CreateNoWindow = true,
-				Verb = "runas"
-			};
-			Process.Start(pif).WaitForExit();
-			if (!deleteonly) {
-				pif.Arguments = "/create /xml \"" + xml_path + "\" /TN MahouAutostart+";
-				Process.Start(pif).WaitForExit();
-			}
-			File.Delete(xml_path);
+			StartupManager.SetEnabled(!deleteonly);
 		}
+
 		public static void SoundPlay(bool second = false) {
 			if (SoundEnabled) {
 				byte[] snd = second ? Properties.Resources.snd2 : Properties.Resources.snd;
@@ -3322,112 +3240,22 @@ DEL "+restartMahouPath;
 		/// Creates startup shortcut/task v3.0+v2.0.
 		/// </summary>
 		void CreateAutoStart() {
-			if (AutoStartAsAdmin) {
-				AutoStartRemove(true);
-				AutoStartTask();
-//				if (AutoStartExist(false))
-//					AutoStartRemove(false);
-				Logging.Log("Startup task created.");
-			} else {
-				AutoStartRemove(false);
-				var exelocation = Assembly.GetExecutingAssembly().Location;
-	 			var shortcutLocation = Path.Combine(
-	 				                       Environment.GetFolderPath(Environment.SpecialFolder.Startup),
-	 				                       "Mahou.lnk");
-	 			if (File.Exists(shortcutLocation))
-	 				return;
-	 			Type t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); //Windows Script Host Shell Object
-	 			dynamic shell = Activator.CreateInstance(t);
-	 			try {
-	 				var lnk = shell.CreateShortcut(shortcutLocation);
-	 				try {
-	 					lnk.TargetPath = exelocation;
-	 					lnk.WorkingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-	 					lnk.IconLocation = exelocation + ", 0";
-	 					lnk.Description = "Mahou - Magic layout switcher";
-	 					lnk.Save();
-	 				} finally {
-	 					Marshal.FinalReleaseComObject(lnk);
-	 				}
-				} finally {
-					Marshal.FinalReleaseComObject(shell);
-	 			}
-//				if (AutoStartExist(true))
-//					AutoStartRemove(true);
-				Logging.Log("Startup shortcut created.");
-			}
+			StartupManager.SetEnabled(true);
+			Logging.Log("HKCU Run startup enabled.");
 		}
+
 		bool AutoStartExist(bool admin) {
-			if (admin) {
-				var pif = new Process {
-					StartInfo = new ProcessStartInfo {
-						FileName = "cmd.exe",
-						Arguments = "/c schtasks.exe /query /TN MahouAutoStart+ >NUL 2>&1 && echo Y",
-						RedirectStandardOutput = true,
-						CreateNoWindow = true,
-						UseShellExecute = false
-					}
-				};
-				pif.Start();
-				while (!pif.StandardOutput.EndOfStream) {
-					var l = pif.StandardOutput.ReadLine();
-					if (l.Contains("Y")) {
-						Debug.WriteLine("Task exist!");
-						pif.StartInfo.Arguments = "/c schtasks.exe /query /TN MahouAutoStart+ /fo LIST /v";
-						pif.Start();
-						Debug.WriteLine("Checking task path...");
-						while (!pif.StandardOutput.EndOfStream) {
-							l = pif.StandardOutput.ReadLine();
-							if (l.Contains(Assembly.GetExecutingAssembly().Location)) {
-								Debug.WriteLine("Task path OK! in: " + l);
-								pif.Dispose();
-								return true;
-							}
-						}
-					}
-				}
-				Debug.WriteLine("Task path wrong!");
-				pif.Dispose();
-				return false;
-			}
-			var lnk = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "Mahou.lnk");
-			bool actual = false;
-			if (File.Exists(lnk)) {
- 				Type t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); //Windows Script Host Shell Object
-	 			dynamic shell = Activator.CreateInstance(t);
-	 			try {
-	 				var slnk = shell.CreateShortcut(lnk);
-	 				try {
-	 					if (slnk.TargetPath == Assembly.GetExecutingAssembly().Location)
-	 						actual = true;
-	 				} finally {
-	 					Marshal.FinalReleaseComObject(slnk);
-	 				}
-				} finally {
-					Marshal.FinalReleaseComObject(shell);
-	 			}
-			}
-			Debug.WriteLine("Actual: " + actual);
-			return actual;
+			return StartupManager.IsEnabled();
 		}
+
 		/// <summary>
 		/// Remove startup with Windows.
 		/// </summary>
 		void AutoStartRemove(bool admin) {
-			if (admin) {
-				AutoStartTask(true);
-				Logging.Log("Startup task removed.");
-			} else {
-				if (File.Exists(Path.Combine(
-					    Environment.GetFolderPath(Environment.SpecialFolder.Startup),
-					    "Mahou.lnk"))) {
-					File.Delete(Path.Combine(
-						Environment.GetFolderPath(Environment.SpecialFolder.Startup),
-						"Mahou.lnk"));
-				}
-				Logging.Log("Startup shortcut removed.");
-			}
+			StartupManager.SetEnabled(false);
+			Logging.Log("HKCU Run startup disabled.");
 		}
+
 		void PreExit(bool hideicon = true, int noglobal = 0) {
 			if (UseJKL && !KMHook.JKLERR)
 				jklXHidServ.Destroy();
@@ -3459,21 +3287,12 @@ DEL "+restartMahouPath;
 		/// <summary>Exits Mahou.</summary>
 		public void ExitProgram() {
 			Logging.Log("Exit by user demand.");
-			PreExit();
-			if (!KMHook.IfNW7())
-				System.Threading.Thread.Sleep(100);
 			try {
-				var piKill = new ProcessStartInfo() {
-					FileName = "taskkill",
-					Arguments = "/IM Mahou.exe /F", 
-					WindowStyle = ProcessWindowStyle.Hidden };
-				Process.Start(piKill);
-				piKill.Arguments = "/PID " + Process.GetCurrentProcess().Id + " /F";
-				Process.Start(piKill);
+				PreExit();
 			} catch (Exception e) {
-				Logging.Log("Taskkill error, try exit normally...", 1);
-				Application.Exit();
+				Logging.Log("Cleanup during exit failed: " + e.Message, 2);
 			}
+			Application.Exit();
 		}
 		/// <summary>
 		/// Registers keys 1->9 & 0 on keyboard as hotkey to be used as word count selector for Convert Multiple Words Count.
@@ -4242,207 +4061,29 @@ DEL "+restartMahouPath;
 		}
 		#region Updates functions
 		void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) {
-			if (isold)
-				_progress = e.ProgressPercentage;
-			prb_UpdateDownloadProgress.Value = progress = e.ProgressPercentage;
-			//Below in "if" is AUTO-UPDATE feature ;)
-			if (e.ProgressPercentage == 100 && !was) {
-				Logging.Log("Download of Mahou update [" + UpdInfo[3] +"] finished.");
-				int MahouPID = Process.GetCurrentProcess().Id;
-				//Downloaded archive
-				var arch = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
-				PreExit();
-				DeleteOldJKL();
-				//Batch script to create other script o.0,
-				//which shutdown running Mahou,
-				//delete old version,
-				//unzip downloaded one, and start it.
-				var silent = MMain.MyConfs.ReadBool("Functions", "SilentUpdate");
-				var UpdateMahou =
-					@"@ECHO OFF
-chcp 65001
-SET MAHOUDIR=" + AppDomain.CurrentDomain.BaseDirectory + @"
-SET Mahou=" + AppDomain.CurrentDomain.FriendlyName + @"
-TASKKILL /PID " + MahouPID + @" /F
-TASKKILL /IM %Mahou% /F
-set i=1
-:loop
-DEL /Q /F /A ""%MAHOUDIR%%Mahou%""
-set /a i=%i%+1
-if %i% == 333 goto continue
-if not exist ""%MAHOUDIR%%Mahou%"" goto continue
-goto loop
-:continue
-echo %i%
-ECHO x0 = replace(Wscript.Arguments(0), ""\\"", ""\"") > ""%TEMP%\unzip.vbs""
-ECHO x1 = replace(Wscript.Arguments(1), ""\\"", ""\"") >> ""%TEMP%\unzip.vbs""
-ECHO With CreateObject(""Shell.Application"") >> ""%TEMP%\unzip.vbs""
-ECHO    .NameSpace(x1).CopyHere .NameSpace(x0).items, 20 >> ""%TEMP%\unzip.vbs""
-ECHO End With >> ""%TEMP%\unzip.vbs""
-
-CSCRIPT ""%TEMP%\unzip.vbs"" ""%TEMP%\" + arch + @""" ""%MAHOUDIR%""
-
-START """" ""%MAHOUDIR%Mahou.exe"" "+ (!silent ? "\"_!_updated_!_\"" : "\"_!_silent_updated_!_\"") + @"
-DEL /Q /F /A ""%TEMP%\" + arch + @"""
-DEL /Q /F /A ""%TEMP%\unzip.vbs""
-DEL /Q /F /A ""%TEMP%\UpdateMahou.cmd""";
-				//Save Batch script
-				Logging.Log("Writing update script.");
-				var fn = Path.Combine(Path.GetTempPath(), "UpdateMahou.cmd");
-				File.WriteAllText(fn, UpdateMahou);
-				var piUpdateMahou = new ProcessStartInfo();
-				piUpdateMahou.FileName = fn;
-				//Make UpdateMahou.cmd's startup hidden
-				piUpdateMahou.WindowStyle = ProcessWindowStyle.Hidden;
-				//Start updating(unzipping)
-				Logging.Log("Starting update script.");
-				Process.Start(piUpdateMahou);
-				was = true;
-				ExitProgram();
-			}
+			// Legacy self-update is intentionally disabled.
 		}
+
 		string getASD_RemoteSize(bool InZip = false) {
 			try {
-				if (InZip) {
-					var data = getResponce("https://github.com/BladeMight/Mahou/releases/latest-commit"); 
-					if (!String.IsNullOrEmpty(data)) {
-						var siz = Regex.Match(data, "<small class=\"text-gray float-right\">(.+)</small>").Groups[1].Value;
-						Logging.Log("Remote size of AS_dict: " + siz);
-						return siz;
-					} else throw new Exception(MMain.Lang[Languages.Element.NetError]);
-				} 
-				var request = (HttpWebRequest)WebRequest.Create("https://raw.githubusercontent.com/BladeMight/Mahou/master/AS_dict.txt");
-				if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
-					request.Proxy = MakeProxy();
-				}
-				request.Method = "HEAD";
-				request.AllowAutoRedirect = false;
-				using (var r = (HttpWebResponse)request.GetResponse()) {
-					var type = " B";
-					var D = Convert.ToDouble(r.ContentLength);
-					if(D /1024 != 0 && D / 1024 >= 1) {
-				        D /= 1024;
-				        type = " KB";
-				        if(D /1024 != 0 && D / 1024 >= 1) {
-			                D /= 1024;
-			                type = " MB";
-				        }
-					}
-					return D.ToString("0.00") + type;
-				}
-			} catch (Exception e) {
-				Logging.Log("Getting remote size of AS_dict failed, details: " + e.Message, 1);
-				return MMain.Lang[Languages.Element.Error]; 
-			}
+				var source = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AS_dict.txt");
+				if (!File.Exists(source)) return MMain.Lang[Languages.Element.Error];
+				var length = new FileInfo(source).Length;
+				return (length / 1024d / 1024d).ToString("0.00") + " MB";
+			} catch { return MMain.Lang[Languages.Element.Error]; }
 		}
-		string getResponce(string url) {
-			try {
-				var request = (HttpWebRequest)WebRequest.Create(url);
-				request.UserAgent = "request";
-				// For proxy
-				if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
-					request.Proxy = MakeProxy();
-				}
-				request.ServicePoint.SetTcpKeepAlive(true, 5000, 1000);
-				var response = (HttpWebResponse)request.GetResponse();
-                if (response.StatusCode == HttpStatusCode.OK) {
-					var sr = new StreamReader(response.GetResponseStream(), true);
-					var data = sr.ReadToEnd();
-					sr.Dispose();
-					response.Close();
-					Logging.Log("Responce of url [" + url + "] succeded.");
-					return data;
-				}
-			    response.Close();
-			} catch(Exception e) {
-				Logging.Log("Responce of url [" + url + "] done with error, message:\r\n" + e.Message + e.StackTrace, 1);
-			}
-		    return null;
-			
-		}
-		void btn_UpdateAutoSwitchDictionary_Click(object sender, EventArgs e) {
-			var resp = "";
-			if (check_ASD_size) {
-				var size = getASD_RemoteSize(Dowload_ASD_InZip);
-				if (size == MMain.Lang[Languages.Element.Error]) {
-					btn_UpdateAutoSwitchDictionary.ForeColor = Color.OrangeRed;
-					btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.Error];
-					tmr.Tick += (o, oo) => { 
-						btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.AutoSwitchUpdateDictionary];
-						btn_UpdateAutoSwitchDictionary.ForeColor = Color.FromKnownColor(KnownColor.ControlText);
-						tmr.Stop(); 
-					};
-					tmr.Interval = 350;
-					tmr.Start();
-					return;
-				}
-				check_ASD_size = false;
-				var name = "AS_dict.txt";
-				if (Dowload_ASD_InZip)
-					name = "AS_dict.zip";
-				btn_UpdateAutoSwitchDictionary.Text = name + " " + size + " " + MMain.Lang[Languages.Element.Download]+ "?";
-				return;
-			}
-			check_ASD_size = true;
-			if (Dowload_ASD_InZip) {
-				var zip = Path.Combine(Path.GetTempPath(), "AS_dict.zip");
-					using (var wc = new WebClient()) {
-						// For proxy
-						if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
-							wc.Proxy = MakeProxy();
-						}
-						wc.DownloadFile(new Uri("https://github.com/BladeMight/Mahou/releases/download/latest-commit/AS_dict.zip"), zip);
-						var ExtractASD = @"@ECHO OFF
-chcp 65001
-ECHO With CreateObject(""Shell.Application"") > ""unzip.vbs""
-ECHO    .NameSpace(WScript.Arguments(1)).CopyHere .NameSpace(WScript.Arguments(0)).items, 16 >> ""unzip.vbs""
-ECHO End With >> ""unzip.vbs""
 
-CSCRIPT ""unzip.vbs"" """ + zip + @""" """ + Path.GetTempPath() + @"""
-DEL """ + zip + @"""
-DEL ""unzip.vbs""
-DEL ""ExtractASD.cmd""";
-						Logging.Log("Writing extract script.");
-						File.WriteAllText(Path.Combine(Path.GetTempPath(), "ExtractASD.cmd"), ExtractASD);
-						var piExtractASD = new ProcessStartInfo() { FileName = "ExtractASD.cmd", WorkingDirectory = Path.GetTempPath(), WindowStyle = ProcessWindowStyle.Hidden};
-						Logging.Log("Starting extract script.");
-						Process.Start(piExtractASD).WaitForExit();
-						resp = File.ReadAllText(Path.Combine(Path.GetTempPath(), "AS_dict.txt"));
-						File.Delete(Path.Combine(Path.GetTempPath(), "AS_dict.txt"));
-                 	}
-			} else
-				resp = getResponce("https://raw.githubusercontent.com/BladeMight/Mahou/master/AS_dict.txt");
-			btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.Checking];
-			var dict = Regex.Replace(resp, "\r?\n", Environment.NewLine);
-			tmr.Interval = 300;
-			if (dict != null) {
-				btn_UpdateAutoSwitchDictionary.ForeColor = Color.BlueViolet;
-				btn_UpdateAutoSwitchDictionary.Text = "OK";
-				tmr.Tick += (o, oo) => { 
-					btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.AutoSwitchUpdateDictionary];
-					btn_UpdateAutoSwitchDictionary.ForeColor = Color.FromKnownColor(KnownColor.ControlText);
-					tmr.Stop();
-				};
-				tmr.Interval = 350;
-				tmr.Start();
-				AutoSwitchDictionaryRaw = dict;
-				this.txt_AutoSwitchDictionary.Invoke((MethodInvoker)delegate {
-					ChangeAutoSwitchDictionaryTextBox();
-					UpdateSnippetCountLabel(AutoSwitchDictionaryRaw, lbl_AutoSwitchWordsCount, false);
-				});
-				File.WriteAllText(AS_dictfile, dict, Encoding.UTF8);
-			} else {
-				btn_UpdateAutoSwitchDictionary.ForeColor = Color.OrangeRed;
-				btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.Error];
-				tmr.Tick += (o, oo) => { 
-					btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.AutoSwitchUpdateDictionary];
-					btn_UpdateAutoSwitchDictionary.ForeColor = Color.FromKnownColor(KnownColor.ControlText);
-					tmr.Stop(); 
-				};
-				tmr.Interval = 350;
-				tmr.Start();
-			}
+		string getResponce(string url) {
+			Logging.Log("Blocked legacy network request: " + url, 2);
+			return null;
 		}
+
+		void btn_UpdateAutoSwitchDictionary_Click(object sender, EventArgs e) {
+			var ok = RestoreBundledAutoSwitchDictionary();
+			btn_UpdateAutoSwitchDictionary.ForeColor = ok ? Color.BlueViolet : Color.OrangeRed;
+			btn_UpdateAutoSwitchDictionary.Text = ok ? "Bundled dictionary restored" : "Bundled dictionary missing";
+		}
+
 		static Regex rx = new Regex(@"\\u([a-fA-f0-9]{4})", RegexOptions.Compiled);
 		public static string UnescapeUnicode(string x) {
 			if (!x.Contains("\\u")) return x;
@@ -4459,56 +4100,15 @@ DEL ""ExtractASD.cmd""";
 		/// Gets update info, and sets it to static [UpdInfo] string.
 		/// </summary>
 		void GetUpdateInfo() {
-			var Info = new string[5] {"","","","",""} ; // Update info
-			var api = "https://api.github.com/repos/BladeMight/Mahou/releases";
-			var url = api+"/latest";
-			var beta = MMain.MyConfs.Read("Updates", "Channel") != "Stable";
-			if (beta) {
-				url = api+"/tags/latest-commit";
-			}
-			var data = getResponce(url);
-			if (!String.IsNullOrEmpty(data)) {
-//				Debug.WriteLine(data);
-				var a = new Auri(data);
-				var Title = trimlr(a["name"]);
-				var Description = trimlr(a["body"]);
-				// cosmetics
-				Description = Description.Replace(":memo:", "📝").Replace(":gem:", "💎").Replace(":bug:", "🐛")
-						   				 .Replace(":speech_balloon:", "💬").Replace(":rocket:", "🚀");
-				Description = Regex.Unescape(Description);
-				var Version = trimlr(a["tag_name"]);
-				var aa = new Auri(a["assets"]);
-				var Lindex = "0";
-				var Commit = "";
-				if (beta) {
-					Lindex = "7";
-					Commit = Regex.Match(Title, @".*\[([a-fA-F0-9]{7})\]").Groups[1].Value;
-				}
-				var Link = trimlr(new Auri(aa["^"+Lindex])["browser_download_url"]);
-				Debug.WriteLine(Title);
-				Debug.WriteLine(Description);
-				Debug.WriteLine(Version);
-				Debug.WriteLine(Commit);
-				Debug.WriteLine(Link);
-				Info[0] = Title;
-				Info[1] = UnescapeUnicode(Description);
-				Info[2] = Version;
-				Info[3] = Link;
-				if (!String.IsNullOrEmpty(Commit))
-					Info[4] = Commit;
-				Logging.Log("Check for updates succeded, GitHub "+ (beta ? ("commit:"+ Commit) : ("version: " + Version)) + ".");
-			} else {
-				Logging.Log("Check for updates failed, error above.", 1);
-				Info = new string[]{
-						MMain.Lang[Languages.Element.Error],
-						MMain.Lang[Languages.Element.NetError],
-						MMain.Lang[Languages.Element.Error],
-						MMain.Lang[Languages.Element.Error],
-						MMain.Lang[Languages.Element.Error]
-				};
-			}
-			UpdInfo = Info;
+			UpdInfo = new [] {
+				"Manual verified updates only",
+				LegacyNetworkDisabledMessage,
+				Application.ProductVersion,
+				String.Empty,
+				String.Empty
+			};
 		}
+
 		/// <summary>
 		/// Creates proxy from proxy controls(server/name/pass) text.
 		/// </summary>
@@ -4537,57 +4137,19 @@ DEL ""ExtractASD.cmd""";
 		/// Check for updates at Mahou startup.
 		/// </summary>
 		public void StartupCheck() {
-			Logging.Log("Startup check for updates.");
-			var update_delay = MMain.MyConfs.ReadInt("Updates", "Delay");
-			if (update_delay <= 0) update_delay = 1;
-			Logging.Log("[UPD] > Delaying updates by " + update_delay +"s.");
-			System.Threading.Thread.Sleep(update_delay*1000);
-			System.Threading.Tasks.Task.Factory.StartNew(GetUpdateInfo).Wait();
-			SetUInfo();
-			bool silent = MMain.MyConfs.ReadBool("Functions", "SilentUpdate");
-			Debug.WriteLine(UpdInfo[2]);
-			try {
-				if ((UpdInfo[2] == "latest-commit" || MMain.MyConfs.Read("Updates", "Channel") != "Stable") ?
-				    MMain.MyConfs.Read("Updates", "LatestCommit") != UpdInfo[4] :
-				    flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2])) {
-					Logging.Log("New version available, " + (!silent ? "showing dialog..." : "silent updating..."));
-					if (silent)
-						AtUpdateShow = 1;
-					else {
-						if (UpdInfo[0] != MMain.Lang[Languages.Element.Error]) {
-							var fx = new Form() { TopMost = false, Visible = false };
-							if (MessageBox.Show(fx, UpdInfo[1].Substring(0, ((UpdInfo[1].Length > 640) ? 640 : UpdInfo[1].Length)) +"...\n"+UpdInfo[3], UpdInfo[0],
-								     MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.OK) {
-								AtUpdateShow = 1;
-							} else { AtUpdateShow = 2; }
-							fx.Dispose();
-						} else {
-							AtUpdateShow = 3;
-						}
-					}
-				} else
-					AtUpdateShow = 2; // No Updates
-			} catch(Exception e) {
-				Logging.Log("Unexpected error: \n" + e.Message +"\n" + e.StackTrace);
-				AtUpdateShow = 3;
-			}
+			AtUpdateShow = 2;
 		}
+
 		/// <summary>
 		/// Sets UI info controls(version/title/description) text.
 		/// </summary>
 		void SetUInfo() {
 			if (MMain.mahou == null) return;
-//			this.grb_MahouReleaseTitle.Invoke((MethodInvoker)delegate {
-			    MMain.mahou.grb_MahouReleaseTitle.Text = UpdInfo[0];
-//			});
-//			this.txt_UpdateDetails.Invoke((MethodInvoker)delegate {
-			    MMain.mahou.txt_UpdateDetails.Text = UpdInfo[1];
-//			});
-//			this.btn_DownloadUpdate.Invoke((MethodInvoker)delegate {
-               	MMain.mahou.btn_DownloadUpdate.Text = MMain.Lang[Languages.Element.DownloadUpdate]; // Restore download button text
-			    MMain.mahou.btn_DownloadUpdate.Text = Regex.Replace(MMain.mahou.btn_DownloadUpdate.Text, @"\<.+?\>", UpdInfo[2]);
-//			});
+			MMain.mahou.grb_MahouReleaseTitle.Text = "Manual verified updates only";
+			MMain.mahou.txt_UpdateDetails.Text = LegacyNetworkDisabledMessage;
+			MMain.mahou.btn_DownloadUpdate.Enabled = false;
 		}
+
 		void UpdateSnippetCountLabel(string snippets, Label target, bool isSnip = true) {
 			if (!isSnip && string.IsNullOrEmpty(snippets)) { return; }
 			var snipc = GetSnippetsCount(snippets);
@@ -5282,7 +4844,12 @@ DEL ""ExtractASD.cmd""";
 				if (MahouUI.ClipBackOnlyText) {
 					KMHook.lastClipText = NativeClipboard.GetText();
 				} else {
-					KMHook.lastClip = NativeClipboard.clip_get();
+					if (KMHook.lastClip != null) KMHook.lastClip.Dispose();
+					KMHook.lastClip = NativeClipboard.CaptureOleSnapshot();
+					if (KMHook.lastClip == null) {
+						Logging.Log("Paste menu action cancelled because the clipboard could not be preserved.", 2);
+						return;
+					}
 				}
 				var cl = NativeClipboard.GetText();
 				if (string.IsNullOrEmpty(cl)) {
@@ -5838,104 +5405,13 @@ DEL ""ExtractASD.cmd""";
 				btn.Font = fntd.Font;
 		}
 		void Btn_CheckForUpdatesClick(object sender, EventArgs e) {
-			if (!checking) {
-				checking = true;
-				var btChkTextWas = btn_CheckForUpdates.Text;
-				btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.Checking];
-				UpdInfo = null;
-				System.Threading.Tasks.Task.Factory.StartNew(GetUpdateInfo).Wait();
-				tmr.Tick += (_, __) => {;
-					btn_CheckForUpdates.Text = btChkTextWas;
-					SetUInfo();
-					checking = false;
-					tmr.Interval = 3000;
-					tmr.Stop();
-				};
-				tmr.Interval = 1900;
-				if (UpdInfo[2] == MMain.Lang[Languages.Element.Error]) {
-					tmr.Interval = 1000;
-					tmr.Start();
-				} else {
-					if (cbb_UpdatesChannel.SelectedIndex != 0) {
-						if (MMain.MyConfs.Read("Updates", "LatestCommit") != UpdInfo[4]) {
-							btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.TimeToUpdate];
-							tmr.Start();
-							SetUInfo();
-							grb_DownloadUpdate.Enabled = true;
-						} else {
-							btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.YouHaveLatest];
-							tmr.Start();
-							grb_DownloadUpdate.Enabled = false;
-							SetUInfo();
-						}
-					}
-					else if (flVersion("v" + Application.ProductVersion) <
-					   flVersion(UpdInfo[2]) || this.Text.Contains("dev")) {
-						btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.TimeToUpdate];
-						tmr.Start();
-						SetUInfo();
-						grb_DownloadUpdate.Enabled = true;
-					} else {
-						btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.YouHaveLatest];
-						tmr.Start();
-						grb_DownloadUpdate.Enabled = false;
-						SetUInfo();
-					}
-				}
-			}
+			ShowLegacyNetworkDisabled();
 		}
+
 		void Btn_DownloadUpdateClick(object sender, EventArgs e) {
-			if (!updating && UpdInfo != null) {
-				updating = true;
-				//Downloads latest Mahou
-				using (var wc = new WebClient()) {
-					wc.DownloadProgressChanged += wc_DownloadProgressChanged;
-					// Gets filename from url
-					var BDMText = btn_DownloadUpdate.Text;
-					var fn = Regex.Match(UpdInfo[3], @"[^\\\/]+$").Groups[0].Value;
-					if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
-						wc.Proxy = MakeProxy();
-					}
-					if (UpdInfo.Length > 4)
-						MMain.MyConfs.WriteSave("Updates", "LatestCommit", UpdInfo[4]);
-					else MMain.MyConfs.WriteSave("Updates", "LatestCommit", "Downgraded to Stable");
-					Logging.Log("Downloading Mahou update: "+UpdInfo[3]);
-					try {
-						wc.DownloadFileAsync(new Uri(UpdInfo[3]), Path.Combine(Path.GetTempPath(), fn));
-						btn_DownloadUpdate.Text = "Downloading " + fn;
-						animate.Tick += (_, __) => { btn_DownloadUpdate.Text += "."; };
-						animate.Start();
-						btn_DownloadUpdate.Enabled = false;
-						tmr.Tick += (_, __) => {
-							// Checks if progress changed?
-							if (progress == _progress) {
-								old.Stop();
-								isold = true;
-								btn_DownloadUpdate.Enabled = true;
-								animate.Stop();
-								prb_UpdateDownloadProgress.Value = progress = _progress = 0;
-								wc.CancelAsync();
-								updating = false;
-								btn_DownloadUpdate.Text = "Error...";
-								tmr.Tick += (o, oo) => {
-									btn_DownloadUpdate.Text = BDMText;
-									tmr.Stop();
-								};
-								tmr.Interval = 3000;
-								tmr.Start();
-							} else {
-								tmr.Stop();
-							}
-						};
-						old.Start();
-						tmr.Interval = 15000;
-						tmr.Start();
-					} catch(Exception ex) {
-						Logging.Log("Download update error: "+ ex.Message + Environment.NewLine+ex.StackTrace, 1);
-					}
-				}
-			}
+			ShowLegacyNetworkDisabled();
 		}
+
 		void MahouUIDeactivate(object sender, EventArgs e) {
 			RegisterHotkeys();
 		}
@@ -6431,130 +5907,24 @@ DEL ""ExtractASD.cmd""";
 		    return s;
 		}
 		string SyncUploadZxZ(string content) {
-	        try {
-				var fname = "Mahou-Sync."+GetRandomString(8)+".txt";
-				Console.WriteLine("fname:" + fname);
-	            string boundary = "----------------------------" + DateTime.Now.Ticks.ToString("x");
-	            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(SYNC_HOST2);
-				if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
-					req.Proxy = MakeProxy();
-				}
-	            req.ContentType = "multipart/form-data; boundary=" + boundary;
-	            req.Method = "POST";
-	            req.KeepAlive = true;
-		        var form = Encoding.UTF8.GetBytes("\n--" + boundary + "\n" +
-	                                              "Content-Disposition: form-data; name=\"file\"; filename="+fname+"\n" +
-		                                		  "Content-Type: application/octet-stream\n\n" +
-		                                		  content + "\n--" + boundary + "--");
-	            req.ContentLength = form.Length;
-	            using (var rs = req.GetRequestStream()) {
-	                rs.Write(form, 0, form.Length);
-	            }
-	            using (var r = req.GetResponse()) {
-	                var rs = r.GetResponseStream();
-	                var sr = new StreamReader(rs);
-	                var str = sr.ReadToEnd();
-	                sr.Dispose();
-	                return str;
-	            }
-	        }
-	        catch (WebException ex) {
-	            using (WebResponse r = ex.Response) {
-	                using (var sr = new StreamReader(r.GetResponseStream()))
-	                    return sr.ReadToEnd();
-	
-	            }
-	        }
+			return String.Empty;
 		}
+
 		string SyncUploadHB(byte[] data, ref StringBuilder stat) {
-			using (var wc = new WebClient()) {
-				if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
-					wc.Proxy = MakeProxy();
-				}
-				wc.Encoding = Encoding.UTF8;
-				try {
-					var r = wc.UploadData(new Uri(SYNC_HOST+"/documents"), "POST", data);
-					return Regex.Match(Encoding.UTF8.GetString(r), "^[{].key.:.(.+).[}]$").Groups[1].Value;
-				} catch (Exception e) { 
-					stat.Clear().Append(e.Message);
-					if (data.Length >= 400000) 
-						stat.Append(MMain.Lang[Languages.Element.TooBig]);
-				}
-			}
-			return "";
+			stat.Clear().Append(LegacyNetworkDisabledMessage);
+			return String.Empty;
 		}
+
 		void SyncBackup() {
-			string id = "";
-			var rawtext = new StringBuilder();
-			var bb = new [] { chk_Mini.Checked, chk_Stxt.Checked, chk_Htxt.Checked, chk_Ttxt.Checked, chk_Mmm.Checked };
-			var stat = new StringBuilder("OK");
-			for (int i = 0; i!= SYNC_NAMES.Length; i++) {
-				var r = ReadToBackup(SYNC_TYPES[i], SYNC_NAMES[i], bb[i], chk_andPROXY.Checked);
-				rawtext.Append(r[0]);
-				if (r[1] != "") {
-					stat.Append(Environment.NewLine).Append(r[1]);
-				}
-			}
-			Debug.WriteLine("Rawtext: " +rawtext);
-			if (!ZxZ)
-				id = SyncUploadHB(Encoding.UTF8.GetBytes(rawtext.ToString()), ref stat);
-			else
-				id = SyncUploadZxZ(rawtext.ToString());
-			Debug.WriteLine("id:"+id);
-			txt_backupId.Text = (ZxZ ? "" : (SYNC_HOST + "/")) + id;
-			MMain.MyConfs.Write("Sync", "BLast", txt_backupId.Text);
-			txt_backupId.Enabled = true;
-			txt_backupStatus.Text = stat.ToString();
+			txt_backupStatus.Text = LegacyNetworkDisabledMessage;
 			txt_backupStatus.Visible = true;
 		}
+
 		void SyncRestore() {
-			var id = txt_restoreId.Text;
-			var stat = "";
-			if (!string.IsNullOrEmpty(id)) {
-				if (!ZxZ) {
-					var raw = SYNC_HOST+"/raw";
-					if (id.StartsWith("http", StringComparison.InvariantCulture)) {
-						if (!id.StartsWith(raw, StringComparison.InvariantCulture) || id.Contains("hastebin.com")) {
-							var p = id.Split('/');
-							var l = p[p.Length-1];
-							if (string.IsNullOrEmpty(l))
-								l = p[p.Length-2];
-							id = raw + "/" + l;
-						}
-					} else {
-						if (id.Length >= 32) {
-							stat = MMain.Lang[Languages.Element.UnknownID];
-						} else 
-							id = raw + "/" + id;
-					}
-				}
-				Debug.WriteLine("id:" +id);
-				var d = "";
-				if (!string.IsNullOrEmpty(id)) {
-					using (var wc = new WebClient()) {
-						if (!String.IsNullOrEmpty(txt_ProxyServerPort.Text)) {
-							wc.Proxy = MakeProxy();
-						}
-						wc.Encoding = Encoding.UTF8;
-						try {
-							d = Encoding.UTF8.GetString(wc.DownloadData(new Uri(id)));
-						} catch (Exception e) { 
-							stat = e.Message;
-						}
-					}
-				}
-				Debug.WriteLine(d);
-				if (!string.IsNullOrEmpty(d)) {
-					stat += WriteRestoreFiles(d, chk_rMini.Checked, chk_rStxt.Checked, chk_rHtxt.Checked, chk_rTtxt.Checked, chk_andPROXY2.Checked, chk_rMmm.Checked);				MMain.MyConfs.Write("Sync", "BLast", txt_backupId.Text);
-					MMain.MyConfs.Write("Sync", "RLast", txt_restoreId.Text);
-				}
-				LoadConfigs();
-			} else { 
-				stat =  MMain.Lang[Languages.Element.EnterID];
-			}
-			txt_restoreStatus.Text = stat;
+			txt_restoreStatus.Text = LegacyNetworkDisabledMessage;
 			txt_restoreStatus.Visible = true;
 		}
+
 		void SetBools(string bools, char sep, out bool mini, out bool stxt, out bool htxt, out bool ttxt, out bool ptxt, out bool mmm) {
 			var s = bools.Split(sep);
 			mini = boo(s[0]);

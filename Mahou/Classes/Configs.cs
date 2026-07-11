@@ -132,31 +132,21 @@ namespace Mahou {
         public INI _INI;
         /// <summary> Creates if it is not exist and test that configs file Mahou.ini its readable, on startup can create dialog about forced AppData configs if configs file failed to be created/readen. </summary>
         public static void CreateConfigsFile() {
-        	if (File.Exists(Path.Combine(MahouUI.mahou_folder_appd,".force"))) {
-        		filePath = Path.Combine(MahouUI.mahou_folder_appd, "Mahou.ini");
-        		forceAppData = true;
-        	}
-        	bool create = true;
-        	try {
-	        	if (!File.Exists(filePath)) { //Create an UTF-16 configuration file
-        			// Test write permissions
-        			var dummy = Path.Combine(MahouUI.nPath, "dummy");
-        			File.WriteAllText(dummy, "dummy");
-        			File.Delete(dummy);
-        			// Write configs start
-	                File.WriteAllText(filePath, "!Unicode(✔), Mahou settings file", Encoding.Unicode);
-	                create = false;
-        		} else { 
-			    	using (var sr = new StreamReader(filePath)) {
-	    				sr.Read();
-	        		}
-        		}
-        		fine = true;
-        	} catch(Exception e) {
-        		fine = false;
-        		if (!SwitchToAppData(create, e)) 
-        			System.Diagnostics.Process.GetCurrentProcess().Kill();
-        	}
+            try {
+                var directory = Path.GetDirectoryName(filePath);
+                if (!String.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
+                if (!File.Exists(filePath))
+                    File.WriteAllText(filePath, "!Unicode(✔), MIXANIZM Mahou settings file", Encoding.UTF8);
+                else
+                    using (var sr = new StreamReader(filePath, true)) sr.Read();
+                fine = true;
+            } catch (Exception e) {
+                fine = false;
+                Logging.Log("Configs read/write error: " + e.Message + "\n" + e.StackTrace, 1);
+                MessageBox.Show("MIXANIZM Mahou cannot create or read its settings file:\r\n" + filePath + "\r\n\r\n" + e.Message,
+                    "MIXANIZM Mahou", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
         }
         public static bool SwitchToAppData(bool create, Exception e) {
         	if (MMain.C_SWITCH) { return false; }
@@ -211,6 +201,7 @@ namespace Mahou {
         	ReadFromDisk();
         	#region Hidden
 			CheckBool("Hidden", "cmdbackfix", "true");
+			CheckBool("Hidden", "AllowSnippetExecute", "false");
 			CheckBool("Hidden", "DARKTHEME", "false");
 			CheckString("Hidden", "Layout_S_Modifier_Layout", "0");
 			CheckInt("Hidden", "Layout_S_Modifier_Key", "0");
@@ -394,12 +385,12 @@ namespace Mahou {
 			CheckBool("Hotkeys", "ConvertLastLine_Double", "false");
 			CheckBool("Hotkeys", "ConvertLastLine_Enabled", "true");
 			// Convert last line hotkey
-			CheckInt("Hotkeys", "ConvertSelectedText_Key", "145");
+			CheckInt("Hotkeys", "ConvertSelectedText_Key", "45");
 			CheckString("Hotkeys", "ConvertSelectedText_Modifiers", "");
 			CheckBool("Hotkeys", "ConvertSelectedText_Double", "false");
 			CheckBool("Hotkeys", "ConvertSelectedText_Enabled", "true");
 			// Convert selected text hotkey
-			CheckInt("Hotkeys", "ConvertLastWord_Key", "19");
+			CheckInt("Hotkeys", "ConvertLastWord_Key", "45");
 			CheckString("Hotkeys", "ConvertLastWord_Modifiers", "");
 			CheckBool("Hotkeys", "ConvertLastWord_Double", "false");
 			CheckBool("Hotkeys", "ConvertLastWord_Enabled", "true");
@@ -411,7 +402,7 @@ namespace Mahou {
 			// Toggle main window hotkey
 			#endregion
 			#region AutoSwitch section
-			CheckBool("AutoSwitch", "DownloadInZip", "true");
+			CheckBool("AutoSwitch", "DownloadInZip", "false");
 			CheckBool("AutoSwitch", "SwitchToGuessLayout", "true");
 			CheckBool("AutoSwitch", "SpaceAfter", "true");
 			CheckBool("AutoSwitch", "Enabled", "false");
@@ -532,7 +523,7 @@ namespace Mahou {
 			CheckInt("Layouts", "SpecificKey1", "1");
 			CheckString("Layouts", "MainLayout2", "");
 			CheckString("Layouts", "MainLayout1", "");
-			CheckBool("Layouts", "ChangeToSpecificLayoutByKey", "true");
+			CheckBool("Layouts", "ChangeToSpecificLayoutByKey", "false");
             CheckString("Layouts", "EmulateLayoutSwitchType", "Alt+Shift");
 			CheckBool("Layouts", "EmulateLayoutSwitch", "false");
 			CheckBool("Layouts", "OneLayout", "false");
@@ -546,8 +537,8 @@ namespace Mahou {
             CheckBool("Functions", "WriteInputHistoryHourly", "false");
             CheckBool("Functions", "ReadOnlyNA", "false");
             CheckBool("Functions", "UseJKL", "true");
-            CheckBool("Functions", "RemapCapslockAsF18", "true");
-            CheckBool("Functions", "AppDataConfigs", forceAppData.ToString());
+            CheckBool("Functions", "RemapCapslockAsF18", "false");
+            CheckBool("Functions", "AppDataConfigs", "true");
             CheckBool("Functions", "GuessKeyCodeFix", "false");
             CheckBool("Functions", "OneLayoutWholeWord", "true");
             CheckBool("Functions", "MCDServerSupport", "false");
@@ -571,7 +562,51 @@ namespace Mahou {
         	#region FirstStart section
             CheckBool("FirstStart", "First", "true");
         	#endregion
+            NormalizeCriticalRanges();
+            ApplyMixanizmDefaults();
             fine = true;
+        }
+        void NormalizeCriticalRanges() {
+            NormalizeInt("Hidden", "AS_IngoreLSTimeout", 0, 600000, 5000);
+            NormalizeInt("Hidden", "OverlayExcludedInterval", 100, 600000, 2500);
+            NormalizeInt("Hidden", "AutoRestartMins", 0, 10080, 0);
+            NormalizeInt("Updates", "Delay", 1, 300, 5);
+            NormalizeInt("Timings", "SelectedTextGetMoreTriesCount", 1, 20, 5);
+            NormalizeInt("Timings", "DelayAfterBackspaces", 0, 2000, 100);
+            NormalizeInt("Timings", "CapsLockDisableRefreshRate", 10, 60000, 100);
+            NormalizeInt("Timings", "ScrollLockStateRefreshRate", 10, 60000, 100);
+            NormalizeInt("Timings", "FlagsInTrayRefreshRate", 10, 60000, 100);
+            NormalizeInt("Timings", "DoubleHotkey2ndPressWait", 50, 5000, 350);
+            NormalizeInt("Timings", "LangTooltipForCaretRefreshRate", 10, 60000, 25);
+            NormalizeInt("Timings", "LangTooltipForMouseRefreshRate", 10, 60000, 25);
+            NormalizeInt("PersistentLayout", "Layout1CheckInterval", 10, 60000, 50);
+            NormalizeInt("PersistentLayout", "Layout2CheckInterval", 10, 60000, 50);
+        }
+        void NormalizeInt(string section, string key, int min, int max, int fallback) {
+            int value;
+            if (!Int32.TryParse(_INI.GetValue(section, key), out value) || value < min || value > max)
+                _INI.SetValue(section, key, fallback.ToString());
+        }
+        void ApplyMixanizmDefaults() {
+            // Caps Lock must remain the ordinary Windows Caps Lock unless the user
+            // explicitly re-enables an advanced remapping later.
+            _INI.SetValue("Functions", "RemapCapslockAsF18", "false");
+            _INI.SetValue("Layouts", "ChangeToSpecificLayoutByKey", "false");
+
+            // Migrate untouched upstream Pause/Scroll defaults to the requested
+            // single Insert action without overwriting an existing custom hotkey.
+            var oldLast = _INI.GetValue("Hotkeys", "ConvertLastWord_Key") == "19" &&
+                          String.IsNullOrWhiteSpace(_INI.GetValue("Hotkeys", "ConvertLastWord_Modifiers"));
+            var oldSelection = _INI.GetValue("Hotkeys", "ConvertSelectedText_Key") == "145" &&
+                               String.IsNullOrWhiteSpace(_INI.GetValue("Hotkeys", "ConvertSelectedText_Modifiers"));
+            if (oldLast && oldSelection) {
+                _INI.SetValue("Hotkeys", "ConvertLastWord_Key", "45");
+                _INI.SetValue("Hotkeys", "ConvertSelectedText_Key", "45");
+                _INI.SetValue("Hotkeys", "ConvertLastWord_Double", "false");
+                _INI.SetValue("Hotkeys", "ConvertSelectedText_Double", "false");
+                _INI.SetValue("Hotkeys", "ConvertLastWord_Enabled", "true");
+                _INI.SetValue("Hotkeys", "ConvertSelectedText_Enabled", "true");
+            }
         }
         void CheckBool(string section, string key, string default_value) {
             bool bt = false; //bool temp
@@ -589,41 +624,69 @@ namespace Mahou {
         }
         /// <summary> Writes "value" to "key" in "section" in INI configuration. </summary>
         public void Write(string section, string key, string value) {
+            if (IsProtectedSecret(section, key)) value = SecretProtector.Protect(value);
             _INI.SetValue(section, key, value);
         }
-        /// <summary> Writes "value" to "key" in "section" in INI configuration, and saves to disk. </summary>
         public void WriteSave(string section, string key, string value) {
-            _INI.SetValue(section, key, value);
+            Write(section, key, value);
             WriteToDisk();
         }
-        /// <summary> Reads "value" from "key" in "section" from INI configuration. </summary>
         public string Read(string section, string key) {
-        	return _INI.GetValue(section, key);
+            var value = _INI.GetValue(section, key);
+            if (!IsProtectedSecret(section, key)) return value;
+            string plain;
+            if (SecretProtector.TryUnprotect(value, out plain)) return plain;
+            if (SecretProtector.TryDecodeLegacyBase64(value, out plain)) {
+                _INI.SetValue(section, key, SecretProtector.Protect(plain));
+                return plain;
+            }
+            if (!String.IsNullOrEmpty(value)) {
+                plain = value;
+                _INI.SetValue(section, key, SecretProtector.Protect(plain));
+                return plain;
+            }
+            return String.Empty;
         }
-        /// <summary>
-        /// Reads "value" as int from "key" in "section" from INI configuration.
-        /// </summary>
+        static bool IsProtectedSecret(string section, string key) {
+            return String.Equals(section, "Proxy", StringComparison.OrdinalIgnoreCase) &&
+                   String.Equals(key, "Password", StringComparison.OrdinalIgnoreCase);
+        }
         public int ReadInt(string section, string key) {
-            return Int32.Parse(_INI.GetValue(section, key));
+            int value;
+            return Int32.TryParse(Read(section, key), out value) ? value : 0;
         }
-        /// <summary> Reads "value" as bool from "key" in "section" from INI configuration. </summary>
         public bool ReadBool(string section, string key) {
-            return Boolean.Parse(_INI.GetValue(section, key).ToLower());
+            bool value;
+            return Boolean.TryParse(Read(section, key), out value) && value;
         }
         public void ReadFromDisk() {
         	_INI = new INI(File.ReadAllText(filePath));
         }
         public void WriteToDisk() {
-        	try {
-        		File.WriteAllText(filePath, _INI.Raw);
-        	} catch (Exception e) {
-        		Logging.Log("Can't write configs file by path: ["+filePath+"].", 1);
-        		if (!MahouUI.ReadOnlyNA) {
-        			SwitchToAppData(true, e);
-	        		_INI.SetValue("Functions", "AppDataConfigs", "true");
-	        		File.WriteAllText(filePath, _INI.Raw);
-        		}
-        	}
+            var temp = filePath + ".tmp";
+            var backup = filePath + ".bak";
+            try {
+                var directory = Path.GetDirectoryName(filePath);
+                if (!String.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
+                File.WriteAllText(temp, _INI.Raw, Encoding.UTF8);
+                if (File.Exists(filePath)) {
+                    try {
+                        File.Replace(temp, filePath, backup, true);
+                    } catch (PlatformNotSupportedException) {
+                        File.Copy(temp, filePath, true);
+                        File.Delete(temp);
+                    } catch (IOException) {
+                        File.Copy(temp, filePath, true);
+                        File.Delete(temp);
+                    }
+                } else {
+                    File.Move(temp, filePath);
+                }
+            } catch (Exception e) {
+                Logging.Log("Can't write configs file by path: [" + filePath + "]: " + e.Message, 1);
+                try { if (File.Exists(temp)) File.Delete(temp); } catch { }
+                throw;
+            }
         }
     }
 }

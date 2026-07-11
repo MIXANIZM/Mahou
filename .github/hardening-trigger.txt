@@ -1,1 +1,0 @@
-Execute the simplified integrated hardening pipeline now.
