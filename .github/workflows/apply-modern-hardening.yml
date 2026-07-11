@@ -31,12 +31,27 @@ jobs:
           set -euo pipefail
           mkdir -p hardening-diagnostics
           cat .github/hardening-parts/part-*.patch > /tmp/modern-hardening.patch
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          path = Path('/tmp/modern-hardening.patch')
+          text = path.read_text(encoding='utf-8')
+          pattern = re.compile(
+              r'@@ -10,7 \+10,8 @@ using System\.Text\.RegularExpressions;\n.*?'
+              r'(?=@@ -37,7 \+38,7 @@ namespace Mahou \{)',
+              re.S,
+          )
+          text, count = pattern.subn('', text, count=1)
+          if count != 1:
+              raise SystemExit('Expected legacy CR-only KMHook hunk was not found exactly once')
+          path.write_text(text, encoding='utf-8')
+          PY
           cp /tmp/modern-hardening.patch hardening-diagnostics/modern-hardening.patch
-          if ! git apply --check /tmp/modern-hardening.patch > hardening-diagnostics/apply-check.txt 2>&1; then
+          if ! git apply --recount --check /tmp/modern-hardening.patch > hardening-diagnostics/apply-check.txt 2>&1; then
             cat hardening-diagnostics/apply-check.txt
             exit 1
           fi
-          git apply --whitespace=nowarn /tmp/modern-hardening.patch
+          git apply --recount --whitespace=nowarn /tmp/modern-hardening.patch
           rm -rf .github/hardening-parts
           rm -f .github/workflows/apply-modern-hardening.yml
           git diff --check
