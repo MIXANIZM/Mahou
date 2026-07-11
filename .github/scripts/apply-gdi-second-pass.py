@@ -137,8 +137,8 @@ replace_eol(
     "\t\t\t\t\t\t\timg = extractedIcon.ToBitmap();\n",
 )
 
-# The original directory-icon block mixes tabs and spaces, so replace it by
-# unique structural markers instead of matching its indentation byte-for-byte.
+# The original directory-icon block mixes tabs and spaces. Replace it by
+# unique markers, but emit normalized tab-only indentation for the new code.
 ui_data = UI.read_bytes()
 start_marker = b'WinAPI.ExtractIconEx("shell32.dll", 3, out large, out small, 1);'
 end_marker = b'file_icons_cache["<DIRECTORY>"] = img;'
@@ -149,7 +149,7 @@ if start < 0 or end < 0:
 if ui_data.find(start_marker, start + 1) >= 0:
     raise RuntimeError("MahouUI.cs: directory icon extraction start marker is not unique")
 line_start = ui_data.rfind(b"\n", 0, start) + 1
-indent = ui_data[line_start:start]
+indent = b"\t\t\t\t\t\t"
 eol = b"\r\n" if b"\r\n" in ui_data[start:end] else b"\n"
 new_lines = [
     b'WinAPI.ExtractIconEx("shell32.dll", 3, out large, out small, 1);',
