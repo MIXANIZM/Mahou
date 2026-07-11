@@ -1,0 +1,57 @@
+name: Apply indexed INI reads
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-ini-index-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.head_ref == 'mixanizm-modern-v2.9.0.1' || github.ref_name == 'mixanizm-modern-v2.9.0.1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout modern branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Apply indexed thread-safe INI reads
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p ini-index-diagnostics
+          script=.github/scripts/apply-ini-index.py
+          if [ ! -f "$script" ]; then
+            echo 'Indexed INI reads are already applied.' | tee ini-index-diagnostics/result.txt
+            exit 0
+          fi
+          python3 "$script" 2>&1 | tee ini-index-diagnostics/result.txt
+          python3 .github/scripts/security-regression.py 2>&1 | tee -a ini-index-diagnostics/result.txt
+          git config core.whitespace cr-at-eol
+          git diff --check 2>&1 | tee -a ini-index-diagnostics/result.txt
+          rm -f .github/workflows/apply-ini-index.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'perf: index and synchronize in-memory INI reads'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
+
+      - name: Upload INI index diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ini-index-diagnostics
+          path: ini-index-diagnostics
+          if-no-files-found: warn
+          retention-days: 3
