@@ -45,8 +45,12 @@ replace_eol(
     "\t\t\tSetAboveTitleWidth();\n",
 )
 replace_eol(
+    "\t\t\t\tc++;\n"
+    "\t\t\t}\n"
     "\t\t\t}\n"
     "\t\t\tpan_Translations.Width = Width-2;\n",
+    "\t\t\t\tc++;\n"
+    "\t\t\t}\n"
     "\t\t\tg.Dispose();\n"
     "\t\t\tpan_Translations.Width = Width-2;\n",
 )
