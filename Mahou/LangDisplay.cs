@@ -33,7 +33,9 @@ namespace Mahou
 					MMain.mahou.icon.trIcon.Icon = fi;
 					WinAPI.DestroyIcon(fi.Handle);
 				}
+				var previousBackground = BackgroundImage;
 				BackgroundImage = new Bitmap(MahouUI.FLAG);
+				if (previousBackground != null) previousBackground.Dispose();
 				TransparencyKey = BackColor = Color.Pink;
 				Invalidate();
 				Update();
@@ -210,7 +212,9 @@ namespace Mahou
 		protected override void OnPaint(PaintEventArgs e) {
 			if (!transparentBG || DisplayFlag) { base.OnPaint(e); return; }
 			e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
-			e.Graphics.DrawString(lbLang.Text, lbLang.Font, new SolidBrush(lbLang.ForeColor), 0, 0);
+			using (var brush = new SolidBrush(lbLang.ForeColor)) {
+				e.Graphics.DrawString(lbLang.Text, lbLang.Font, brush, 0, 0);
+			}
 			base.OnPaint(e);
 		}
 	}

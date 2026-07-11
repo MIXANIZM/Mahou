@@ -4488,7 +4488,8 @@ namespace Mahou {
 		
 		                //Painting background
 		                if(Enabled)
-		                    myBuffer.Graphics.FillRectangle(new SolidBrush(BG), r);
+		                    using (var backgroundBrush = new SolidBrush(BG))
+		                        myBuffer.Graphics.FillRectangle(backgroundBrush, r);
 		                else
 		                    myBuffer.Graphics.FillRectangle(Brushes.LightGray, r);
 		
@@ -4499,7 +4500,8 @@ namespace Mahou {
 		                r.X += 1;
 		
 		                if(Enabled)
-		                    myBuffer.Graphics.DrawRectangle(new Pen(Color.FromArgb(255, 133, 158, 191), 1), r);
+		                    using (var borderPen = new Pen(Color.FromArgb(255, 133, 158, 191), 1))
+		                        myBuffer.Graphics.DrawRectangle(borderPen, r);
 		                else
 		                    myBuffer.Graphics.DrawRectangle(Pens.DarkGray, r);
 		
@@ -4508,15 +4510,18 @@ namespace Mahou {
 		                	var t = ItemTexts[ii];
 							Debug.WriteLine(i.Bounds);
 //		                	CustomDrawItem(ItemArgs[i], ItemTexts[i]);
-							myBuffer.Graphics.DrawRectangle(new Pen(TAB_BORDERS), i.Bounds.X, i.Bounds.Y, i.Bounds.Width, i.Bounds.Height);
+							using (var tabBorderPen = new Pen(TAB_BORDERS))
+								myBuffer.Graphics.DrawRectangle(tabBorderPen, i.Bounds.X, i.Bounds.Y, i.Bounds.Width, i.Bounds.Height);
 							var yal = i.Bounds.Y;
 							var xal = i.Bounds.X;
 							if (i.Bounds.Height == 24) { // Assume that is focused tab
 								yal += 4;
 								xal += 6;
-								myBuffer.Graphics.FillRectangle(new SolidBrush(TAB_FOCUS_BG), i.Bounds.X+1, i.Bounds.Y+1, i.Bounds.Width-2, i.Bounds.Height-2);
+								using (var focusBrush = new SolidBrush(TAB_FOCUS_BG))
+									myBuffer.Graphics.FillRectangle(focusBrush, i.Bounds.X+1, i.Bounds.Y+1, i.Bounds.Width-2, i.Bounds.Height-2);
 							}
-							myBuffer.Graphics.DrawString(t, i.Font, new SolidBrush(FG), xal, yal);
+							using (var textBrush = new SolidBrush(FG))
+								myBuffer.Graphics.DrawString(t, i.Font, textBrush, xal, yal);
 		                }
 		
 		                myBuffer.Render();

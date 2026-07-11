@@ -29,7 +29,9 @@ namespace Mahou {
 		public bool snap_l, snap_r, snap_t, snap_b;
 		public void ChangeLayout(Bitmap flag, string layoutName) {
 			lbl_LayoutName.Text = layoutName;
+			var previousFlag = pct_Flag.BackgroundImage;
 			pct_Flag.BackgroundImage = new Bitmap(flag);
+			if (previousFlag != null) previousFlag.Dispose();
 			Width = lbl_LayoutName.Left + lbl_LayoutName.Width + l;
 			ReSnap();
 		}
@@ -155,15 +157,12 @@ namespace Mahou {
 		}
 		protected override void OnPaint(PaintEventArgs e) {
 			if (MMain.mahou == null) { base.OnPaint(e); return; }
-			Graphics g = CreateGraphics();
-			var pn = new Pen(Color.Black);
-			if (AeroEnabled && MahouUI.LangPanelBorderAero)
-				pn = new Pen(CurrentAeroColor());
-			else
-				pn.Color = MMain.mahou.LangPanelBorderColor;
-			g.DrawRectangle(pn, new Rectangle(0, 0, Size.Width - 1, Size.Height - 1));
-			g.Dispose();
-			pn.Dispose();
+			var borderColor = AeroEnabled && MahouUI.LangPanelBorderAero
+				? CurrentAeroColor()
+				: MMain.mahou.LangPanelBorderColor;
+			using (var pen = new Pen(borderColor)) {
+				e.Graphics.DrawRectangle(pen, new Rectangle(0, 0, Size.Width - 1, Size.Height - 1));
+			}
 			base.OnPaint(e);
 		}
 		#endregion
