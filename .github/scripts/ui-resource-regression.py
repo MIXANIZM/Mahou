@@ -20,17 +20,20 @@ required = {
         "using (var f = new Form())",
         "} finally {\n\t\t\t\tWinAPI.SetForegroundWindow(last);",
     ],
-    "Mahou/TranslatePanel.cs": [
-        "using (var g = CreateGraphics())\n\t\t\t\t\tsize = g.MeasureString(slt.Text, slt.Font);",
-        "using (var g = CreateGraphics())\n\t\t\t\t\t\tsi = g.MeasureString(txttrc.Text, txttrc.Font);",
-    ],
 }
 
 for path, markers in required.items():
-    source = ui if path.endswith("MahouUI.cs") else translate
+    source = ui
     for marker in markers:
         if marker not in source:
             errors.append("required UI resource marker missing in %s: %s" % (path, marker))
+
+if translate.count("using (var g = CreateGraphics())") < 2:
+    errors.append("TranslatePanel must dispose both temporary Graphics instances with using")
+if "size = g.MeasureString(slt.Text, slt.Font);" not in translate:
+    errors.append("source-language measurement is missing from TranslatePanel")
+if "si = g.MeasureString(txttrc.Text, txttrc.Font);" not in translate:
+    errors.append("transcription measurement is missing from TranslatePanel")
 
 forbidden = {
     "Mahou/MahouUI.cs": [
