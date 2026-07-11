@@ -1,20 +1,21 @@
 name: Apply privacy log hardening
 
 on:
-  push:
+  pull_request:
     branches:
-      - mixanizm-modern-v2.9.0.1
+      - master
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: apply-privacy-log-hardening
+  group: apply-privacy-log-hardening-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
   apply:
+    if: github.head_ref == 'mixanizm-modern-v2.9.0.1' || github.ref_name == 'mixanizm-modern-v2.9.0.1'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -37,6 +38,7 @@ jobs:
           python3 "$script"
           python3 .github/scripts/security-regression.py
           git diff --check
+          rm -f .github/privacy-log-trigger.txt
           rm -f .github/workflows/apply-privacy-log-hardening.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
