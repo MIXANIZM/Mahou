@@ -159,6 +159,7 @@ namespace Mahou {
 		ToolTip HelpMeUnderstand;
 		#endregion
 		public TrayIcon icon;
+		Icon generatedTrayIcon;
 		public LangDisplay mouseLangDisplay = new LangDisplay();
 		public LangDisplay caretLangDisplay = new LangDisplay();
 		public LangPanel _langPanel;
@@ -2416,6 +2417,31 @@ namespace Mahou {
 			if (disposable != null) disposable.Dispose();
 			disposable = null;
 		}
+		public void SetTrayIconFromBitmap(Bitmap source) {
+			if (source == null || icon == null || icon.trIcon == null) return;
+			IntPtr nativeHandle = IntPtr.Zero;
+			Icon next = null;
+			try {
+				nativeHandle = source.GetHicon();
+				using (var borrowed = Icon.FromHandle(nativeHandle))
+					next = (Icon)borrowed.Clone();
+				icon.trIcon.Icon = next;
+				var previous = generatedTrayIcon;
+				generatedTrayIcon = next;
+				next = null;
+				if (previous != null) previous.Dispose();
+			} finally {
+				if (next != null) next.Dispose();
+				if (nativeHandle != IntPtr.Zero) WinAPI.DestroyIcon(nativeHandle);
+			}
+		}
+		void SetStaticTrayIcon(Icon source) {
+			if (icon == null || icon.trIcon == null) return;
+			icon.trIcon.Icon = source;
+			var previous = generatedTrayIcon;
+			generatedTrayIcon = null;
+			if (previous != null) previous.Dispose();
+		}
 		public static void RefreshFLAG(bool force = false) {
 			Debug.WriteLine("aLIVe");
 			// No need for update when no display wrapper
@@ -2459,7 +2485,8 @@ namespace Mahou {
 					Logging.Log("Changed flag to " + flagname + " lcid " + lcid);
 					Debug.WriteLine("Changed flag to " + flagname + " lcid " + lcid);
 					if (File.Exists(flagpth)) {
-						FLAG = new Bitmap(Image.FromFile(flagpth));
+						using (var loadedFlag = Image.FromFile(flagpth))
+							FLAG = new Bitmap(loadedFlag);
 					}
 					else
 						switch (flagname) {
@@ -2588,15 +2615,17 @@ namespace Mahou {
 				if (lastTrayFlagLayout != lcid || force) {
 					RefreshFLAG(force);
 					Bitmap b = null;
-					if (FLAG != null) b = new Bitmap(FLAG);
-					if (TrayText && ITEXT != null) b = new Bitmap(ITEXT);
-					Icon flagicon;
-					if (b != null)
-						flagicon = Icon.FromHandle(b.GetHicon());
-					else 
-						flagicon = Mahou.Properties.Resources.MahouTrayHD;
-					icon.trIcon.Icon = flagicon;
-					WinAPI.DestroyIcon(flagicon.Handle);
+					try {
+						if (FLAG != null) b = new Bitmap(FLAG);
+						if (TrayText && ITEXT != null) {
+							if (b != null) b.Dispose();
+							b = new Bitmap(ITEXT);
+						}
+						if (b != null) SetTrayIconFromBitmap(b);
+						else SetStaticTrayIcon(Mahou.Properties.Resources.MahouTrayHD);
+					} finally {
+						if (b != null) b.Dispose();
+					}
 					lastTrayFlagLayout = lcid;
 				}
 			} catch(Exception e) {

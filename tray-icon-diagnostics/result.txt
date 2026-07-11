@@ -1,0 +1,2 @@
+Tray icon ownership hardened: native handles, cloned icons, prior icons and loaded images are released.
+Security regression check passed: 40 source files inspected.

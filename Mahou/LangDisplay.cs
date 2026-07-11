@@ -27,11 +27,8 @@ namespace Mahou
 				lbLang.Visible = false;
 				MahouUI.RefreshFLAG(true);
 				if (MahouUI.MouseTTAlways && mouseDisplay) {// fix for tray stuck due to variable "LayoutChanged" which being changed by this mouse tooltip always
-					var fi = Icon.FromHandle((
-							(MahouUI.TrayText && MahouUI.ITEXT != null) ? MahouUI.ITEXT : MahouUI.FLAG)
-						.GetHicon());
-					MMain.mahou.icon.trIcon.Icon = fi;
-					WinAPI.DestroyIcon(fi.Handle);
+					var trayBitmap = (MahouUI.TrayText && MahouUI.ITEXT != null) ? MahouUI.ITEXT : MahouUI.FLAG;
+					MMain.mahou.SetTrayIconFromBitmap(trayBitmap);
 				}
 				var previousBackground = BackgroundImage;
 				BackgroundImage = new Bitmap(MahouUI.FLAG);
