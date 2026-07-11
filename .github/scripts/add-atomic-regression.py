@@ -36,7 +36,7 @@ replace_once(
     '                \'using (File.Create(forceMarker)) { }\'],\n'
     '    "atomic": ["static readonly object SyncRoot = new object();",\n'
     '               "static readonly Encoding Utf8WithoutBom = new UTF8Encoding(false);",\n'
-    '               "Guid.NewGuid().ToString(\\"N\\") + \\.tmp",\n'
+    '               "Guid.NewGuid().ToString(\\"N\\") + \\".tmp\\"",\n'
     '               "FileOptions.WriteThrough", "stream.Flush(true);",\n'
     '               "File.Replace(temp, fullPath, backup, true);",\n'
     '               "ReplaceByCopy(temp, fullPath);",\n'
