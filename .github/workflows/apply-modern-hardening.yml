@@ -36,18 +36,13 @@ jobs:
           import re
           path = Path('/tmp/modern-hardening.patch')
           text = path.read_text(encoding='utf-8')
-
           patterns = [
               re.compile(
                   r'@@ -10,7 \+10,8 @@ using System\.Text\.RegularExpressions;\n.*?'
-                  r'(?=@@ -37,7 \+38,7 @@ namespace Mahou \{)',
-                  re.S,
-              ),
+                  r'(?=@@ -37,7 \+38,7 @@ namespace Mahou \{)', re.S),
               re.compile(
                   r'@@ -3961,7 \+3980,8 @@ namespace Mahou \{\n.*?'
-                  r'(?=diff --git a/Mahou/Classes/Logging\.cs)',
-                  re.S,
-              ),
+                  r'(?=diff --git a/Mahou/Classes/Logging\.cs)', re.S),
           ]
           for index, pattern in enumerate(patterns, 1):
               text, count = pattern.subn('', text, count=1)
@@ -56,11 +51,12 @@ jobs:
           path.write_text(text, encoding='utf-8')
           PY
           cp /tmp/modern-hardening.patch hardening-diagnostics/modern-hardening.patch
-          if ! git apply --recount --check /tmp/modern-hardening.patch > hardening-diagnostics/apply-check.txt 2>&1; then
+          APPLY_FLAGS=(--recount --ignore-space-change --ignore-whitespace)
+          if ! git apply "${APPLY_FLAGS[@]}" --check /tmp/modern-hardening.patch > hardening-diagnostics/apply-check.txt 2>&1; then
             cat hardening-diagnostics/apply-check.txt
             exit 1
           fi
-          git apply --recount --whitespace=nowarn /tmp/modern-hardening.patch
+          git apply "${APPLY_FLAGS[@]}" --whitespace=nowarn /tmp/modern-hardening.patch
           rm -rf .github/hardening-parts
           rm -f .github/workflows/apply-modern-hardening.yml
           git diff --check
