@@ -5,8 +5,10 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 
+
 def text(relative):
     return (ROOT / relative).read_text(encoding="utf-8-sig")
+
 
 files = {
     "ui": text("Mahou/MahouUI.cs"),
@@ -28,7 +30,7 @@ forbidden = {
     "program": ["taskkill", "RestartMahou.cmd", "RestartMahou.vbs"],
     "configs": ["AllowSnippetExecute"],
     "hook": ["lastClipText", "MahouUI.ClipBackOnlyText", '"__execute"',
-             "static void Execute(string args)", "Process.Start(p)"],
+             "static void Execute(string args)", "Process.Start("],
 }
 for key, needles in forbidden.items():
     source = files[key].lower()
@@ -57,7 +59,7 @@ required = {
     "program": ["WaitForRestartParent(args)", "UserDataPaths.Initialize(args)"],
 }
 for key, needles in required.items():
-    source=files[key]
+    source = files[key]
     for needle in needles:
         if needle not in source:
             errors.append("required hardening marker missing in %s: %s" % (key, needle))
@@ -84,20 +86,21 @@ for pattern in ("*.cmd", "*.bat", "*.vbs", "*.ps1"):
         errors.append("obsolete executable script remains in application tree: %s" % script.relative_to(ROOT))
 
 for path in (ROOT / "Mahou").rglob("*.cs"):
-    source=path.read_text(encoding="utf-8-sig")
+    source = path.read_text(encoding="utf-8-sig")
     if "WebClient" in source and path.name != "TranslatePanel.cs":
         errors.append("unexpected WebClient use outside translator: %s" % path.relative_to(ROOT))
 
-hook=files["hook"]
-start=hook.find('public static bool RestoreClipBoard(string special = "")')
-end=hook.find('public static void EnsureClipboardRestored()', start)
-body=hook[start:end]
+hook = files["hook"]
+start = hook.find('public static bool RestoreClipBoard(string special = "")')
+end = hook.find('public static void EnsureClipboardRestored()', start)
+body = hook[start:end]
 for marker in ("clipboardBackupPending", "lastClip == null", "NativeClipboard.SetText(special)"):
     if marker not in body:
         errors.append("clipboard replacement guard incomplete: %s" % marker)
 
 if errors:
     print("SECURITY REGRESSION CHECK FAILED")
-    for error in errors: print("- " + error)
+    for error in errors:
+        print("- " + error)
     sys.exit(1)
 print("Security regression check passed: %d source files inspected." % len(list((ROOT / "Mahou").rglob("*.cs"))))
