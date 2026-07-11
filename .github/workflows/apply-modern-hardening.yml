@@ -43,15 +43,18 @@ jobs:
               re.compile(
                   r'@@ -3961,7 \+3980,8 @@ namespace Mahou \{\n.*?'
                   r'(?=diff --git a/Mahou/Classes/Logging\.cs)', re.S),
+              re.compile(
+                  r'diff --git a/Mahou/Classes/NativeClipboard\.cs .*?'
+                  r'(?=diff --git a/Mahou/Classes/SecretProtector\.cs)', re.S),
           ]
           for index, pattern in enumerate(patterns, 1):
               text, count = pattern.subn('', text, count=1)
               if count != 1:
-                  raise SystemExit('Expected legacy CR-only hunk group %d was not found exactly once' % index)
+                  raise SystemExit('Expected normalized patch group %d was not found exactly once' % index)
           path.write_text(text, encoding='utf-8')
           PY
           cp /tmp/modern-hardening.patch hardening-diagnostics/modern-hardening.patch
-          APPLY_FLAGS=(--recount --ignore-space-change --ignore-whitespace)
+          APPLY_FLAGS=(--3way --recount --ignore-space-change --ignore-whitespace)
           if ! git apply "${APPLY_FLAGS[@]}" --check /tmp/modern-hardening.patch > hardening-diagnostics/apply-check.txt 2>&1; then
             cat hardening-diagnostics/apply-check.txt
             exit 1
