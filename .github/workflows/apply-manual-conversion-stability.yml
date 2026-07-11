@@ -1,0 +1,53 @@
+name: Apply manual conversion stability
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-manual-conversion-stability-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.head_ref == 'mixanizm-modern-v2.9.0.1' || github.ref_name == 'mixanizm-modern-v2.9.0.1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout modern branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Apply stability hardening
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p manual-conversion-diagnostics
+          python3 .github/scripts/apply-manual-conversion-stability.py 2>&1 | tee manual-conversion-diagnostics/result.txt
+          python3 .github/scripts/security-regression.py 2>&1 | tee -a manual-conversion-diagnostics/result.txt
+          git config core.whitespace cr-at-eol
+          git diff --check 2>&1 | tee -a manual-conversion-diagnostics/result.txt
+          rm -f .github/scripts/apply-manual-conversion-stability.py
+          rm -f .github/workflows/apply-manual-conversion-stability.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'fix: stabilize repeated manual conversion and input hooks'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manual-conversion-diagnostics
+          path: manual-conversion-diagnostics
+          if-no-files-found: warn
+          retention-days: 3
