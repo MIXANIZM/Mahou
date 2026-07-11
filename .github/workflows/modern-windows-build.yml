@@ -27,7 +27,8 @@ jobs:
         shell: pwsh
         run: |
           $commit = "${{ github.event.pull_request.head.sha || github.sha }}"
-          Set-Content -Path Mahou/____commit.cs -Value "static class ____ { public static string commit=\"$commit\"; }" -Encoding utf8
+          $source = 'static class ____ { public static string commit="' + $commit + '"; }'
+          Set-Content -Path Mahou/____commit.cs -Value $source -Encoding utf8
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
