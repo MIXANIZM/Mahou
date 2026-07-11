@@ -1388,7 +1388,7 @@ namespace Mahou {
 				load = true;
 			} else if (writedef) {
 				if (def != null) 
-					System.IO.File.WriteAllText(PATH, DictToRaw(def));
+					AtomicFile.WriteAllText(PATH, DictToRaw(def));
 			}
 			if (load) {
 				if (__dict != null && __dict.len != 0) {

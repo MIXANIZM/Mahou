@@ -104,6 +104,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\AtomicFile.cs" />
     <Compile Include="Classes\Auray.cs" />
     <Compile Include="Classes\Auri.cs" />
     <Compile Include="Classes\CaretPos.cs" />

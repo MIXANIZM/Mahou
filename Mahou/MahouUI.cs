@@ -1283,7 +1283,7 @@ namespace Mahou {
 				MMain.MyConfs.Write("Snippets", "SpaceAfter", chk_SnippetsSpaceAfter.Checked.ToString());
 				MMain.MyConfs.Write("Snippets", "SwitchToGuessLayout", chk_SnippetsSwitchToGuessLayout.Checked.ToString());
 				if (SnippetsEnabled)
-					File.WriteAllText(snipfile, txt_Snippets.Text, Encoding.UTF8);
+					AtomicFile.WriteAllText(snipfile, txt_Snippets.Text, Encoding.UTF8);
 				MMain.MyConfs.Write("Snippets", "SnippetExpandKey", cbb_SnippetExpandKeys.SelectedItem == null ? "null" : cbb_SnippetExpandKeys.SelectedItem.ToString());
 				MMain.MyConfs.Write("Snippets", "SnippetsExpKeyOther", SnippetsExpKeyOther);
 				SaveNCRSets();
@@ -1294,7 +1294,7 @@ namespace Mahou {
 				MMain.MyConfs.Write("AutoSwitch", "SwitchToGuessLayout", chk_AutoSwitchSwitchToGuessLayout.Checked.ToString());
 				MMain.MyConfs.Write("AutoSwitch", "DownloadInZip", chk_DownloadASD_InZip.Checked.ToString());
 				if (AutoSwitchEnabled && !string.IsNullOrEmpty(AutoSwitchDictionaryRaw) && !AutoSwitchDictionaryTooBig)
-					File.WriteAllText(AS_dictfile, AutoSwitchDictionaryRaw, Encoding.UTF8);
+					AtomicFile.WriteAllText(AS_dictfile, AutoSwitchDictionaryRaw, Encoding.UTF8);
 				#endregion
 				#region Appearence & Hotkeys
 				SaveFromTemps();
@@ -1884,7 +1884,7 @@ namespace Mahou {
 			MahouUIActivated((object)1, new EventArgs());
 			if (SnippetsEnabled) {
 				if (!File.Exists(snipfile))
-					File.WriteAllText(snipfile, txt_Snippets.Text, Encoding.UTF8);
+					AtomicFile.WriteAllText(snipfile, txt_Snippets.Text, Encoding.UTF8);
 				if (File.Exists(snipfile)) {
 					txt_Snippets.Text = File.ReadAllText(snipfile);
 					UpdateSnippetCountLabel(txt_Snippets.Text, lbl_SnippetsCount);
@@ -5901,7 +5901,7 @@ file_icons_cache["<DIRECTORY>"] = img;
 							}
 							var f = Path.Combine(nPath, SYNC_NAMES[i]);
 							Debug.WriteLine("Writing: " +f);
-							File.WriteAllText(f, d[ty]);
+							AtomicFile.WriteAllText(f, d[ty]);
 							OK += " " + SYNC_NAMES[i];
 						} catch (Exception e) {
 							stat += ty + ": " + e.Message + Environment.NewLine;
