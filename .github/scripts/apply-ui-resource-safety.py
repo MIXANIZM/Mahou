@@ -7,11 +7,24 @@ TR = ROOT / "Mahou/TranslatePanel.cs"
 
 
 def replace(path, old, new, expected=1):
-    data = path.read_text(encoding="utf-8-sig")
-    count = data.count(old)
+    data = path.read_bytes()
+    old_lf = old.encode("utf-8")
+    new_lf = new.encode("utf-8")
+    old_crlf = old_lf.replace(b"\n", b"\r\n")
+    new_crlf = new_lf.replace(b"\n", b"\r\n")
+    count_lf = data.count(old_lf)
+    count_crlf = data.count(old_crlf)
+    count = count_lf + count_crlf
     if count != expected:
-        raise RuntimeError(f"{path.relative_to(ROOT)}: expected {expected}, found {count}: {old!r}")
-    path.write_text(data.replace(old, new, expected), encoding="utf-8")
+        raise RuntimeError(
+            f"{path.relative_to(ROOT)}: expected {expected}, found {count} "
+            f"(LF={count_lf}, CRLF={count_crlf}): {old!r}"
+        )
+    if count_crlf:
+        data = data.replace(old_crlf, new_crlf, expected)
+    else:
+        data = data.replace(old_lf, new_lf, expected)
+    path.write_bytes(data)
 
 replace(UI,
 '''\t\tpublic static void DPISCALE(Control cxx, bool nox = false) {\n\t\t\tfloat dx, dy;\n\t\t\tGraphics g = cxx.CreateGraphics();\n\t\t\ttry { dx = g.DpiX; dy = g.DpiY; }\n\t\t\tfinally { g.Dispose(); }\n''',
