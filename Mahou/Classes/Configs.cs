@@ -192,9 +192,9 @@ namespace Mahou {
         		                    MMain.Lang[Languages.Element.Error], MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
     			if (!Directory.Exists(MahouUI.mahou_folder_appd))
     				Directory.CreateDirectory(MahouUI.mahou_folder_appd);
-    			var copy = File.Exists(filePath);
-    			filePath = Path.Combine(MahouUI.mahou_folder_appd, "Mahou.ini");
-    			File.Create(Path.Combine(MahouUI.mahou_folder_appd,".force"));
+			filePath = Path.Combine(MahouUI.mahou_folder_appd, "Mahou.ini");
+			var forceMarker = Path.Combine(MahouUI.mahou_folder_appd, ".force");
+			using (File.Create(forceMarker)) { }
     			MMain.MyConfs = new Configs();
     			return true;
     		}
