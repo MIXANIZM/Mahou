@@ -36,14 +36,23 @@ jobs:
           import re
           path = Path('/tmp/modern-hardening.patch')
           text = path.read_text(encoding='utf-8')
-          pattern = re.compile(
-              r'@@ -10,7 \+10,8 @@ using System\.Text\.RegularExpressions;\n.*?'
-              r'(?=@@ -37,7 \+38,7 @@ namespace Mahou \{)',
-              re.S,
-          )
-          text, count = pattern.subn('', text, count=1)
-          if count != 1:
-              raise SystemExit('Expected legacy CR-only KMHook hunk was not found exactly once')
+
+          patterns = [
+              re.compile(
+                  r'@@ -10,7 \+10,8 @@ using System\.Text\.RegularExpressions;\n.*?'
+                  r'(?=@@ -37,7 \+38,7 @@ namespace Mahou \{)',
+                  re.S,
+              ),
+              re.compile(
+                  r'@@ -3961,7 \+3980,8 @@ namespace Mahou \{\n.*?'
+                  r'(?=diff --git a/Mahou/Classes/Logging\.cs)',
+                  re.S,
+              ),
+          ]
+          for index, pattern in enumerate(patterns, 1):
+              text, count = pattern.subn('', text, count=1)
+              if count != 1:
+                  raise SystemExit('Expected legacy CR-only hunk group %d was not found exactly once' % index)
           path.write_text(text, encoding='utf-8')
           PY
           cp /tmp/modern-hardening.patch hardening-diagnostics/modern-hardening.patch
