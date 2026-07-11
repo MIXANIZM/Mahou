@@ -1,0 +1,46 @@
+name: Remove snippet command execution
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: remove-snippet-command-execution-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.head_ref == 'mixanizm-modern-v2.9.0.1' || github.ref_name == 'mixanizm-modern-v2.9.0.1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout modern branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Remove snippet external-command execution
+        shell: bash
+        run: |
+          set -euo pipefail
+          script=.github/scripts/apply-remove-snippet-execute.py
+          if [ ! -f "$script" ]; then
+            echo 'Snippet command execution is already removed.'
+            exit 0
+          fi
+          python3 "$script"
+          python3 .github/scripts/security-regression.py
+          git diff --check
+          rm -f .github/workflows/apply-remove-snippet-execute.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'security: remove snippet external-command execution'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
