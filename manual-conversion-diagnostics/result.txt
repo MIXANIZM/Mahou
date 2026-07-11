@@ -1,0 +1,3 @@
+Applied manual conversion stability hardening.
+tted the tracked word, and guaranteed hook/hotkey/raw-input restoration through finally.
+Security regression check passed: 41 source files inspected.

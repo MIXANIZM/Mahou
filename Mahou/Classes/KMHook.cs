@@ -41,6 +41,10 @@ namespace Mahou {
 		public static NativeClipboard.OleSnapshot lastClip;
 		static readonly object clipboardBackupSync = new object();
 		static bool clipboardBackupPending;
+		static int manualConversionInProgress;
+		static int manualConversionCooldownUntil;
+		const int ManualConversionCooldownMs = 120;
+		const int WordManualConversionCooldownMs = 300;
 		public static string symbolclear;
 		static List<Keys> tempNumpads = new List<Keys>();
 		static Keys preKey = Keys.None, prevKEY; //, seKeyDown = Keys.None, aseKeyDown = Keys.None;
@@ -2578,20 +2582,54 @@ namespace Mahou {
 		/// Converts selected text.
 		/// </summary>
 		static bool selectionConversionSucceeded;
+		static bool TryBeginManualConversion() {
+			if (Interlocked.CompareExchange(ref manualConversionInProgress, 1, 0) != 0) {
+				Logging.Log("Manual conversion ignored because another conversion is still running.", 2);
+				return false;
+			}
+			var now = Environment.TickCount;
+			var blockedUntil = Volatile.Read(ref manualConversionCooldownUntil);
+			if (unchecked(now - blockedUntil) < 0) {
+				Interlocked.Exchange(ref manualConversionInProgress, 0);
+				Logging.Log("Manual conversion ignored during the short post-conversion cooldown.", 2);
+				return false;
+			}
+			return true;
+		}
+		static void EndManualConversion() {
+			var cooldown = ManualConversionCooldownMs;
+			try {
+				var process = Locales.ActiveWindowProcess();
+				if (process != null && String.Equals(process.ProcessName, "WINWORD", StringComparison.OrdinalIgnoreCase))
+					cooldown = WordManualConversionCooldownMs;
+			} catch (Exception e) {
+				Logging.Log("Could not resolve foreground process for conversion cooldown: " + e.Message, 2);
+			}
+			Volatile.Write(ref manualConversionCooldownUntil, unchecked(Environment.TickCount + cooldown));
+			Interlocked.Exchange(ref manualConversionInProgress, 0);
+		}
 		public static void ConvertSelectionOrLastWord() {
-			var selectionState = SelectionProbe.GetState();
-			if (selectionState == SelectionProbe.State.Sensitive) {
-				Logging.Log("Insert conversion suppressed in a protected text field.", 2);
-				return;
+			if (!TryBeginManualConversion()) return;
+			try {
+				var selectionState = SelectionProbe.GetState();
+				if (selectionState == SelectionProbe.State.Sensitive) {
+					Logging.Log("Insert conversion suppressed in a protected text field.", 2);
+					return;
+				}
+				if (selectionState == SelectionProbe.State.None) {
+					var wordSnapshot = MMain.c_word == null ? new List<YuKey>() : new List<YuKey>(MMain.c_word);
+					ConvertLast(wordSnapshot);
+					return;
+				}
+				selectionConversionSucceeded = false;
+				ConvertSelection();
+				if (!selectionConversionSucceeded && selectionState != SelectionProbe.State.Selected) {
+					var wordSnapshot = MMain.c_word == null ? new List<YuKey>() : new List<YuKey>(MMain.c_word);
+					ConvertLast(wordSnapshot);
+				}
+			} finally {
+				EndManualConversion();
 			}
-			if (selectionState == SelectionProbe.State.None) {
-				ConvertLast(MMain.c_word);
-				return;
-			}
-			selectionConversionSucceeded = false;
-			ConvertSelection();
-			if (!selectionConversionSucceeded && selectionState != SelectionProbe.State.Selected)
-				ConvertLast(MMain.c_word);
 		}
 		public static void ConvertSelection() {
 			selectionConversionSucceeded = false;
@@ -3320,24 +3358,43 @@ namespace Mahou {
 			if (selfie) {
 				Logging.Log(pt+"Inside "+busy_on+" called: "+mn);
 				self_action();
-			} else {
-				Debug.WriteLine(pt+ mn);
-//				MMain.mahou.Invoke((MethodInvoker)delegate {
-				if (LLHook._ACTIVE)  { LLHook.UnSet(); } 
-				if (MMain.mahou != null) { MMain.mahou.UnregisterHotkeys(); }
-//			});
-				if (MMain.rif != null)
+				return;
+			}
+			Debug.WriteLine(pt+ mn);
+			var llHookWasActive = LLHook._ACTIVE;
+			var hotkeysWereDisabled = false;
+			var rawInputWasRemoved = false;
+			try {
+				if (llHookWasActive) LLHook.UnSet();
+				if (MMain.mahou != null) {
+					hotkeysWereDisabled = true;
+					MMain.mahou.UnregisterHotkeys();
+				}
+				if (MMain.rif != null) {
+					rawInputWasRemoved = true;
 					MMain.rif.RegisterRawInputDevices(IntPtr.Zero, WinAPI.RawInputDeviceFlags.Remove);
+				}
 				selfie = true;
 				busy_on = mn;
 				self_action();
-//				MMain.mahou.Invoke((MethodInvoker)delegate {
-				if (LLHook._ACTIVE) { LLHook.Set(); }
-				if (MMain.mahou != null) { MMain.mahou.RegisterHotkeys(); }
-//				                   });
-				if (MMain.rif != null)
-					MMain.rif.RegisterRawInputDevices(MMain.rif.Handle);
+			} finally {
+				try {
+					if (llHookWasActive) LLHook.Set();
+				} catch (Exception e) {
+					Logging.Log("Low-level hook restore failed after " + mn + ": " + e.Message, 1);
+				}
+				try {
+					if (hotkeysWereDisabled && MMain.mahou != null) MMain.mahou.RegisterHotkeys();
+				} catch (Exception e) {
+					Logging.Log("Hotkey restore failed after " + mn + ": " + e.Message, 1);
+				}
+				try {
+					if (rawInputWasRemoved && MMain.rif != null) MMain.rif.RegisterRawInputDevices(MMain.rif.Handle);
+				} catch (Exception e) {
+					Logging.Log("Raw-input restore failed after " + mn + ": " + e.Message, 1);
+				}
 				selfie = false;
+				busy_on = "";
 				Debug.WriteLine(pt+ "end " + mn);
 			}
 		}
@@ -3540,11 +3597,12 @@ namespace Mahou {
 		/// </summary>
 		/// <param name="c_">List of YuKeys to be converted.</param>
 		public static void ConvertLast(List<YuKey> c_, bool line = false) {
+			var sourceWord = c_ == null ? new List<YuKey>() : new List<YuKey>(c_);
 			try { //Used to catch errors, since it called as Task
 				Debug.WriteLine("Start CL");
-				Debug.WriteLine(c_.Count + " LL");
-				Logging.Log("[CLAST] > Starting to convert word, count:"+c_.Count+", LW: "+MMain.c_word.Count+" Last CR:"+lastLWClearReason);
-				if (c_.Count <= 0)
+				Debug.WriteLine(sourceWord.Count + " LL");
+				Logging.Log("[CLAST] > Starting to convert word, count:"+sourceWord.Count+", LW: "+MMain.c_word.Count+" Last CR:"+lastLWClearReason);
+				if (sourceWord.Count <= 0)
 					return;
 				Locales.IfLessThan2();
 				if (MahouUI.SoundOnConvLast)
@@ -3555,7 +3613,7 @@ namespace Mahou {
 				if (MahouUI.UseJKL && !KMHook.JKLERR)
 					wasLocale = MahouUI.currentLayout;
 				var desl = GetNextLayout(wasLocale).uId;
-				YuKey[] YuKeys = line ? c_.ToArray() : LayoutKeyReplace(c_, (int)(wasLocale&0xffff), (int)(desl&0xffff)).ToArray();
+				YuKey[] YuKeys = line ? sourceWord.ToArray() : LayoutKeyReplace(sourceWord, (int)(wasLocale&0xffff), (int)(desl&0xffff)).ToArray();
 				if (MahouUI.UseJKL && MahouUI.EmulateLS && !JKLERR) {
 					Debug.WriteLine("JKL-ed CLW");
 					Logging.Log("[CLAST] > On JKL layout: " +desl);
@@ -3584,7 +3642,7 @@ namespace Mahou {
 									Thread.Sleep(10);
 									jklXHidServ.Init();
 									Thread.Sleep(100);
-									ConvertLast(c_, line);
+									ConvertLast(sourceWord, line);
 								} else {
 									Logging.Log("JKL restart didn't help...", 1);
 									StartConvertWord(YuKeys, wasLocale, false, true);
