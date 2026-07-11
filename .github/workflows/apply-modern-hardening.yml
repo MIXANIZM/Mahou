@@ -34,8 +34,9 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import re
-          path = Path('/tmp/modern-hardening.patch')
-          text = path.read_text(encoding='utf-8')
+
+          patch_path = Path('/tmp/modern-hardening.patch')
+          text = patch_path.read_text(encoding='utf-8')
           patterns = [
               re.compile(
                   r'@@ -10,7 \+10,8 @@ using System\.Text\.RegularExpressions;\n.*?'
@@ -46,20 +47,103 @@ jobs:
               re.compile(
                   r'diff --git a/Mahou/Classes/NativeClipboard\.cs .*?'
                   r'(?=diff --git a/Mahou/Classes/SecretProtector\.cs)', re.S),
+              re.compile(
+                  r'@@ -4242,207 \+4061,29 @@.*?'
+                  r'(?=^@@ -4459,56 \+4100,15 @@)', re.S | re.M),
           ]
           for index, pattern in enumerate(patterns, 1):
               text, count = pattern.subn('', text, count=1)
               if count != 1:
                   raise SystemExit('Expected normalized patch group %d was not found exactly once' % index)
-          path.write_text(text, encoding='utf-8')
+          patch_path.write_text(text, encoding='utf-8')
           PY
+
           cp /tmp/modern-hardening.patch hardening-diagnostics/modern-hardening.patch
-          APPLY_FLAGS=(--3way --recount --ignore-space-change --ignore-whitespace)
+          APPLY_FLAGS=(--recount --ignore-space-change --ignore-whitespace)
           if ! git apply "${APPLY_FLAGS[@]}" --check /tmp/modern-hardening.patch > hardening-diagnostics/apply-check.txt 2>&1; then
             cat hardening-diagnostics/apply-check.txt
             exit 1
           fi
           git apply "${APPLY_FLAGS[@]}" --whitespace=nowarn /tmp/modern-hardening.patch
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          ui_path = Path('Mahou/MahouUI.cs')
+          raw = ui_path.read_text(encoding='utf-8-sig')
+
+          def replace_between(text, start_marker, end_marker, replacement):
+              start = text.find(start_marker)
+              if start < 0:
+                  raise SystemExit('Start marker not found: ' + start_marker)
+              end = text.find(end_marker, start)
+              if end < 0:
+                  raise SystemExit('End marker not found: ' + end_marker)
+              return text[:start] + replacement + text[end:]
+
+          replacement = '''\t\tvoid wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) {
+\t\t\t// Legacy self-update is intentionally disabled.
+\t\t}
+
+\t\tstring getASD_RemoteSize(bool InZip = false) {
+\t\t\ttry {
+\t\t\t\tvar source = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AS_dict.txt");
+\t\t\t\tif (!File.Exists(source)) return MMain.Lang[Languages.Element.Error];
+\t\t\t\tvar length = new FileInfo(source).Length;
+\t\t\t\treturn (length / 1024d / 1024d).ToString("0.00") + " MB";
+\t\t\t} catch { return MMain.Lang[Languages.Element.Error]; }
+\t\t}
+
+\t\tstring getResponce(string url) {
+\t\t\tLogging.Log("Blocked legacy network request: " + url, 2);
+\t\t\treturn null;
+\t\t}
+
+\t\tvoid btn_UpdateAutoSwitchDictionary_Click(object sender, EventArgs e) {
+\t\t\tvar ok = RestoreBundledAutoSwitchDictionary();
+\t\t\tbtn_UpdateAutoSwitchDictionary.ForeColor = ok ? Color.BlueViolet : Color.OrangeRed;
+\t\t\tbtn_UpdateAutoSwitchDictionary.Text = ok ? "Bundled dictionary restored" : "Bundled dictionary missing";
+\t\t}
+
+'''
+          raw = replace_between(
+              raw,
+              '\t\tvoid wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) {',
+              '\t\tstatic Regex rx = new Regex',
+              replacement,
+          )
+          ui_path.write_text(raw, encoding='utf-8-sig', newline='')
+
+          program_path = Path('Mahou/Program.cs')
+          program = program_path.read_text(encoding='utf-8-sig')
+          if 'static void WaitForRestartParent(string[] args)' not in program:
+              marker = '\t\tpublic static void RefreshLCnMID() {'
+              helper = '''\t\tstatic void WaitForRestartParent(string[] args) {
+\t\t\tconst string prefix = "--restart-wait=";
+\t\t\tif (args == null) return;
+\t\t\tforeach (var arg in args) {
+\t\t\t\tif (String.IsNullOrEmpty(arg) || !arg.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) continue;
+\t\t\t\tint processId;
+\t\t\t\tif (!Int32.TryParse(arg.Substring(prefix.Length), out processId) || processId <= 0) return;
+\t\t\t\ttry {
+\t\t\t\t\tusing (var process = Process.GetProcessById(processId)) {
+\t\t\t\t\t\tif (!process.HasExited) process.WaitForExit(5000);
+\t\t\t\t\t}
+\t\t\t\t} catch (ArgumentException) {
+\t\t\t\t\t// The old process already exited.
+\t\t\t\t} catch (Exception e) {
+\t\t\t\t\tDebug.WriteLine("Restart wait failed: " + e.Message);
+\t\t\t\t}
+\t\t\t\treturn;
+\t\t\t}
+\t\t}
+'''
+              if marker not in program:
+                  raise SystemExit('Program helper insertion marker not found')
+              program = program.replace(marker, helper + marker, 1)
+              program_path.write_text(program, encoding='utf-8-sig', newline='')
+          PY
+
           rm -rf .github/hardening-parts
           rm -f .github/workflows/apply-modern-hardening.yml
           git diff --check
