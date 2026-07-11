@@ -20,17 +20,24 @@ files = {
     "startup": text("Mahou/Classes/StartupManager.cs"),
     "paths": text("Mahou/Classes/UserDataPaths.cs"),
     "program": text("Mahou/Program.cs"),
+    "lang_display": text("Mahou/LangDisplay.cs"),
+    "lang_panel": text("Mahou/LangPanel.cs"),
 }
 errors = []
 
 forbidden = {
     "ui": ["UpdateMahou.cmd", "ExtractASD.cmd", "DownloadFileAsync(", "DownloadFile(",
-           "UploadData(", "https://hastebin.com", "https://0x0.st", "Shell.Application", "TASKKILL /IM"],
+           "UploadData(", "https://hastebin.com", "https://0x0.st", "Shell.Application", "TASKKILL /IM",
+           "FillRectangle(new SolidBrush(BG)", "DrawRectangle(new Pen(TAB_BORDERS)",
+           "FillRectangle(new SolidBrush(TAB_FOCUS_BG)", "DrawString(t, i.Font, new SolidBrush(FG)"],
     "startup": ["/Create /TN", "Startup\\Mahou.lnk"],
     "program": ["taskkill", "RestartMahou.cmd", "RestartMahou.vbs"],
     "configs": ["AllowSnippetExecute"],
     "hook": ["lastClipText", "MahouUI.ClipBackOnlyText", '"__execute"',
              "static void Execute(string args)", "Process.Start("],
+    "lang_display": ["DrawString(lbLang.Text, lbLang.Font, new SolidBrush"],
+    "lang_panel": ["Graphics g = CreateGraphics();", "var pn = new Pen(Color.Black);",
+                   "pn = new Pen(CurrentAeroColor())"],
 }
 for key, needles in forbidden.items():
     source = files[key].lower()
@@ -57,6 +64,15 @@ required = {
     "startup": ["CurrentVersion\\Run", "MIXANIZM Mahou", "/Delete /TN"],
     "paths": ["MIXANIZM Mahou", "Environment.SpecialFolder.ApplicationData"],
     "program": ["WaitForRestartParent(args)", "UserDataPaths.Initialize(args)"],
+    "lang_display": ["using (var brush = new SolidBrush(lbLang.ForeColor))",
+                     "previousBackground.Dispose()"],
+    "lang_panel": ["using (var pen = new Pen(borderColor))", "e.Graphics.DrawRectangle",
+                   "previousFlag.Dispose()"],
+    "ui": ["using (var backgroundBrush = new SolidBrush(BG))",
+           "using (var borderPen = new Pen(Color.FromArgb(255, 133, 158, 191), 1))",
+           "using (var tabBorderPen = new Pen(TAB_BORDERS))",
+           "using (var focusBrush = new SolidBrush(TAB_FOCUS_BG))",
+           "using (var textBrush = new SolidBrush(FG))"],
 }
 for key, needles in required.items():
     source = files[key]
