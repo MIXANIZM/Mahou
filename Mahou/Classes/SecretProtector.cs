@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -34,7 +34,13 @@ namespace Mahou {
             if (String.IsNullOrEmpty(value)) return true;
             try {
                 var bytes = Convert.FromBase64String(value);
-                plainText = Encoding.Unicode.GetString(bytes);
+                if (bytes.Length == 0 || (bytes.Length & 1) != 0) return false;
+                var decoded = Encoding.Unicode.GetString(bytes);
+                if (Convert.ToBase64String(Encoding.Unicode.GetBytes(decoded)) != value) return false;
+                foreach (var c in decoded) {
+                    if (Char.IsControl(c) && c != '\r' && c != '\n' && c != '\t') return false;
+                }
+                plainText = decoded;
                 return true;
             } catch {
                 return false;

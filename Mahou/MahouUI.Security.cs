@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -27,8 +27,6 @@ namespace Mahou {
 
             chk_AppDataConfigs.Checked = true;
             chk_AppDataConfigs.Enabled = false;
-            chk_RemapCapsLockAsF18.Checked = false;
-            chk_SpecificLS.Checked = false;
             cbb_AutostartType.SelectedIndex = 0;
             cbb_AutostartType.Enabled = false;
 
@@ -42,6 +40,10 @@ namespace Mahou {
 
             chk_DownloadASD_InZip.Checked = false;
             chk_DownloadASD_InZip.Enabled = false;
+            HelpMeUnderstand.SetToolTip(chk_TrEnable,
+                "When enabled, selected text is sent to the configured online translation service.");
+            HelpMeUnderstand.SetToolTip(chk_TrOnDoubleClick,
+                "When enabled, double-clicked text may be sent to the configured online translation service.");
             btn_UpdateAutoSwitchDictionary.Text = "Restore bundled dictionary";
             HelpMeUnderstand.SetToolTip(btn_UpdateAutoSwitchDictionary,
                 "Restores the dictionary shipped with this verified build. No network request is made.");

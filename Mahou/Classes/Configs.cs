@@ -536,7 +536,7 @@ namespace Mahou {
             CheckBool("Functions", "WriteInputHistoryByDate", "false");
             CheckBool("Functions", "WriteInputHistoryHourly", "false");
             CheckBool("Functions", "ReadOnlyNA", "false");
-            CheckBool("Functions", "UseJKL", "true");
+            CheckBool("Functions", "UseJKL", "false");
             CheckBool("Functions", "RemapCapslockAsF18", "false");
             CheckBool("Functions", "AppDataConfigs", "true");
             CheckBool("Functions", "GuessKeyCodeFix", "false");
@@ -588,11 +588,6 @@ namespace Mahou {
                 _INI.SetValue(section, key, fallback.ToString());
         }
         void ApplyMixanizmDefaults() {
-            // Caps Lock must remain the ordinary Windows Caps Lock unless the user
-            // explicitly re-enables an advanced remapping later.
-            _INI.SetValue("Functions", "RemapCapslockAsF18", "false");
-            _INI.SetValue("Layouts", "ChangeToSpecificLayoutByKey", "false");
-
             // Migrate untouched upstream Pause/Scroll defaults to the requested
             // single Insert action without overwriting an existing custom hotkey.
             var oldLast = _INI.GetValue("Hotkeys", "ConvertLastWord_Key") == "19" &&

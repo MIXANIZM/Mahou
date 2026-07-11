@@ -40,7 +40,7 @@ namespace Mahou {
 		static string[] UpdInfo;
 		public static List<int> HKBlockAlt = new List<int>();
 		public static bool BlockAltUpNOW = false;
-		static bool updating, was, isold = true, checking, snip_checking, as_checking, check_ASD_size = true;
+		static bool isold = true, snip_checking, as_checking;
 		public static bool ENABLED = true, reload_snip = false;
 		#region Timers
 		static Timer overlay_excluder;
@@ -70,7 +70,6 @@ namespace Mahou {
 		#endregion
 		static uint lastTrayFlagLayout = 0;
 		public static Bitmap FLAG, ITEXT;
-		static int progress = 0, _progress = 0;
 		public string SnippetsExpandType = "", SnippetsExpKeyOther = "";
 		int titlebar = 12;
 		public static int AtUpdateShow, SpecKeySetCount, SnippetsCount, AutoSwitchCount, TrSetCount, InputHistoryBackSpaceWriteType;
@@ -1870,7 +1869,6 @@ namespace Mahou {
 			AutoSwitchSpaceAfter = chk_AutoSwitchSpaceAfter.Checked = MMain.MyConfs.ReadBool("AutoSwitch", "SpaceAfter");
 			AutoSwitchSwitchToGuessLayout = chk_AutoSwitchSwitchToGuessLayout.Checked = MMain.MyConfs.ReadBool("AutoSwitch", "SwitchToGuessLayout");
 			Dowload_ASD_InZip = chk_DownloadASD_InZip.Checked = MMain.MyConfs.ReadBool("AutoSwitch", "DownloadInZip");
-			check_ASD_size = true;
 			if(AutoSwitchEnabled && SnippetsEnabled)
 				if (File.Exists(AS_dictfile) && !AutoSwitchDictionaryTooBig) {
 					AutoSwitchDictionaryRaw = File.ReadAllText(AS_dictfile);
@@ -2393,7 +2391,7 @@ namespace Mahou {
 //				Debug.WriteLine(p[0].Id + " " + force);
 				explorer_pid = p[0].Id;
 				explorer_not_found_tries = 0;
-			} catch(Exception e) {
+			} catch(Exception) {
 				fong = true;
 				explorer_not_found_tries++;
 			}
@@ -4682,22 +4680,22 @@ namespace Mahou {
 			__lopen(Logging.log, "txt", e.Button == MouseButtons.Right);
 		}
 		void Lnk_RepositoryLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen("http://github.com/BladeMight/Mahou", "http", false, e.Button == MouseButtons.Right);
+			__lopen("https://github.com/MIXANIZM/Mahou", "http", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_SiteLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen("http://blademight.github.io/Mahou/", "http", false, e.Button == MouseButtons.Right);
+			__lopen("https://github.com/MIXANIZM/Mahou", "http", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_WikiLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen("http://github.com/BladeMight/Mahou/wiki", "http", false, e.Button == MouseButtons.Right);
+			__lopen("https://github.com/MIXANIZM/Mahou/wiki", "http", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_ReleasesLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen("http://github.com/BladeMight/Mahou/releases", "http", false, e.Button == MouseButtons.Right);
+			__lopen("https://github.com/MIXANIZM/Mahou/releases", "http", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_EmailLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen("mailto:BladeMight@gmail.com", "mailto", false, e.Button == MouseButtons.Right);
+			__lopen("https://github.com/MIXANIZM/Mahou/issues", "mailto", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_pluginLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen("http://github.com/BladeMight/MahouCaretDisplayServer", "http", false, e.Button == MouseButtons.Right);
+			__lopen("https://github.com/MIXANIZM/MahouCaretDisplayServer", "http", false, e.Button == MouseButtons.Right);
 		}
 		void Lnk_SnipOpenLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
 			__lopen(snipfile, "txt");
@@ -5472,7 +5470,6 @@ namespace Mahou {
 		}
 		void Chk_DownloadASD_InZipCheckedChanged(object sender, EventArgs e) {
 			Dowload_ASD_InZip = chk_DownloadASD_InZip.Checked;
-			check_ASD_size = true;
 		}
 		void Btn_NCR_AddClick(object sender, EventArgs e) {
 			var _set = new Panel();
