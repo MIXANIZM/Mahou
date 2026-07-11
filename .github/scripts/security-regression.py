@@ -120,6 +120,7 @@ required = {
                   "http.MaximumAutomaticRedirections = 3;",
                   "static TimeoutWebClient CreateTranslationClient()",
                   "using (var client = CreateTranslationClient())",
+                  "client.DownloadFile(gtr.speech_url, speech_file);",
                   "static string NetworkErrorMessage(Exception error)",
                   "void ShowTranslationCore(string str, Point pos)",
                   "finally {\n\t\t\t\trunning = false;",
