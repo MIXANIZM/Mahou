@@ -300,13 +300,34 @@ namespace Mahou {
 			Memory.Flush();
 		}
 		static NotifyIcon[] Ticons;
+		static Icon[] TOwnedIcons;
 		static Timer ttmr;
 		static bool[] nvisible;
+		static void SetNcsTrayIcon(int index, Bitmap source) {
+			if (source == null || Ticons == null || Ticons[index] == null) return;
+			IntPtr nativeHandle = IntPtr.Zero;
+			Icon next = null;
+			try {
+				nativeHandle = source.GetHicon();
+				using (var borrowed = Icon.FromHandle(nativeHandle))
+					next = (Icon)borrowed.Clone();
+				Ticons[index].Icon = next;
+				var previous = TOwnedIcons[index];
+				TOwnedIcons[index] = next;
+				next = null;
+				if (previous != null) previous.Dispose();
+			} finally {
+				if (next != null) next.Dispose();
+				if (nativeHandle != IntPtr.Zero) WinAPI.DestroyIcon(nativeHandle);
+			}
+		}
 		public static void NCS_tray() {
 			var icons = new []{Properties.Resources.num, Properties.Resources.caps, Properties.Resources.scr};
 			var icons_on = new []{Properties.Resources.num_on, Properties.Resources.caps_on, Properties.Resources.scr_on};
 			if (Ticons == null)
 				Ticons = new NotifyIcon[3];
+			if (TOwnedIcons == null)
+				TOwnedIcons = new Icon[3];
 			if (nvisible != null) {
 				if (String.IsNullOrEmpty(ncs) && (nvisible[0] || nvisible[1] || nvisible[2])) {
 					NCS_destroy(); return;
@@ -326,11 +347,8 @@ namespace Mahou {
 				if (!nvisible[v])continue;
 				NotifyIcon t;
 				if (Ticons[v] == null) t = new NotifyIcon(); else t = Ticons[v];
-				if (Tstates[v])
-					t.Icon = Icon.FromHandle(icons_on[v].GetHicon());
-				else
-					t.Icon = Icon.FromHandle(icons[v].GetHicon());
 				Ticons[v] = t;
+				SetNcsTrayIcon(v, Tstates[v] ? icons_on[v] : icons[v]);
 			}
 			for(int v = 2; v >=0; v--) { 
 				if (!nvisible[v])continue;
@@ -346,10 +364,7 @@ namespace Mahou {
 						var t = Ticons[v];
 						if (Tstates[v] == tTstates[v])continue;
 						diff++;
-						if (tTstates[v])
-							t.Icon = Icon.FromHandle(icons_on[v].GetHicon());
-						else
-							t.Icon = Icon.FromHandle(icons[v].GetHicon());
+						SetNcsTrayIcon(v, tTstates[v] ? icons_on[v] : icons[v]);
 					}
 					if (diff >0) 
 						Tstates = tTstates;
@@ -368,9 +383,15 @@ namespace Mahou {
 				for (int v = 0; v<3; v++) {
 					if (Ticons[v] == null) continue;
 					if (Ticons[v].Visible) Ticons[v].Visible = false;
+					Ticons[v].Icon = null;
 					Ticons[v].Dispose();
+					if (TOwnedIcons != null && TOwnedIcons[v] != null) {
+						TOwnedIcons[v].Dispose();
+						TOwnedIcons[v] = null;
+					}
 				}
 				Ticons = null;
+				TOwnedIcons = null;
 			}
 		}
 		public static double xr = 1, yr = 1;
@@ -5183,9 +5204,8 @@ namespace Mahou {
 					if (file_icons_cache.ContainsKey(eex)) {
 						img = file_icons_cache[eex];
 					} else {
-						var b = GetPathIcon(ffd).ToBitmap(); //Icon.ExtractAssociatedIcon(ffd).ToBitmap();
-						img = Image.FromHbitmap(b.GetHbitmap());
-						b.Dispose();
+						using (var extractedIcon = GetPathIcon(ffd))
+							img = extractedIcon.ToBitmap();
 						if (eex != ".exe")
 							file_icons_cache[eex] = img;
 					}
@@ -5196,16 +5216,21 @@ namespace Mahou {
 					} else {
 				        IntPtr large;
 				        IntPtr small;
-				        WinAPI.ExtractIconEx("shell32.dll", 3, out large, out small, 1);
-				        try { 
-				        	var b = Icon.FromHandle(large != IntPtr.Zero ? large : small).ToBitmap();
-				        	img = Image.FromHbitmap(b.GetHbitmap());
-				        	b.Dispose();
-				        }
-				        catch (Exception ee) {
-				        	Logging.Log("Can't extract icon..." +ee.Message + ee.StackTrace, 1);
-				        }
-						file_icons_cache["<DIRECTORY>"] = img;
+						WinAPI.ExtractIconEx("shell32.dll", 3, out large, out small, 1);
+						try {
+							var selectedIcon = large != IntPtr.Zero ? large : small;
+							if (selectedIcon != IntPtr.Zero)
+								using (var borrowedIcon = Icon.FromHandle(selectedIcon))
+									img = borrowedIcon.ToBitmap();
+						}
+						catch (Exception ee) {
+							Logging.Log("Can't extract icon..." +ee.Message + ee.StackTrace, 1);
+						}
+						finally {
+							if (large != IntPtr.Zero) WinAPI.DestroyIcon(large);
+							if (small != IntPtr.Zero && small != large) WinAPI.DestroyIcon(small);
+						}
+file_icons_cache["<DIRECTORY>"] = img;
 					}
 				}
 				var new_root = new ToolStripMenuItem(n,img);

@@ -668,16 +668,11 @@ namespace Mahou {
 			ResumeLayout(false);
 		}
 		protected override void OnPaint(PaintEventArgs e) {
-//			if (MMain.mahou == null) { base.OnPaint(e); return; }
-			Graphics g = CreateGraphics();
-			var pn = new Pen(Color.Black);
-			if (AeroEnabled && MahouUI.TrBorderAero)
-				pn = new Pen(CurrentAeroColor());
-			else
-				pn.Color = MahouUI.TrBorder;
-			g.DrawRectangle(pn, new Rectangle(0, 0, Size.Width - 1, Size.Height - 1));
-			g.Dispose();
-			pn.Dispose();
+			var borderColor = AeroEnabled && MahouUI.TrBorderAero
+				? CurrentAeroColor()
+				: MahouUI.TrBorder;
+			using (var pen = new Pen(borderColor))
+				e.Graphics.DrawRectangle(pen, new Rectangle(0, 0, Size.Width - 1, Size.Height - 1));
 			base.OnPaint(e);
 		}
 		protected override void OnShown(EventArgs e) {
