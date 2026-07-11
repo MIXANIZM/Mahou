@@ -6,6 +6,11 @@ namespace Mahou {
 	/// <summary>Writes low-frequency user data through a flushed temporary file and same-directory replace.</summary>
 	static class AtomicFile {
 		static readonly object SyncRoot = new object();
+		static readonly Encoding Utf8WithoutBom = new UTF8Encoding(false);
+
+		public static void WriteAllText(string path, string content) {
+			WriteAllText(path, content, Utf8WithoutBom);
+		}
 
 		public static void WriteAllText(string path, string content, Encoding encoding) {
 			if (String.IsNullOrEmpty(path)) throw new ArgumentException("A destination path is required.", "path");
