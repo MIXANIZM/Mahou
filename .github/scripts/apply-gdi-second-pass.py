@@ -136,32 +136,40 @@ replace_eol(
     "\t\t\t\t\t\tusing (var extractedIcon = GetPathIcon(ffd))\n"
     "\t\t\t\t\t\t\timg = extractedIcon.ToBitmap();\n",
 )
-replace_eol(
-    UI,
-    "\t\t\t\t\t\tWinAPI.ExtractIconEx(\"shell32.dll\", 3, out large, out small, 1);\n"
-    "\t\t\t\t\t\ttry { \n"
-    "\t\t\t\t\t        \tvar b = Icon.FromHandle(large != IntPtr.Zero ? large : small).ToBitmap();\n"
-    "\t\t\t\t\t        \timg = Image.FromHbitmap(b.GetHbitmap());\n"
-    "\t\t\t\t\t        \tb.Dispose();\n"
-    "\t\t\t\t\t        }\n"
-    "\t\t\t\t\t        catch (Exception ee) {\n"
-    "\t\t\t\t\t        \tLogging.Log(\"Can't extract icon...\" +ee.Message + ee.StackTrace, 1);\n"
-    "\t\t\t\t\t        }\n",
-    "\t\t\t\t\t\tWinAPI.ExtractIconEx(\"shell32.dll\", 3, out large, out small, 1);\n"
-    "\t\t\t\t\t\ttry { \n"
-    "\t\t\t\t\t\t\tvar selectedIcon = large != IntPtr.Zero ? large : small;\n"
-    "\t\t\t\t\t\t\tif (selectedIcon != IntPtr.Zero)\n"
-    "\t\t\t\t\t\t\t\tusing (var borrowedIcon = Icon.FromHandle(selectedIcon))\n"
-    "\t\t\t\t\t\t\t\t\timg = borrowedIcon.ToBitmap();\n"
-    "\t\t\t\t\t\t}\n"
-    "\t\t\t\t\t\tcatch (Exception ee) {\n"
-    "\t\t\t\t\t\t\tLogging.Log(\"Can't extract icon...\" +ee.Message + ee.StackTrace, 1);\n"
-    "\t\t\t\t\t\t}\n"
-    "\t\t\t\t\t\tfinally {\n"
-    "\t\t\t\t\t\t\tif (large != IntPtr.Zero) WinAPI.DestroyIcon(large);\n"
-    "\t\t\t\t\t\t\tif (small != IntPtr.Zero && small != large) WinAPI.DestroyIcon(small);\n"
-    "\t\t\t\t\t\t}\n",
-)
+
+# The original directory-icon block mixes tabs and spaces, so replace it by
+# unique structural markers instead of matching its indentation byte-for-byte.
+ui_data = UI.read_bytes()
+start_marker = b'WinAPI.ExtractIconEx("shell32.dll", 3, out large, out small, 1);'
+end_marker = b'file_icons_cache["<DIRECTORY>"] = img;'
+start = ui_data.find(start_marker)
+end = ui_data.find(end_marker, start)
+if start < 0 or end < 0:
+    raise RuntimeError("MahouUI.cs: directory icon extraction markers not found")
+if ui_data.find(start_marker, start + 1) >= 0:
+    raise RuntimeError("MahouUI.cs: directory icon extraction start marker is not unique")
+line_start = ui_data.rfind(b"\n", 0, start) + 1
+indent = ui_data[line_start:start]
+eol = b"\r\n" if b"\r\n" in ui_data[start:end] else b"\n"
+new_lines = [
+    b'WinAPI.ExtractIconEx("shell32.dll", 3, out large, out small, 1);',
+    b'try {',
+    b'\tvar selectedIcon = large != IntPtr.Zero ? large : small;',
+    b'\tif (selectedIcon != IntPtr.Zero)',
+    b'\t\tusing (var borrowedIcon = Icon.FromHandle(selectedIcon))',
+    b'\t\t\timg = borrowedIcon.ToBitmap();',
+    b'}',
+    b'catch (Exception ee) {',
+    b'\tLogging.Log("Can\'t extract icon..." +ee.Message + ee.StackTrace, 1);',
+    b'}',
+    b'finally {',
+    b'\tif (large != IntPtr.Zero) WinAPI.DestroyIcon(large);',
+    b'\tif (small != IntPtr.Zero && small != large) WinAPI.DestroyIcon(small);',
+    b'}',
+]
+new_block = eol.join(indent + line for line in new_lines) + eol
+ui_data = ui_data[:line_start] + new_block + ui_data[end:]
+UI.write_bytes(ui_data)
 
 Path(__file__).unlink()
 print("Second GDI pass applied to lock-state tray icons, translator border and file icon extraction.")
