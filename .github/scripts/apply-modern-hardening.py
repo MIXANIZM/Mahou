@@ -4,6 +4,7 @@ import re
 import shutil
 import subprocess
 import sys
+import traceback
 
 ROOT = Path(__file__).resolve().parents[2]
 PARTS = ROOT / ".github" / "hardening-parts"
@@ -118,7 +119,7 @@ def replace_legacy_network_block() -> None:
         "\t\tstatic Regex rx = new Regex",
         replacement,
     )
-    path.write_text(raw, encoding="utf-8-sig", newline="")
+    path.write_text(raw, encoding="utf-8-sig", newline="\r\n")
 
 
 def add_restart_wait_helper() -> None:
@@ -126,7 +127,11 @@ def add_restart_wait_helper() -> None:
     raw = path.read_text(encoding="utf-8-sig")
     if "static void WaitForRestartParent(string[] args)" in raw:
         return
-    marker = "\t\tpublic static void RefreshLCnMID() {"
+
+    match = re.search(r"^[ \t]+public static void RefreshLCnMID\(\) \{", raw, re.M)
+    if not match:
+        fail("Program helper insertion marker not found")
+
     helper = '''\t\tstatic void WaitForRestartParent(string[] args) {
 \t\t\tconst string prefix = "--restart-wait=";
 \t\t\tif (args == null) return;
@@ -147,9 +152,8 @@ def add_restart_wait_helper() -> None:
 \t\t\t}
 \t\t}
 '''
-    if marker not in raw:
-        fail("Program helper insertion marker not found")
-    path.write_text(raw.replace(marker, helper + marker, 1), encoding="utf-8-sig", newline="")
+    raw = raw[:match.start()] + helper + raw[match.start():]
+    path.write_text(raw, encoding="utf-8-sig", newline="\r\n")
 
 
 def cleanup_staging() -> None:
@@ -172,9 +176,13 @@ def main() -> None:
     replace_legacy_network_block()
     add_restart_wait_helper()
     cleanup_staging()
-    run("git", "diff", "--check")
     print("Modern hardening applied successfully.")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except BaseException:
+        DIAGNOSTICS.mkdir(parents=True, exist_ok=True)
+        (DIAGNOSTICS / "error.txt").write_text(traceback.format_exc(), encoding="utf-8")
+        raise
