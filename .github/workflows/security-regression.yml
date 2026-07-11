@@ -26,6 +26,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 .github/scripts/security-regression.py | tee security-regression.txt
+          python3 .github/scripts/ui-resource-regression.py | tee -a security-regression.txt
 
       - name: Upload security report
         if: always()
