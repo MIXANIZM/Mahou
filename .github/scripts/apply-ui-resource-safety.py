@@ -28,9 +28,6 @@ replace(TR,
 '''\t\t\t\t\t\tvar si = g.MeasureString(txttrc.Text, txttrc.Font);\n''',
 '''\t\t\t\t\t\tSizeF si;\n\t\t\t\t\t\tusing (var g = CreateGraphics())\n\t\t\t\t\t\t\tsi = g.MeasureString(txttrc.Text, txttrc.Font);\n''')
 replace(TR, '''\t\t\t\tg.Dispose();\n\t\t\t\tbtn.Location = new Point(pan.Width-14-1, 1);\n''', '''\t\t\t\tbtn.Location = new Point(pan.Width-14-1, 1);\n''', 1)
-replace(TR,
-'''\t\tvoid SetAboveTitleWidth() {\n\t\t\tvar g = CreateGraphics();\n\t\t\tvar size = g.MeasureString(TITLE.Text + "  ", TITLE.Font);\n\t\t\tg.Dispose();\n''',
-'''\t\tvoid SetAboveTitleWidth() {\n\t\t\tSizeF size;\n\t\t\tusing (var g = CreateGraphics())\n\t\t\t\tsize = g.MeasureString(TITLE.Text + "  ", TITLE.Font);\n''')
 
 Path(__file__).unlink()
 print("Hardened UI Graphics/Form lifetime without changing measurement behavior.")
