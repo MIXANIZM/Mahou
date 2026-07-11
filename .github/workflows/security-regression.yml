@@ -1,0 +1,37 @@
+name: Security regression
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-regression-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify security invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/security-regression.py | tee security-regression.txt
+
+      - name: Upload security report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-regression-report
+          path: security-regression.txt
+          if-no-files-found: warn
+          retention-days: 14
