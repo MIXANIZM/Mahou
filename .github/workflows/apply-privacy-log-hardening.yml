@@ -1,0 +1,45 @@
+name: Apply privacy log hardening
+
+on:
+  push:
+    branches:
+      - mixanizm-modern-v2.9.0.1
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-privacy-log-hardening
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout modern branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Apply privacy-safe logging migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          script=.github/scripts/apply-privacy-log-hardening.py
+          if [ ! -f "$script" ]; then
+            echo 'Privacy log hardening already applied.'
+            exit 0
+          fi
+          python3 "$script"
+          python3 .github/scripts/security-regression.py
+          git diff --check
+          rm -f .github/workflows/apply-privacy-log-hardening.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'security: redact plaintext from diagnostic logs'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
