@@ -45,7 +45,7 @@ replace_bytes(
 replace_bytes(
     "Mahou/Classes/KMHook.cs",
     "\t\t\t_selis, _mselis, snipselshiftpressed, snipselwassel, ",
-    "\t\t\tsnipselshiftpressed, snipselwassel, ",
+    "\t\t\tsnipselshiftpressed, snipselwassel,",
 )
 replace_bytes(
     "Mahou/MahouUI.cs",
