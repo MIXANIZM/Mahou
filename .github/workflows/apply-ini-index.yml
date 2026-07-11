@@ -41,7 +41,12 @@ jobs:
           path = Path('.github/scripts/apply-ini-index.py')
           source = path.read_text(encoding='utf-8')
           old = 'replace_eol(CONFIGS, "\\t        \\tvar inini = _INI.Raw;\\n", "\\t        \\tvar inini = _INI.GetRawSnapshot();\\n")'
-          new = 'replace_eol(CONFIGS, "var inini = _INI.Raw;", "var inini = _INI.GetRawSnapshot();")'
+          new = '''raw_ini_data = CONFIGS.read_bytes()
+          old_raw_access = b"var inini = _INI.Raw;"
+          new_raw_access = b"var inini = _INI.GetRawSnapshot();"
+          if raw_ini_data.count(old_raw_access) != 1:
+              raise RuntimeError("Configs.cs: expected one raw INI access in GetRawWithoutGroup")
+          CONFIGS.write_bytes(raw_ini_data.replace(old_raw_access, new_raw_access, 1))'''
           if source.count(old) != 1:
               raise RuntimeError('Expected one indentation-sensitive raw INI replacement in migration script.')
           path.write_text(source.replace(old, new, 1), encoding='utf-8')
