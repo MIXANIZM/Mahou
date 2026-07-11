@@ -22,7 +22,31 @@ namespace Mahou {
 //		public static List<string> SPFs = new List<string>();
 //		public static List<string> SPUs = new List<string>();
 		public static bool running, useGS = true, useNA = false;
-		public static readonly WebClient client = new WebClient();
+		const int TranslationTimeoutMs = 8000;
+		const int MaxTranslationInputCharacters = 5000;
+		sealed class TimeoutWebClient : WebClient {
+			readonly int timeoutMs;
+			public TimeoutWebClient(int timeoutMs) {
+				this.timeoutMs = timeoutMs;
+			}
+			protected override WebRequest GetWebRequest(Uri address) {
+				var request = base.GetWebRequest(address);
+				request.Timeout = timeoutMs;
+				var http = request as HttpWebRequest;
+				if (http != null) {
+					http.ReadWriteTimeout = timeoutMs;
+					http.AllowAutoRedirect = true;
+					http.MaximumAutomaticRedirections = 3;
+				}
+				return request;
+			}
+		}
+		static TimeoutWebClient CreateTranslationClient() {
+			var client = new TimeoutWebClient(TranslationTimeoutMs);
+			client.Headers[HttpRequestHeader.UserAgent] =
+				"AndroidTranslate/5.3.0.RC02.130475354-53000263 5.1 phone TRANSLATE_OPM5_TEST_1";
+			return client;
+		}
 		public static readonly string GTSpeechLink = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob"; // tl & q
 		public static readonly string GTLink = "https://translate.googleapis.com/translate_a/single?client=gtx&dt=t"; // q, sl, & tl
 		public static readonly string GTNALink = "https://translate.google.com/translate_a/single?client=at&dt=t&dt=ld&dt=qca&dt=rm&dt=bd&dj=1&hl=en-US&ie=UTF-8&oe=UTF-8&inputm=2&otf=2&iid=1dd3b944-fa62-4b55-b330-74909a99969e"; // q, sl, & tl
@@ -121,17 +145,15 @@ namespace Mahou {
 		public static List<GTResp> GetGTResponceAll(string[] tls, string[] qs, string[] sls) {
 			var gtrlist = new List<GTResp>();
 			try {
+				using (var client = CreateTranslationClient()) {
 				for (int i=0; i!= tls.Length; i++) {
 					var gl = GTLink;
 					if (useNA) gl = GTNALink;
-					// corrects GTLink responce encoding.
-					client.Headers["User-Agent"] = "AndroidTranslate/5.3.0.RC02.130475354-53000263 5.1 phone TRANSLATE_OPM5_TEST_1";
+					// Corrects the direct Google Translate response encoding.
 					var url = gl+"&q="+HttpUtility.UrlPathEncode(
 						qs[i].Replace(" ", "%20").Replace("\r", "%0D").Replace("\n", "%0A"))+
 						"&sl="+sls[i]+"&tl="+tls[i];
-					Debug.WriteLine("url: " + url);
 					var raw_array = Encoding.UTF8.GetString(client.DownloadData(url));
-					Debug.WriteLine("RAW:" +raw_array);
 					var det_l = "";
 					var gtresp = new GTResp();
 					string src = "", tr = "", strc = "", trc = "";
@@ -176,13 +198,38 @@ namespace Mahou {
 					gtresp.targ_lang = tls[i];
 					gtrlist.Add(gtresp);
 				}
-			} catch(Exception e) { MMain.mahou._TranslatePanel.GTRespError(e.Message/*+e.StackTrace*/); }
+				}
+			} catch(Exception e) { MMain.mahou._TranslatePanel.GTRespError(NetworkErrorMessage(e)); }
 			return gtrlist;
 		}
+		static string NetworkErrorMessage(Exception error) {
+			var webError = error as WebException;
+			if (webError != null && webError.Status == WebExceptionStatus.Timeout)
+				return "Translation request timed out after " + (TranslationTimeoutMs / 1000) + " seconds.";
+			return "Translation request failed: " + error.Message;
+		}
 		public void ShowTranslation(string str, Point pos) {
+			if (running || String.IsNullOrEmpty(str)) return;
+			if (str.Length > MaxTranslationInputCharacters) {
+				GTRespError("Translation input is limited to " + MaxTranslationInputCharacters + " characters.");
+				Location = pos;
+				SpecialShow();
+				return;
+			}
+			running = true;
+			try {
+				ShowTranslationCore(str, pos);
+			} catch (Exception e) {
+				GTRespError(NetworkErrorMessage(e));
+				Location = pos;
+				SpecialShow();
+			} finally {
+				running = false;
+			}
+		}
+		void ShowTranslationCore(string str, Point pos) {
 			GTRs.Clear();
 			pan_Translations.Controls.Clear();
-			running = true;
 			var tls = (from pv in MahouUI.TrSetsValues
 			           where pv.Key.StartsWith("cbb_to") 
 			           select pv.Value).ToArray();
@@ -201,10 +248,13 @@ namespace Mahou {
 				var multi = HttpUtility.UrlEncode(TranslatePanel.getMultiParams(tls, qs, sls));
 	//			var multi_resp = getRespContent(TranslatePanel.GTLink+"?multi="+multi);
 				var multi_resp = "";
-				try { multi_resp = Encoding.UTF8.GetString(Encoding.Default.GetBytes(client.DownloadString(TranslatePanel.GSLink+"?multi="+multi)));
-					} catch(Exception e) { GTRespError(e.Message); }
-				Debug.WriteLine(multi);
-				Debug.WriteLine(multi_resp);
+				try {
+					using (var client = CreateTranslationClient())
+						multi_resp = Encoding.UTF8.GetString(Encoding.Default.GetBytes(
+							client.DownloadString(TranslatePanel.GSLink+"?multi="+multi)));
+				} catch(Exception e) {
+					GTRespError(NetworkErrorMessage(e));
+				}
 				var gtrs = multi_resp.Split(new [] {"_!_!_!_SEPARATOR_!_!_!_"}, StringSplitOptions.None);
 				foreach (var raw_gtr in gtrs) {
 					var gtr = TranslatePanel.ParseGTResp(raw_gtr);
@@ -226,7 +276,6 @@ namespace Mahou {
 				}
 			}
 			Location = pos;
-			running = false;
 			SpecialShow();
 		}
 		public void AddTranslation(GTResp gtr) {
@@ -284,7 +333,7 @@ namespace Mahou {
 				slt.BorderStyle = txt.BorderStyle = 0;
 				slt.Location = new Point(1, 0);
 				slt.Text = (gtr.auto_detect ? "" : gtr.src_lang+"/")+gtr.targ_lang+":";
-				var g = CreateGraphics();
+				using (var g = CreateGraphics()) {
 				var size = g.MeasureString(slt.Text, slt.Font);
 				slt.Width = (int)size.Width;
 				txt.Name = "TR_TXT"+gtr.targ_lang;
@@ -314,7 +363,7 @@ namespace Mahou {
 						pan.Controls.Add(txttrc);
 					}
 				}
-				g.Dispose();
+				}
 				btn.Location = new Point(pan.Width-14-1, 1);
 				pan.Controls.Add(btn);
 				txt.Width = pan.Width-slt.Width-2-btn.Width-2-trcw;
@@ -340,9 +389,9 @@ namespace Mahou {
 				btn.gtr = gtr;
 //				Debug.WriteLine("updating speech url to "+gtr.speech_url);
 				slt.Text = gtr.targ_lang+":";
-				var g = CreateGraphics();
-				var size = g.MeasureString(slt.Text, slt.Font);
-				g.Dispose();
+				SizeF size;
+				using (var g = CreateGraphics())
+					size = g.MeasureString(slt.Text, slt.Font);
 				slt.Width = (int)size.Width;
 				if (ind != -1) {
 					GTRs.RemoveAt(ind);
@@ -436,7 +485,7 @@ namespace Mahou {
 			Width = pan_Translations.Width = 0; // Minify
 			pant_y = txt_Source.Height = 0;
 			// 1st find max width
-			var g = CreateGraphics();
+			using (var g = CreateGraphics()) {
 			SetAboveTitleWidth();
 			var s = g.MeasureString(txt_Source.Text, txt_Source.Font);
 			var sw = Convert.ToInt32(s.Width);
@@ -532,7 +581,7 @@ namespace Mahou {
 				}
 				c++;
 			}
-			g.Dispose();
+			}
 			pan_Translations.Width = Width-2;
 			// 2nd set right positions
 			c = 0;
@@ -559,9 +608,9 @@ namespace Mahou {
 			ResumeLayout(false);
 		}
 		void SetAboveTitleWidth() {
-			var g = CreateGraphics();
-			var size = g.MeasureString(TITLE.Text + "  ", TITLE.Font);
-			g.Dispose();
+			SizeF size;
+			using (var g = CreateGraphics())
+				size = g.MeasureString(TITLE.Text + "  ", TITLE.Font);
 			TITLE.Width = (int)size.Width+1;
 			var TITLEw = (TITLE.Width+X.Width);
 			if (Width < TITLEw)
