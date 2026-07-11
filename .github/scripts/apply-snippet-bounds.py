@@ -79,7 +79,7 @@ replace_eol(
 replace_eol(
     "\t\t\t\t\tfor (int x = 0; x != times; x++) {\n",
     "\t\t\t\t\tfor (int x = 0; x < times; x++) {\n",
-    expected=4,
+    expected=5,
 )
 replace_eol(
     "\t\t\t\tInt32.TryParse(axy[1], out delay);\n"
