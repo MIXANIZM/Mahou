@@ -1,0 +1,46 @@
+name: Apply GDI hardening
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-gdi-hardening-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.head_ref == 'mixanizm-modern-v2.9.0.1' || github.ref_name == 'mixanizm-modern-v2.9.0.1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout modern branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Apply GDI resource hardening
+        shell: bash
+        run: |
+          set -euo pipefail
+          script=.github/scripts/apply-gdi-hardening.py
+          if [ ! -f "$script" ]; then
+            echo 'GDI hardening is already applied.'
+            exit 0
+          fi
+          python3 "$script"
+          python3 .github/scripts/security-regression.py
+          git diff --check
+          rm -f .github/workflows/apply-gdi-hardening.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'fix: dispose GDI resources in language indicators'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
