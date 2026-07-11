@@ -419,9 +419,10 @@ namespace Mahou {
 		}
 		public static void DPISCALE(Control cxx, bool nox = false) {
 			float dx, dy;
-			Graphics g = cxx.CreateGraphics();
-			try { dx = g.DpiX; dy = g.DpiY; }
-			finally { g.Dispose(); }
+			using (var g = cxx.CreateGraphics()) {
+				dx = g.DpiX;
+				dy = g.DpiY;
+			}
 			var es = Convert.ToSingle(96);
 			if (dx.Equals(es) && dy.Equals(es)) { return; }
 			xr = dx/96;
@@ -441,20 +442,23 @@ namespace Mahou {
 		}
 		public static void chrome_window_alt_fix() {
 			var last = Locales.ActiveWindow();
-			var f = new Form();
-			f.FormBorderStyle = FormBorderStyle.None;
-			f.MaximizeBox = f.MinimizeBox = false;
-			f.TopMost = true;
-			f.Width = f.Height = 1;
-			f.Location = new Point(0, 0);
-			f.Show();
-			WinAPI.SetForegroundWindow(f.Handle);
-			KInputs.MakeInput(new [] {
-		                  	KInputs.AddKey(Keys.LMenu, false),
-		                  	KInputs.AddKey(Keys.RMenu, false)});
-			System.Threading.Thread.Sleep(1);
-			f.Dispose();
-			WinAPI.SetForegroundWindow(last);
+			try {
+				using (var f = new Form()) {
+					f.FormBorderStyle = FormBorderStyle.None;
+					f.MaximizeBox = f.MinimizeBox = false;
+					f.TopMost = true;
+					f.Width = f.Height = 1;
+					f.Location = new Point(0, 0);
+					f.Show();
+					WinAPI.SetForegroundWindow(f.Handle);
+					KInputs.MakeInput(new [] {
+						KInputs.AddKey(Keys.LMenu, false),
+						KInputs.AddKey(Keys.RMenu, false)});
+					System.Threading.Thread.Sleep(1);
+				}
+			} finally {
+				WinAPI.SetForegroundWindow(last);
+			}
 		}
 		#region WndProc(Hotkeys) & Functions
 		protected override void WndProc(ref Message m) {

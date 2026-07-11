@@ -333,8 +333,9 @@ namespace Mahou {
 				slt.BorderStyle = txt.BorderStyle = 0;
 				slt.Location = new Point(1, 0);
 				slt.Text = (gtr.auto_detect ? "" : gtr.src_lang+"/")+gtr.targ_lang+":";
-				var g = CreateGraphics();
-				var size = g.MeasureString(slt.Text, slt.Font);
+				SizeF size;
+				using (var g = CreateGraphics())
+					size = g.MeasureString(slt.Text, slt.Font);
 				slt.Width = (int)size.Width;
 				txt.Name = "TR_TXT"+gtr.targ_lang;
 				txt.Text = MahouUI.UnescapeUnicode(gtr.translation);
@@ -357,13 +358,14 @@ namespace Mahou {
 						txttrc.Font = MahouUI.TrText;
 						txttrc.Name = "TRC_TXT"+gtr.targ_lang;
 						txttrc.Text = "["+MahouUI.UnescapeUnicode(gtr.targ_transcr)+"]";
-						var si = g.MeasureString(txttrc.Text, txttrc.Font);
+						SizeF si;
+						using (var g = CreateGraphics())
+							si = g.MeasureString(txttrc.Text, txttrc.Font);
 						trcw = txttrc.Width = (int)si.Width;
 						txttrc.Location = new Point(txt.Location.X+pan.Width-slt.Width-2-btn.Width-2-trcw, txt.Location.Y);
 						pan.Controls.Add(txttrc);
 					}
 				}
-				g.Dispose();
 				btn.Location = new Point(pan.Width-14-1, 1);
 				pan.Controls.Add(btn);
 				txt.Width = pan.Width-slt.Width-2-btn.Width-2-trcw;
