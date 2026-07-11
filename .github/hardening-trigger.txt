@@ -1,1 +1,1 @@
-Apply the staged modern hardening patch and remove this marker in the one-time workflow.
+Apply the staged modern hardening patch now. This marker is removed by the one-time workflow.
