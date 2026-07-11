@@ -127,6 +127,9 @@
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Auray.cs" />
@@ -148,6 +151,7 @@
     <Compile Include="Classes\Configs.cs" />
     <Compile Include="Classes\WinAPI.cs" />
     <Compile Include="Classes\RawInputForm.cs" />
+    <Compile Include="Classes\SelectionProbe.cs" />
     <Compile Include="Classes\SecretProtector.cs" />
     <Compile Include="Classes\StartupManager.cs" />
     <Compile Include="Classes\UserDataPaths.cs" />

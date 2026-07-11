@@ -70,3 +70,8 @@ This document records the first-pass static audit and the hardening applied on t
 Do not merge or publish a release until x86/x64 builds pass, Windows 11 runtime tests are
 completed, a second independent audit is performed, and the resulting binaries are tied
 to a source commit with SHA-256 provenance.
+
+## Obsolete distribution automation removed
+
+The MIXANIZM branch no longer contains legacy CMD/VBS release scripts or old Chocolatey download automation.
+Removed: `Mahou/build-github-release+chocolatey-update.vbs`, `Mahou/build-run.cmd`, `Mahou/build.cmd`, `Mahou/clean.cmd`, `Chocolatey/`.

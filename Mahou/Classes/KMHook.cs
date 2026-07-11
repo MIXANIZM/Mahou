@@ -10,7 +10,8 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Mahou {
-	static class KMHook  { // Keyboard & Mouse Listeners & Event hook		#region Variables
+	static class KMHook  { // Keyboard & Mouse Listeners & Event hook
+		#region Variables
 		public static string __ANY__ = "***ANY***", REGEXSNIP = "regex/", IGNLAYSNIP = "?~?", last_snip, snip_selection,
 							AS_IGN_RULES;
 		public static bool win, alt, ctrl, shift,
@@ -38,7 +39,8 @@ namespace Mahou {
 		static uint cs_layout_last = 0;
 		static string busy_on = "", lastLWClearReason = "";
 		public static NativeClipboard.OleSnapshot lastClip;
-		public static string lastClipText;
+		static readonly object clipboardBackupSync = new object();
+		static bool clipboardBackupPending;
 		public static string symbolclear;
 		static List<Keys> tempNumpads = new List<Keys>();
 		static Keys preKey = Keys.None, prevKEY; //, seKeyDown = Keys.None, aseKeyDown = Keys.None;
@@ -783,7 +785,7 @@ namespace Mahou {
 						try {
 							var c = WinAPI.WindowFromPoint(Cursor.Position);
 							var x = Control.FromHandle(c);
-							RestoreClipBoard(x.Text);
+							NativeClipboard.SetText(x.Text);
 							var was = x.ForeColor;
 							x.ForeColor = System.Drawing.Color.YellowGreen;
 							var z = new System.Windows.Forms.Timer();
@@ -969,9 +971,12 @@ namespace Mahou {
 		static void snipsel() {
 //			var clipr = GetClipboard(4,10);
 			skip_kbd_events+=2;
-			snip_selection = GetClipStr(); 
-			Debug.WriteLine("SEL>> "+snip_selection);
-			RestoreClipBoard();
+			try {
+				snip_selection = GetClipStr();
+				Debug.WriteLine("SEL>> "+snip_selection);
+			} finally {
+				EnsureClipboardRestored();
+			}
 		}
 		static bool _hasKey(string[] ar, string key) {
 			for (int i = 0; i < ar.Length; i++) {
@@ -1702,12 +1707,18 @@ namespace Mahou {
 			switch (expr) {
 				case "__paste":
 					Logging.Log("[EXPR] > Pasting text from snippet.");
-					Debug.WriteLine("Paste: " + args);
 					EXSN_result.Append(args);
-					GetClipStr();
-					RestoreClipBoard(Regex.Replace(args, "\r?\n|\r", Environment.NewLine));
-					KInputs.MakeInput(KInputs.AddPress(Keys.V), (int)WinAPI.MOD_CONTROL);
-					DoLater(() => RestoreClipBoard(), 300);
+					if (!EnsureClipboardBackup()) {
+						Logging.Log("Snippet paste cancelled because the clipboard could not be preserved.", 2);
+						break;
+					}
+					try {
+						if (!RestoreClipBoard(Regex.Replace(args, "\r?\n|\r", Environment.NewLine))) break;
+						KInputs.MakeInput(KInputs.AddPress(Keys.V), (int)WinAPI.MOD_CONTROL);
+						Thread.Sleep(50);
+					} finally {
+						EnsureClipboardRestored();
+					}
 					break;
 				case "__date":
 				case "__time":
@@ -2585,9 +2596,19 @@ namespace Mahou {
 		/// </summary>
 		static bool selectionConversionSucceeded;
 		public static void ConvertSelectionOrLastWord() {
+			var selectionState = SelectionProbe.GetState();
+			if (selectionState == SelectionProbe.State.Sensitive) {
+				Logging.Log("Insert conversion suppressed in a protected text field.", 2);
+				return;
+			}
+			if (selectionState == SelectionProbe.State.None) {
+				ConvertLast();
+				return;
+			}
 			selectionConversionSucceeded = false;
 			ConvertSelection();
-			if (!selectionConversionSucceeded) ConvertLast(MMain.c_word);
+			if (!selectionConversionSucceeded && selectionState != SelectionProbe.State.Selected)
+				ConvertLast();
 		}
 		public static void ConvertSelection() {
 			selectionConversionSucceeded = false;
@@ -2724,13 +2745,13 @@ namespace Mahou {
 						ReSelect(items, "N");
 						MahouUI.hk_result = true;
 					}
-					NativeClipboard.Clear();
-					RestoreClipBoard();
 				}, "convert_selection");
 			} catch(Exception e) {
 				Logging.Log("[CS] > Convert Selection encountered error, details:\r\n" +e.Message+"\r\n"+e.StackTrace, 1);
+			} finally {
+				EnsureClipboardRestored();
+				Memory.Flush();
 			}
-			Memory.Flush();
 		}
 		public enum ConvT {
 			Transliteration,
@@ -2804,36 +2825,45 @@ namespace Mahou {
 						ReSelect(output.Length, cT);
 						MahouUI.hk_result = true;
 					}
-					NativeClipboard.Clear();
-					RestoreClipBoard();
 	            }, "selection_convert");
 				} catch(Exception e) {
 					Logging.Log("["+tn+"] > Selection encountered error, details:\r\n" +e.Message+"\r\n"+e.StackTrace, 1);
+				} finally {
+					EnsureClipboardRestored();
+					Memory.Flush();
 				}
-			Memory.Flush();
 		}
 		public static void PasteText(string text, string info="") {
-			Logging.Log("Pasting ["+text+"]  as "+info);
-			RestoreClipBoard(text);
-			List<WinAPI.INPUT> a = new List<WinAPI.INPUT>();
-			a.Add(KInputs.AddKey(Keys.LControlKey, true));
-			var v = MahouUI.LibreCtrlAltShiftV && Locales.ActiveWindowProcess().ProcessName.ToLower().Contains("soffice.");
-			if (v) {
-				Logging.Log("Using Libre paste fix.");
-				a.Add(KInputs.AddKey(Keys.LShiftKey, true));
-				a.Add(KInputs.AddKey(Keys.LMenu, true));
+			Logging.Log("Pasting temporary text as " + info + ".");
+			if (!EnsureClipboardBackup()) {
+				Logging.Log("Paste cancelled because the clipboard could not be preserved.", 2);
+				return;
 			}
-			a.Add(KInputs.AddKey(Keys.V, true));
-			KInputs.MakeInput(a.ToArray());
-			Thread.Sleep(50);
-			a.Clear();
-			a.Add(KInputs.AddKey(Keys.LControlKey, false));
-			if (v) {
-				a.Add(KInputs.AddKey(Keys.LShiftKey, false));
-				a.Add(KInputs.AddKey(Keys.LMenu, false));
+			try {
+				if (!RestoreClipBoard(text)) return;
+				var input = new List<WinAPI.INPUT>();
+				input.Add(KInputs.AddKey(Keys.LControlKey, true));
+				var libre = MahouUI.LibreCtrlAltShiftV && Locales.ActiveWindowProcess().ProcessName.ToLower().Contains("soffice.");
+				if (libre) {
+					Logging.Log("Using Libre paste fix.");
+					input.Add(KInputs.AddKey(Keys.LShiftKey, true));
+					input.Add(KInputs.AddKey(Keys.LMenu, true));
+				}
+				input.Add(KInputs.AddKey(Keys.V, true));
+				KInputs.MakeInput(input.ToArray());
+				Thread.Sleep(50);
+				input.Clear();
+				input.Add(KInputs.AddKey(Keys.LControlKey, false));
+				if (libre) {
+					input.Add(KInputs.AddKey(Keys.LShiftKey, false));
+					input.Add(KInputs.AddKey(Keys.LMenu, false));
+				}
+				input.Add(KInputs.AddKey(Keys.V, false));
+				KInputs.MakeInput(input.ToArray());
+				Thread.Sleep(35);
+			} finally {
+				EnsureClipboardRestored();
 			}
-			a.Add(KInputs.AddKey(Keys.V, false));
-			KInputs.MakeInput(a.ToArray());
 		}
 		public static bool LooksLikeRegex(string regex) {
 			if (regex.Length > 3) {
@@ -3127,25 +3157,67 @@ namespace Mahou {
 			Logging.Log("Clipboard remained blocked for 500 ms; operation cancelled.", 2);
 			return false;
 		}
+		static bool CaptureClipboardBackup(bool allowExisting) {
+			lock (clipboardBackupSync) {
+				if (clipboardBackupPending) {
+					if (allowExisting && lastClip != null) return true;
+					Logging.Log("Clipboard backup is already pending; nested operation cancelled.", 2);
+					return false;
+				}
+				var snapshot = NativeClipboard.CaptureOleSnapshot();
+				if (snapshot == null) return false;
+				lastClip = snapshot;
+				clipboardBackupPending = true;
+				return true;
+			}
+		}
+		public static bool BackupClipboard() {
+			return CaptureClipboardBackup(false);
+		}
+		public static bool EnsureClipboardBackup() {
+			return CaptureClipboardBackup(true);
+		}
 		public static bool RestoreClipBoard(string special = "") {
 			Debug.WriteLine(">> RC");
-			var restore = special;
-			bool spc = true;
-			if (String.IsNullOrEmpty(restore)) {
-				if (MahouUI.ClipBackOnlyText) {
-					restore = lastClipText;
-					spc = false;
-				} else {
-					var snapshot = lastClip;
-					lastClip = null;
-					if (snapshot == null) return false;
-					try { return snapshot.Restore(); }
-					finally { snapshot.Dispose(); }
+			if (!String.IsNullOrEmpty(special)) {
+				lock (clipboardBackupSync) {
+					if (!clipboardBackupPending || lastClip == null) {
+						Logging.Log("Temporary clipboard replacement refused because no full backup exists.", 2);
+						return false;
+					}
 				}
+				if (!WaitForClip2BeFree()) return false;
+				return NativeClipboard.SetText(special);
 			}
-			Logging.Log((spc?"Force-Text ":"")+"Restoring clipboard text.");
-			if (!WaitForClip2BeFree()) return false;
-			return NativeClipboard.SetText(restore);
+
+			NativeClipboard.OleSnapshot snapshot;
+			lock (clipboardBackupSync) {
+				if (!clipboardBackupPending || lastClip == null) return true;
+				snapshot = lastClip;
+			}
+			var restored = snapshot.Restore();
+			if (restored) {
+				lock (clipboardBackupSync) {
+					if (Object.ReferenceEquals(lastClip, snapshot)) {
+						lastClip = null;
+						clipboardBackupPending = false;
+					}
+				}
+				snapshot.Dispose();
+			}
+			return restored;
+		}
+		public static void EnsureClipboardRestored() {
+			try {
+				if (!RestoreClipBoard()) {
+					lock (clipboardBackupSync) {
+						if (clipboardBackupPending)
+							Logging.Log("Pending clipboard backup could not be restored yet.", 2);
+					}
+				}
+			} catch (Exception e) {
+				Logging.Log("Clipboard fail-safe restore error: " + e.Message, 1);
+			}
 		}
 		public static string GetClipboard(int tries = 1, int timeout = 5) {
 			var txt = NativeClipboard.GetText();
@@ -3185,51 +3257,38 @@ namespace Mahou {
 		public static string GetClipStr() {
 			Debug.WriteLine(">> GCS");
 			Locales.IfLessThan2();
-			string ClipStr = "";
-			// Backup & Restore feature, now only text supported...
 			if (MMain.MahouActive() && MMain.mahou.ActiveControl is TextBox)
 				return (MMain.mahou.ActiveControl as TextBox).SelectedText;
-			//Logging.Log("Taking backup of clipboard text if possible.");
-			if (MahouUI.ClipBackOnlyText) {
-				lastClipText = NativeClipboard.GetText();
-			} else {
-				if (lastClip != null) lastClip.Dispose();
-				lastClip = NativeClipboard.CaptureOleSnapshot();
-				if (lastClip == null) {
-					Logging.Log("Selected-text operation cancelled because the original clipboard could not be preserved.", 2);
-					return String.Empty;
-				}
-			}
-			
-//			Thread.Sleep(50);
-//			if (!String.IsNullOrEmpty(lastClipText))
-//				lastClipText = Clipboard.GetText();
-//			This prevents from converting text that already exist in Clipboard
-//			by pressing "Convert Selection hotkey" without selected text.
-			if (!NativeClipboard.Clear()) {
-				Logging.Log("Selected-text operation cancelled because the clipboard could not be cleared.", 2);
-				RestoreClipBoard();
+
+			if (!BackupClipboard()) {
+				Logging.Log("Selected-text operation cancelled because the original clipboard could not be preserved.", 2);
 				return String.Empty;
 			}
-			Logging.Log("Getting selected text.");
-			if (MahouUI.SelectedTextGetMoreTries)
-				for (int i = 0; i != MMain.mahou.SelectedTextGetMoreTriesCount; i++) {
-					if (WaitForClip2BeFree()) {
-							ClipStr = MakeCopy();
-							if (!String.IsNullOrEmpty(ClipStr))
-								break;
+
+			var success = false;
+			try {
+				if (!NativeClipboard.Clear()) {
+					Logging.Log("Selected-text operation cancelled because the clipboard could not be cleared.", 2);
+					return String.Empty;
+				}
+				Logging.Log("Getting selected text.");
+				var clipText = String.Empty;
+				if (MahouUI.SelectedTextGetMoreTries) {
+					for (int i = 0; i != MMain.mahou.SelectedTextGetMoreTriesCount; i++) {
+						if (!WaitForClip2BeFree()) continue;
+						clipText = MakeCopy();
+						if (!String.IsNullOrEmpty(clipText)) break;
 					}
+				} else if (WaitForClip2BeFree()) {
+					clipText = MakeCopy();
+					if (String.IsNullOrEmpty(clipText)) clipText = MakeCopy();
 				}
-			else {
-				if (WaitForClip2BeFree()) {
-					ClipStr = MakeCopy();
-					if (String.IsNullOrEmpty(ClipStr))
-						ClipStr = MakeCopy();
-				}
+				if (String.IsNullOrEmpty(clipText)) return String.Empty;
+				success = true;
+				return Regex.Replace(clipText, "\r?\n|\r", "\n");
+			} finally {
+				if (!success) EnsureClipboardRestored();
 			}
-			if (String.IsNullOrEmpty(ClipStr))
-				return "";
-			return Regex.Replace(ClipStr, "\r?\n|\r", "\n");
 		}
 		/// <summary>
 		/// Re-presses modifiers you hold when hotkey fired(due to SendModsUp()).
@@ -3979,7 +4038,8 @@ namespace Mahou {
 		/// <param name="uID1">Layout id 1(from).</param>
 		/// <param name="uID2">Layout id 2(to)</param>
 		/// <returns></returns>
-		static string InAnother(char c, uint uID1, uint uID2)  { //Remakes c from uID1  to uID2			var cc = c;
+		static string InAnother(char c, uint uID1, uint uID2)  { //Remakes c from uID1  to uID2
+			var cc = c;
 			var s = "";
 			var chsc = WinAPI.VkKeyScanEx(cc, uID1);
 			if (chsc == -1) return s;
@@ -4002,7 +4062,8 @@ namespace Mahou {
 		/// </summary>
 		/// <param name="key">Key to be inputted.</param>
 		/// <param name="flags">Flags(state) of key.</param>
-		public static void KeybdEvent(Keys key, int flags)  { // 			//Do not remove this line, it needed for "Left Control Switch Layout" to work properly
+		public static void KeybdEvent(Keys key, int flags)  { // 
+			//Do not remove this line, it needed for "Left Control Switch Layout" to work properly
 //			Thread.Sleep(15);
 			var sc = (uint)WinAPI.MapVirtualKey((uint)key, 4);
 			Debug.WriteLine("scan" + (sc>>8));
@@ -4029,7 +4090,8 @@ namespace Mahou {
 		/// Sends modifiers up by modstoup array. 
 		/// </summary>
 		/// <param name="modstoup">Array of modifiers which will be send up. 0 = ctrl, 1 = shift, 2 = alt.</param>
-		public static void SendModsUp(int modstoup, bool waitwin = false)  { //			//These three below are needed to release all modifiers, so even if you will still hold any of it
+		public static void SendModsUp(int modstoup, bool waitwin = false)  { //
+			//These three below are needed to release all modifiers, so even if you will still hold any of it
 			//it will skip them and do as it must.
 			if (modstoup <= 0) return;
 			Debug.WriteLine(">> SMU: " + Hotkey.GetMods(modstoup));

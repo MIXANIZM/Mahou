@@ -562,6 +562,9 @@ namespace Mahou {
         	#region FirstStart section
             CheckBool("FirstStart", "First", "true");
         	#endregion
+            #region Migrations section
+            CheckBool("Migrations", "MixanizmDefaultsV1", "false");
+            #endregion
             NormalizeCriticalRanges();
             ApplyMixanizmDefaults();
             fine = true;
@@ -588,6 +591,7 @@ namespace Mahou {
                 _INI.SetValue(section, key, fallback.ToString());
         }
         void ApplyMixanizmDefaults() {
+            if (ReadBool("Migrations", "MixanizmDefaultsV1")) return;
             // Migrate untouched upstream Pause/Scroll defaults to the requested
             // single Insert action without overwriting an existing custom hotkey.
             var oldLast = _INI.GetValue("Hotkeys", "ConvertLastWord_Key") == "19" &&
@@ -602,6 +606,7 @@ namespace Mahou {
                 _INI.SetValue("Hotkeys", "ConvertLastWord_Enabled", "true");
                 _INI.SetValue("Hotkeys", "ConvertSelectedText_Enabled", "true");
             }
+            _INI.SetValue("Migrations", "MixanizmDefaultsV1", "true");
         }
         void CheckBool(string section, string key, string default_value) {
             bool bt = false; //bool temp

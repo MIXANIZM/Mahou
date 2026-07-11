@@ -37,10 +37,6 @@ namespace Mahou {
 						   TrEnabled, TrBorderAero, OnceSpecific, WriteInputHistory, ExcludeCaretLD, UsePaste,
 						   WriteInputHistoryByDate, WriteInputHistoryHourly, MahouMM = false,
 						   hk_result, multi_continue = true, ZxZ = true, configs_loading;
-		static string[] UpdInfo;
-		public static List<int> HKBlockAlt = new List<int>();
-		public static bool BlockAltUpNOW = false;
-		static bool isold = true, snip_checking, as_checking;
 		public static bool ENABLED = true, reload_snip = false;
 		#region Timers
 		static Timer overlay_excluder;
@@ -181,13 +177,6 @@ namespace Mahou {
 		/// cbb_typN - Switch type(To specific layout or switch between).
 		/// </summary>
 		public Dictionary<string, string> SpecKeySetsValues = new Dictionary<string, string>();
-		public static Dictionary<string, string> TrSetsValues = new Dictionary<string, string>();
-		static string latestSwitch = "null";
-		const string SYNC_HOST = "https://hastebin.com";
-		const string SYNC_HOST2 = "https://0x0.st";
-		const string SYNC_SEP = "#------>";
-		readonly string[] SYNC_NAMES = { "Mahou.ini", "snippets.txt", "history.txt", "TSDict.txt", "Mahou.mm" };
-		readonly string[] SYNC_TYPES = { "ini", "sni", "his", "tdi", "mm" };
 		// From more configs
 		ColorDialog clrd = new ColorDialog();
 		FontDialog fntd = new FontDialog();
@@ -823,25 +812,19 @@ namespace Mahou {
 		}
 		public static void ShowSelectionTranslation(bool mouse = false) {
 			if (!TrEnabled) return;
-//			var dum = new Point(0,0);
-//			var pos = CaretPos.GetCaretPointToScreen(out dum);
-//			Debug.WriteLine(pos.X);
-//			if (mouse || pos.Equals(new Point(77777,77777)) || pos == last_CR)
-//				pos = Cursor.Position;
 			var pos = Cursor.Position;
 			pos.Y += 10;
-			var str = KMHook.GetClipStr().Replace('\n', ' ');
-			Debug.WriteLine(str);
-			if (!string.IsNullOrEmpty(str)) {
-				if (!TranslatePanel.running) {
+			try {
+				var str = KMHook.GetClipStr().Replace('\n', ' ');
+				Debug.WriteLine(str);
+				if (!String.IsNullOrEmpty(str) && !TranslatePanel.running) {
 					MMain.mahou._TranslatePanel.ShowTranslation(str, pos);
 					MahouUI.hk_result = true;
 				}
+			} finally {
+				if (ACT_Match > 0) ACT_Match--;
+				KMHook.EnsureClipboardRestored();
 			}
-			if (ACT_Match < 1) 
-				KMHook.RestoreClipBoard();
-			else
-				ACT_Match--;
 			if (!mouse) last_CR = pos;
 		}
 		/// <summary>
@@ -2723,11 +2706,11 @@ namespace Mahou {
 			icon.ChangeLt += (_, __) => lastAltTabChangeLayout();
 			icon.ConvertClip += (_, __) => {
 				var t = KMHook.ConvertText(KMHook.GetClipboard(2));
-				KMHook.RestoreClipBoard(t);
+				NativeClipboard.SetText(t);
 			};
 			icon.TransliClip += (_, __) => {
 				var t = KMHook.TransliterateText(KMHook.GetClipboard(2));
-				KMHook.RestoreClipBoard(t);
+				NativeClipboard.SetText(t);
 			};
 			var mm = Path.Combine(nPath, "Mahou.mm");
 			if (File.Exists(mm)) {
@@ -4098,13 +4081,7 @@ namespace Mahou {
 		/// Gets update info, and sets it to static [UpdInfo] string.
 		/// </summary>
 		void GetUpdateInfo() {
-			UpdInfo = new [] {
-				"Manual verified updates only",
-				LegacyNetworkDisabledMessage,
-				Application.ProductVersion,
-				String.Empty,
-				String.Empty
-			};
+			Logging.Log("Legacy update check is disabled; verified releases are installed manually.");
 		}
 
 		/// <summary>
@@ -4658,7 +4635,7 @@ namespace Mahou {
 		#region Links
 		static void __lopen(string file, string type, bool dir = false, bool copy = false) {
 			if (copy) {
-				KMHook.RestoreClipBoard(file);
+				NativeClipboard.SetText(file);
 				ShowTooltip(MMain.Lang[Languages.Element.DbgInf_Copied] + "\r\n" + file, 800);
 				return;
 			}
@@ -4839,16 +4816,6 @@ namespace Mahou {
 					}
 				}
 			} else if (act == "paste") {
-				if (MahouUI.ClipBackOnlyText) {
-					KMHook.lastClipText = NativeClipboard.GetText();
-				} else {
-					if (KMHook.lastClip != null) KMHook.lastClip.Dispose();
-					KMHook.lastClip = NativeClipboard.CaptureOleSnapshot();
-					if (KMHook.lastClip == null) {
-						Logging.Log("Paste menu action cancelled because the clipboard could not be preserved.", 2);
-						return;
-					}
-				}
 				var cl = NativeClipboard.GetText();
 				if (string.IsNullOrEmpty(cl)) {
 					cl = NativeClipboard.GetText(WinAPI.CF_HTMLFORMAT, false);
@@ -4861,7 +4828,6 @@ namespace Mahou {
 				} else {
 					KMHook.SendModsUp(15);
 					KMHook.PasteText(cl);
-					KMHook.RestoreClipBoard();
 				}
 			} else if (act == "snipex") {
 				var expr = "";
@@ -5658,7 +5624,7 @@ namespace Mahou {
 				};
 				t.Interval = 1800;
 				if (!string.IsNullOrEmpty(txt_backupId.Text)) {
-					KMHook.RestoreClipBoard(txt_backupId.Text);
+					NativeClipboard.SetText(txt_backupId.Text);
 					pctBkpCopy.BackgroundImage = Properties.Resources.clipok;
 					t.Start();
 				} else {

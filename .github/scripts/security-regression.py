@@ -5,10 +5,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 
-
-def text(relative: str) -> str:
+def text(relative):
     return (ROOT / relative).read_text(encoding="utf-8-sig")
-
 
 files = {
     "ui": text("Mahou/MahouUI.cs"),
@@ -21,88 +19,68 @@ files = {
     "paths": text("Mahou/Classes/UserDataPaths.cs"),
     "program": text("Mahou/Program.cs"),
 }
-
 errors = []
 
 forbidden = {
-    "ui": [
-        "UpdateMahou.cmd",
-        "ExtractASD.cmd",
-        "DownloadFileAsync(",
-        "DownloadFile(",
-        "UploadData(",
-        "https://hastebin.com",
-        "https://0x0.st",
-        "Shell.Application",
-        "TASKKILL /IM",
-    ],
+    "ui": ["UpdateMahou.cmd", "ExtractASD.cmd", "DownloadFileAsync(", "DownloadFile(",
+           "UploadData(", "https://hastebin.com", "https://0x0.st", "Shell.Application", "TASKKILL /IM"],
     "startup": ["/Create /TN", "Startup\\Mahou.lnk"],
     "program": ["taskkill", "RestartMahou.cmd", "RestartMahou.vbs"],
-    "clipboard": ["EnumClipboardFormats", "GetClipboardFormatName", "GlobalSize"],
+    "hook": ["lastClipText", "MahouUI.ClipBackOnlyText"],
 }
-
-for file_key, needles in forbidden.items():
-    source = files[file_key]
+for key, needles in forbidden.items():
+    source = files[key].lower()
     for needle in needles:
-        if needle.lower() in source.lower():
-            errors.append("forbidden token returned in %s: %s" % (file_key, needle))
+        if needle.lower() in source:
+            errors.append("forbidden token returned in %s: %s" % (key, needle))
 
 required = {
-    "security_ui": [
-        "LegacyNetworkDisabledMessage",
-        'ClipBackOnlyText = false;',
-        'MMain.MyConfs.Write("Hidden", "ClipBackOnlyText", "false")',
-    ],
-    "configs": [
-        'CheckBool("Hidden", "AllowSnippetExecute", "false")',
-        'CheckBool("Functions", "UseJKL", "false")',
-        'CheckBool("Functions", "RemapCapslockAsF18", "false")',
-        'CheckBool("Layouts", "ChangeToSpecificLayoutByKey", "false")',
-        'CheckBool("Migrations", "MixanizmDefaultsV1", "false")',
-    ],
-    "clipboard": [
-        "OleGetClipboard",
-        "OleSetClipboard",
-        "CaptureOleSnapshot",
-        "OpenWithRetry",
-    ],
-    "hook": [
-        "CaptureClipboardBackup",
-        "EnsureClipboardBackup",
-        "EnsureClipboardRestored",
-        "Temporary clipboard replacement refused because no full backup exists",
-        "ConvertSelectionOrLastWord",
-    ],
+    "security_ui": ["LegacyNetworkDisabledMessage", "ClipBackOnlyText = false;",
+                    'MMain.MyConfs.Write("Hidden", "ClipBackOnlyText", "false")',
+                    "txt_ProxyPassword.UseSystemPasswordChar = true"],
+    "configs": ['CheckBool("Hidden", "AllowSnippetExecute", "false")',
+                'CheckBool("Functions", "UseJKL", "false")',
+                'CheckBool("Functions", "RemapCapslockAsF18", "false")',
+                'CheckBool("Layouts", "ChangeToSpecificLayoutByKey", "false")',
+                'CheckBool("Migrations", "MixanizmDefaultsV1", "false")'],
+    "clipboard": ["OleGetClipboard", "OleSetClipboard", "CaptureOleSnapshot", "OpenWithRetry",
+                  "bounded retries"],
+    "hook": ["CaptureClipboardBackup", "EnsureClipboardBackup", "EnsureClipboardRestored",
+             "Temporary clipboard replacement refused because no full backup exists",
+             "ConvertSelectionOrLastWord", "SelectionProbe.GetState"],
     "secrets": ["ProtectedData.Protect", "ProtectedData.Unprotect", "DataProtectionScope.CurrentUser"],
     "startup": ["CurrentVersion\\Run", "MIXANIZM Mahou", "/Delete /TN"],
     "paths": ["MIXANIZM Mahou", "Environment.SpecialFolder.ApplicationData"],
     "program": ["WaitForRestartParent(args)", "UserDataPaths.Initialize(args)"],
 }
-
-for file_key, needles in required.items():
-    source = files[file_key]
+for key, needles in required.items():
+    source=files[key]
     for needle in needles:
         if needle not in source:
-            errors.append("required hardening marker missing in %s: %s" % (file_key, needle))
+            errors.append("required hardening marker missing in %s: %s" % (key, needle))
 
-# The only source file allowed to use WebClient is the explicit opt-in translator.
+# No executable distribution scripts in the application tree.
+for pattern in ("*.cmd", "*.bat", "*.vbs", "*.ps1"):
+    for script in (ROOT / "Mahou").rglob(pattern):
+        errors.append("obsolete executable script remains in application tree: %s" % script.relative_to(ROOT))
+
+# WebClient is permitted only in the explicitly opt-in translator.
 for path in (ROOT / "Mahou").rglob("*.cs"):
-    source = path.read_text(encoding="utf-8-sig")
+    source=path.read_text(encoding="utf-8-sig")
     if "WebClient" in source and path.name != "TranslatePanel.cs":
         errors.append("unexpected WebClient use outside translator: %s" % path.relative_to(ROOT))
 
-# A temporary clipboard replacement must always require a pending full snapshot.
-restore_start = files["hook"].find('public static bool RestoreClipBoard(string special = "")')
-restore_end = files["hook"].find("public static void EnsureClipboardRestored()", restore_start)
-restore_body = files["hook"][restore_start:restore_end]
-for marker in ["clipboardBackupPending", "lastClip == null", "NativeClipboard.SetText(special)"]:
-    if marker not in restore_body:
+# Temporary text replacement must be guarded by a pending full snapshot.
+hook=files["hook"]
+start=hook.find('public static bool RestoreClipBoard(string special = "")')
+end=hook.find('public static void EnsureClipboardRestored()', start)
+body=hook[start:end]
+for marker in ("clipboardBackupPending", "lastClip == null", "NativeClipboard.SetText(special)"):
+    if marker not in body:
         errors.append("clipboard replacement guard incomplete: %s" % marker)
 
 if errors:
     print("SECURITY REGRESSION CHECK FAILED")
-    for error in errors:
-        print("- " + error)
+    for error in errors: print("- " + error)
     sys.exit(1)
-
 print("Security regression check passed: %d source files inspected." % len(list((ROOT / "Mahou").rglob("*.cs"))))

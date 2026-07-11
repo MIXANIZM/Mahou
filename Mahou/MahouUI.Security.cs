@@ -27,6 +27,14 @@ namespace Mahou {
 
             chk_AppDataConfigs.Checked = true;
             chk_AppDataConfigs.Enabled = false;
+            ClipBackOnlyText = false;
+            MMain.MyConfs.Write("Hidden", "ClipBackOnlyText", "false");
+            Hchk_ClipBackOnlyText.Checked = false;
+            Hchk_ClipBackOnlyText.Enabled = false;
+            Hchk_ClipBackOnlyText.Visible = false;
+            txt_ProxyPassword.UseSystemPasswordChar = true;
+            HelpMeUnderstand.SetToolTip(txt_ProxyPassword,
+                "Stored for the current Windows user with DPAPI; hidden on screen.");
             cbb_AutostartType.SelectedIndex = 0;
             cbb_AutostartType.Enabled = false;
 

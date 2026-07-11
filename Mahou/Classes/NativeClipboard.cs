@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
@@ -97,9 +97,20 @@ namespace Mahou {
             public bool Restore() {
                 if (restored) return true;
                 try {
-                    var ok = wasEmpty ? Clear() : dataObject != null && OleSetClipboard(dataObject) >= 0;
-                    restored = ok;
-                    return ok;
+                    if (wasEmpty) {
+                        restored = Clear();
+                        return restored;
+                    }
+                    if (dataObject == null) return false;
+                    for (var attempt = 0; attempt < OpenAttempts; attempt++) {
+                        if (OleSetClipboard(dataObject) >= 0) {
+                            restored = true;
+                            return true;
+                        }
+                        Thread.Sleep(RetryDelayMs);
+                    }
+                    Logging.Log("OLE clipboard restore remained unavailable after bounded retries.", 2);
+                    return false;
                 } catch (Exception ex) {
                     Logging.Log("OLE clipboard restore failed: " + ex.Message, 2);
                     return false;
@@ -115,14 +126,20 @@ namespace Mahou {
         }
 
         public static OleSnapshot CaptureOleSnapshot() {
-            try {
-                IDataObject dataObject;
-                var result = OleGetClipboard(out dataObject);
-                if (result >= 0 && dataObject != null) return new OleSnapshot(dataObject, false);
-                if (IsEmpty()) return new OleSnapshot(null, true);
-            } catch (Exception ex) {
-                Logging.Log("OLE clipboard snapshot failed: " + ex.Message, 2);
+            Exception lastError = null;
+            for (var attempt = 0; attempt < OpenAttempts; attempt++) {
+                try {
+                    IDataObject dataObject;
+                    var result = OleGetClipboard(out dataObject);
+                    if (result >= 0 && dataObject != null) return new OleSnapshot(dataObject, false);
+                    if (IsEmpty()) return new OleSnapshot(null, true);
+                } catch (Exception ex) {
+                    lastError = ex;
+                }
+                Thread.Sleep(RetryDelayMs);
             }
+            Logging.Log("OLE clipboard snapshot unavailable after bounded retries" +
+                        (lastError == null ? "." : ": " + lastError.Message), 2);
             return null;
         }
     }
