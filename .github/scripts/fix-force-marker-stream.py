@@ -30,9 +30,9 @@ replace_eol(
     "    \t\t\tvar copy = File.Exists(filePath);\n"
     "    \t\t\tfilePath = Path.Combine(MahouUI.mahou_folder_appd, \"Mahou.ini\");\n"
     "    \t\t\tFile.Create(Path.Combine(MahouUI.mahou_folder_appd,\".force\"));\n",
-    "    \t\t\tfilePath = Path.Combine(MahouUI.mahou_folder_appd, \"Mahou.ini\");\n"
-    "    \t\t\tvar forceMarker = Path.Combine(MahouUI.mahou_folder_appd, \".force\");\n"
-    "    \t\t\tusing (File.Create(forceMarker)) { }\n",
+    "\t\t\tfilePath = Path.Combine(MahouUI.mahou_folder_appd, \"Mahou.ini\");\n"
+    "\t\t\tvar forceMarker = Path.Combine(MahouUI.mahou_folder_appd, \".force\");\n"
+    "\t\t\tusing (File.Create(forceMarker)) { }\n",
 )
 
 Path(__file__).unlink()
