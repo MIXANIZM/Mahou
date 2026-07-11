@@ -1,0 +1,57 @@
+name: Apply tray icon ownership hardening
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-tray-icon-ownership-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.head_ref == 'mixanizm-modern-v2.9.0.1' || github.ref_name == 'mixanizm-modern-v2.9.0.1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout modern branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Apply tray icon ownership hardening
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p tray-icon-diagnostics
+          script=.github/scripts/apply-tray-icon-ownership.py
+          if [ ! -f "$script" ]; then
+            echo 'Tray icon ownership hardening is already applied.' | tee tray-icon-diagnostics/result.txt
+            exit 0
+          fi
+          python3 "$script" 2>&1 | tee tray-icon-diagnostics/result.txt
+          python3 .github/scripts/security-regression.py 2>&1 | tee -a tray-icon-diagnostics/result.txt
+          git config core.whitespace cr-at-eol
+          git diff --check 2>&1 | tee -a tray-icon-diagnostics/result.txt
+          rm -f .github/workflows/apply-tray-icon-ownership.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'fix: own and dispose generated tray icons'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
+
+      - name: Upload tray icon diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tray-icon-diagnostics
+          path: tray-icon-diagnostics
+          if-no-files-found: warn
+          retention-days: 3
