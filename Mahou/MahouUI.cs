@@ -5841,9 +5841,9 @@ namespace Mahou {
 						try {
 							if (ty == "ini") {
 								if (!proxyg) 
-									MMain.MyConfs._INI.Raw = MMain.MyConfs.GetRawWithoutGroup("[Proxy]", d[ty]);
+									MMain.MyConfs._INI.ReplaceRaw(MMain.MyConfs.GetRawWithoutGroup("[Proxy]", d[ty]));
 								else
-									MMain.MyConfs._INI.Raw = d[ty];
+									MMain.MyConfs._INI.ReplaceRaw(d[ty]);
 							}
 							var f = Path.Combine(nPath, SYNC_NAMES[i]);
 							Debug.WriteLine("Writing: " +f);

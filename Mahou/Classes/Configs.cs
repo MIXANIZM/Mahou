@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -13,12 +14,48 @@ namespace Mahou {
 		/// <summary>Split into lines INI configs file</summary>
 		public string[] lines;
 		public bool DEBUG;
+		readonly object syncRoot = new object();
+		readonly Dictionary<string, string> valueIndex = new Dictionary<string, string>(StringComparer.Ordinal);
 		#endregion
 		
 		public INI(string ini, bool dbg = false) {
-			this.Raw = ini;
+			this.Raw = ini ?? String.Empty;
 			this.lines = Raw.Replace("\r", "").Split('\n');
 			this.DEBUG = dbg;
+			RebuildIndexUnlocked();
+		}
+		string IndexKey(string section, string valueName) {
+			return section + "\u001f" + valueName;
+		}
+		void RebuildIndexUnlocked() {
+			valueIndex.Clear();
+			var seenSections = new HashSet<string>(StringComparer.Ordinal);
+			string currentSection = null;
+			foreach (var sourceLine in lines) {
+				var line = sourceLine ?? String.Empty;
+				if (line.Length <= 1) { currentSection = null; continue; }
+				if (line[0] == '!' || line[0] == ';') continue;
+				if (line[0] == '[' && line[line.Length - 1] == ']') {
+					var candidate = line.Substring(1, line.Length - 2);
+					currentSection = seenSections.Add(candidate) ? candidate : null;
+					continue;
+				}
+				if (currentSection == null) continue;
+				var equals = line.IndexOf('=');
+				if (equals <= 0) continue;
+				var key = IndexKey(currentSection, line.Substring(0, equals));
+				if (!valueIndex.ContainsKey(key)) valueIndex.Add(key, line.Substring(equals + 1));
+			}
+		}
+		public string GetRawSnapshot() {
+			lock (syncRoot) return Raw;
+		}
+		public void ReplaceRaw(string raw) {
+			lock (syncRoot) {
+				Raw = raw ?? String.Empty;
+				lines = Raw.Replace("\r", "").Split('\n');
+				RebuildIndexUnlocked();
+			}
 		}
 		#region Debug
 		public void log(string str) {
@@ -92,34 +129,34 @@ namespace Mahou {
 			return _source;
 		}
 		public void SetValue(string Section, string ValueName, string Value) {
-			var sect = HasSection(Section);
-			var val_line = HasValue(sect, ValueName);
-			if (sect == -1) {
-				log("  NO SUCH SECT! " + Section);
-				lines = AddLine("["+Section+"]", sect, lines);
-				sect = 0;
-				val_line = -1;
-			}
-			if (val_line > -1) {
-				lines[val_line] = ValueName + "=" + Value;
-			}
-			if (val_line == -1) {
-				log("   NO SUCH VALUE! " + ValueName);
-				lines = AddLine(ValueName + "=" + Value, sect, lines);
-			}
-			if (val_line == -1 || val_line > -1 || sect == -1) {
+			lock (syncRoot) {
+				var sect = HasSection(Section);
+				var val_line = HasValue(sect, ValueName);
+				if (sect == -1) {
+					log("  NO SUCH SECT! " + Section);
+					lines = AddLine("["+Section+"]", sect, lines);
+					sect = 0;
+					val_line = -1;
+				}
+				if (val_line > -1) {
+					lines[val_line] = ValueName + "=" + Value;
+				}
+				if (val_line == -1) {
+					log("   NO SUCH VALUE! " + ValueName);
+					lines = AddLine(ValueName + "=" + Value, sect, lines);
+				}
 				Raw = string.Join(Environment.NewLine, lines);
 				lines = Raw.Replace("\r", "").Split('\n');
+				RebuildIndexUnlocked();
 			}
 		}
 		#endregion
 		#region Reading
 		public string GetValue(string Section, string ValueName) {
-			log("Getting value :"+ValueName+": from section ["+Section+"].");
-			var sect = HasSection(Section);
-			var val_line = HasValue(sect, ValueName);
-			if (val_line < 0) return "";
-			return lines[val_line].Split(new []{'='}, 2)[1];
+			lock (syncRoot) {
+				string value;
+				return valueIndex.TryGetValue(IndexKey(Section, ValueName), out value) ? value : String.Empty;
+			}
 		}
 		#endregion
 	}
@@ -165,7 +202,7 @@ namespace Mahou {
         }
         public string GetRawWithoutGroup(string gr, string OutINI="") {
         	var glr = new StringBuilder();
-        	var inini = _INI.Raw;
+			var inini = _INI.GetRawSnapshot();
         	if (!string.IsNullOrEmpty(OutINI)) {
         		inini = OutINI;
         	}
@@ -698,7 +735,7 @@ namespace Mahou {
             try {
                 var directory = Path.GetDirectoryName(filePath);
                 if (!String.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
-                File.WriteAllText(temp, _INI.Raw, Encoding.UTF8);
+                File.WriteAllText(temp, _INI.GetRawSnapshot(), Encoding.UTF8);
                 if (File.Exists(filePath)) {
                     try {
                         File.Replace(temp, filePath, backup, true);
