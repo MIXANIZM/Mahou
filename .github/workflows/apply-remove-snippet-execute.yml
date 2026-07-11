@@ -29,18 +29,28 @@ jobs:
       - name: Remove snippet external-command execution
         shell: bash
         run: |
-          set -euo pipefail
+          set -o pipefail
+          mkdir -p snippet-removal-diagnostics
           script=.github/scripts/apply-remove-snippet-execute.py
           if [ ! -f "$script" ]; then
-            echo 'Snippet command execution is already removed.'
+            echo 'Snippet command execution is already removed.' | tee snippet-removal-diagnostics/result.txt
             exit 0
           fi
-          python3 "$script"
-          python3 .github/scripts/security-regression.py
-          git diff --check
+          python3 "$script" 2>&1 | tee snippet-removal-diagnostics/result.txt
+          python3 .github/scripts/security-regression.py 2>&1 | tee -a snippet-removal-diagnostics/result.txt
+          git diff --check 2>&1 | tee -a snippet-removal-diagnostics/result.txt
           rm -f .github/workflows/apply-remove-snippet-execute.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
           git commit -m 'security: remove snippet external-command execution'
           git push origin HEAD:mixanizm-modern-v2.9.0.1
+
+      - name: Upload snippet removal diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: snippet-removal-diagnostics
+          path: snippet-removal-diagnostics
+          if-no-files-found: warn
+          retention-days: 3
