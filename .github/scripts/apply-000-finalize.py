@@ -66,6 +66,25 @@ if not security_gate.exists():
     raise RuntimeError("Security regression gate was not produced")
 subprocess.run([sys.executable, str(security_gate)], cwd=str(ROOT), check=True)
 
+# GitHub Apps may reject a push that modifies workflow definitions. Restore the
+# two workflow files for this one migration commit; they are switched to the
+# final read-only versions directly through the GitHub API after the code push.
+def restore_from_head(relative_path):
+    result = subprocess.run(
+        ["git", "show", "HEAD:" + relative_path],
+        cwd=str(ROOT),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if result.returncode != 0:
+        raise RuntimeError("Cannot restore tracked workflow: " + relative_path)
+    target = ROOT / relative_path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(result.stdout)
+
+restore_from_head(".github/workflows/modern-windows-build.yml")
+restore_from_head(".github/workflows/source-snapshot-debug.yml")
+
 if FINALIZE.exists():
     shutil.rmtree(FINALIZE)
 if manual.exists():
