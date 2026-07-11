@@ -1,0 +1,175 @@
+-						wc.DownloadFile(new Uri("https://github.com/BladeMight/Mahou/releases/download/latest-commit/AS_dict.zip"), zip);
+-						var ExtractASD = @"@ECHO OFF
+-chcp 65001
+-ECHO With CreateObject(""Shell.Application"") > ""unzip.vbs""
+-ECHO    .NameSpace(WScript.Arguments(1)).CopyHere .NameSpace(WScript.Arguments(0)).items, 16 >> ""unzip.vbs""
+-ECHO End With >> ""unzip.vbs""
+- 
+-CSCRIPT ""unzip.vbs"" """ + zip + @""" """ + Path.GetTempPath() + @"""
+-DEL """ + zip + @"""
+-DEL ""unzip.vbs""
+-DEL ""ExtractASD.cmd""";
+-						Logging.Log("Writing extract script.");
+-						File.WriteAllText(Path.Combine(Path.GetTempPath(), "ExtractASD.cmd"), ExtractASD);
+-						var piExtractASD = new ProcessStartInfo() { FileName = "ExtractASD.cmd", WorkingDirectory = Path.GetTempPath(), WindowStyle = ProcessWindowStyle.Hidden};
+-						Logging.Log("Starting extract script.");
+-						Process.Start(piExtractASD).WaitForExit();
+-						resp = File.ReadAllText(Path.Combine(Path.GetTempPath(), "AS_dict.txt"));
+-						File.Delete(Path.Combine(Path.GetTempPath(), "AS_dict.txt"));
+-                 	}
+-			} else
+-				resp = getResponce("https://raw.githubusercontent.com/BladeMight/Mahou/master/AS_dict.txt");
+-			btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.Checking];
+-			var dict = Regex.Replace(resp, "\r?\n", Environment.NewLine);
+-			tmr.Interval = 300;
+-			if (dict != null) {
+-				btn_UpdateAutoSwitchDictionary.ForeColor = Color.BlueViolet;
+-				btn_UpdateAutoSwitchDictionary.Text = "OK";
+-				tmr.Tick += (o, oo) => { 
+-					btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.AutoSwitchUpdateDictionary];
+-					btn_UpdateAutoSwitchDictionary.ForeColor = Color.FromKnownColor(KnownColor.ControlText);
+-					tmr.Stop();
+-				};
+-				tmr.Interval = 350;
+-				tmr.Start();
+-				AutoSwitchDictionaryRaw = dict;
+-				this.txt_AutoSwitchDictionary.Invoke((MethodInvoker)delegate {
+-					ChangeAutoSwitchDictionaryTextBox();
+-					UpdateSnippetCountLabel(AutoSwitchDictionaryRaw, lbl_AutoSwitchWordsCount, false);
+-				});
+-				File.WriteAllText(AS_dictfile, dict, Encoding.UTF8);
+-			} else {
+-				btn_UpdateAutoSwitchDictionary.ForeColor = Color.OrangeRed;
+-				btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.Error];
+-				tmr.Tick += (o, oo) => { 
+-					btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.AutoSwitchUpdateDictionary];
+-					btn_UpdateAutoSwitchDictionary.ForeColor = Color.FromKnownColor(KnownColor.ControlText);
+-					tmr.Stop(); 
+-				};
+-				tmr.Interval = 350;
+-				tmr.Start();
+-			}
++		void btn_UpdateAutoSwitchDictionary_Click(object sender, EventArgs e) {
++			var ok = RestoreBundledAutoSwitchDictionary();
++			btn_UpdateAutoSwitchDictionary.ForeColor = ok ? Color.BlueViolet : Color.OrangeRed;
++			btn_UpdateAutoSwitchDictionary.Text = ok ? "Bundled dictionary restored" : "Bundled dictionary missing";
+ 		}
++
+ 		static Regex rx = new Regex(@"\\u([a-fA-f0-9]{4})", RegexOptions.Compiled);
+ 		public static string UnescapeUnicode(string x) {
+ 			if (!x.Contains("\\u")) return x;
+@@ -4459,56 +4100,15 @@ DEL ""ExtractASD.cmd""";
+ 		/// Gets update info, and sets it to static [UpdInfo] string.
+ 		/// </summary>
+ 		void GetUpdateInfo() {
+-			var Info = new string[5] {"","","","",""} ; // Update info
+-			var api = "https://api.github.com/repos/BladeMight/Mahou/releases";
+-			var url = api+"/latest";
+-			var beta = MMain.MyConfs.Read("Updates", "Channel") != "Stable";
+-			if (beta) {
+-				url = api+"/tags/latest-commit";
+-			}
+-			var data = getResponce(url);
+-			if (!String.IsNullOrEmpty(data)) {
+-//				Debug.WriteLine(data);
+-				var a = new Auri(data);
+-				var Title = trimlr(a["name"]);
+-				var Description = trimlr(a["body"]);
+-				// cosmetics
+-				Description = Description.Replace(":memo:", "📝").Replace(":gem:", "💎").Replace(":bug:", "🐛")
+-						   			 .Replace(":speech_balloon:", "💬").Replace(":rocket:", "🚀");
+-				Description = Regex.Unescape(Description);
+-				var Version = trimlr(a["tag_name"]);
+-				var aa = new Auri(a["assets"]);
+-				var Lindex = "0";
+-				var Commit = "";
+-				if (beta) {
+-					Lindex = "7";
+-					Commit = Regex.Match(Title, @".*\[([a-fA-F0-9]{7})\]").Groups[1].Value;
+-				}
+-				var Link = trimlr(new Auri(aa["^"+Lindex])["browser_download_url"]);
+-				Debug.WriteLine(Title);
+-				Debug.WriteLine(Description);
+-				Debug.WriteLine(Version);
+-				Debug.WriteLine(Commit);
+-				Debug.WriteLine(Link);
+-				Info[0] = Title;
+-				Info[1] = UnescapeUnicode(Description);
+-				Info[2] = Version;
+-				Info[3] = Link;
+-				if (!String.IsNullOrEmpty(Commit))
+-					Info[4] = Commit;
+-				Logging.Log("Check for updates succeded, GitHub "+ (beta ? ("commit:"+ Commit) : ("version: " + Version)) + ".");
+-			} else {
+-				Logging.Log("Check for updates failed, error above.", 1);
+-				Info = new string[]{
+-						MMain.Lang[Languages.Element.Error],
+-						MMain.Lang[Languages.Element.NetError],
+-						MMain.Lang[Languages.Element.Error],
+-						MMain.Lang[Languages.Element.Error],
+-						MMain.Lang[Languages.Element.Error]
+-				};
+-			}
+-			UpdInfo = Info;
++			UpdInfo = new [] {
++				"Manual verified updates only",
++				LegacyNetworkDisabledMessage,
++				Application.ProductVersion,
++				String.Empty,
++				String.Empty
++			};
+ 		}
++
+ 		/// <summary>
+ 		/// Creates proxy from proxy controls(server/name/pass) text.
+ 		/// </summary>
+@@ -4537,57 +4137,19 @@ DEL ""ExtractASD.cmd""";
+ 		/// Check for updates at Mahou startup.
+ 		/// </summary>
+ 		public void StartupCheck() {
+-			Logging.Log("Startup check for updates.");
+-			var update_delay = MMain.MyConfs.ReadInt("Updates", "Delay");
+-			if (update_delay <= 0) update_delay = 1;
+-			Logging.Log("[UPD] > Delaying updates by " + update_delay +"s.");
+-			System.Threading.Thread.Sleep(update_delay*1000);
+-			System.Threading.Tasks.Task.Factory.StartNew(GetUpdateInfo).Wait();
+-			SetUInfo();
+-			bool silent = MMain.MyConfs.ReadBool("Functions", "SilentUpdate");
+-			Debug.WriteLine(UpdInfo[2]);
+-			try {
+-				if ((UpdInfo[2] == "latest-commit" || MMain.MyConfs.Read("Updates", "Channel") != "Stable") ?
+-				    MMain.MyConfs.Read("Updates", "LatestCommit") != UpdInfo[4] :
+-				    flVersion("v" + Application.ProductVersion) < flVersion(UpdInfo[2])) {
+-					Logging.Log("New version available, " + (!silent ? "showing dialog..." : "silent updating..."));
+-					if (silent)
+-						AtUpdateShow = 1;
+-					else {
+-						if (UpdInfo[0] != MMain.Lang[Languages.Element.Error]) {
+-							var fx = new Form() { TopMost = false, Visible = false };
+-							if (MessageBox.Show(fx, UpdInfo[1].Substring(0, ((UpdInfo[1].Length > 640) ? 640 : UpdInfo[1].Length)) +"...\n"+UpdInfo[3], UpdInfo[0],
+-								     MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.OK) {
+-								AtUpdateShow = 1;
+-							} else { AtUpdateShow = 2; }
+-							fx.Dispose();
+-						} else {
+-							AtUpdateShow = 3;
+-						}
+-					}
+-				} else
+-					AtUpdateShow = 2; // No Updates
+-			} catch(Exception e) {
+-				Logging.Log("Unexpected error: \n" + e.Message +"\n" + e.StackTrace);
+-				AtUpdateShow = 3;
+-			}
++			AtUpdateShow = 2;
+ 		}
++
+ 		/// <summary>
+ 		/// Sets UI info controls(version/title/description) text.
+ 		/// </summary>
+ 		void SetUInfo() {
+ 			if (MMain.mahou == null) return;
+-//			this.grb_MahouReleaseTitle.Invoke((MethodInvoker)delegate {
+-			    MMain.mahou.grb_MahouReleaseTitle.Text = UpdInfo[0];
+-//			});
+-//			this.txt_UpdateDetails.Invoke((MethodInvoker)delegate {
