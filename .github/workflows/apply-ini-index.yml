@@ -36,6 +36,16 @@ jobs:
             echo 'Indexed INI reads are already applied.' | tee ini-index-diagnostics/result.txt
             exit 0
           fi
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('.github/scripts/apply-ini-index.py')
+          source = path.read_text(encoding='utf-8')
+          old = 'replace_eol(CONFIGS, "\\t        \\tvar inini = _INI.Raw;\\n", "\\t        \\tvar inini = _INI.GetRawSnapshot();\\n")'
+          new = 'replace_eol(CONFIGS, "var inini = _INI.Raw;", "var inini = _INI.GetRawSnapshot();")'
+          if source.count(old) != 1:
+              raise RuntimeError('Expected one indentation-sensitive raw INI replacement in migration script.')
+          path.write_text(source.replace(old, new, 1), encoding='utf-8')
+          PY
           python3 "$script" 2>&1 | tee ini-index-diagnostics/result.txt
           python3 .github/scripts/security-regression.py 2>&1 | tee -a ini-index-diagnostics/result.txt
           git config core.whitespace cr-at-eol
