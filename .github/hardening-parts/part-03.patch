@@ -1,0 +1,183 @@
++                        selectionConversionSucceeded = true;
+ 						Logging.Log("[CS] > Starting conversion of [" + ClipStr + "].");
+ 						KInputs.MakeInput(KInputs.AddPress(Keys.Back));
+ 						var result = "";
+@@ -3104,19 +3117,16 @@ namespace Mahou {
+ 		}
+ 		static bool WaitForClip2BeFree() {
+ 			Debug.WriteLine(">> WFC2F");
+-			IntPtr CB_Blocker = IntPtr.Zero;
+-			int tries = 0;
+-			do { 
+-				CB_Blocker = WinAPI.GetOpenClipboardWindow();
+-				if (CB_Blocker == IntPtr.Zero) break;
+-				Logging.Log("Clipboard blocked by process id ["+WinAPI.GetWindowThreadProcessId(CB_Blocker, IntPtr.Zero) +"].", 2);
+-				tries ++;
+-				if (tries > 3000) {
+-					Logging.Log("3000 Tries to wait for clipboard blocker ended, blocker didn't free'd clipboard |_|.", 2); return false;
+-				}
+-			} while (CB_Blocker != IntPtr.Zero);
+-			Debug.WriteLine(">> WFC2F t: " + tries);
+-			return true;
++			for (var tries = 0; tries < 50; tries++) {
++				var blocker = WinAPI.GetOpenClipboardWindow();
++				if (blocker == IntPtr.Zero) return true;
++				if (tries == 0)
++					Logging.Log("Clipboard is temporarily blocked by process id [" +
++						WinAPI.GetWindowThreadProcessId(blocker, IntPtr.Zero) + "].", 2);
++				Thread.Sleep(10);
++			}
++			Logging.Log("Clipboard remained blocked for 500 ms; operation cancelled.", 2);
++			return false;
+ 		}
+ 		public static bool RestoreClipBoard(string special = "") {
+ 			Debug.WriteLine(">> RC");
+@@ -3127,16 +3137,16 @@ namespace Mahou {
+ 					restore = lastClipText;
+ 					spc = false;
+ 				} else {
+-					NativeClipboard.clip_set(lastClip);
+-					return true;
++					var snapshot = lastClip;
++					lastClip = null;
++					if (snapshot == null) return false;
++					try { return snapshot.Restore(); }
++					finally { snapshot.Dispose(); }
+ 				}
+ 			}
+-			Logging.Log((spc?"Force-Text ":"")+"Restoring clipboard text: ["+restore+"].");
+-			if (WaitForClip2BeFree()) {
+-				try { Clipboard.SetDataObject(restore, true, 5, 120); return true; } 
+-				catch { Logging.Log("Error during clipboard "+(spc?"Special ":"")+"text restore after 5 tries.", 2); return false; }
+-			}
+-			return false;
++			Logging.Log((spc?"Force-Text ":"")+"Restoring clipboard text.");
++			if (!WaitForClip2BeFree()) return false;
++			return NativeClipboard.SetText(restore);
+ 		}
+ 		public static string GetClipboard(int tries = 1, int timeout = 5) {
+ 			var txt = NativeClipboard.GetText();
+@@ -3184,7 +3194,12 @@ namespace Mahou {
+ 			if (MahouUI.ClipBackOnlyText) {
+ 				lastClipText = NativeClipboard.GetText();
+ 			} else {
+-				lastClip = NativeClipboard.clip_get();
++				if (lastClip != null) lastClip.Dispose();
++				lastClip = NativeClipboard.CaptureOleSnapshot();
++				if (lastClip == null) {
++					Logging.Log("Selected-text operation cancelled because the original clipboard could not be preserved.", 2);
++					return String.Empty;
++				}
+ 			}
+ 			
+ //			Thread.Sleep(50);
+@@ -3192,7 +3207,11 @@ namespace Mahou {
+ //				lastClipText = Clipboard.GetText();
+ //			This prevents from converting text that already exist in Clipboard
+ //			by pressing "Convert Selection hotkey" without selected text.
+-			NativeClipboard.Clear();
++			if (!NativeClipboard.Clear()) {
++				Logging.Log("Selected-text operation cancelled because the clipboard could not be cleared.", 2);
++				RestoreClipBoard();
++				return String.Empty;
++			}
+ 			Logging.Log("Getting selected text.");
+ 			if (MahouUI.SelectedTextGetMoreTries)
+ 				for (int i = 0; i != MMain.mahou.SelectedTextGetMoreTriesCount; i++) {
+@@ -3961,7 +3980,8 @@ namespace Mahou {
+ 		/// <param name="uID1">Layout id 1(from).</param>
+ 		/// <param name="uID2">Layout id 2(to)</param>
+ 		/// <returns></returns>
+-		static string InAnother(char c, uint uID1, uint uID2)  { //Remakes c from uID1  to uID2
+			var cc = c;
++		static string InAnother(char c, uint uID1, uint uID2)  { //Remakes c from uID1  to uID2
++			var cc = c;
+ 			var s = "";
+ 			var chsc = WinAPI.VkKeyScanEx(cc, uID1);
+ 			if (chsc == -1) return s;
+@@ -3984,7 +4004,8 @@ namespace Mahou {
+ 		/// </summary>
+ 		/// <param name="key">Key to be inputted.</param>
+ 		/// <param name="flags">Flags(state) of key.</param>
+-		public static void KeybdEvent(Keys key, int flags)  { // 
+			//Do not remove this line, it needed for "Left Control Switch Layout" to work properly
++		public static void KeybdEvent(Keys key, int flags)  { //
++			//Do not remove this line, it needed for "Left Control Switch Layout" to work properly
+ //			Thread.Sleep(15);
+ 			var sc = (uint)WinAPI.MapVirtualKey((uint)key, 4);
+ 			Debug.WriteLine("scan" + (sc>>8));
+@@ -4011,7 +4032,8 @@ namespace Mahou {
+ 		/// Sends modifiers up by modstoup array. 
+ 		/// </summary>
+ 		/// <param name="modstoup">Array of modifiers which will be send up. 0 = ctrl, 1 = shift, 2 = alt.</param>
+-		public static void SendModsUp(int modstoup, bool waitwin = false)  { //
+			//These three below are needed to release all modifiers, so even if you will still hold any of it
++		public static void SendModsUp(int modstoup, bool waitwin = false)  { //
++			//These three below are needed to release all modifiers, so even if you will still hold any of it
+ 			//it will skip them and do as it must.
+ 			if (modstoup <= 0) return;
+ 			Debug.WriteLine(">> SMU: " + Hotkey.GetMods(modstoup));
+diff --git a/Mahou/Classes/Logging.cs b/Mahou/Classes/Logging.cs
+index c868ea7..bc3f443 100755
+--- a/Mahou/Classes/Logging.cs
++++ b/Mahou/Classes/Logging.cs
+@@ -1,52 +1,71 @@
+-﻿// Created by BladeMight in 05.12.2016-18:55
++// MIXANIZM hardening: non-blocking, bounded, AppData-safe logging.
+ using System;
+ using System.Collections.Concurrent;
+ using System.Diagnostics;
+ using System.IO;
+ 
+-namespace Mahou
+-{
+-	public static class Logging {
+-		public static string logdir = Path.Combine(MahouUI.nPath, "Logs");
+-		public static string log = Path.Combine(logdir, DateTime.Today.ToString("yyyy.MM.dd") + ".txt");
+-		static object locky = new Object(); // To prevent `file in use` error in multi-threads
+-		static BlockingCollection<string> _logMessages = new BlockingCollection<string>();
+-		/// <summary>
+-		/// Write message to log.
+-		/// </summary>
+-		/// <param name="logmsg">Message that will be written.</param>
+-		/// <param name="msgtype">Type of message: 0(or nothing) = Info, 1 = Error, 2 = Warning.</param>
+-		public static void Log(string logmsg, int msgtype = 0) {			
+-			if (!MahouUI.LoggingEnabled) return;
+-			if (!File.Exists(Configs.filePath)) 
+-				MMain.MyConfs = new Configs();	
+-			if (!Directory.Exists(Path.Combine(MahouUI.nPath, "Logs")))
+-				Directory.CreateDirectory(logdir);
+-			var messagetype = "I";
+-			var msgtime = DateTime.Now.ToString("hh:mm:ss.fff");
+-			switch (msgtype) {
+-				case 1:
+-					messagetype = "E";
+-					break;
+-				case 2:
+-					messagetype = "W";
+-					break;
+-			}
+-			var tologmsg = msgtime + " [" + messagetype + "]: " + logmsg + "\r\n";
+-			_logMessages.Add(tologmsg);
+-			}
+-		public static void UpdateLog() {
+-			lock (locky) {
+-				foreach (var msg in _logMessages.GetConsumingEnumerable()) {
+-					#if VSCDEBUG
+-						Console.Write(msg);
+-					#elif DEBUG 
+-						Debug.Write(msg);
+-					#else
+-						File.AppendAllText(log, msg);
+-					#endif
+-				}
+-			}
+-		}
+-	}
++namespace Mahou {
++    public static class Logging {
++        static readonly object Sync = new object();
++        static readonly ConcurrentQueue<string> Messages = new ConcurrentQueue<string>();
++        const long MaxLogSize = 5L * 1024L * 1024L;
++        const int MaxQueuedMessages = 5000;
++
