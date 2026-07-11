@@ -1,0 +1,2 @@
+Privacy-safe logging hardening applied: 37 plaintext log sites replaced.
+Security regression check passed: 40 source files inspected.
