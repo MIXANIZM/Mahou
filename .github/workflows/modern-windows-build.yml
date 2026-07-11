@@ -23,6 +23,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Package source snapshot
+        if: matrix.platform == 'x86'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path source-snapshot | Out-Null
+          git archive --format=zip --output=source-snapshot/MIXANIZM-Mahou-modern-source.zip HEAD
+
+      - name: Upload source snapshot
+        if: matrix.platform == 'x86'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MIXANIZM-Mahou-modern-source
+          path: source-snapshot/MIXANIZM-Mahou-modern-source.zip
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Stamp source commit
         shell: pwsh
         run: |
