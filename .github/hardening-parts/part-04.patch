@@ -1,0 +1,183 @@
++        public static string logdir = Path.Combine(
++            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
++            "MIXANIZM Mahou", "Logs");
++        public static string log = Path.Combine(logdir, DateTime.Today.ToString("yyyy.MM.dd") + ".txt");
++
++        public static void SetDirectory(string directory) {
++            if (String.IsNullOrWhiteSpace(directory)) return;
++            lock (Sync) {
++                logdir = directory;
++                log = Path.Combine(logdir, DateTime.Today.ToString("yyyy.MM.dd") + ".txt");
++            }
++        }
++
++        public static void Log(string logmsg, int msgtype = 0) {
++            if (!MahouUI.LoggingEnabled && msgtype == 0) return;
++            var kind = msgtype == 1 ? "E" : msgtype == 2 ? "W" : "I";
++            var message = DateTime.Now.ToString("HH:mm:ss.fff") + " [" + kind + "]: " +
++                          (logmsg ?? String.Empty) + Environment.NewLine;
++            while (Messages.Count >= MaxQueuedMessages) {
++                string ignored;
++                if (!Messages.TryDequeue(out ignored)) break;
++            }
++            Messages.Enqueue(message);
++        }
++
++        public static void UpdateLog() {
++            lock (Sync) {
++                Directory.CreateDirectory(logdir);
++                log = Path.Combine(logdir, DateTime.Today.ToString("yyyy.MM.dd") + ".txt");
++                RotateIfNeeded();
++                string message;
++                while (Messages.TryDequeue(out message)) {
++#if VSCDEBUG
++                    Console.Write(message);
++#elif DEBUG
++                    Debug.Write(message);
++#else
++                    File.AppendAllText(log, message);
++#endif
++                }
++            }
++        }
++
++        static void RotateIfNeeded() {
++            try {
++                if (!File.Exists(log) || new FileInfo(log).Length < MaxLogSize) return;
++                var archive = Path.Combine(logdir,
++                    DateTime.Now.ToString("yyyy.MM.dd-HHmmss") + ".txt");
++                File.Move(log, archive);
++                var files = new DirectoryInfo(logdir).GetFiles("*.txt");
++                Array.Sort(files, (a, b) => b.LastWriteTimeUtc.CompareTo(a.LastWriteTimeUtc));
++                for (var i = 10; i < files.Length; i++) files[i].Delete();
++            } catch (Exception ex) {
++                Debug.WriteLine("Log rotation failed: " + ex.Message);
++            }
++        }
++    }
+ }
+diff --git a/Mahou/Classes/NativeClipboard.cs b/Mahou/Classes/NativeClipboard.cs
+index 02c15a9..6e76533 100755
+--- a/Mahou/Classes/NativeClipboard.cs
++++ b/Mahou/Classes/NativeClipboard.cs
+@@ -1,195 +1,133 @@
+-﻿using System;
+-using System.Collections.Generic;
++using System;
+ using System.Runtime.InteropServices;
++using System.Runtime.InteropServices.ComTypes;
++using System.Threading;
+ 
+-namespace Mahou
+-{
++namespace Mahou {
++    /// <summary>
++    /// Bounded native clipboard operations and a non-materializing OLE snapshot.
++    /// The snapshot holds the original IDataObject instead of enumerating and
++    /// re-serializing formats such as HTML, RTF, Excel, images and file drops.
++    /// </summary>
+     public static class NativeClipboard {
+-		/// <summary>
+-		/// Clears clipboard.
+-		/// </summary>
+-        public static void Clear() {
+-            WinAPI.OpenClipboard(IntPtr.Zero);
+-            WinAPI.EmptyClipboard();
+-            WinAPI.CloseClipboard();
++        const int OpenAttempts = 25;
++        const int RetryDelayMs = 4;
++        const uint GMEM_MOVEABLE = 0x0002;
++        const uint GMEM_ZEROINIT = 0x0040;
++
++        [DllImport("ole32.dll")]
++        static extern int OleGetClipboard([MarshalAs(UnmanagedType.Interface)] out IDataObject dataObject);
++
++        [DllImport("ole32.dll")]
++        static extern int OleSetClipboard([MarshalAs(UnmanagedType.Interface)] IDataObject dataObject);
++
++        static bool OpenWithRetry() {
++            for (var i = 0; i < OpenAttempts; i++) {
++                if (WinAPI.OpenClipboard(IntPtr.Zero)) return true;
++                Thread.Sleep(RetryDelayMs);
++            }
++            return false;
++        }
++
++        public static bool Clear() {
++            if (!OpenWithRetry()) return false;
++            try { return WinAPI.EmptyClipboard(); }
++            finally { WinAPI.CloseClipboard(); }
++        }
++
++        public static bool IsEmpty() {
++            if (!OpenWithRetry()) return false;
++            try {
++                return WinAPI.EnumClipboardFormats(0) == 0;
++            } finally {
++                WinAPI.CloseClipboard();
++            }
++        }
++
++        public static string GetText(uint format = WinAPI.CF_UNICODETEXT, bool wide = true) {
++            if (!WinAPI.IsClipboardFormatAvailable(format) || !OpenWithRetry()) return null;
++            try {
++                var handle = WinAPI.GetClipboardData(format);
++                if (handle == IntPtr.Zero) return null;
++                var pointer = WinAPI.GlobalLock(handle);
++                if (pointer == IntPtr.Zero) return null;
++                try { return wide ? Marshal.PtrToStringUni(pointer) : Marshal.PtrToStringAnsi(pointer); }
++                finally { WinAPI.GlobalUnlock(handle); }
++            } finally {
++                WinAPI.CloseClipboard();
++            }
++        }
++
++        public static bool SetText(string text) {
++            text = text ?? String.Empty;
++            if (!OpenWithRetry()) return false;
++            IntPtr memory = IntPtr.Zero;
++            try {
++                if (!WinAPI.EmptyClipboard()) return false;
++                var bytes = checked((text.Length + 1) * 2);
++                memory = WinAPI.GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, new UIntPtr((uint)bytes));
++                if (memory == IntPtr.Zero) return false;
++                var pointer = WinAPI.GlobalLock(memory);
++                if (pointer == IntPtr.Zero) return false;
++                try {
++                    Marshal.Copy(text.ToCharArray(), 0, pointer, text.Length);
++                    Marshal.WriteInt16(pointer, text.Length * 2, 0);
++                } finally {
++                    WinAPI.GlobalUnlock(memory);
++                }
++                if (WinAPI.SetClipboardData(WinAPI.CF_UNICODETEXT, memory) == IntPtr.Zero) return false;
++                memory = IntPtr.Zero; // Windows owns it after SetClipboardData succeeds.
++                return true;
++            } finally {
++                if (memory != IntPtr.Zero) WinAPI.GlobalFree(memory);
++                WinAPI.CloseClipboard();
++            }
++        }
++
++        public sealed class OleSnapshot : IDisposable {
++            IDataObject dataObject;
++            readonly bool wasEmpty;
++            bool restored;
++
++            internal OleSnapshot(IDataObject dataObject, bool wasEmpty) {
++                this.dataObject = dataObject;
++                this.wasEmpty = wasEmpty;
++            }
++
++            public bool Restore() {
++                if (restored) return true;
++                try {
++                    var ok = wasEmpty ? Clear() : dataObject != null && OleSetClipboard(dataObject) >= 0;
++                    restored = ok;
++                    return ok;
++                } catch (Exception ex) {
++                    Logging.Log("OLE clipboard restore failed: " + ex.Message, 2);
++                    return false;
++                }
++            }
++
++            public void Dispose() {
