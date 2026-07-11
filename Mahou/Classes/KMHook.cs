@@ -24,7 +24,7 @@ namespace Mahou {
 			hotkeywithmodsfired, csdoing, incapt, waitfornum, 
 			IsHotkey, ff_chr_wheeled, preSnip, LMB_down, RMB_down, MMB_down,
 			dbl_click, click, selfie, aftsingleAS, JKLERR, JKLERRchecking, last_snipANY,
-			_selis, _mselis, snipselshiftpressed, snipselwassel, 
+			snipselshiftpressed, snipselwassel,
 			AS_IGN_BACK, AS_IGN_DEL, AS_IGN_LS, was_back, was_del, was_ls, __setsnip, L_DOWN, 
 			CLW_W_SPACE, CLW_W_ENTER, CTRL_ALT_changelayout_temporary, CTRL_ALT_Layout_loaded;
 		public static uint CTRL_ALT_prev_layout;

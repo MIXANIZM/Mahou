@@ -4392,12 +4392,6 @@ namespace Mahou {
 			Logging.Log("Language changed.");
 			SetTooltips();
 		}
-		class MTheme {
-			public Color BG;
-			public Color FG;
-			public Color TAB_BORDERS;
-			public Color TAB_FOCUS_BG;
-		}
 		void ToggleDark(bool yes) {
 			var BGDARK = Color.FromArgb(51, 54, 58);
 			var FGDARK = Color.FromArgb(181, 181, 181);
