@@ -33,6 +33,7 @@ try:
     encoded_hash = hashlib.sha256(encoded_bytes).hexdigest()
     lines.append("encoded_length=" + str(len(encoded)))
     lines.append("encoded_sha256=" + encoded_hash)
+    (diagnostics / "round3-summary.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     if len(encoded) != expected_encoded_length or encoded_hash != expected_encoded_sha256:
         raise RuntimeError("Round 3 encoded payload identity mismatch")
 
@@ -40,10 +41,10 @@ try:
     patch_hash = hashlib.sha256(patch).hexdigest()
     lines.append("patch_size=" + str(len(patch)))
     lines.append("patch_sha256=" + patch_hash)
+    (diagnostics / "round3-summary.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     if len(patch) != expected_patch_size or patch_hash != expected_patch_sha256:
         raise RuntimeError("Round 3 decoded patch identity mismatch")
 
-    (diagnostics / "round3-summary.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     patch_path = migrations / "round3.patch"
     patch_path.write_bytes(patch)
 
