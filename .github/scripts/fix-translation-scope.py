@@ -62,7 +62,7 @@ replace_eol(
     "\t\t\t    try {\n"
     "\t\t\t\tif (!File.Exists(speech_file)) {\n"
     "\t\t\t\t\tusing (var client = CreateTranslationClient())\n"
-    "\t    \t\t\t\tclient.DownloadFile(gtr.speech_url, speech_file);\n"
+    "\t\t\t\t\t\tclient.DownloadFile(gtr.speech_url, speech_file);\n"
     "\t\t\t\t}\n"
     "\t\t\t    } catch (Exception x) {\n",
 )
