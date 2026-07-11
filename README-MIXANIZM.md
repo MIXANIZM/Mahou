@@ -19,17 +19,29 @@ translation panel, history and advanced layout controls.
 
 The legacy self-updater and public sync/backup services are disabled. The dictionary
 button restores the copy packaged with the verified build and does not download or run
-an extraction script.
+an extraction script. Snippet `__execute` and its external-process launch path are
+physically removed.
 
 The translator remains an explicit opt-in feature. When enabled, selected text is sent
-to the configured online translation service. Snippet `__execute` is blocked by default
-and requires an explicit hidden setting to enable.
+to the configured online translation service. Translation and speech requests use a
+bounded per-operation client with an eight-second timeout and at most three redirects;
+input is limited to 5000 characters and raw request URLs or responses are not written to
+diagnostic output.
+
+## User data reliability
+
+Configuration is written through its existing temporary-file replacement path. Snippets,
+the AutoSwitch dictionary, imported user files and generated default dictionaries are
+also flushed to a same-directory temporary file and replaced with a `.bak` recovery copy.
+High-frequency input-history updates intentionally keep their existing lightweight write
+path until physical keyboard-hook performance testing is available.
 
 ## Current status
 
 This is still a draft test branch. It requires physical Windows 11 testing of keyboard
-hooks, Insert word/selection conversion, AutoSwitch, snippets, modifier handling and the
-full settings UI before merge or public release. See `SECURITY-AUDIT-MODERN.md`.
+hooks, Insert word/selection conversion, AutoSwitch, snippets, modifier handling,
+translator behavior and the full settings UI before merge or public release. See
+`SECURITY-AUDIT-MODERN.md`.
 
 Original Mahou is GPL v2+ software. Original authorship remains credited in the source
 history and license; MIXANIZM maintains this modernization branch.
