@@ -21,9 +21,9 @@ replace_once(
 replace_once(
     '           "Image.FromHbitmap(b.GetHbitmap())"],\n',
     '           "Image.FromHbitmap(b.GetHbitmap())",\n'
-    '           "File.WriteAllText(snipfile, txt_Snippets.Text, Encoding.UTF8)",\n'
-    '           "File.WriteAllText(AS_dictfile, AutoSwitchDictionaryRaw, Encoding.UTF8)",\n'
-    '           "File.WriteAllText(f, d[ty])"],\n',
+    '           "\\n\\t\\t\\t\\t\\tFile.WriteAllText(snipfile, txt_Snippets.Text, Encoding.UTF8)",\n'
+    '           "\\n\\t\\t\\t\\t\\tFile.WriteAllText(AS_dictfile, AutoSwitchDictionaryRaw, Encoding.UTF8)",\n'
+    '           "\\n\\t\\t\\t\\t\\t\\t\\tFile.WriteAllText(f, d[ty])"],\n',
 )
 replace_once(
     '             "Int32.TryParse(rma[0].Groups[2].Value, out times)"],\n',
