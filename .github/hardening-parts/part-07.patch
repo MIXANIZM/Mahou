@@ -1,0 +1,170 @@
++        static string ParseCustomDirectory(string[] args) {
++            if (args == null) return null;
++            for (var i = 0; i < args.Length - 1; i++) {
++                var arg = (args[i] ?? String.Empty).Trim();
++                if (arg.Equals("/C", StringComparison.OrdinalIgnoreCase) ||
++                    arg.Equals("-C", StringComparison.OrdinalIgnoreCase) ||
++                    arg.Equals("C", StringComparison.OrdinalIgnoreCase)) {
++                    return args[i + 1];
++                }
++            }
++            return null;
++        }
++
++        static string EnsureTrailingSeparator(string path) {
++            if (path.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)) return path;
++            return path + Path.DirectorySeparatorChar;
++        }
++
++        static void MigrateLegacyFiles() {
++            if (PathsEqual(ExecutableRoot, DataRoot)) return;
++            foreach (var name in MigratedFiles) {
++                var source = Path.Combine(ExecutableRoot, name);
++                var destination = Path.Combine(DataRoot, name);
++                try {
++                    if (File.Exists(source) && !File.Exists(destination)) File.Copy(source, destination, false);
++                } catch (Exception ex) {
++                    Debug.WriteLine("Legacy migration failed for " + name + ": " + ex.Message);
++                }
++            }
++        }
++
++        static void QuarantineIncompatibleConfig() {
++            var config = Configs.filePath;
++            if (!File.Exists(config)) return;
++            try {
++                var raw = File.ReadAllText(config);
++                var modern = raw.IndexOf("[AutoSwitch]", StringComparison.OrdinalIgnoreCase) >= 0 &&
++                             raw.IndexOf("ConvertLastWord_Key=", StringComparison.OrdinalIgnoreCase) >= 0;
++                if (modern) return;
++                var backup = config + ".legacy-v1.4." + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".bak";
++                File.Move(config, backup);
++            } catch (Exception ex) {
++                Debug.WriteLine("Config compatibility check failed: " + ex.Message);
++            }
++        }
++
++        internal static bool EnsureBundledFile(string name) {
++            var source = Path.Combine(ExecutableRoot, name);
++            var destination = Path.Combine(DataRoot, name);
++            try {
++                if (!File.Exists(source)) return File.Exists(destination);
++                if (!File.Exists(destination)) File.Copy(source, destination, false);
++                return File.Exists(destination);
++            } catch (Exception ex) {
++                Logging.Log("Bundled file migration failed for " + name + ": " + ex.Message, 2);
++                return false;
++            }
++        }
++
++        internal static bool RestoreBundledDictionary(string destination) {
++            var source = Path.Combine(ExecutableRoot, "AS_dict.txt");
++            try {
++                if (!File.Exists(source)) return false;
++                var destinationFull = Path.GetFullPath(destination);
++                var sourceFull = Path.GetFullPath(source);
++                if (!PathsEqual(sourceFull, destinationFull)) File.Copy(sourceFull, destinationFull, true);
++                return File.Exists(destinationFull);
++            } catch (Exception ex) {
++                Logging.Log("Bundled dictionary restore failed: " + ex.Message, 1);
++                return false;
++            }
++        }
++
++        static bool PathsEqual(string left, string right) {
++            return String.Equals(
++                Path.GetFullPath(left).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
++                Path.GetFullPath(right).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar),
++                StringComparison.OrdinalIgnoreCase);
++        }
++    }
++}
+diff --git a/Mahou/Mahou.csproj b/Mahou/Mahou.csproj
+index 2dfc11d..627648b 100644
+--- a/Mahou/Mahou.csproj
++++ b/Mahou/Mahou.csproj
+@@ -1,4 +1,4 @@
+-<?xml version="1.0" encoding="utf-8"?>
++﻿<?xml version="1.0" encoding="utf-8"?>
+ <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+   <PropertyGroup>
+@@ -121,6 +121,7 @@
+     <Reference Include="System.Net">
+       <RequiredTargetFramework>4.0</RequiredTargetFramework>
+     </Reference>
++    <Reference Include="System.Security" />
+     <Reference Include="System.Web" />
+     <Reference Include="System.Windows.Forms" />
+   </ItemGroup>
+@@ -144,6 +145,9 @@
+     <Compile Include="Classes\Configs.cs" />
+     <Compile Include="Classes\WinAPI.cs" />
+     <Compile Include="Classes\RawInputForm.cs" />
++    <Compile Include="Classes\SecretProtector.cs" />
++    <Compile Include="Classes\StartupManager.cs" />
++    <Compile Include="Classes\UserDataPaths.cs" />
+     <Compile Include="JustUI\JUIButton.cs" />
+     <Compile Include="JustUI\JUITitle.cs" />
+     <Compile Include="JustUI\JUITitle.Designer.cs">
+@@ -162,6 +166,9 @@
+     <Compile Include="MahouUI.cs">
+       <SubType>Form</SubType>
+     </Compile>
++    <Compile Include="MahouUI.Security.cs">
++      <DependentUpon>MahouUI.cs</DependentUpon>
++    </Compile>
+     <Compile Include="MahouUI.Designer.cs">
+       <DependentUpon>MahouUI.cs</DependentUpon>
+     </Compile>
+@@ -185,6 +192,10 @@
+   </ItemGroup>
+   <ItemGroup>
+     <None Include="App.config" />
++    <Content Include="..\AS_dict.txt">
++      <Link>AS_dict.txt</Link>
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </Content>
+   </ItemGroup>
+   <ItemGroup>
+     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+diff --git a/Mahou/MahouUI.Security.cs b/Mahou/MahouUI.Security.cs
+new file mode 100644
+index 0000000..76c05ad
+--- /dev/null
++++ b/Mahou/MahouUI.Security.cs
+@@ -0,0 +1,63 @@
++using System;
++using System.Drawing;
++using System.IO;
++using System.Text;
++using System.Windows.Forms;
++
++namespace Mahou {
++    public partial class MahouUI {
++        const string LegacyNetworkDisabledMessage =
++            "Legacy network update and public sync are disabled in MIXANIZM Mahou for security. " +
++            "Updates are installed manually from verified releases.";
++
++        void ApplySecurityPolicy() {
++            MMain.MyConfs.Write("Functions", "StartupUpdatesCheck", "false");
++            MMain.MyConfs.Write("Functions", "SilentUpdate", "false");
++            MMain.MyConfs.Write("Functions", "AppDataConfigs", "true");
++
++            chk_StartupUpdatesCheck.Checked = false;
++            chk_StartupUpdatesCheck.Enabled = false;
++            chk_SilentUpdate.Checked = false;
++            chk_SilentUpdate.Enabled = false;
++            btn_CheckForUpdates.Enabled = false;
++            btn_DownloadUpdate.Enabled = false;
++            grb_DownloadUpdate.Enabled = false;
++            txt_UpdateDetails.Text = LegacyNetworkDisabledMessage;
++            grb_MahouReleaseTitle.Text = "Manual verified updates only";
++
++            chk_AppDataConfigs.Checked = true;
++            chk_AppDataConfigs.Enabled = false;
++            chk_RemapCapsLockAsF18.Checked = false;
++            chk_SpecificLS.Checked = false;
++            cbb_AutostartType.SelectedIndex = 0;
++            cbb_AutostartType.Enabled = false;
++
