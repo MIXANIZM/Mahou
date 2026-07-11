@@ -1,0 +1,66 @@
+name: Modern Windows build
+
+on:
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: modern-windows-build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [x86, x64]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Stamp source commit
+        shell: pwsh
+        run: |
+          $commit = "${{ github.event.pull_request.head.sha || github.sha }}"
+          Set-Content -Path Mahou/____commit.cs -Value "static class ____ { public static string commit=\"$commit\"; }" -Encoding utf8
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Release ${{ matrix.platform }}
+        shell: pwsh
+        run: |
+          msbuild Mahou/Mahou.sln /m /t:Rebuild /p:Configuration=Release /p:Platform=${{ matrix.platform }} /v:minimal /fl /flp:"logfile=msbuild-${{ matrix.platform }}.log;verbosity=normal"
+
+      - name: Collect build
+        shell: pwsh
+        run: |
+          $source = if ("${{ matrix.platform }}" -eq "x86") { "Mahou/bin/Release_x86" } else { "Mahou/bin/Release_x64" }
+          if (-not (Test-Path $source)) { throw "Build output not found: $source" }
+          $dest = "release/${{ matrix.platform }}"
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          Copy-Item "$source/*" $dest -Recurse -Force
+          Get-ChildItem $dest -Recurse | Select-Object FullName,Length | Format-Table -AutoSize
+          Get-FileHash "$dest/Mahou.exe" -Algorithm SHA256 | ForEach-Object { $_.Hash.ToLowerInvariant() + " *Mahou.exe" } | Set-Content "$dest/SHA256SUMS.txt" -Encoding utf8
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: modern-build-log-${{ matrix.platform }}
+          path: msbuild-${{ matrix.platform }}.log
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: MIXANIZM-Mahou-modern-${{ matrix.platform }}
+          path: release/${{ matrix.platform }}
+          if-no-files-found: error
+          retention-days: 14
