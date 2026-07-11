@@ -94,11 +94,12 @@ jobs:
           $platform = '${{ matrix.platform }}'
           $source = Join-Path $env:GITHUB_WORKSPACE "artifacts/$platform/build1"
           $dest = "release/$platform"
+          $deterministicName = "deterministic-build-$platform.txt"
           New-Item -ItemType Directory -Force -Path $dest | Out-Null
           Copy-Item (Join-Path $source 'Mahou.exe') $dest -Force
           Copy-Item (Join-Path $source 'Mahou.exe.config') $dest -Force
           Copy-Item (Join-Path $source 'AS_dict.txt') $dest -Force
-          Copy-Item "deterministic-build-$platform.txt" $dest -Force
+          Copy-Item $deterministicName $dest -Force
           Copy-Item 'security-regression.txt' $dest -Force
           Copy-Item 'README-MIXANIZM.md' $dest -Force
           Copy-Item 'SECURITY-AUDIT-MODERN.md' $dest -Force
@@ -110,7 +111,7 @@ jobs:
             'Mahou.exe',
             'Mahou.exe.config',
             'AS_dict.txt',
-            'deterministic-build-' + $platform + '.txt',
+            $deterministicName,
             'security-regression.txt',
             'README-MIXANIZM.md',
             'SECURITY-AUDIT-MODERN.md',
