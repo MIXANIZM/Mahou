@@ -1780,8 +1780,10 @@ namespace Mahou {
 					break;
 				case "__delay":
 					int d = 0;
-					if (Int32.TryParse(args, out d))
+					if (Int32.TryParse(args, out d)) {
+						d = Math.Max(0, Math.Min(d, MaxSnippetDelayMs));
 						Thread.Sleep(d);
+					}
 					break;
 				case "__mahouhome":
 					EXSN_result.Append(MahouUI.nPath);
@@ -1802,13 +1804,16 @@ namespace Mahou {
 					if (args.Contains("|")) {
 						var A = args.Split('|');
 						t=A[0];
-						Int32.TryParse(A[1], out upc);
+						int parsedUppercaseCount;
 						if (A[1] == "*")
 							upc = t.Length;
+						else if (Int32.TryParse(A[1], out parsedUppercaseCount))
+							upc = parsedUppercaseCount;
 					}
+					upc = Math.Max(0, Math.Min(upc, Math.Min(t.Length, MaxUppercaseCharacters)));
 					var subst = 0;
 					var res = "";
-					for (int i=0; i!=upc; i++) {
+					for (int i=0; i<upc; i++) {
 						if (upc >t.Length) {
 							Debug.WriteLine("Can't go on, no more chars left...");
 							break;
@@ -1900,7 +1905,12 @@ namespace Mahou {
 					break;
 			}
 		}
+		const int MaxSnippetDelayMs = 5000;
+		const int MaxKeyboardStepDelayMs = 1000;
+		const int MaxSnippetKeyRepeat = 1000;
+		const int MaxUppercaseCharacters = 10000;
 		public static List<Keys> strparsekey(string key, int times = 1) {
+			times = Math.Max(0, Math.Min(times, MaxSnippetKeyRepeat));
 			key = key.ToLower().Replace("capslock", "capital");
 			List<Keys> keys = new List<Keys>();
 			foreach (Keys k in Enum.GetValues(typeof(Keys))) {
@@ -1914,7 +1924,7 @@ namespace Mahou {
 					.Replace("return", "enter").Replace("numpa", "numpad");
 				if (_n == key+"key") { // controlkey, shiftkey
 //					Logging.Log("Added the " + _n);
-					for (int x = 0; x != times; x++) {
+					for (int x = 0; x < times; x++) {
 						keys.Add(k);
 					}
 					break;
@@ -1933,7 +1943,7 @@ namespace Mahou {
 						if (ok)
 							if (code == (int)k) { 
 								Logging.Log("[EXPR] > Added the key by code: " + code + ", key: " + k);
-								for (int x = 0; x != times; x++) {
+								for (int x = 0; x < times; x++) {
 									keys.Add(k);
 								}
 								break;
@@ -1942,21 +1952,21 @@ namespace Mahou {
 				}
 				if (key == "esc") {
 					Logging.Log("[EXPR] > Added the short escape: " + key);
-					for (int x = 0; x != times; x++) {
+					for (int x = 0; x < times; x++) {
 						keys.Add(k);
 					}
 					break;
 				}
 				if (key == "win") {
 					Logging.Log("[EXPR] > Added the lwin as base of: " + _n);
-					for (int x = 0; x != times; x++) {
+					for (int x = 0; x < times; x++) {
 						keys.Add(k);
 					}
 					break;
 				}
 				if (_n == key) {
 					Logging.Log("[EXPR] > Added the " + _n);
-					for (int x = 0; x != times; x++) {
+					for (int x = 0; x < times; x++) {
 						keys.Add(k);
 					}
 					break;
@@ -1973,7 +1983,9 @@ namespace Mahou {
 			if (args.Contains("|") || tt) {
 				var axy = args.Split(new[]{tt?"!!":"|"},2, StringSplitOptions.None);
 				args = axy[0];
-				Int32.TryParse(axy[1], out delay);
+				int parsedDelay;
+				if (Int32.TryParse(axy[1], out parsedDelay))
+					delay = Math.Max(0, Math.Min(parsedDelay, MaxKeyboardStepDelayMs));
 				Debug.WriteLine("SimKeyboard set delay:"+delay);
 			}
 			if (args.Contains(" "))
@@ -1995,7 +2007,9 @@ namespace Mahou {
 					var times = 1;
 					if (rma.Count > 0) {
 						key = rma[0].Groups[1].Value;
-						Int32.TryParse(rma[0].Groups[2].Value, out times);
+						int parsedTimes;
+					if (Int32.TryParse(rma[0].Groups[2].Value, out parsedTimes))
+						times = Math.Max(0, Math.Min(parsedTimes, MaxSnippetKeyRepeat));
 					}
 					Debug.WriteLine("SimKey: "+key + " " + times +" times");
 					keys.AddRange(strparsekey(key, times));
@@ -2033,6 +2047,7 @@ namespace Mahou {
 			return Environment.OSVersion.Version.Major == 10 || (Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor > 1);
 		}
 		public static void DoLater(Action act, int timeout) {
+			timeout = Math.Max(0, Math.Min(timeout, 600000));
 			System.Threading.Tasks.Task.Factory.StartNew(() => {
 			                                             	Thread.Sleep(timeout);
 			                                             	act();
