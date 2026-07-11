@@ -1,0 +1,2 @@
+Removed snippet __execute command execution path and its hidden configuration flag.
+Security regression check passed: 40 source files inspected.

@@ -1548,7 +1548,7 @@ namespace Mahou {
 		}
 		#region in Snippets expressions 
 		//                                                0         1          2             3         4             5          6                7            8            9            10         11               12           13           14              15             16             17           18        19       20    
-		public static readonly string[] expressions = new []{ "__date", "__time", "__version", "__system", "__title", "__keyboard", "__execute", "__cursorhere", "__paste", "__mahouhome", "__delay", "__uppercase", "__convert", "__setlayout", "__selection", "__clearlsnip", "__replace", "__setsnip", "__setlsnip", "__if", "__nif" };
+		public static readonly string[] expressions = new []{ "__date", "__time", "__version", "__system", "__title", "__keyboard", "__cursorhere", "__paste", "__mahouhome", "__delay", "__uppercase", "__convert", "__setlayout", "__selection", "__clearlsnip", "__replace", "__setsnip", "__setlsnip", "__if", "__nif" };
 		static string ExpandSnippetWithExpressions(string expand) {
 			StringBuilder ex, args, raw, err, allraw;
 			ex = new StringBuilder(); args = new StringBuilder(); raw = new StringBuilder(); err = new StringBuilder(); allraw = new StringBuilder();
@@ -1778,9 +1778,6 @@ namespace Mahou {
 						 ExprAgainTestOrSend(argv[1], ref EXSN_result);
 					}
 					break;
-				case "__execute":
-					Execute(args);
-					break;
 				case "__delay":
 					int d = 0;
 					if (Int32.TryParse(args, out d))
@@ -1901,35 +1898,6 @@ namespace Mahou {
 					last_snip = args;
 					lsnip_noset++;
 					break;
-			}
-		}
-		static void Execute(string args) {
-			if (!MMain.MyConfs.ReadBool("Hidden", "AllowSnippetExecute")) {
-				Logging.Log("[EXPR] __execute blocked by security policy.", 2);
-				return;
-			}
-			string fil = "", arg ="";
-			bool fil_get = false;
-			for (int i = 0; i < args.Length; i++) {
-				var c = args[i];
-				Debug.WriteLine("c: " +c);
-				if (!fil_get) {
-					if (c == '|') {
-						fil_get = true;
-					} else fil += c;
-				} else {
-					arg += c;
-				}
-			}
-			Logging.Log("[EXPR] > Executing an explicitly enabled external command; argument length=" + (arg == null ? 0 : arg.Length) + ".");
-			var p = new ProcessStartInfo();
-			p.Arguments = arg;
-			p.UseShellExecute = true;
-			p.FileName = fil;
-			try {
-				Process.Start(p);
-			} catch(Exception e) {
-				Logging.Log("[EXPR] > Execute error: " + e.Message);
 			}
 		}
 		public static List<Keys> strparsekey(string key, int times = 1) {

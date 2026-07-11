@@ -201,7 +201,6 @@ namespace Mahou {
         	ReadFromDisk();
         	#region Hidden
 			CheckBool("Hidden", "cmdbackfix", "true");
-			CheckBool("Hidden", "AllowSnippetExecute", "false");
 			CheckBool("Hidden", "DARKTHEME", "false");
 			CheckString("Hidden", "Layout_S_Modifier_Layout", "0");
 			CheckInt("Hidden", "Layout_S_Modifier_Key", "0");
