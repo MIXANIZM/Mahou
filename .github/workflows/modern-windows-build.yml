@@ -7,59 +7,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: modern-windows-build-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  apply-migrations:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout modern branch
-        uses: actions/checkout@v4
-        with:
-          ref: mixanizm-modern-v2.9.0.1
-          fetch-depth: 0
-          show-progress: false
-
-      - name: Apply staged migrations
-        shell: bash
-        run: |
-          set -euo pipefail
-          shopt -s nullglob
-          scripts=(.github/scripts/apply-*.py)
-          if [ ${#scripts[@]} -eq 0 ]; then
-            echo 'No staged migration scripts remain.'
-            exit 0
-          fi
-          for script in "${scripts[@]}"; do
-            echo "Applying $script"
-            python3 "$script"
-          done
-          if [ -n "$(git status --porcelain)" ]; then
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add -A
-            git commit -m 'chore: apply modern Mahou migration round'
-            git push origin HEAD:mixanizm-modern-v2.9.0.1
-          else
-            echo 'Migration scripts made no changes yet.'
-          fi
-
-      - name: Upload migration diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: modern-migration-diagnostics
-          path: migration-diagnostics
-          if-no-files-found: ignore
-          retention-days: 3
-
   build:
-    needs: apply-migrations
     runs-on: windows-2022
     timeout-minutes: 30
     strategy:
@@ -72,6 +27,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: mixanizm-modern-v2.9.0.1
+
+      - name: Verify security invariants
+        shell: pwsh
+        run: |
+          python .github/scripts/security-regression.py | Tee-Object -FilePath security-regression.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Package source snapshot
         if: matrix.platform == 'x86'
@@ -138,9 +99,24 @@ jobs:
           Copy-Item (Join-Path $source 'Mahou.exe.config') $dest -Force
           Copy-Item (Join-Path $source 'AS_dict.txt') $dest -Force
           Copy-Item "deterministic-build-$platform.txt" $dest -Force
+          Copy-Item 'security-regression.txt' $dest -Force
+          Copy-Item 'README-MIXANIZM.md' $dest -Force
+          Copy-Item 'SECURITY-AUDIT-MODERN.md' $dest -Force
+          Copy-Item 'KNOWN-LIMITATIONS.md' $dest -Force
+          Copy-Item 'TEST-PLAN-WINDOWS11.md' $dest -Force
 
           $commit = (git rev-parse HEAD).Trim()
-          $files = @('Mahou.exe','Mahou.exe.config','AS_dict.txt')
+          $files = @(
+            'Mahou.exe',
+            'Mahou.exe.config',
+            'AS_dict.txt',
+            'deterministic-build-' + $platform + '.txt',
+            'security-regression.txt',
+            'README-MIXANIZM.md',
+            'SECURITY-AUDIT-MODERN.md',
+            'KNOWN-LIMITATIONS.md',
+            'TEST-PLAN-WINDOWS11.md'
+          )
           $hashLines = @()
           $manifestFiles = @()
           foreach ($file in $files) {
@@ -160,6 +136,8 @@ jobs:
             deterministic_rebuild_verified = $true
             legacy_self_update = 'disabled'
             public_sync = 'disabled'
+            security_regression = 'passed'
+            runtime_test_status = 'required before release'
             files = $manifestFiles
           }
           $manifest | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $dest 'build-manifest.json') -Encoding utf8
