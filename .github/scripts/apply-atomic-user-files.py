@@ -14,7 +14,7 @@ def replace_eol(path, old, new, expected=1):
     old_crlf = old_lf.replace(b"\n", b"\r\n")
     new_crlf = new_lf.replace(b"\n", b"\r\n")
     count_lf = data.count(old_lf)
-    count_crlf = data.count(old_crlf)
+    count_crlf = data.count(old_crlf) if b"\n" in old_lf else 0
     count = count_lf + count_crlf
     if count != expected:
         raise RuntimeError(
