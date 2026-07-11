@@ -1,0 +1,49 @@
++8. **Snippet expression `__execute` could start arbitrary programs by default.**
++9. **Several timing/range values were accepted without bounds.**
++10. **Logging used blocking queue consumption and stored logs beside the executable.**
++
++## Hardening applied in the first security pass
++
++- Legacy updater download/install code removed from reachable methods; update UI is
++  disabled and describes manual verified releases.
++- Public backup/sync upload and restore UI is disabled; network methods are inert.
++- Dictionary update restores the dictionary shipped in the verified build instead of
++  downloading and executing extraction scripts.
++- Proxy password storage uses Windows DPAPI (`CurrentUser`) with migration from legacy
++  Base64/plain text.
++- Default data directory is `%APPDATA%\MIXANIZM Mahou`; logs use
++  `%LOCALAPPDATA%\MIXANIZM Mahou\Logs`.
++- Legacy portable data is copied once when the destination is absent. Incompatible
++  v1.4 settings are quarantined instead of parsed as modern settings.
++- Configuration writes use a temp file, replace/copy fallback and a backup.
++- Critical timing values are range-checked.
++- Autostart uses the current-user `Run` registry value; old shortcut/task entries are
++  removed but elevated tasks are never created.
++- Restart uses a bounded parent-process wait argument; exit no longer invokes `taskkill`.
++- Logging is non-blocking, bounded and size-rotated.
++- Clipboard preservation uses an OLE `IDataObject` snapshot without enumerating or
++  re-serializing HTML, RTF, Excel, image and file-drop formats. If preservation cannot
++  be guaranteed, selected-text conversion fails open without clearing the clipboard.
++- Clipboard waits are bounded.
++- Snippet `__execute` is blocked by default and requires an explicit hidden opt-in.
++- Caps Lock remapping and one-key layout switching default to off.
++- Untouched upstream word/selection hotkeys migrate to a shared `Insert` action.
++
++## Still requiring work or explicit product decisions
++
++- Translation is an explicit opt-in network feature and sends selected text to a remote
++  translation endpoint. The UI must clearly disclose that behavior before release.
++- JKL native helper lifecycle and binaries need a dedicated architecture/runtime audit.
++- The custom `Mahou.mm` menu intentionally supports launching local programs and URLs;
++  this must remain opt-in and be documented as executable local configuration.
++- Keyboard hook latency and all selected-text conversion paths require physical Windows
++  11 testing in Notepad, Chrome, Telegram/Discord, Word and Excel.
++- Authenticode signing is not configured.
++- Compiler warnings inherited from the modern baseline should be reduced after the
++  security-critical behavior is stable.
++
++## Release gate
++
++Do not merge or publish a release until x86/x64 builds pass, Windows 11 runtime tests are
++completed, a second independent audit is performed, and the resulting binaries are tied
++to a source commit with SHA-256 provenance.
