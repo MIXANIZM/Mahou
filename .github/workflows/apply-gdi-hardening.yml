@@ -37,6 +37,7 @@ jobs:
           fi
           python3 "$script"
           python3 .github/scripts/security-regression.py
+          git config core.whitespace cr-at-eol
           git diff --check
           rm -f .github/workflows/apply-gdi-hardening.yml
           git config user.name 'github-actions[bot]'
