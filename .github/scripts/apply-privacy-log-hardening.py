@@ -57,5 +57,16 @@ replacements = [
 for old, new in replacements:
     replace(p, old, new)
 
+path = ROOT / p
+lines = path.read_text(encoding="utf-8-sig").splitlines(True)
+markers = [new.split('Logging.Log(', 1)[1].split('"', 2)[1] for _, new in replacements if 'Logging.Log(' in new]
+for index, line in enumerate(lines):
+    if not any(marker in line for marker in markers):
+        continue
+    prefix = line[:len(line) - len(line.lstrip(" \t"))]
+    width = len(prefix.expandtabs(4))
+    lines[index] = "\t" * (width // 4) + " " * (width % 4) + line.lstrip(" \t")
+path.write_text("".join(lines), encoding="utf-8-sig", newline="")
+
 Path(__file__).unlink()
 print("Privacy-safe logging hardening applied: %d plaintext log sites replaced." % len(replacements))
