@@ -176,6 +176,9 @@
     <Compile Include="MahouUI.Security.cs">
       <DependentUpon>MahouUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="MahouUI.Compatibility.cs">
+      <DependentUpon>MahouUI.cs</DependentUpon>
+    </Compile>
     <Compile Include="MahouUI.Designer.cs">
       <DependentUpon>MahouUI.cs</DependentUpon>
     </Compile>

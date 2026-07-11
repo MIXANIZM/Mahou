@@ -2602,13 +2602,13 @@ namespace Mahou {
 				return;
 			}
 			if (selectionState == SelectionProbe.State.None) {
-				ConvertLast();
+				ConvertLast(MMain.c_word);
 				return;
 			}
 			selectionConversionSucceeded = false;
 			ConvertSelection();
 			if (!selectionConversionSucceeded && selectionState != SelectionProbe.State.Selected)
-				ConvertLast();
+				ConvertLast(MMain.c_word);
 		}
 		public static void ConvertSelection() {
 			selectionConversionSucceeded = false;
