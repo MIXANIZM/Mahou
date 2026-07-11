@@ -10,21 +10,40 @@ migrations = root / ".github" / "migrations"
 diagnostics = root / "migration-diagnostics"
 diagnostics.mkdir(parents=True, exist_ok=True)
 
+expected_encoded_length = 24680
+expected_encoded_sha256 = "7da27a8c708c555517d2d22d03b50e9915da0912336c6ea7a09982852ee28f67"
+expected_patch_size = 18510
+expected_patch_sha256 = "ae0eb34751924e48b8bd948c89972af640366292e2952999191aea2ce705e97c"
+
 try:
-    parts = sorted(migrations.glob("round3.b64.*"))
+    parts = sorted(migrations.glob("r3small.*"))
+    if len(parts) < 7:
+        print("Round 3 waiting for all chunks: %d/7" % len(parts))
+        raise SystemExit(0)
+    if len(parts) != 7:
+        raise RuntimeError("Expected exactly seven round3 migration chunks, found %d" % len(parts))
+
     lines = ["parts=" + str(len(parts))]
     for part in parts:
         data = part.read_bytes()
         lines.append(part.name + " size=" + str(len(data)) + " sha256=" + hashlib.sha256(data).hexdigest())
-    if len(parts) != 3:
-        raise RuntimeError("Expected exactly three round3 migration chunks")
 
     encoded = "".join(part.read_text(encoding="ascii").strip() for part in parts)
+    encoded_bytes = encoded.encode("ascii")
+    encoded_hash = hashlib.sha256(encoded_bytes).hexdigest()
     lines.append("encoded_length=" + str(len(encoded)))
-    patch = base64.b64decode(encoded, validate=True)
-    lines.append("patch_size=" + str(len(patch)) + " patch_sha256=" + hashlib.sha256(patch).hexdigest())
-    (diagnostics / "round3-summary.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    lines.append("encoded_sha256=" + encoded_hash)
+    if len(encoded) != expected_encoded_length or encoded_hash != expected_encoded_sha256:
+        raise RuntimeError("Round 3 encoded payload identity mismatch")
 
+    patch = base64.b64decode(encoded, validate=True)
+    patch_hash = hashlib.sha256(patch).hexdigest()
+    lines.append("patch_size=" + str(len(patch)))
+    lines.append("patch_sha256=" + patch_hash)
+    if len(patch) != expected_patch_size or patch_hash != expected_patch_sha256:
+        raise RuntimeError("Round 3 decoded patch identity mismatch")
+
+    (diagnostics / "round3-summary.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
     patch_path = migrations / "round3.patch"
     patch_path.write_bytes(patch)
 
@@ -38,9 +57,13 @@ try:
 
     for part in parts:
         part.unlink()
+    for old_part in migrations.glob("round3.b64.*"):
+        old_part.unlink()
     patch_path.unlink()
     Path(__file__).unlink()
     print("Round 3 clipboard fail-safe hardening applied.")
+except SystemExit:
+    raise
 except BaseException:
     (diagnostics / "round3-error.txt").write_text(traceback.format_exc(), encoding="utf-8")
     raise
