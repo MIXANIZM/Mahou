@@ -26,7 +26,9 @@ forbidden = {
            "UploadData(", "https://hastebin.com", "https://0x0.st", "Shell.Application", "TASKKILL /IM"],
     "startup": ["/Create /TN", "Startup\\Mahou.lnk"],
     "program": ["taskkill", "RestartMahou.cmd", "RestartMahou.vbs"],
-    "hook": ["lastClipText", "MahouUI.ClipBackOnlyText"],
+    "configs": ["AllowSnippetExecute"],
+    "hook": ["lastClipText", "MahouUI.ClipBackOnlyText", '"__execute"',
+             "static void Execute(string args)", "Process.Start(p)"],
 }
 for key, needles in forbidden.items():
     source = files[key].lower()
@@ -38,8 +40,7 @@ required = {
     "security_ui": ["LegacyNetworkDisabledMessage", "ClipBackOnlyText = false;",
                     'MMain.MyConfs.Write("Hidden", "ClipBackOnlyText", "false")',
                     "txt_ProxyPassword.UseSystemPasswordChar = true"],
-    "configs": ['CheckBool("Hidden", "AllowSnippetExecute", "false")',
-                'CheckBool("Functions", "UseJKL", "false")',
+    "configs": ['CheckBool("Functions", "UseJKL", "false")',
                 'CheckBool("Functions", "RemapCapslockAsF18", "false")',
                 'CheckBool("Layouts", "ChangeToSpecificLayoutByKey", "false")',
                 'CheckBool("Migrations", "MixanizmDefaultsV1", "false")'],
@@ -48,7 +49,7 @@ required = {
     "hook": ["CaptureClipboardBackup", "EnsureClipboardBackup", "EnsureClipboardRestored",
              "Temporary clipboard replacement refused because no full backup exists",
              "ConvertSelectionOrLastWord", "SelectionProbe.GetState",
-             "selected text length=", "input length=", "argument length=",
+             "selected text length=", "input length=",
              "Current snippet length:", "Snippet rewrite completed; source length="],
     "secrets": ["ProtectedData.Protect", "ProtectedData.Unprotect", "DataProtectionScope.CurrentUser"],
     "startup": ["CurrentVersion\\Run", "MIXANIZM Mahou", "/Delete /TN"],
@@ -61,8 +62,6 @@ for key, needles in required.items():
         if needle not in source:
             errors.append("required hardening marker missing in %s: %s" % (key, needle))
 
-# Diagnostic logs must never serialize user-entered snippets, selected text,
-# transformed output, dictionary entries, executable arguments, or raw expressions.
 privacy_forbidden = [
     'Starting conversion of [" + ClipStr',
     'Conversion of string [" + ClipStr',
@@ -80,18 +79,15 @@ for needle in privacy_forbidden:
     if needle in files["hook"]:
         errors.append("plaintext diagnostic logging returned in hook: %s" % needle)
 
-# No executable distribution scripts in the application tree.
 for pattern in ("*.cmd", "*.bat", "*.vbs", "*.ps1"):
     for script in (ROOT / "Mahou").rglob(pattern):
         errors.append("obsolete executable script remains in application tree: %s" % script.relative_to(ROOT))
 
-# WebClient is permitted only in the explicitly opt-in translator.
 for path in (ROOT / "Mahou").rglob("*.cs"):
     source=path.read_text(encoding="utf-8-sig")
     if "WebClient" in source and path.name != "TranslatePanel.cs":
         errors.append("unexpected WebClient use outside translator: %s" % path.relative_to(ROOT))
 
-# Temporary text replacement must be guarded by a pending full snapshot.
 hook=files["hook"]
 start=hook.find('public static bool RestoreClipBoard(string special = "")')
 end=hook.find('public static void EnsureClipboardRestored()', start)
