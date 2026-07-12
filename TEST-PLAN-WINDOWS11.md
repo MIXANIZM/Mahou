@@ -2,10 +2,23 @@
 
 ## Insert and keyboard hooks
 
-- Test Insert with no selection: the last word changes immediately and the clipboard is untouched.
+- Test Insert with no selection: supported direct Edit/Word targets change without touching the clipboard; unsupported controls are a complete no-op.
 - Test Insert with selected text in Notepad, Word, Chrome, Telegram and Discord.
 - Confirm password fields suppress conversion.
 - Test fast typing, held modifiers, key repeat, Backspace, Space, Enter and application switching.
+
+### Emergency no-synthetic-selection regression
+
+Use a fresh disposable document and record the full text, caret, selection, keyboard layout and clipboard before every step.
+
+- In Notepad/Edit and RichEdit, test `one two three four` with the caret inside and after every word. Only the direct target word may change; the prefix, suffix and separators must remain byte-for-byte identical.
+- In Word, repeat the same matrix in two documents and switch documents between Insert presses. Only the active, revalidated Word Range may change.
+- In Chrome textarea/contenteditable, Telegram and Discord, no-selection Insert must be a complete no-op until a direct adapter exists: no text, caret, selection, layout or clipboard change.
+- Repeat Insert 20 times on one word, then on different words with mouse clicks and Left/Right/Home/End between presses. No blue selection may appear at any point.
+- Test held and rapidly repeated Insert. One hotkey event may run at most one mutating direct strategy.
+- Force an unsupported control, `SelectionProbe.State.Unknown`, a protected field and a direct-adapter failure. Every case must be a complete no-op.
+- After every return from no-selection Insert, verify that no new selection exists and that ordinary typing and Backspace affect only the current caret position.
+- With an existing user-created selection, verify that Insert still converts that selection. Then clear the selection manually before testing the no-selection path again.
 
 ## Clipboard
 

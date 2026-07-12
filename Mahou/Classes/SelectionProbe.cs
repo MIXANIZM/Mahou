@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Automation;
-using System.Windows.Automation.Text;
 
 namespace Mahou {
     /// <summary>
@@ -218,59 +217,6 @@ namespace Mahou {
             return true;
         }
 
-        static bool TryFindExactTextBounds(string text, int caret, string expected, out int start, out int end) {
-            start = 0;
-            end = 0;
-            if (String.IsNullOrEmpty(text) || String.IsNullOrEmpty(expected) ||
-                caret < 0 || caret > text.Length || expected.Length > text.Length)
-                return false;
-
-            var bestStart = -1;
-            var bestEnd = -1;
-            var bestDistance = Int32.MaxValue;
-            var bestSide = Int32.MaxValue;
-            var ambiguous = false;
-            var searchStart = Math.Max(0, caret - expected.Length - MaxAdjacentWhitespaceProbe);
-            var searchEnd = Math.Min(text.Length - expected.Length, caret + MaxAdjacentWhitespaceProbe);
-            for (var candidateStart = searchStart; candidateStart <= searchEnd; candidateStart++) {
-                if (!String.Equals(text.Substring(candidateStart, expected.Length), expected, StringComparison.Ordinal))
-                    continue;
-                var candidateEnd = candidateStart + expected.Length;
-                int distance;
-                int side;
-                if (caret >= candidateStart && caret <= candidateEnd) {
-                    distance = 0;
-                    side = candidateEnd <= caret ? 0 : 1;
-                } else if (candidateEnd < caret &&
-                           caret - candidateEnd <= MaxAdjacentWhitespaceProbe &&
-                           IsWhitespaceOnly(text, candidateEnd, caret)) {
-                    distance = caret - candidateEnd;
-                    side = 0;
-                } else if (candidateStart > caret &&
-                           candidateStart - caret <= MaxAdjacentWhitespaceProbe &&
-                           IsWhitespaceOnly(text, caret, candidateStart)) {
-                    distance = candidateStart - caret;
-                    side = 1;
-                } else {
-                    continue;
-                }
-
-                if (distance < bestDistance || (distance == bestDistance && side < bestSide)) {
-                    bestStart = candidateStart;
-                    bestEnd = candidateEnd;
-                    bestDistance = distance;
-                    bestSide = side;
-                    ambiguous = false;
-                } else if (distance == bestDistance && side == bestSide && candidateStart != bestStart) {
-                    ambiguous = true;
-                }
-            }
-            if (bestStart < 0 || ambiguous) return false;
-            start = bestStart;
-            end = bestEnd;
-            return true;
-        }
-
         static bool TryFindWordBounds(string text, int caret, int maxCharacters, out int start, out int end) {
             start = 0;
             end = 0;
@@ -342,42 +288,6 @@ namespace Mahou {
             return TryGetStandardEditSelectedText(maxCharacters, out selectedText);
         }
 
-        internal static DirectWordResult TryReplaceStandardExactTextAroundCaret(string expected,
-                                                                                  string replacement) {
-            if (String.IsNullOrEmpty(expected) || replacement == null) return DirectWordResult.Unavailable;
-            try {
-                IntPtr foreground;
-                IntPtr focused;
-                bool sensitive;
-                if (!TryGetFocusedStandardEdit(out foreground, out focused, out sensitive))
-                    return DirectWordResult.Unavailable;
-                if (sensitive) return DirectWordResult.Sensitive;
-
-                int selectionStart;
-                int selectionEnd;
-                if (!TryGetSelection(focused, out selectionStart, out selectionEnd))
-                    return DirectWordResult.Unavailable;
-                if (selectionEnd > selectionStart) return DirectWordResult.Unavailable;
-
-                string fullText;
-                if (!TryGetStandardEditText(focused, out fullText)) return DirectWordResult.Unavailable;
-                int exactStart;
-                int exactEnd;
-                if (!TryFindExactTextBounds(fullText, selectionStart, expected, out exactStart, out exactEnd))
-                    return DirectWordResult.NoWord;
-
-                var exact = new StandardEditWord(foreground, focused, exactStart, exactEnd,
-                                                 selectionStart, expected);
-                return TryReplaceStandardEditWord(exact, replacement)
-                    ? DirectWordResult.Replaced
-                    : DirectWordResult.Failed;
-            } catch (UnauthorizedAccessException) {
-                return DirectWordResult.Sensitive;
-            } catch (Exception) {
-                return DirectWordResult.Failed;
-            }
-        }
-
         internal static DirectWordResult TryGetStandardEditWordAroundCaret(int maxCharacters, out StandardEditWord word) {
             word = null;
             try {
@@ -415,6 +325,7 @@ namespace Mahou {
         internal static bool TryReplaceStandardEditWord(StandardEditWord word, string replacement) {
             if (word == null || replacement == null) return false;
             var redrawDisabled = false;
+            var selectionApplied = false;
             var replacementApplied = false;
             try {
                 IntPtr foreground;
@@ -443,13 +354,15 @@ namespace Mahou {
                 if (SendMessageTimeout(focused, EM_SETSEL, (IntPtr)word.Start, (IntPtr)word.End,
                                        SMTO_ABORTIFHUNG, 40, out ignored) == IntPtr.Zero)
                     return false;
+                selectionApplied = true;
                 if (SendMessageTimeoutString(focused, EM_REPLACESEL, (IntPtr)1, replacement,
-                                             SMTO_ABORTIFHUNG, 100, out ignored) == IntPtr.Zero) {
+                                              SMTO_ABORTIFHUNG, 100, out ignored) == IntPtr.Zero) {
                     SendMessageTimeout(focused, EM_SETSEL, (IntPtr)word.Caret, (IntPtr)word.Caret,
                                        SMTO_ABORTIFHUNG, 40, out ignored);
                     return false;
                 }
                 replacementApplied = true;
+                selectionApplied = false;
 
                 var delta = replacement.Length - (word.End - word.Start);
                 var newCaret = word.Caret <= word.Start
@@ -463,6 +376,13 @@ namespace Mahou {
             } catch {
                 return replacementApplied;
             } finally {
+                if (selectionApplied && !replacementApplied) {
+                    try {
+                        IntPtr ignored;
+                        SendMessageTimeout(word.FocusedWindow, EM_SETSEL, (IntPtr)word.Caret, (IntPtr)word.Caret,
+                                           SMTO_ABORTIFHUNG, 40, out ignored);
+                    } catch { }
+                }
                 if (redrawDisabled) {
                     try {
                         IntPtr ignored;
@@ -472,78 +392,6 @@ namespace Mahou {
                         UpdateWindow(word.FocusedWindow);
                     } catch { }
                 }
-            }
-        }
-
-        internal static DirectWordResult TryReplaceActiveExactTextRangeAroundCaret(string expected,
-                                                                                     string replacement) {
-            if (String.IsNullOrEmpty(expected) || replacement == null) return DirectWordResult.Unavailable;
-
-            object applicationObject = null;
-            object selectionObject = null;
-            object documentObject = null;
-            object contentObject = null;
-            object contextRangeObject = null;
-            object targetRangeObject = null;
-            var replacementApplied = false;
-            try {
-                applicationObject = Marshal.GetActiveObject("Word.Application");
-                dynamic application = applicationObject;
-                selectionObject = application.Selection;
-                dynamic selection = selectionObject;
-                var selectionStart = (int)selection.Start;
-                var selectionEnd = (int)selection.End;
-                if (selectionEnd > selectionStart) return DirectWordResult.Unavailable;
-
-                documentObject = application.ActiveDocument;
-                dynamic document = documentObject;
-                contentObject = document.Content;
-                dynamic content = contentObject;
-                var documentEnd = Math.Max(0, (int)content.End - 1);
-                if (selectionStart < 0 || selectionStart > documentEnd) return DirectWordResult.Unavailable;
-
-                var contextStart = Math.Max(0, selectionStart - expected.Length - MaxAdjacentWhitespaceProbe);
-                var contextEnd = Math.Min(documentEnd, selectionStart + expected.Length + MaxAdjacentWhitespaceProbe);
-                contextRangeObject = document.Range(contextStart, contextEnd);
-                dynamic contextRange = contextRangeObject;
-                var contextText = (string)contextRange.Text ?? String.Empty;
-                var localCaret = selectionStart - contextStart;
-
-                int localStart;
-                int localEnd;
-                if (!TryFindExactTextBounds(contextText, localCaret, expected, out localStart, out localEnd))
-                    return DirectWordResult.NoWord;
-
-                var targetStart = contextStart + localStart;
-                var targetEnd = contextStart + localEnd;
-                targetRangeObject = document.Range(targetStart, targetEnd);
-                dynamic targetRange = targetRangeObject;
-                var current = (string)targetRange.Text ?? String.Empty;
-                if (!String.Equals(current, expected, StringComparison.Ordinal)) return DirectWordResult.NoWord;
-
-                if (!String.Equals(current, replacement, StringComparison.Ordinal)) targetRange.Text = replacement;
-                replacementApplied = true;
-                var delta = replacement.Length - expected.Length;
-                var newCaret = selectionStart <= targetStart
-                    ? targetStart
-                    : selectionStart >= targetEnd
-                        ? selectionStart + delta
-                        : targetStart + Math.Min(selectionStart - targetStart, replacement.Length);
-                selection.SetRange(newCaret, newCaret);
-                return DirectWordResult.Replaced;
-            } catch (UnauthorizedAccessException) {
-                return replacementApplied ? DirectWordResult.Replaced : DirectWordResult.Sensitive;
-            } catch (COMException) {
-                return replacementApplied ? DirectWordResult.Replaced : DirectWordResult.Unavailable;
-            } catch (Exception) {
-                return replacementApplied ? DirectWordResult.Replaced : DirectWordResult.Failed;
-            } finally {
-                ReleaseComObject(targetRangeObject);
-                ReleaseComObject(contextRangeObject);
-                ReleaseComObject(contentObject);
-                ReleaseComObject(documentObject);
-                ReleaseComObject(selectionObject);
-                ReleaseComObject(applicationObject);
             }
         }
 
@@ -626,110 +474,6 @@ namespace Mahou {
                 ReleaseComObject(selectionObject);
                 ReleaseComObject(applicationObject);
             }
-        }
-
-        internal static bool TrySelectAutomationExactTextAroundCaret(string expected,
-                                                                         out int trailingSeparatorCount) {
-            trailingSeparatorCount = 0;
-            if (String.IsNullOrEmpty(expected)) return false;
-            try {
-                var focused = AutomationElement.FocusedElement;
-                if (focused == null || focused.Current.IsPassword) return false;
-
-                object patternObject;
-                if (!focused.TryGetCurrentPattern(TextPattern.Pattern, out patternObject)) return false;
-                var pattern = patternObject as TextPattern;
-                if (pattern == null) return false;
-                var ranges = pattern.GetSelection();
-                if (ranges == null || ranges.Length == 0 || ranges[0] == null) return false;
-                if (!String.IsNullOrEmpty(ranges[0].GetText(1))) return false;
-
-                var exactRange = ranges[0].Clone();
-                var requestedContext = expected.Length + MaxAdjacentWhitespaceProbe;
-                var movedStart = exactRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
-                                                                TextUnit.Character, -requestedContext);
-                var caretOffset = Math.Max(0, -movedStart);
-                exactRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
-                                               TextUnit.Character, requestedContext);
-                var raw = exactRange.GetText(requestedContext * 2 + 1);
-                if (String.IsNullOrEmpty(raw) || caretOffset > raw.Length) return false;
-
-                int exactStart;
-                int exactEnd;
-                if (!TryFindExactTextBounds(raw, caretOffset, expected, out exactStart, out exactEnd))
-                    return false;
-                if (caretOffset > exactEnd && IsWhitespaceOnly(raw, exactEnd, caretOffset))
-                    trailingSeparatorCount = caretOffset - exactEnd;
-                if (exactStart > 0 && exactRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
-                                                                    TextUnit.Character, exactStart) != exactStart)
-                    return false;
-                var trailing = raw.Length - exactEnd;
-                if (trailing > 0 && exactRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
-                                                                  TextUnit.Character, -trailing) != -trailing)
-                    return false;
-                if (!String.Equals(exactRange.GetText(expected.Length + 1), expected, StringComparison.Ordinal))
-                    return false;
-                exactRange.Select();
-                return true;
-            } catch (ElementNotAvailableException) {
-            } catch (InvalidOperationException) {
-            } catch (COMException) {
-            } catch (UnauthorizedAccessException) {
-            }
-            return false;
-        }
-
-        internal static bool TrySelectAutomationWordAroundCaret(int maxCharacters, out string selectedWord,
-                                                                    out int trailingSeparatorCount) {
-            selectedWord = String.Empty;
-            trailingSeparatorCount = 0;
-            try {
-                var focused = AutomationElement.FocusedElement;
-                if (focused == null || focused.Current.IsPassword) return false;
-
-                object patternObject;
-                if (!focused.TryGetCurrentPattern(TextPattern.Pattern, out patternObject)) return false;
-                var pattern = patternObject as TextPattern;
-                if (pattern == null) return false;
-                var ranges = pattern.GetSelection();
-                if (ranges == null || ranges.Length == 0 || ranges[0] == null) return false;
-                if (!String.IsNullOrEmpty(ranges[0].GetText(1))) return false;
-
-                var wordRange = ranges[0].Clone();
-                var requestedContext = maxCharacters + MaxAdjacentWhitespaceProbe;
-                var movedStart = wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
-                                                               TextUnit.Character, -requestedContext);
-                var caretOffset = Math.Max(0, -movedStart);
-                wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
-                                              TextUnit.Character, requestedContext);
-                var raw = wordRange.GetText(requestedContext * 2 + 1);
-                if (String.IsNullOrEmpty(raw) || caretOffset > raw.Length) return false;
-
-                int wordStart;
-                int wordEnd;
-                if (!TryFindWordBounds(raw, caretOffset, maxCharacters, out wordStart, out wordEnd))
-                    return false;
-                if (caretOffset > wordEnd && IsWhitespaceOnly(raw, wordEnd, caretOffset))
-                    trailingSeparatorCount = caretOffset - wordEnd;
-                if (wordStart > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
-                                                                  TextUnit.Character, wordStart) != wordStart)
-                    return false;
-                var trailing = raw.Length - wordEnd;
-                if (trailing > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
-                                                                 TextUnit.Character, -trailing) != -trailing)
-                    return false;
-
-                var trimmed = raw.Substring(wordStart, wordEnd - wordStart);
-                if (!IsSingleWord(trimmed, maxCharacters)) return false;
-                wordRange.Select();
-                selectedWord = trimmed;
-                return true;
-            } catch (ElementNotAvailableException) {
-            } catch (InvalidOperationException) {
-            } catch (COMException) {
-            } catch (UnauthorizedAccessException) {
-            }
-            return false;
         }
 
         static void ReleaseComObject(object value) {

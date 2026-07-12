@@ -10,6 +10,24 @@ def text(relative):
     return (ROOT / relative).read_text(encoding="utf-8-sig")
 
 
+def method_body(source, signature):
+    start = source.find(signature)
+    if start < 0:
+        return ""
+    opening = source.find("{", start)
+    if opening < 0:
+        return ""
+    depth = 0
+    for index in range(opening, len(source)):
+        if source[index] == "{":
+            depth += 1
+        elif source[index] == "}":
+            depth -= 1
+            if depth == 0:
+                return source[start:index + 1]
+    return ""
+
+
 files = {
     "ui": text("Mahou/MahouUI.cs"),
     "security_ui": text("Mahou/MahouUI.Security.cs"),
@@ -56,7 +74,20 @@ forbidden = {
              "if (LLHook._ACTIVE) { LLHook.Set(); }",
              "ConvertLast(MMain.c_word);",
              "TryConvertWordBeforeCaret",
-             "select_word_before_caret"],
+             "select_word_before_caret",
+             "ManualWordRoundTrip", "TryConvertRecentManualWordRoundTrip",
+             "RememberManualWordRoundTrip", "TryConvertWordAroundCaret",
+             "TrySelectRecentExactTextBeforeCaret", "ReselectGeneratedCaretWordWithoutSeparators",
+             "TryNormalizeGeneratedCaretWordSelection", "CollapseGeneratedCaretWordSelection",
+             "RestoreCaretPastPreservedSeparators", "ShouldPreferTrackedWordForManualConversion",
+             "generatedSelection", "selectionWasRequested", "select_previous_word_fallback",
+             'ReSelect(items, "N")'],
+    "selection_probe": ["TrySelectAutomationWordAroundCaret",
+                        "TrySelectAutomationExactTextAroundCaret",
+                        "TryReplaceStandardExactTextAroundCaret",
+                        "TryReplaceActiveExactTextRangeAroundCaret",
+                        "TryFindExactTextBounds", "TextPatternRange.Select()", ".Select();",
+                        "exactRange.Select()", "wordRange.Select()"],
     "lang_display": ["DrawString(lbLang.Text, lbLang.Font, new SolidBrush",
                      "Icon.FromHandle((", "DestroyIcon(fi.Handle)"],
     "lang_panel": ["Graphics g = CreateGraphics();", "var pn = new Pen(Color.Black);",
@@ -126,42 +157,24 @@ required = {
              "AtomicFile.WriteAllText(PATH, DictToRaw(def));",
              "static int manualConversionInProgress;",
              "Interlocked.CompareExchange(ref manualConversionInProgress, 1, 0)",
-             "new List<YuKey>(MMain.c_word)",
              "var llHookWasActive = LLHook._ACTIVE;",
              "if (llHookWasActive) LLHook.Set();",
              "Hotkey restore failed after",
              "Raw-input restore failed after",
              "TryConvertWordWithoutVisibleSelection",
-             "TryConvertWordAroundCaret",
              "SwitchLayoutAfterManualConversion",
              "Keyboard layout synchronized with converted text",
-             "TryConvertRecentManualWordRoundTrip",
-             "RememberManualWordRoundTrip",
-             "Restored a recent manual conversion exactly",
-             "ShouldPreferTrackedWordForManualConversion",
-             "Using the tracked physical-key word because it contains an internal layout-letter symbol",
-             "RestoreCaretPastPreservedSeparators",
-             "ReselectGeneratedCaretWordWithoutSeparators",
-             "TrySelectRecentExactTextBeforeCaret",
              "SelectionProbe.TryGetStandardEditWordAroundCaret",
              "SelectionProbe.TryReplaceStandardEditWord",
              "SelectionProbe.TryReplaceActiveWordRange",
-             "SelectionProbe.TrySelectAutomationWordAroundCaret",
-             "select_previous_word_fallback",
-             "CollapseGeneratedCaretWordSelection",
              "MaxCaretWordCharacters = 256"],
-    "selection_probe": ["TryGetSelectedText", "TryGetAutomationSelectedText",
-                        "TryGetStandardEditSelectedText", "TryFindWordBounds",
-                        "TryGetStandardEditWordAroundCaret", "TryReplaceStandardEditWord",
-                        "TryReplaceActiveWordRange", "TrySelectAutomationWordAroundCaret",
-                        "TryReplaceStandardExactTextAroundCaret",
-                        "TryReplaceActiveExactTextRangeAroundCaret",
-                        "TrySelectAutomationExactTextAroundCaret",
-                        "TryFindExactTextBounds",
-                        "EM_REPLACESEL", "WM_SETREDRAW", "SendMessageTimeoutString",
-                        "var caretInsideWord = caretOnWord && leftOnWord;",
-                        "var caretOffset = Math.Max(0, -movedStart);",
-                        "Marshal.GetActiveObject(\"Word.Application\")"],
+    "selection_probe": ["TryGetAutomationSelectedText",
+                         "TryGetStandardEditSelectedText", "TryFindWordBounds",
+                         "TryGetStandardEditWordAroundCaret", "TryReplaceStandardEditWord",
+                         "TryReplaceActiveWordRange",
+                         "EM_REPLACESEL", "WM_SETREDRAW", "SendMessageTimeoutString",
+                         "var caretInsideWord = caretOnWord && leftOnWord;",
+                         "Marshal.GetActiveObject(\"Word.Application\")"],
     "secrets": ["ProtectedData.Protect", "ProtectedData.Unprotect", "DataProtectionScope.CurrentUser"],
     "startup": ["CurrentVersion\\Run", "MIXANIZM Mahou", "/Delete /TN"],
     "paths": ["MIXANIZM Mahou", "Environment.SpecialFolder.ApplicationData"],
@@ -249,6 +262,83 @@ body = hook[start:end]
 for marker in ("clipboardBackupPending", "lastClip == null", "NativeClipboard.SetText(special)"):
     if marker not in body:
         errors.append("clipboard replacement guard incomplete: %s" % marker)
+
+# Collapsed-caret Insert is a capability-restricted pipeline. It may probe and use
+# the two direct range adapters, but it must never synthesize a selection or fall
+# back to keyboard/clipboard mutation.
+dispatcher = method_body(hook, "public static void ConvertSelectionOrLastWord()")
+direct_insert = method_body(hook, "static bool TryConvertWordWithoutVisibleSelection()")
+standard_replace = method_body(files["selection_probe"], "internal static bool TryReplaceStandardEditWord(")
+word_replace = method_body(files["selection_probe"], "internal static DirectWordResult TryReplaceActiveWordRange(")
+
+if not dispatcher:
+    errors.append("Insert dispatcher body could not be isolated")
+else:
+    unknown_guard = "if (selectionState == SelectionProbe.State.Unknown)"
+    collapsed_guard = "if (selectionState != SelectionProbe.State.None) return;"
+    unknown_start = dispatcher.find(unknown_guard)
+    collapsed_start = dispatcher.find(collapsed_guard)
+    if unknown_start < 0 or collapsed_start < 0 or unknown_start > collapsed_start:
+        errors.append("Insert dispatcher does not separate Unknown from collapsed-caret state")
+    else:
+        unknown_path = dispatcher[unknown_start:collapsed_start]
+        if "return;" not in unknown_path:
+            errors.append("Unknown selection state is not a strict no-op")
+        collapsed_path = dispatcher[collapsed_start:]
+        collapsed_forbidden = (
+            "ConvertSelection(", "ConvertLast(", "StartConvertWord(", "ReSelect(",
+            "GetClipStr(", "PasteText(", "KInputs.", "Clipboard", "TrySelect",
+            "CollapseGenerated", "RestoreCaret", "ChangeLayout(", "SwitchLayoutAfterManualConversion("
+        )
+        for marker in collapsed_forbidden:
+            if marker in collapsed_path:
+                errors.append("collapsed-caret dispatcher reaches forbidden capability: %s" % marker)
+        if collapsed_path.count("TryConvertWordWithoutVisibleSelection();") != 1:
+            errors.append("collapsed-caret dispatcher must invoke exactly one direct strategy router")
+
+if not direct_insert:
+    errors.append("direct collapsed-caret Insert body could not be isolated")
+else:
+    for marker in ("ConvertSelection(", "ConvertLast(", "StartConvertWord(", "ReSelect(",
+                   "GetClipStr(", "PasteText(", "KInputs.", "Clipboard", "TrySelect",
+                   ".Select()", "EM_SETSEL", "EM_REPLACESEL"):
+        if marker in direct_insert:
+            errors.append("direct collapsed-caret Insert uses forbidden fallback: %s" % marker)
+    if direct_insert.count("SelectionProbe.TryReplaceStandardEditWord(") != 1:
+        errors.append("direct Insert must have exactly one Standard Edit mutation call site")
+    if direct_insert.count("SelectionProbe.TryReplaceActiveWordRange(") != 1:
+        errors.append("direct Insert must have exactly one Word Range mutation call site")
+    standard_ready = direct_insert.find("standardResult == SelectionProbe.DirectWordResult.Ready")
+    word_strategy = direct_insert.find('ActiveProcessIs("WINWORD")')
+    if standard_ready < 0 or word_strategy < 0 or standard_ready > word_strategy:
+        errors.append("direct Insert strategy order changed unexpectedly")
+    elif "return true;" not in direct_insert[standard_ready:word_strategy]:
+        errors.append("Standard Edit mutation is not terminal for the current Insert")
+
+standard_markers = (
+    "foreground != word.ForegroundWindow || focused != word.FocusedWindow",
+    "selectionStart != word.Caret || selectionEnd != word.Caret",
+    "currentText.Substring(word.Start, word.End - word.Start)",
+    "EM_SETSEL, (IntPtr)word.Start, (IntPtr)word.End",
+    "EM_REPLACESEL", "selectionApplied = true", "selectionApplied && !replacementApplied",
+    "EM_SETSEL, (IntPtr)word.Caret, (IntPtr)word.Caret"
+)
+for marker in standard_markers:
+    if marker not in standard_replace:
+        errors.append("Standard Edit direct adapter lost safety invariant: %s" % marker)
+
+word_markers = (
+    "selectionEnd > selectionStart", "TryFindWordBounds", "targetRange.Text",
+    "IsSingleWord(source, maxCharacters)", "targetRange.Text = replacement",
+    "replacementApplied ? DirectWordResult.Replaced"
+)
+for marker in word_markers:
+    if marker not in word_replace:
+        errors.append("Word direct adapter lost safety invariant: %s" % marker)
+
+for marker in ("KInputs.", "GetClipStr(", "PasteText(", ".Select()"):
+    if marker in standard_replace or marker in word_replace:
+        errors.append("direct adapter gained forbidden keyboard/clipboard/selection capability: %s" % marker)
 
 if errors:
     print("SECURITY REGRESSION CHECK FAILED")

@@ -77,6 +77,13 @@ jobs:
           & msbuild Mahou/Mahou.sln /m /t:Rebuild /p:Configuration=Release /p:Platform=$platform /p:Deterministic=true "/p:OutputPath=$build2" "/p:IntermediateOutputPath=$obj2" /v:minimal /fl "/flp:logfile=msbuild-$platform-build2.log;verbosity=normal"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+          $testExe = Join-Path $root "artifacts/$platform/InsertSafetyRegression.exe"
+          $csc = Join-Path ([System.Runtime.InteropServices.RuntimeEnvironment]::GetRuntimeDirectory()) 'csc.exe'
+          & $csc /nologo "/platform:$platform" "/out:$testExe" .github/tests/InsertSafetyRegression.cs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $testExe (Join-Path $build1 'Mahou.exe')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
           $files = @('Mahou.exe','Mahou.exe.config','AS_dict.txt')
           $lines = @()
           foreach ($file in $files) {
