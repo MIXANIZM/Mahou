@@ -24,140 +24,46 @@ jobs:
           ref: mixanizm-modern-v2.9.0.1
           fetch-depth: 0
 
-      - name: Apply left-biased caret boundary rule
+      - name: Normalize and apply exact patch
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
+          import json
 
-          path = Path('Mahou/Classes/SelectionProbe.cs')
-          raw = path.read_bytes()
+          files = [
+              Path('.github/scripts/security-regression.py'),
+              Path('Mahou/Classes/SelectionProbe.cs'),
+          ]
           bom = b'\xef\xbb\xbf'
-          has_bom = raw.startswith(bom)
-          if has_bom:
-              raw = raw[len(bom):]
-          crlf = b'\r\n' in raw
-          text = raw.decode('utf-8').replace('\r\n', '\n')
+          metadata = {}
+          for path in files:
+              raw = path.read_bytes()
+              has_bom = raw.startswith(bom)
+              if has_bom:
+                  raw = raw[len(bom):]
+              metadata[str(path)] = {'bom': has_bom, 'crlf': b'\r\n' in raw}
+              path.write_bytes(raw.decode('utf-8').replace('\r\n', '\n').encode('utf-8'))
+          Path('/tmp/caret-left-bias-meta.json').write_text(json.dumps(metadata), encoding='utf-8')
+          PY
 
-          old_probe = '''            var probe = -1;
-            if (caret < text.Length && IsWordCharacter(text, caret)) {
-                probe = caret;
-            } else if (caret > 0 && IsWordCharacter(text, caret - 1)) {
-                probe = caret - 1;
-            } else {
-                var left = caret - 1;
-                var leftDistance = 0;
-                while (left >= 0 && leftDistance < MaxAdjacentWhitespaceProbe && IsHorizontalWhitespace(text[left])) {
-                    left--;
-                    leftDistance++;
-                }
-                if (left >= 0 && IsWordCharacter(text, left)) {
-                    probe = left;
-                } else {
-                    var right = caret;
-                    var rightDistance = 0;
-                    while (right < text.Length && rightDistance < MaxAdjacentWhitespaceProbe && IsHorizontalWhitespace(text[right])) {
-                        right++;
-                        rightDistance++;
-                    }
-                    if (right < text.Length && IsWordCharacter(text, right)) probe = right;
-                }
-            }
-'''
-          new_probe = '''            var probe = -1;
-            var caretOnWord = caret < text.Length && IsWordCharacter(text, caret);
-            var leftOnWord = caret > 0 && IsWordCharacter(text, caret - 1);
-            var caretInsideWord = caretOnWord && leftOnWord;
+          git apply --check .github/patches/caret-boundary-left-bias.patch
+          git apply .github/patches/caret-boundary-left-bias.patch
 
-            if (caretInsideWord) {
-                probe = caret;
-            } else if (leftOnWord) {
-                probe = caret - 1;
-            } else {
-                // At an exact word-start boundary, prefer the previous word on the same line.
-                // Only use the word to the right when no previous word exists.
-                var left = caret - 1;
-                var leftDistance = 0;
-                while (left >= 0 && leftDistance < MaxAdjacentWhitespaceProbe && IsHorizontalWhitespace(text[left])) {
-                    left--;
-                    leftDistance++;
-                }
-                if (left >= 0 && IsWordCharacter(text, left)) {
-                    probe = left;
-                } else if (caretOnWord) {
-                    probe = caret;
-                } else {
-                    var right = caret;
-                    var rightDistance = 0;
-                    while (right < text.Length && rightDistance < MaxAdjacentWhitespaceProbe && IsHorizontalWhitespace(text[right])) {
-                        right++;
-                        rightDistance++;
-                    }
-                    if (right < text.Length && IsWordCharacter(text, right)) probe = right;
-                }
-            }
-'''
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
 
-          old_uia = '''                var wordRange = ranges[0].Clone();
-                wordRange.ExpandToEnclosingUnit(TextUnit.Word);
-                var raw = wordRange.GetText(maxCharacters + MaxAdjacentWhitespaceProbe + 1);
-                if (String.IsNullOrEmpty(raw)) return false;
-
-                var leading = 0;
-                while (leading < raw.Length && Char.IsWhiteSpace(raw[leading])) leading++;
-                var trailing = 0;
-                while (trailing < raw.Length - leading && Char.IsWhiteSpace(raw[raw.Length - trailing - 1])) trailing++;
-                if (leading > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
-                                                                TextUnit.Character, leading) != leading)
-                    return false;
-                if (trailing > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
-                                                                 TextUnit.Character, -trailing) != -trailing)
-                    return false;
-
-                var trimmed = raw.Substring(leading, raw.Length - leading - trailing);
-                if (!IsSingleWord(trimmed, maxCharacters)) return false;
-                wordRange.Select();
-                selectedWord = trimmed;
-'''
-          new_uia = '''                var wordRange = ranges[0].Clone();
-                var requestedContext = maxCharacters + MaxAdjacentWhitespaceProbe;
-                var movedStart = wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
-                                                               TextUnit.Character, -requestedContext);
-                var caretOffset = Math.Max(0, -movedStart);
-                wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
-                                              TextUnit.Character, requestedContext);
-                var raw = wordRange.GetText(requestedContext * 2 + 1);
-                if (String.IsNullOrEmpty(raw) || caretOffset > raw.Length) return false;
-
-                int wordStart;
-                int wordEnd;
-                if (!TryFindWordBounds(raw, caretOffset, maxCharacters, out wordStart, out wordEnd))
-                    return false;
-                if (wordStart > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
-                                                                  TextUnit.Character, wordStart) != wordStart)
-                    return false;
-                var trailing = raw.Length - wordEnd;
-                if (trailing > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
-                                                                 TextUnit.Character, -trailing) != -trailing)
-                    return false;
-
-                var trimmed = raw.Substring(wordStart, wordEnd - wordStart);
-                if (!IsSingleWord(trimmed, maxCharacters)) return false;
-                wordRange.Select();
-                selectedWord = trimmed;
-'''
-
-          if text.count(old_probe) != 1:
-              raise SystemExit('Expected exactly one caret probe block.')
-          if text.count(old_uia) != 1:
-              raise SystemExit('Expected exactly one UI Automation word-range block.')
-          text = text.replace(old_probe, new_probe, 1).replace(old_uia, new_uia, 1)
-
-          encoded = (text.replace('\n', '\r\n') if crlf else text).encode('utf-8')
-          if has_bom:
-              encoded = bom + encoded
-          path.write_bytes(encoded)
+          bom = b'\xef\xbb\xbf'
+          metadata = json.loads(Path('/tmp/caret-left-bias-meta.json').read_text(encoding='utf-8'))
+          for name, meta in metadata.items():
+              path = Path(name)
+              text = path.read_text(encoding='utf-8').replace('\r\n', '\n')
+              raw = (text.replace('\n', '\r\n') if meta['crlf'] else text).encode('utf-8')
+              if meta['bom']:
+                  raw = bom + raw
+              path.write_bytes(raw)
           PY
 
       - name: Verify source invariants
@@ -176,6 +82,6 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add Mahou/Classes/SelectionProbe.cs
+          git add .github/scripts/security-regression.py Mahou/Classes/SelectionProbe.cs
           git commit -m 'fix: prefer previous word at caret boundary'
           git push origin HEAD:mixanizm-modern-v2.9.0.1
