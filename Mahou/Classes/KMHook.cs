@@ -2647,6 +2647,30 @@ namespace Mahou {
 			var result = ConvertText(text, sourceLayout, targetLayout);
 			return Regex.Replace(result, @"(\d+)[,.?бю/](\d+)[,.?бю/](\d+)[,.?бю/](\d+)", "$1.$2.$3.$4");
 		}
+		static void SwitchLayoutAfterManualConversion(uint targetLayout, string context, IntPtr expectedForeground) {
+			if (targetLayout == 0) {
+				Logging.Log("Post-conversion layout switch skipped because target layout is 0; context=" + context + ".", 2);
+				return;
+			}
+			cs_layout_last = targetLayout;
+			try {
+				var foreground = WinAPI.GetForegroundWindow();
+				if (expectedForeground != IntPtr.Zero && foreground != expectedForeground) {
+					Logging.Log("Post-conversion layout switch cancelled because the foreground window changed; context=" + context + ".", 2);
+					return;
+				}
+				var activeWindow = Locales.ActiveWindow();
+				if (activeWindow == IntPtr.Zero) {
+					Logging.Log("Post-conversion layout switch skipped because there is no active window; context=" + context + ".", 2);
+					return;
+				}
+				ChangeToLayout(activeWindow, targetLayout);
+				Logging.Log("Keyboard layout synchronized with converted text; target=" + targetLayout + ", context=" + context + ".");
+			} catch (Exception e) {
+				// Text replacement has already succeeded. A layout-switch failure must not roll it back or crash Mahou.
+				Logging.Log("Could not synchronize keyboard layout after manual conversion; context=" + context + ", error=" + e.Message, 1);
+			}
+		}
 		static bool ActiveProcessIs(string processName) {
 			try {
 				var process = Locales.ActiveWindowProcess();
@@ -2657,6 +2681,7 @@ namespace Mahou {
 			}
 		}
 		static bool TryConvertWordWithoutVisibleSelection() {
+			var conversionForeground = WinAPI.GetForegroundWindow();
 			// Layout-switching selection mode intentionally keeps the established compatibility path.
 			if (MahouUI.ConvertSelectionLS) return false;
 			var sourceLayout = cs_layout_last;
@@ -2671,7 +2696,7 @@ namespace Mahou {
 			if (standardResult == SelectionProbe.DirectWordResult.Ready) {
 				var replacement = ConvertCaretWordText(standardWord.Text, sourceLayout, targetLayout);
 				if (SelectionProbe.TryReplaceStandardEditWord(standardWord, replacement)) {
-					cs_layout_last = targetLayout;
+					SwitchLayoutAfterManualConversion(targetLayout, "standard-edit-caret-word", conversionForeground);
 					Logging.Log("Converted a standard edit word around the caret without visual selection; length=" + standardWord.Text.Length + ".");
 					return true;
 				}
@@ -2690,7 +2715,7 @@ namespace Mahou {
 					return true;
 				}
 				if (wordResult == SelectionProbe.DirectWordResult.Replaced) {
-					cs_layout_last = targetLayout;
+					SwitchLayoutAfterManualConversion(targetLayout, "word-caret-range", conversionForeground);
 					Logging.Log("Converted a Microsoft Word range around the caret without visual selection; input length=" + sourceLength + ", output length=" + replacementLength + ".");
 					return true;
 				}
@@ -2830,6 +2855,7 @@ namespace Mahou {
 		public static void ConvertSelection() {
 			selectionConversionSucceeded = false;
 			Debug.WriteLine("Start CS");
+			var conversionForeground = WinAPI.GetForegroundWindow();
 			try { //Used to catch errors
 				DoSelf(() => {
 					Logging.Log("[CS] > Starting Convert selection.");
@@ -2841,6 +2867,7 @@ namespace Mahou {
 						KInputs.MakeInput(KInputs.AddPress(Keys.Back));
 						var result = "";
 						int items = 0;
+						uint convertedTargetLayout = 0;
 						if (MahouUI.ConvertSelectionLS && !MahouUI.OneLayoutWholeWord) {
 							Logging.Log("[CS] > Using CS-Switch mode.");
 							var wasLocale = Locales.GetCurrentLocale();
@@ -2862,6 +2889,7 @@ namespace Mahou {
 								Thread.Sleep(10); nowLocale = GetNextLayout().uId;
 							}
 							ChangeLayout(true);
+							convertedTargetLayout = nowLocale;
 							var index = 0;
 							var q = new List<WinAPI.INPUT>();
 							foreach (char c in ClipStr) {
@@ -2947,7 +2975,7 @@ namespace Mahou {
 							var l2 = GetNextLayout(l1).uId;
 							Debug.WriteLine("next: " +l2);
 							result = ConvertText(ClipStr, l1, l2);
-							cs_layout_last = l2;
+							convertedTargetLayout = l2;
 							Logging.Log("[CS] > Converted selected text from locale [" + l1 + "] to [" + l2 + "]; input length=" + ClipStr.Length + ", output length=" + result.Length + ".");
 							//Inputs converted text
 							result = Regex.Replace(result, @"(\d+)[,.?бю/](\d+)[,.?бю/](\d+)[,.?бю/](\d+)", "$1.$2.$3.$4");
@@ -2959,6 +2987,7 @@ namespace Mahou {
 							}
 							items = result.Length;
 						}
+						SwitchLayoutAfterManualConversion(convertedTargetLayout, "selection", conversionForeground);
 						ReSelect(items, "N");
 						MahouUI.hk_result = true;
 					}

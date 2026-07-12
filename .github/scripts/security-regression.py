@@ -133,6 +133,8 @@ required = {
              "Raw-input restore failed after",
              "TryConvertWordWithoutVisibleSelection",
              "TryConvertWordAroundCaret",
+             "SwitchLayoutAfterManualConversion",
+             "Keyboard layout synchronized with converted text",
              "SelectionProbe.TryGetStandardEditWordAroundCaret",
              "SelectionProbe.TryReplaceStandardEditWord",
              "SelectionProbe.TryReplaceActiveWordRange",
