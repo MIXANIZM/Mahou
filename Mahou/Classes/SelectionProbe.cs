@@ -628,7 +628,9 @@ namespace Mahou {
             }
         }
 
-        internal static bool TrySelectAutomationExactTextAroundCaret(string expected) {
+        internal static bool TrySelectAutomationExactTextAroundCaret(string expected,
+                                                                         out int trailingSeparatorCount) {
+            trailingSeparatorCount = 0;
             if (String.IsNullOrEmpty(expected)) return false;
             try {
                 var focused = AutomationElement.FocusedElement;
@@ -656,6 +658,8 @@ namespace Mahou {
                 int exactEnd;
                 if (!TryFindExactTextBounds(raw, caretOffset, expected, out exactStart, out exactEnd))
                     return false;
+                if (caretOffset > exactEnd && IsWhitespaceOnly(raw, exactEnd, caretOffset))
+                    trailingSeparatorCount = caretOffset - exactEnd;
                 if (exactStart > 0 && exactRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
                                                                     TextUnit.Character, exactStart) != exactStart)
                     return false;
@@ -675,8 +679,10 @@ namespace Mahou {
             return false;
         }
 
-        internal static bool TrySelectAutomationWordAroundCaret(int maxCharacters, out string selectedWord) {
+        internal static bool TrySelectAutomationWordAroundCaret(int maxCharacters, out string selectedWord,
+                                                                    out int trailingSeparatorCount) {
             selectedWord = String.Empty;
+            trailingSeparatorCount = 0;
             try {
                 var focused = AutomationElement.FocusedElement;
                 if (focused == null || focused.Current.IsPassword) return false;
@@ -703,6 +709,8 @@ namespace Mahou {
                 int wordEnd;
                 if (!TryFindWordBounds(raw, caretOffset, maxCharacters, out wordStart, out wordEnd))
                     return false;
+                if (caretOffset > wordEnd && IsWhitespaceOnly(raw, wordEnd, caretOffset))
+                    trailingSeparatorCount = caretOffset - wordEnd;
                 if (wordStart > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
                                                                   TextUnit.Character, wordStart) != wordStart)
                     return false;

@@ -74,6 +74,7 @@ namespace Mahou {
 		const int ManualWordRoundTripLimit = 8;
 		const int ManualWordRoundTripTtlMs = 10 * 60 * 1000;
 		const int ManualWordKeyboardFallbackTtlMs = 15 * 1000;
+		const int MaxPreservedCaretSeparators = 8;
 		public static string symbolclear;
 		static List<Keys> tempNumpads = new List<Keys>();
 		static Keys preKey = Keys.None, prevKEY; //, seKeyDown = Keys.None, aseKeyDown = Keys.None;
@@ -2668,6 +2669,79 @@ namespace Mahou {
 					.ToList();
 			}
 		}
+		static bool IsPreservedCaretSeparator(char value) {
+			return value == ' ' || value == '\t' || value == '\u00A0';
+		}
+		static int KeyboardCharacterCount(string text) {
+			if (String.IsNullOrEmpty(text)) return 0;
+			return StringInfo.ParseCombiningCharacters(text).Length;
+		}
+		static void RestoreCaretPastPreservedSeparators(int count, string context) {
+			if (count <= 0) return;
+			count = Math.Min(count, MaxPreservedCaretSeparators);
+			DoSelf(() => KInputs.MakeInput(KInputs.AddPress(Keys.Right, count)),
+				"restore_caret_after_preserved_separator_" + context);
+		}
+		static bool ReselectGeneratedCaretWordWithoutSeparators(string selectedWord,
+		                                                        int trailingSeparatorCount) {
+			if (String.IsNullOrEmpty(selectedWord)) return false;
+			var characterCount = KeyboardCharacterCount(selectedWord);
+			if (characterCount <= 0 || characterCount > MaxCaretWordCharacters) return false;
+			DoSelf(() => {
+				var inputs = new List<WinAPI.INPUT>();
+				inputs.AddRange(KInputs.AddPress(Keys.Right));
+				if (trailingSeparatorCount > 0)
+					inputs.AddRange(KInputs.AddPress(Keys.Left, trailingSeparatorCount));
+				inputs.Add(KInputs.AddKey(Keys.LShiftKey, true));
+				inputs.AddRange(KInputs.AddPress(Keys.Left, characterCount));
+				inputs.Add(KInputs.AddKey(Keys.LShiftKey, false));
+				KInputs.MakeInput(inputs.ToArray());
+				Thread.Sleep(CaretWordSelectionDelay());
+			}, "reselect_generated_caret_word_without_separators");
+			string verified;
+			return SelectionProbe.TryGetSelectedText(MaxCaretWordCharacters, out verified) &&
+				String.Equals(verified, selectedWord, StringComparison.Ordinal);
+		}
+		static bool TrySelectRecentExactTextBeforeCaret(string expected, IntPtr foreground,
+		                                                    out int trailingSeparatorCount) {
+			trailingSeparatorCount = 0;
+			if (String.IsNullOrEmpty(expected)) return false;
+			var expectedCharacters = KeyboardCharacterCount(expected);
+			if (expectedCharacters <= 0 || expectedCharacters > MaxCaretWordCharacters) return false;
+
+			for (var gap = 0; gap <= MaxPreservedCaretSeparators; gap++) {
+				DoSelf(() => {
+					var inputs = new List<WinAPI.INPUT>();
+					inputs.Add(KInputs.AddKey(Keys.LShiftKey, true));
+					inputs.AddRange(KInputs.AddPress(Keys.Left, expectedCharacters + gap));
+					inputs.Add(KInputs.AddKey(Keys.LShiftKey, false));
+					KInputs.MakeInput(inputs.ToArray());
+					Thread.Sleep(CaretWordSelectionDelay());
+				}, "select_recent_manual_round_trip_with_separator_probe");
+				if (WinAPI.GetForegroundWindow() != foreground) return false;
+
+				string selected;
+				var matched = SelectionProbe.TryGetSelectedText(MaxCaretWordCharacters + MaxPreservedCaretSeparators,
+					out selected) && selected.Length >= expected.Length &&
+					String.Equals(selected.Substring(0, expected.Length), expected, StringComparison.Ordinal);
+				if (matched) {
+					for (var i = expected.Length; i < selected.Length; i++) {
+						if (!IsPreservedCaretSeparator(selected[i])) {
+							matched = false;
+							break;
+						}
+					}
+				}
+				if (matched) {
+					trailingSeparatorCount = selected.Length - expected.Length;
+					if (trailingSeparatorCount == 0 ||
+					    ReselectGeneratedCaretWordWithoutSeparators(expected, trailingSeparatorCount))
+						return true;
+				}
+				CollapseGeneratedCaretWordSelection();
+			}
+			return false;
+		}
 		static bool TryConvertRecentManualWordRoundTrip() {
 			var foreground = WinAPI.GetForegroundWindow();
 			if (foreground == IntPtr.Zero) return false;
@@ -2703,7 +2777,9 @@ namespace Mahou {
 			}
 
 			foreach (var candidate in candidates) {
-				if (!SelectionProbe.TrySelectAutomationExactTextAroundCaret(candidate.ConvertedText)) continue;
+				int trailingSeparatorCount;
+				if (!SelectionProbe.TrySelectAutomationExactTextAroundCaret(candidate.ConvertedText,
+					out trailingSeparatorCount)) continue;
 				selectionConversionSucceeded = false;
 				ConvertSelection();
 				if (selectionConversionSucceeded) {
@@ -2712,6 +2788,7 @@ namespace Mahou {
 						MahouUI.ReselectCustoms.Contains("N");
 					if (conversionReselected || SelectionProbe.GetState() == SelectionProbe.State.Selected)
 						CollapseGeneratedCaretWordSelection();
+					RestoreCaretPastPreservedSeparators(trailingSeparatorCount, "round_trip_uia");
 					RememberManualWordRoundTrip(candidate.ConvertedText, candidate.SourceText,
 						candidate.TargetLayout, candidate.SourceLayout, foreground, true);
 					Logging.Log("Restored a recent manual conversion through an exact UI Automation range; length=" + candidate.ConvertedText.Length + ".");
@@ -2725,21 +2802,10 @@ namespace Mahou {
 				TickAgeWithin(item.CreatedTick, ManualWordKeyboardFallbackTtlMs));
 			if (fallback == null) return false;
 			try {
-				DoSelf(() => {
-					var inputs = new List<WinAPI.INPUT>();
-					inputs.Add(KInputs.AddKey(Keys.LShiftKey, true));
-					inputs.AddRange(KInputs.AddPress(Keys.Left, fallback.ConvertedText.Length));
-					inputs.Add(KInputs.AddKey(Keys.LShiftKey, false));
-					KInputs.MakeInput(inputs.ToArray());
-					Thread.Sleep(CaretWordSelectionDelay());
-				}, "select_recent_manual_round_trip");
-				if (WinAPI.GetForegroundWindow() != foreground) return true;
-				string selected;
-				if (!SelectionProbe.TryGetSelectedText(MaxCaretWordCharacters, out selected) ||
-				    !String.Equals(selected, fallback.ConvertedText, StringComparison.Ordinal)) {
-					CollapseGeneratedCaretWordSelection();
+				int trailingSeparatorCount;
+				if (!TrySelectRecentExactTextBeforeCaret(fallback.ConvertedText, foreground,
+					out trailingSeparatorCount))
 					return false;
-				}
 				selectionConversionSucceeded = false;
 				ConvertSelection();
 				if (!selectionConversionSucceeded) {
@@ -2751,6 +2817,7 @@ namespace Mahou {
 					MahouUI.ReselectCustoms.Contains("N");
 				if (reselection || SelectionProbe.GetState() == SelectionProbe.State.Selected)
 					CollapseGeneratedCaretWordSelection();
+				RestoreCaretPastPreservedSeparators(trailingSeparatorCount, "round_trip_keyboard");
 				RememberManualWordRoundTrip(fallback.ConvertedText, fallback.SourceText,
 					fallback.TargetLayout, fallback.SourceLayout, foreground, true);
 				Logging.Log("Restored a recent manual conversion through the exact keyboard fallback; length=" + fallback.ConvertedText.Length + ".");
@@ -2882,39 +2949,33 @@ namespace Mahou {
 			}
 			return false;
 		}
-		static bool TryNormalizeGeneratedCaretWordSelection(out string selectedWord) {
+		static bool TryNormalizeGeneratedCaretWordSelection(out string selectedWord,
+		                                                     out int trailingSeparatorCount) {
 			selectedWord = String.Empty;
+			trailingSeparatorCount = 0;
 			string selectedText;
-			if (!SelectionProbe.TryGetSelectedText(MaxCaretWordCharacters + 8, out selectedText))
-				return true;
+			if (!SelectionProbe.TryGetSelectedText(MaxCaretWordCharacters + MaxPreservedCaretSeparators,
+			                                       out selectedText))
+				return false;
 			if (String.IsNullOrEmpty(selectedText)) return false;
 
 			var leadingWhitespace = 0;
-			while (leadingWhitespace < selectedText.Length && Char.IsWhiteSpace(selectedText[leadingWhitespace]))
+			while (leadingWhitespace < selectedText.Length &&
+			       IsPreservedCaretSeparator(selectedText[leadingWhitespace]))
 				leadingWhitespace++;
-			var trailingWhitespace = 0;
-			while (trailingWhitespace < selectedText.Length - leadingWhitespace &&
-			       Char.IsWhiteSpace(selectedText[selectedText.Length - trailingWhitespace - 1]))
-				trailingWhitespace++;
-			if (leadingWhitespace > 0 && leadingWhitespace < selectedText.Length) {
-				var trimLeading = new List<WinAPI.INPUT>();
-				trimLeading.Add(KInputs.AddKey(Keys.LShiftKey, true));
-				trimLeading.AddRange(KInputs.AddPress(Keys.Right, leadingWhitespace));
-				trimLeading.Add(KInputs.AddKey(Keys.LShiftKey, false));
-				DoSelf(() => KInputs.MakeInput(trimLeading.ToArray()), "trim_generated_caret_word_selection_start");
-			}
-			if (trailingWhitespace > 0 && trailingWhitespace < selectedText.Length - leadingWhitespace) {
-				var trimTrailing = new List<WinAPI.INPUT>();
-				trimTrailing.Add(KInputs.AddKey(Keys.LShiftKey, true));
-				trimTrailing.AddRange(KInputs.AddPress(Keys.Left, trailingWhitespace));
-				trimTrailing.Add(KInputs.AddKey(Keys.LShiftKey, false));
-				DoSelf(() => KInputs.MakeInput(trimTrailing.ToArray()), "trim_generated_caret_word_selection_end");
-			}
-			selectedText = selectedText.Substring(leadingWhitespace,
-				selectedText.Length - leadingWhitespace - trailingWhitespace);
-			selectedWord = selectedText;
-			return IsCaretWordCandidate(selectedText);
+			while (trailingSeparatorCount < selectedText.Length - leadingWhitespace &&
+			       IsPreservedCaretSeparator(selectedText[selectedText.Length - trailingSeparatorCount - 1]))
+				trailingSeparatorCount++;
+
+			selectedWord = selectedText.Substring(leadingWhitespace,
+				selectedText.Length - leadingWhitespace - trailingSeparatorCount);
+			if (!IsCaretWordCandidate(selectedWord)) return false;
+			if ((leadingWhitespace > 0 || trailingSeparatorCount > 0) &&
+			    !ReselectGeneratedCaretWordWithoutSeparators(selectedWord, trailingSeparatorCount))
+				return false;
+			return true;
 		}
+
 		static bool TryConvertWordAroundCaret() {
 			var originalWindow = WinAPI.GetForegroundWindow();
 			var sourceLayout = cs_layout_last;
@@ -2924,7 +2985,9 @@ namespace Mahou {
 			try {
 				selectionWasRequested = true;
 				string selectedWord;
-				if (SelectionProbe.TrySelectAutomationWordAroundCaret(MaxCaretWordCharacters, out selectedWord)) {
+				int trailingSeparatorCount;
+				if (SelectionProbe.TrySelectAutomationWordAroundCaret(MaxCaretWordCharacters, out selectedWord,
+					out trailingSeparatorCount)) {
 					generatedSelection = true;
 				} else {
 					// Compatibility fallback for controls without a writable range or usable UI Automation caret.
@@ -2951,7 +3014,7 @@ namespace Mahou {
 						return true;
 					}
 					generatedSelection = true;
-					if (!TryNormalizeGeneratedCaretWordSelection(out selectedWord)) {
+					if (!TryNormalizeGeneratedCaretWordSelection(out selectedWord, out trailingSeparatorCount)) {
 						Logging.Log("Caret-word conversion skipped because the generated selection was not a single word.", 2);
 						CollapseGeneratedCaretWordSelection();
 						generatedSelection = false;
@@ -2976,6 +3039,7 @@ namespace Mahou {
 					MahouUI.ReselectCustoms.Contains("N");
 				if (conversionReselected || SelectionProbe.GetState() == SelectionProbe.State.Selected)
 					CollapseGeneratedCaretWordSelection();
+				RestoreCaretPastPreservedSeparators(trailingSeparatorCount, "caret_word");
 				generatedSelection = false;
 				if (!MahouUI.ConvertSelectionLS) {
 					var convertedWord = ConvertCaretWordText(selectedWord, sourceLayout, targetLayout);
