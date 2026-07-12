@@ -1,0 +1,88 @@
+name: Apply internal layout-symbol patch once
+
+on:
+  push:
+    branches:
+      - mixanizm-modern-v2.9.0.1
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-internal-layout-symbol
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+
+      - name: Decode and apply patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d .github/patches/internal-layout-symbol.patch.b64 > /tmp/internal-layout-symbol.patch
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          names = [
+              '.github/scripts/security-regression.py',
+              'Mahou/Classes/KMHook.cs',
+          ]
+          bom = b'\xef\xbb\xbf'
+          meta = {}
+          for name in names:
+              path = Path(name)
+              raw = path.read_bytes()
+              has_bom = raw.startswith(bom)
+              if has_bom:
+                  raw = raw[len(bom):]
+              meta[name] = {'bom': has_bom, 'crlf': b'\r\n' in raw}
+              path.write_bytes(raw.decode('utf-8').replace('\r\n', '\n').encode('utf-8'))
+          Path('/tmp/internal-layout-symbol-meta.json').write_text(json.dumps(meta), encoding='utf-8')
+          patch = Path('/tmp/internal-layout-symbol.patch')
+          patch.write_bytes(patch.read_bytes().replace(b'\r\n', b'\n'))
+          PY
+          patch -p1 --dry-run < /tmp/internal-layout-symbol.patch
+          patch -p1 < /tmp/internal-layout-symbol.patch
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          bom = b'\xef\xbb\xbf'
+          meta = json.loads(Path('/tmp/internal-layout-symbol-meta.json').read_text(encoding='utf-8'))
+          for name, info in meta.items():
+              path = Path(name)
+              text = path.read_text(encoding='utf-8').replace('\r\n', '\n')
+              raw = (text.replace('\n', '\r\n') if info['crlf'] else text).encode('utf-8')
+              if info['bom']:
+                  raw = bom + raw
+              path.write_bytes(raw)
+          PY
+
+      - name: Verify regression gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/security-regression.py
+          python3 .github/scripts/ui-resource-regression.py
+          grep -Fq 'ShouldPreferTrackedWordForManualConversion' Mahou/Classes/KMHook.cs
+          grep -Fq 'Using the tracked physical-key word because it contains an internal layout-letter symbol.' Mahou/Classes/KMHook.cs
+
+      - name: Commit product changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/scripts/security-regression.py Mahou/Classes/KMHook.cs
+          git commit -m 'fix: convert fresh words with internal layout symbols'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
