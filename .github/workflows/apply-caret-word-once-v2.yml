@@ -1,0 +1,59 @@
+name: Apply caret word conversion once v2
+
+on:
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-caret-word-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'mixanizm-modern-v2.9.0.1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+
+      - name: Apply and verify caret-word conversion
+        shell: bash
+        run: |
+          set -euo pipefail
+          patch=.github/patches/caret-word.patch
+          if git apply --check "$patch"; then
+            git apply "$patch"
+          elif git apply --reverse --check "$patch"; then
+            echo 'Caret-word patch is already applied.'
+          else
+            echo 'Caret-word patch does not match the current branch.' >&2
+            exit 1
+          fi
+
+          rm -f -- \
+            .github/workflows/apply-caret-word-once.yml \
+            .github/workflows/apply-caret-word-once-v2.yml \
+            .github/patches/caret-word.patch
+
+          python3 .github/scripts/security-regression.py
+          git diff --check
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes remain to commit.'
+            exit 0
+          fi
+          git commit -m 'feat: convert word before caret with Insert'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
