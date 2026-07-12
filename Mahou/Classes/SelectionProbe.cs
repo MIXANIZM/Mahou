@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Automation;
+using System.Windows.Automation.Text;
 
 namespace Mahou {
     /// <summary>
