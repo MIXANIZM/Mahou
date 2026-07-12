@@ -45,6 +45,9 @@ namespace Mahou {
 		static int manualConversionCooldownUntil;
 		const int ManualConversionCooldownMs = 120;
 		const int WordManualConversionCooldownMs = 300;
+		const int CaretWordSelectionDelayMs = 20;
+		const int WordCaretWordSelectionDelayMs = 60;
+		const int MaxCaretWordCharacters = 256;
 		public static string symbolclear;
 		static List<Keys> tempNumpads = new List<Keys>();
 		static Keys preKey = Keys.None, prevKEY; //, seKeyDown = Keys.None, aseKeyDown = Keys.None;
@@ -2608,6 +2611,120 @@ namespace Mahou {
 			Volatile.Write(ref manualConversionCooldownUntil, unchecked(Environment.TickCount + cooldown));
 			Interlocked.Exchange(ref manualConversionInProgress, 0);
 		}
+		static int CaretWordSelectionDelay() {
+			try {
+				var process = Locales.ActiveWindowProcess();
+				if (process != null && String.Equals(process.ProcessName, "WINWORD", StringComparison.OrdinalIgnoreCase))
+					return WordCaretWordSelectionDelayMs;
+			} catch (Exception e) {
+				Logging.Log("Could not resolve foreground process for caret-word selection delay: " + e.Message, 2);
+			}
+			return CaretWordSelectionDelayMs;
+		}
+		static void CollapseGeneratedCaretWordSelection() {
+			DoSelf(() => KInputs.MakeInput(KInputs.AddPress(Keys.Right)), "collapse_generated_caret_word_selection");
+		}
+		static bool IsCaretWordCandidate(string text) {
+			if (String.IsNullOrEmpty(text) || text.Length > MaxCaretWordCharacters) return false;
+			var hasLetter = false;
+			for (var i = 0; i < text.Length; i++) {
+				var c = text[i];
+				if (Char.IsLetter(c)) {
+					hasLetter = true;
+					continue;
+				}
+				if (Char.IsDigit(c)) continue;
+				var category = CharUnicodeInfo.GetUnicodeCategory(c);
+				if (category == UnicodeCategory.NonSpacingMark || category == UnicodeCategory.SpacingCombiningMark)
+					continue;
+				if ((c == '\'' || c == '’' || c == '-' || c == '_') && i > 0 && i < text.Length - 1)
+					continue;
+				return false;
+			}
+			return hasLetter;
+		}
+		static bool TryNormalizeGeneratedCaretWordSelection(out string selectedWord) {
+			selectedWord = String.Empty;
+			string selectedText;
+			if (!SelectionProbe.TryGetSelectedText(MaxCaretWordCharacters + 1, out selectedText))
+				return true;
+			if (String.IsNullOrEmpty(selectedText)) return false;
+
+			var leadingWhitespace = 0;
+			while (leadingWhitespace < selectedText.Length && Char.IsWhiteSpace(selectedText[leadingWhitespace]))
+				leadingWhitespace++;
+			if (leadingWhitespace > 0 && leadingWhitespace < selectedText.Length) {
+				var trimInputs = new List<WinAPI.INPUT>();
+				trimInputs.Add(KInputs.AddKey(Keys.LShiftKey, true));
+				trimInputs.AddRange(KInputs.AddPress(Keys.Right, leadingWhitespace));
+				trimInputs.Add(KInputs.AddKey(Keys.LShiftKey, false));
+				DoSelf(() => KInputs.MakeInput(trimInputs.ToArray()), "trim_generated_caret_word_selection");
+				selectedText = selectedText.Substring(leadingWhitespace);
+			}
+			selectedWord = selectedText;
+			return IsCaretWordCandidate(selectedText);
+		}
+		static bool TryConvertWordBeforeCaret() {
+			var originalWindow = WinAPI.GetForegroundWindow();
+			var selectionWasRequested = false;
+			var generatedSelection = false;
+			try {
+				selectionWasRequested = true;
+				DoSelf(() => {
+					var selectInputs = new List<WinAPI.INPUT>();
+					selectInputs.Add(KInputs.AddKey(Keys.LControlKey, true));
+					selectInputs.Add(KInputs.AddKey(Keys.LShiftKey, true));
+					selectInputs.AddRange(KInputs.AddPress(Keys.Left));
+					selectInputs.Add(KInputs.AddKey(Keys.LShiftKey, false));
+					selectInputs.Add(KInputs.AddKey(Keys.LControlKey, false));
+					KInputs.MakeInput(selectInputs.ToArray());
+					Thread.Sleep(CaretWordSelectionDelay());
+				}, "select_word_before_caret");
+
+				if (originalWindow == IntPtr.Zero || WinAPI.GetForegroundWindow() != originalWindow) {
+					Logging.Log("Caret-word conversion cancelled because the foreground window changed.", 2);
+					return true;
+				}
+				var generatedState = SelectionProbe.GetState();
+				if (generatedState == SelectionProbe.State.None) return false;
+				if (generatedState == SelectionProbe.State.Sensitive) {
+					Logging.Log("Caret-word conversion suppressed in a protected text field.", 2);
+					return true;
+				}
+				generatedSelection = true;
+
+				string selectedWord;
+				if (!TryNormalizeGeneratedCaretWordSelection(out selectedWord)) {
+					Logging.Log("Caret-word conversion skipped because the generated selection was not a single word.", 2);
+					CollapseGeneratedCaretWordSelection();
+					generatedSelection = false;
+					return true;
+				}
+
+				selectionConversionSucceeded = false;
+				ConvertSelection();
+				if (!selectionConversionSucceeded) {
+					CollapseGeneratedCaretWordSelection();
+					generatedSelection = false;
+					return true;
+				}
+
+				var conversionReselected = MahouUI.ReSelect &&
+					!String.IsNullOrEmpty(MahouUI.ReselectCustoms) &&
+					MahouUI.ReselectCustoms.Contains("N");
+				if (conversionReselected || SelectionProbe.GetState() == SelectionProbe.State.Selected)
+					CollapseGeneratedCaretWordSelection();
+				generatedSelection = false;
+				Logging.Log("Converted the word immediately before the caret; length=" + selectedWord.Length + ".");
+				return true;
+			} catch (Exception e) {
+				Logging.Log("Caret-word conversion encountered error: " + e.Message, 1);
+				if (generatedSelection && originalWindow != IntPtr.Zero && WinAPI.GetForegroundWindow() == originalWindow) {
+					try { CollapseGeneratedCaretWordSelection(); } catch { }
+				}
+				return selectionWasRequested;
+			}
+		}
 		public static void ConvertSelectionOrLastWord() {
 			if (!TryBeginManualConversion()) return;
 			try {
@@ -2617,6 +2734,7 @@ namespace Mahou {
 					return;
 				}
 				if (selectionState == SelectionProbe.State.None) {
+					if (TryConvertWordBeforeCaret()) return;
 					var wordSnapshot = MMain.c_word == null ? new List<YuKey>() : new List<YuKey>(MMain.c_word);
 					ConvertLast(wordSnapshot);
 					return;
@@ -2624,6 +2742,7 @@ namespace Mahou {
 				selectionConversionSucceeded = false;
 				ConvertSelection();
 				if (!selectionConversionSucceeded && selectionState != SelectionProbe.State.Selected) {
+					if (TryConvertWordBeforeCaret()) return;
 					var wordSnapshot = MMain.c_word == null ? new List<YuKey>() : new List<YuKey>(MMain.c_word);
 					ConvertLast(wordSnapshot);
 				}

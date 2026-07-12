@@ -19,6 +19,8 @@ namespace Mahou {
         const int GWL_STYLE = -16;
         const long ES_PASSWORD = 0x20;
         const uint EM_GETSEL = 0x00B0;
+        const uint WM_GETTEXT = 0x000D;
+        const uint WM_GETTEXTLENGTH = 0x000E;
         const uint SMTO_ABORTIFHUNG = 0x0002;
 
         [StructLayout(LayoutKind.Sequential)]
@@ -62,6 +64,16 @@ namespace Mahou {
             uint timeout,
             out IntPtr result);
 
+        [DllImport("user32.dll", EntryPoint = "SendMessageTimeoutW", CharSet = CharSet.Unicode, SetLastError = true)]
+        static extern IntPtr SendMessageTimeoutText(
+            IntPtr hWnd,
+            uint msg,
+            IntPtr wParam,
+            StringBuilder lParam,
+            uint flags,
+            uint timeout,
+            out IntPtr result);
+
         static long GetStyle(IntPtr window) {
             return IntPtr.Size == 8 ? GetWindowLongPtr64(window, GWL_STYLE).ToInt64() : GetWindowLong32(window, GWL_STYLE);
         }
@@ -70,6 +82,96 @@ namespace Mahou {
             var automation = ProbeAutomation();
             if (automation != State.Unknown) return automation;
             return ProbeStandardEdit();
+        }
+
+
+        internal static bool TryGetSelectedText(int maxCharacters, out string selectedText) {
+            selectedText = String.Empty;
+            if (maxCharacters < 1) return false;
+            if (TryGetAutomationSelectedText(maxCharacters, out selectedText)) return true;
+            return TryGetStandardEditSelectedText(maxCharacters, out selectedText);
+        }
+
+        static bool TryGetAutomationSelectedText(int maxCharacters, out string selectedText) {
+            selectedText = String.Empty;
+            try {
+                var focused = AutomationElement.FocusedElement;
+                if (focused == null || focused.Current.IsPassword) return false;
+
+                object patternObject;
+                if (!focused.TryGetCurrentPattern(TextPattern.Pattern, out patternObject)) return false;
+                var pattern = patternObject as TextPattern;
+                if (pattern == null) return false;
+                var ranges = pattern.GetSelection();
+                if (ranges == null || ranges.Length == 0) return false;
+                foreach (var range in ranges) {
+                    if (range == null) continue;
+                    var text = range.GetText(maxCharacters + 1);
+                    if (String.IsNullOrEmpty(text)) continue;
+                    selectedText = text;
+                    return true;
+                }
+            } catch (ElementNotAvailableException) {
+            } catch (InvalidOperationException) {
+            } catch (COMException) {
+            } catch (UnauthorizedAccessException) {
+            }
+            return false;
+        }
+
+        static bool TryGetStandardEditSelectedText(int maxCharacters, out string selectedText) {
+            selectedText = String.Empty;
+            IntPtr startPointer = IntPtr.Zero;
+            IntPtr endPointer = IntPtr.Zero;
+            try {
+                var foreground = GetForegroundWindow();
+                if (foreground == IntPtr.Zero) return false;
+                var thread = GetWindowThreadProcessId(foreground, IntPtr.Zero);
+                if (thread == 0) return false;
+
+                var info = new GUITHREADINFO { cbSize = Marshal.SizeOf(typeof(GUITHREADINFO)) };
+                if (!GetGUIThreadInfo(thread, ref info) || info.hwndFocus == IntPtr.Zero) return false;
+
+                var className = new StringBuilder(128);
+                if (GetClassName(info.hwndFocus, className, className.Capacity) <= 0) return false;
+                var name = className.ToString();
+                if (name.IndexOf("Edit", StringComparison.OrdinalIgnoreCase) < 0) return false;
+                if ((GetStyle(info.hwndFocus) & ES_PASSWORD) != 0) return false;
+
+                startPointer = Marshal.AllocHGlobal(sizeof(int));
+                endPointer = Marshal.AllocHGlobal(sizeof(int));
+                Marshal.WriteInt32(startPointer, 0);
+                Marshal.WriteInt32(endPointer, 0);
+                IntPtr result;
+                if (SendMessageTimeout(info.hwndFocus, EM_GETSEL, startPointer, endPointer,
+                                       SMTO_ABORTIFHUNG, 40, out result) == IntPtr.Zero)
+                    return false;
+                var start = Marshal.ReadInt32(startPointer);
+                var end = Marshal.ReadInt32(endPointer);
+                if (start < 0 || end <= start) return true;
+                if (end - start > maxCharacters) return true;
+
+                IntPtr textLengthResult;
+                if (SendMessageTimeout(info.hwndFocus, WM_GETTEXTLENGTH, IntPtr.Zero, IntPtr.Zero,
+                                       SMTO_ABORTIFHUNG, 40, out textLengthResult) == IntPtr.Zero)
+                    return false;
+                var textLength = textLengthResult.ToInt32();
+                if (textLength < end || textLength > 1024 * 1024) return false;
+
+                var fullText = new StringBuilder(textLength + 1);
+                IntPtr copiedResult;
+                if (SendMessageTimeoutText(info.hwndFocus, WM_GETTEXT, (IntPtr)fullText.Capacity, fullText,
+                                           SMTO_ABORTIFHUNG, 80, out copiedResult) == IntPtr.Zero)
+                    return false;
+                if (fullText.Length < end) return false;
+                selectedText = fullText.ToString(start, end - start);
+                return true;
+            } catch {
+                return false;
+            } finally {
+                if (startPointer != IntPtr.Zero) Marshal.FreeHGlobal(startPointer);
+                if (endPointer != IntPtr.Zero) Marshal.FreeHGlobal(endPointer);
+            }
         }
 
         static State ProbeAutomation() {
