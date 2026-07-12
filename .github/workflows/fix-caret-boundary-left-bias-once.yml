@@ -1,0 +1,183 @@
+name: Fix caret boundary left bias once
+
+on:
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fix-caret-boundary-left-bias-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'mixanizm-modern-v2.9.0.1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+
+      - name: Apply left-biased caret boundary rule
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('Mahou/Classes/SelectionProbe.cs')
+          raw = path.read_bytes()
+          bom = b'\xef\xbb\xbf'
+          has_bom = raw.startswith(bom)
+          if has_bom:
+              raw = raw[len(bom):]
+          crlf = b'\r\n' in raw
+          text = raw.decode('utf-8').replace('\r\n', '\n')
+
+          old_probe = '''            var probe = -1;
+            if (caret < text.Length && IsWordCharacter(text, caret)) {
+                probe = caret;
+            } else if (caret > 0 && IsWordCharacter(text, caret - 1)) {
+                probe = caret - 1;
+            } else {
+                var left = caret - 1;
+                var leftDistance = 0;
+                while (left >= 0 && leftDistance < MaxAdjacentWhitespaceProbe && IsHorizontalWhitespace(text[left])) {
+                    left--;
+                    leftDistance++;
+                }
+                if (left >= 0 && IsWordCharacter(text, left)) {
+                    probe = left;
+                } else {
+                    var right = caret;
+                    var rightDistance = 0;
+                    while (right < text.Length && rightDistance < MaxAdjacentWhitespaceProbe && IsHorizontalWhitespace(text[right])) {
+                        right++;
+                        rightDistance++;
+                    }
+                    if (right < text.Length && IsWordCharacter(text, right)) probe = right;
+                }
+            }
+'''
+          new_probe = '''            var probe = -1;
+            var caretOnWord = caret < text.Length && IsWordCharacter(text, caret);
+            var leftOnWord = caret > 0 && IsWordCharacter(text, caret - 1);
+            var caretInsideWord = caretOnWord && leftOnWord;
+
+            if (caretInsideWord) {
+                probe = caret;
+            } else if (leftOnWord) {
+                probe = caret - 1;
+            } else {
+                // At an exact word-start boundary, prefer the previous word on the same line.
+                // Only use the word to the right when no previous word exists.
+                var left = caret - 1;
+                var leftDistance = 0;
+                while (left >= 0 && leftDistance < MaxAdjacentWhitespaceProbe && IsHorizontalWhitespace(text[left])) {
+                    left--;
+                    leftDistance++;
+                }
+                if (left >= 0 && IsWordCharacter(text, left)) {
+                    probe = left;
+                } else if (caretOnWord) {
+                    probe = caret;
+                } else {
+                    var right = caret;
+                    var rightDistance = 0;
+                    while (right < text.Length && rightDistance < MaxAdjacentWhitespaceProbe && IsHorizontalWhitespace(text[right])) {
+                        right++;
+                        rightDistance++;
+                    }
+                    if (right < text.Length && IsWordCharacter(text, right)) probe = right;
+                }
+            }
+'''
+
+          old_uia = '''                var wordRange = ranges[0].Clone();
+                wordRange.ExpandToEnclosingUnit(TextUnit.Word);
+                var raw = wordRange.GetText(maxCharacters + MaxAdjacentWhitespaceProbe + 1);
+                if (String.IsNullOrEmpty(raw)) return false;
+
+                var leading = 0;
+                while (leading < raw.Length && Char.IsWhiteSpace(raw[leading])) leading++;
+                var trailing = 0;
+                while (trailing < raw.Length - leading && Char.IsWhiteSpace(raw[raw.Length - trailing - 1])) trailing++;
+                if (leading > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
+                                                                TextUnit.Character, leading) != leading)
+                    return false;
+                if (trailing > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
+                                                                 TextUnit.Character, -trailing) != -trailing)
+                    return false;
+
+                var trimmed = raw.Substring(leading, raw.Length - leading - trailing);
+                if (!IsSingleWord(trimmed, maxCharacters)) return false;
+                wordRange.Select();
+                selectedWord = trimmed;
+'''
+          new_uia = '''                var wordRange = ranges[0].Clone();
+                var requestedContext = maxCharacters + MaxAdjacentWhitespaceProbe;
+                var movedStart = wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
+                                                               TextUnit.Character, -requestedContext);
+                var caretOffset = Math.Max(0, -movedStart);
+                wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
+                                              TextUnit.Character, requestedContext);
+                var raw = wordRange.GetText(requestedContext * 2 + 1);
+                if (String.IsNullOrEmpty(raw) || caretOffset > raw.Length) return false;
+
+                int wordStart;
+                int wordEnd;
+                if (!TryFindWordBounds(raw, caretOffset, maxCharacters, out wordStart, out wordEnd))
+                    return false;
+                if (wordStart > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
+                                                                  TextUnit.Character, wordStart) != wordStart)
+                    return false;
+                var trailing = raw.Length - wordEnd;
+                if (trailing > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
+                                                                 TextUnit.Character, -trailing) != -trailing)
+                    return false;
+
+                var trimmed = raw.Substring(wordStart, wordEnd - wordStart);
+                if (!IsSingleWord(trimmed, maxCharacters)) return false;
+                wordRange.Select();
+                selectedWord = trimmed;
+'''
+
+          if text.count(old_probe) != 1:
+              raise SystemExit('Expected exactly one caret probe block.')
+          if text.count(old_uia) != 1:
+              raise SystemExit('Expected exactly one UI Automation word-range block.')
+          text = text.replace(old_probe, new_probe, 1).replace(old_uia, new_uia, 1)
+
+          encoded = (text.replace('\n', '\r\n') if crlf else text).encode('utf-8')
+          if has_bom:
+              encoded = bom + encoded
+          path.write_bytes(encoded)
+          PY
+
+      - name: Verify source invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'var caretInsideWord = caretOnWord && leftOnWord;' Mahou/Classes/SelectionProbe.cs
+          grep -Fq 'At an exact word-start boundary, prefer the previous word' Mahou/Classes/SelectionProbe.cs
+          grep -Fq 'var caretOffset = Math.Max(0, -movedStart);' Mahou/Classes/SelectionProbe.cs
+          python3 .github/scripts/security-regression.py
+          python3 .github/scripts/ui-resource-regression.py
+
+      - name: Commit and push fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Mahou/Classes/SelectionProbe.cs
+          git commit -m 'fix: prefer previous word at caret boundary'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
