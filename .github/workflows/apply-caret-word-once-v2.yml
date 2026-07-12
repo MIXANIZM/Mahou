@@ -30,7 +30,22 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          patch=.github/patches/caret-word.patch
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64
+          import re
+
+          source = Path('.github/workflows/apply-caret-word-once.yml').read_text(encoding='utf-8')
+          match = re.search(
+              r"printf '%s' '([A-Za-z0-9+/=]+)' \| base64 --decode > /tmp/caret-word\.patch",
+              source,
+          )
+          if not match:
+              raise SystemExit('Embedded caret-word patch was not found.')
+          Path('/tmp/caret-word.patch').write_bytes(base64.b64decode(match.group(1), validate=True))
+          PY
+
+          patch=/tmp/caret-word.patch
           if git apply --check "$patch"; then
             git apply "$patch"
           elif git apply --reverse --check "$patch"; then
@@ -40,19 +55,17 @@ jobs:
             exit 1
           fi
 
-          rm -f -- \
-            .github/workflows/apply-caret-word-once.yml \
-            .github/workflows/apply-caret-word-once-v2.yml \
-            .github/patches/caret-word.patch
-
           python3 .github/scripts/security-regression.py
           git diff --check
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
+          git add \
+            .github/scripts/security-regression.py \
+            Mahou/Classes/KMHook.cs \
+            Mahou/Classes/SelectionProbe.cs
           if git diff --cached --quiet; then
-            echo 'No changes remain to commit.'
+            echo 'No code changes remain to commit.'
             exit 0
           fi
           git commit -m 'feat: convert word before caret with Insert'
