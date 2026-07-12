@@ -43,11 +43,37 @@ namespace Mahou {
 		static bool clipboardBackupPending;
 		static int manualConversionInProgress;
 		static int manualConversionCooldownUntil;
+		sealed class ManualWordRoundTrip {
+			internal readonly string SourceText;
+			internal readonly string ConvertedText;
+			internal readonly uint SourceLayout;
+			internal readonly uint TargetLayout;
+			internal readonly IntPtr ForegroundWindow;
+			internal readonly int CreatedTick;
+			internal readonly bool AllowKeyboardFallback;
+
+			internal ManualWordRoundTrip(string sourceText, string convertedText,
+			                             uint sourceLayout, uint targetLayout,
+			                             IntPtr foregroundWindow, bool allowKeyboardFallback) {
+				SourceText = sourceText;
+				ConvertedText = convertedText;
+				SourceLayout = sourceLayout;
+				TargetLayout = targetLayout;
+				ForegroundWindow = foregroundWindow;
+				CreatedTick = Environment.TickCount;
+				AllowKeyboardFallback = allowKeyboardFallback;
+			}
+		}
+		static readonly object manualWordRoundTripSync = new object();
+		static readonly List<ManualWordRoundTrip> manualWordRoundTrips = new List<ManualWordRoundTrip>();
 		const int ManualConversionCooldownMs = 120;
 		const int WordManualConversionCooldownMs = 300;
 		const int CaretWordSelectionDelayMs = 20;
 		const int WordCaretWordSelectionDelayMs = 60;
 		const int MaxCaretWordCharacters = 256;
+		const int ManualWordRoundTripLimit = 8;
+		const int ManualWordRoundTripTtlMs = 10 * 60 * 1000;
+		const int ManualWordKeyboardFallbackTtlMs = 15 * 1000;
 		public static string symbolclear;
 		static List<Keys> tempNumpads = new List<Keys>();
 		static Keys preKey = Keys.None, prevKEY; //, seKeyDown = Keys.None, aseKeyDown = Keys.None;
@@ -2611,6 +2637,130 @@ namespace Mahou {
 			Volatile.Write(ref manualConversionCooldownUntil, unchecked(Environment.TickCount + cooldown));
 			Interlocked.Exchange(ref manualConversionInProgress, 0);
 		}
+		static bool TickAgeWithin(int createdTick, int ttl) {
+			return unchecked(Environment.TickCount - createdTick) >= 0 &&
+			       unchecked(Environment.TickCount - createdTick) <= ttl;
+		}
+		static void RememberManualWordRoundTrip(string sourceText, string convertedText,
+		                                       uint sourceLayout, uint targetLayout,
+		                                       IntPtr foregroundWindow, bool allowKeyboardFallback) {
+			if (String.IsNullOrEmpty(sourceText) || String.IsNullOrEmpty(convertedText) ||
+			    sourceText.Length > MaxCaretWordCharacters || convertedText.Length > MaxCaretWordCharacters ||
+			    String.Equals(sourceText, convertedText, StringComparison.Ordinal) || foregroundWindow == IntPtr.Zero)
+				return;
+			lock (manualWordRoundTripSync) {
+				manualWordRoundTrips.RemoveAll(item =>
+					!TickAgeWithin(item.CreatedTick, ManualWordRoundTripTtlMs) ||
+					(item.ForegroundWindow == foregroundWindow &&
+					 String.Equals(item.ConvertedText, convertedText, StringComparison.Ordinal)));
+				manualWordRoundTrips.Insert(0, new ManualWordRoundTrip(sourceText, convertedText,
+					sourceLayout, targetLayout, foregroundWindow, allowKeyboardFallback));
+				if (manualWordRoundTrips.Count > ManualWordRoundTripLimit)
+					manualWordRoundTrips.RemoveRange(ManualWordRoundTripLimit,
+						manualWordRoundTrips.Count - ManualWordRoundTripLimit);
+			}
+		}
+		static List<ManualWordRoundTrip> RecentManualWordRoundTrips(IntPtr foregroundWindow) {
+			lock (manualWordRoundTripSync) {
+				manualWordRoundTrips.RemoveAll(item => !TickAgeWithin(item.CreatedTick, ManualWordRoundTripTtlMs));
+				return manualWordRoundTrips
+					.Where(item => item.ForegroundWindow == foregroundWindow)
+					.ToList();
+			}
+		}
+		static bool TryConvertRecentManualWordRoundTrip() {
+			var foreground = WinAPI.GetForegroundWindow();
+			if (foreground == IntPtr.Zero) return false;
+			var candidates = RecentManualWordRoundTrips(foreground);
+			if (candidates.Count == 0) return false;
+
+			foreach (var candidate in candidates) {
+				var standard = SelectionProbe.TryReplaceStandardExactTextAroundCaret(
+					candidate.ConvertedText, candidate.SourceText);
+				if (standard == SelectionProbe.DirectWordResult.Sensitive) return true;
+				if (standard == SelectionProbe.DirectWordResult.Replaced) {
+					SwitchLayoutAfterManualConversion(candidate.SourceLayout, "round-trip-standard-edit", foreground);
+					RememberManualWordRoundTrip(candidate.ConvertedText, candidate.SourceText,
+						candidate.TargetLayout, candidate.SourceLayout, foreground, false);
+					Logging.Log("Restored a recent manual conversion exactly in a standard edit control; length=" + candidate.ConvertedText.Length + ".");
+					return true;
+				}
+			}
+
+			if (ActiveProcessIs("WINWORD")) {
+				foreach (var candidate in candidates) {
+					var word = SelectionProbe.TryReplaceActiveExactTextRangeAroundCaret(
+						candidate.ConvertedText, candidate.SourceText);
+					if (word == SelectionProbe.DirectWordResult.Sensitive) return true;
+					if (word == SelectionProbe.DirectWordResult.Replaced) {
+						SwitchLayoutAfterManualConversion(candidate.SourceLayout, "round-trip-word-range", foreground);
+						RememberManualWordRoundTrip(candidate.ConvertedText, candidate.SourceText,
+							candidate.TargetLayout, candidate.SourceLayout, foreground, false);
+						Logging.Log("Restored a recent manual conversion exactly in Microsoft Word; length=" + candidate.ConvertedText.Length + ".");
+						return true;
+					}
+				}
+			}
+
+			foreach (var candidate in candidates) {
+				if (!SelectionProbe.TrySelectAutomationExactTextAroundCaret(candidate.ConvertedText)) continue;
+				selectionConversionSucceeded = false;
+				ConvertSelection();
+				if (selectionConversionSucceeded) {
+					var conversionReselected = MahouUI.ReSelect &&
+						!String.IsNullOrEmpty(MahouUI.ReselectCustoms) &&
+						MahouUI.ReselectCustoms.Contains("N");
+					if (conversionReselected || SelectionProbe.GetState() == SelectionProbe.State.Selected)
+						CollapseGeneratedCaretWordSelection();
+					RememberManualWordRoundTrip(candidate.ConvertedText, candidate.SourceText,
+						candidate.TargetLayout, candidate.SourceLayout, foreground, true);
+					Logging.Log("Restored a recent manual conversion through an exact UI Automation range; length=" + candidate.ConvertedText.Length + ".");
+					return true;
+				}
+				CollapseGeneratedCaretWordSelection();
+				return true;
+			}
+
+			var fallback = candidates.FirstOrDefault(item => item.AllowKeyboardFallback &&
+				TickAgeWithin(item.CreatedTick, ManualWordKeyboardFallbackTtlMs));
+			if (fallback == null) return false;
+			try {
+				DoSelf(() => {
+					var inputs = new List<WinAPI.INPUT>();
+					inputs.Add(KInputs.AddKey(Keys.LShiftKey, true));
+					inputs.AddRange(KInputs.AddPress(Keys.Left, fallback.ConvertedText.Length));
+					inputs.Add(KInputs.AddKey(Keys.LShiftKey, false));
+					KInputs.MakeInput(inputs.ToArray());
+					Thread.Sleep(CaretWordSelectionDelay());
+				}, "select_recent_manual_round_trip");
+				if (WinAPI.GetForegroundWindow() != foreground) return true;
+				string selected;
+				if (!SelectionProbe.TryGetSelectedText(MaxCaretWordCharacters, out selected) ||
+				    !String.Equals(selected, fallback.ConvertedText, StringComparison.Ordinal)) {
+					CollapseGeneratedCaretWordSelection();
+					return false;
+				}
+				selectionConversionSucceeded = false;
+				ConvertSelection();
+				if (!selectionConversionSucceeded) {
+					CollapseGeneratedCaretWordSelection();
+					return true;
+				}
+				var reselection = MahouUI.ReSelect &&
+					!String.IsNullOrEmpty(MahouUI.ReselectCustoms) &&
+					MahouUI.ReselectCustoms.Contains("N");
+				if (reselection || SelectionProbe.GetState() == SelectionProbe.State.Selected)
+					CollapseGeneratedCaretWordSelection();
+				RememberManualWordRoundTrip(fallback.ConvertedText, fallback.SourceText,
+					fallback.TargetLayout, fallback.SourceLayout, foreground, true);
+				Logging.Log("Restored a recent manual conversion through the exact keyboard fallback; length=" + fallback.ConvertedText.Length + ".");
+				return true;
+			} catch (Exception e) {
+				Logging.Log("Recent manual round-trip fallback failed: " + e.Message, 1);
+				try { CollapseGeneratedCaretWordSelection(); } catch { }
+				return true;
+			}
+		}
 		static int CaretWordSelectionDelay() {
 			try {
 				var process = Locales.ActiveWindowProcess();
@@ -2696,6 +2846,8 @@ namespace Mahou {
 			if (standardResult == SelectionProbe.DirectWordResult.Ready) {
 				var replacement = ConvertCaretWordText(standardWord.Text, sourceLayout, targetLayout);
 				if (SelectionProbe.TryReplaceStandardEditWord(standardWord, replacement)) {
+					RememberManualWordRoundTrip(standardWord.Text, replacement, sourceLayout, targetLayout,
+						conversionForeground, false);
 					SwitchLayoutAfterManualConversion(targetLayout, "standard-edit-caret-word", conversionForeground);
 					Logging.Log("Converted a standard edit word around the caret without visual selection; length=" + standardWord.Text.Length + ".");
 					return true;
@@ -2705,9 +2857,15 @@ namespace Mahou {
 			if (ActiveProcessIs("WINWORD")) {
 				int sourceLength;
 				int replacementLength;
+				string wordSource = null;
+				string wordReplacement = null;
 				var wordResult = SelectionProbe.TryReplaceActiveWordRange(
 					MaxCaretWordCharacters,
-					value => ConvertCaretWordText(value, sourceLayout, targetLayout),
+					value => {
+						wordSource = value;
+						wordReplacement = ConvertCaretWordText(value, sourceLayout, targetLayout);
+						return wordReplacement;
+					},
 					out sourceLength,
 					out replacementLength);
 				if (wordResult == SelectionProbe.DirectWordResult.Sensitive) {
@@ -2715,6 +2873,8 @@ namespace Mahou {
 					return true;
 				}
 				if (wordResult == SelectionProbe.DirectWordResult.Replaced) {
+					RememberManualWordRoundTrip(wordSource, wordReplacement, sourceLayout, targetLayout,
+						conversionForeground, false);
 					SwitchLayoutAfterManualConversion(targetLayout, "word-caret-range", conversionForeground);
 					Logging.Log("Converted a Microsoft Word range around the caret without visual selection; input length=" + sourceLength + ", output length=" + replacementLength + ".");
 					return true;
@@ -2757,6 +2917,8 @@ namespace Mahou {
 		}
 		static bool TryConvertWordAroundCaret() {
 			var originalWindow = WinAPI.GetForegroundWindow();
+			var sourceLayout = cs_layout_last;
+			var targetLayout = GetNextLayout(sourceLayout).uId;
 			var selectionWasRequested = false;
 			var generatedSelection = false;
 			try {
@@ -2815,6 +2977,11 @@ namespace Mahou {
 				if (conversionReselected || SelectionProbe.GetState() == SelectionProbe.State.Selected)
 					CollapseGeneratedCaretWordSelection();
 				generatedSelection = false;
+				if (!MahouUI.ConvertSelectionLS) {
+					var convertedWord = ConvertCaretWordText(selectedWord, sourceLayout, targetLayout);
+					RememberManualWordRoundTrip(selectedWord, convertedWord, sourceLayout, targetLayout,
+						originalWindow, true);
+				}
 				Logging.Log("Converted the word around the caret; length=" + selectedWord.Length + ".");
 				return true;
 			} catch (Exception e) {
@@ -2839,6 +3006,7 @@ namespace Mahou {
 					ConvertSelection();
 					return;
 				}
+				if (TryConvertRecentManualWordRoundTrip()) return;
 				if (selectionState == SelectionProbe.State.Unknown) {
 					selectionConversionSucceeded = false;
 					ConvertSelection();
