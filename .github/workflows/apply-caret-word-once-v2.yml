@@ -102,7 +102,26 @@ jobs:
         run: |
           set -euo pipefail
           python3 .github/scripts/security-regression.py | tee -a /tmp/caret-word-report.txt
-          git diff --check
+          python3 - <<'PY'
+          from pathlib import Path
+
+          paths = [
+              Path('.github/scripts/security-regression.py'),
+              Path('Mahou/Classes/KMHook.cs'),
+              Path('Mahou/Classes/SelectionProbe.cs'),
+          ]
+          errors = []
+          for path in paths:
+              raw = path.read_bytes()
+              for number, line in enumerate(raw.splitlines(), 1):
+                  if line.rstrip(b' \t') != line:
+                      errors.append(f'{path}:{number}: trailing space or tab')
+                  if line.startswith((b'<<<<<<<', b'=======', b'>>>>>>>')):
+                      errors.append(f'{path}:{number}: merge-conflict marker')
+          if errors:
+              raise SystemExit('\n'.join(errors))
+          print('Whitespace and conflict-marker check passed.')
+          PY
           git status --short | tee -a /tmp/caret-word-report.txt
 
       - name: Commit code changes
