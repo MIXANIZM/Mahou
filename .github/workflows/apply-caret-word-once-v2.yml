@@ -26,7 +26,7 @@ jobs:
           ref: mixanizm-modern-v2.9.0.1
           fetch-depth: 0
 
-      - name: Decode exact CRLF patch
+      - name: Decode exact patch
         shell: bash
         run: |
           set -euo pipefail
@@ -47,21 +47,55 @@ jobs:
           sha256sum /tmp/caret-word.patch | tee /tmp/caret-word-report.txt
           grep -q '^d254786012ea7827f8f241cd81186093bda3bbcf5f77eca531d9427ebf185132 ' /tmp/caret-word-report.txt
 
-      - name: Apply caret-word patch
+      - name: Normalize, apply and restore line endings
         shell: bash
         run: |
           set -euo pipefail
-          patch=/tmp/caret-word.patch
-          if git apply --check "$patch"; then
-            git apply "$patch"
-            echo 'Patch applied.' | tee -a /tmp/caret-word-report.txt
-          elif git apply --reverse --check "$patch"; then
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          paths = [
+              '.github/scripts/security-regression.py',
+              'Mahou/Classes/KMHook.cs',
+              'Mahou/Classes/SelectionProbe.cs',
+          ]
+          styles = {}
+          for name in paths:
+              path = Path(name)
+              raw = path.read_bytes()
+              styles[name] = 'crlf' if b'\r\n' in raw else 'lf'
+              path.write_bytes(raw.replace(b'\r\n', b'\n'))
+
+          patch = Path('/tmp/caret-word.patch').read_bytes().replace(b'\r\n', b'\n')
+          Path('/tmp/caret-word-lf.patch').write_bytes(patch)
+          Path('/tmp/caret-word-newlines.json').write_text(json.dumps(styles), encoding='utf-8')
+          print(styles)
+          PY
+
+          if git apply --check /tmp/caret-word-lf.patch; then
+            git apply /tmp/caret-word-lf.patch
+            echo 'Patch applied after line-ending normalization.' | tee -a /tmp/caret-word-report.txt
+          elif git apply --reverse --check /tmp/caret-word-lf.patch; then
             echo 'Patch was already applied.' | tee -a /tmp/caret-word-report.txt
           else
-            echo 'Patch does not match the current branch.' | tee -a /tmp/caret-word-report.txt
-            git apply --check --verbose "$patch" 2>&1 | tee -a /tmp/caret-word-report.txt
+            echo 'Normalized patch does not match the current branch.' | tee -a /tmp/caret-word-report.txt
+            git apply --check --verbose /tmp/caret-word-lf.patch 2>&1 | tee -a /tmp/caret-word-report.txt
             exit 1
           fi
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          styles = json.loads(Path('/tmp/caret-word-newlines.json').read_text(encoding='utf-8'))
+          for name, style in styles.items():
+              path = Path(name)
+              raw = path.read_bytes().replace(b'\r\n', b'\n')
+              if style == 'crlf':
+                  raw = raw.replace(b'\n', b'\r\n')
+              path.write_bytes(raw)
+          PY
 
       - name: Verify source invariants
         shell: bash
