@@ -216,11 +216,17 @@ namespace Mahou {
             if (String.IsNullOrEmpty(text) || caret < 0 || caret > text.Length || maxCharacters < 1) return false;
 
             var probe = -1;
-            if (caret < text.Length && IsWordCharacter(text, caret)) {
+            var caretOnWord = caret < text.Length && IsWordCharacter(text, caret);
+            var leftOnWord = caret > 0 && IsWordCharacter(text, caret - 1);
+            var caretInsideWord = caretOnWord && leftOnWord;
+
+            if (caretInsideWord) {
                 probe = caret;
-            } else if (caret > 0 && IsWordCharacter(text, caret - 1)) {
+            } else if (leftOnWord) {
                 probe = caret - 1;
             } else {
+                // At an exact word-start boundary, prefer the previous word on the same line.
+                // Only use the word to the right when no previous word exists.
                 var left = caret - 1;
                 var leftDistance = 0;
                 while (left >= 0 && leftDistance < MaxAdjacentWhitespaceProbe && IsHorizontalWhitespace(text[left])) {
@@ -229,6 +235,8 @@ namespace Mahou {
                 }
                 if (left >= 0 && IsWordCharacter(text, left)) {
                     probe = left;
+                } else if (caretOnWord) {
+                    probe = caret;
                 } else {
                     var right = caret;
                     var rightDistance = 0;
@@ -466,22 +474,28 @@ namespace Mahou {
                 if (!String.IsNullOrEmpty(ranges[0].GetText(1))) return false;
 
                 var wordRange = ranges[0].Clone();
-                wordRange.ExpandToEnclosingUnit(TextUnit.Word);
-                var raw = wordRange.GetText(maxCharacters + MaxAdjacentWhitespaceProbe + 1);
-                if (String.IsNullOrEmpty(raw)) return false;
+                var requestedContext = maxCharacters + MaxAdjacentWhitespaceProbe;
+                var movedStart = wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
+                                                               TextUnit.Character, -requestedContext);
+                var caretOffset = Math.Max(0, -movedStart);
+                wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
+                                              TextUnit.Character, requestedContext);
+                var raw = wordRange.GetText(requestedContext * 2 + 1);
+                if (String.IsNullOrEmpty(raw) || caretOffset > raw.Length) return false;
 
-                var leading = 0;
-                while (leading < raw.Length && Char.IsWhiteSpace(raw[leading])) leading++;
-                var trailing = 0;
-                while (trailing < raw.Length - leading && Char.IsWhiteSpace(raw[raw.Length - trailing - 1])) trailing++;
-                if (leading > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
-                                                                TextUnit.Character, leading) != leading)
+                int wordStart;
+                int wordEnd;
+                if (!TryFindWordBounds(raw, caretOffset, maxCharacters, out wordStart, out wordEnd))
                     return false;
+                if (wordStart > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.Start,
+                                                                  TextUnit.Character, wordStart) != wordStart)
+                    return false;
+                var trailing = raw.Length - wordEnd;
                 if (trailing > 0 && wordRange.MoveEndpointByUnit(TextPatternRangeEndpoint.End,
                                                                  TextUnit.Character, -trailing) != -trailing)
                     return false;
 
-                var trimmed = raw.Substring(leading, raw.Length - leading - trailing);
+                var trimmed = raw.Substring(wordStart, wordEnd - wordStart);
                 if (!IsSingleWord(trimmed, maxCharacters)) return false;
                 wordRange.Select();
                 selectedWord = trimmed;
