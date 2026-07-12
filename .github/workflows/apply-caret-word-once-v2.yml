@@ -26,7 +26,7 @@ jobs:
           ref: mixanizm-modern-v2.9.0.1
           fetch-depth: 0
 
-      - name: Apply and verify caret-word conversion
+      - name: Decode exact CRLF patch
         shell: bash
         run: |
           set -euo pipefail
@@ -44,20 +44,37 @@ jobs:
               raise SystemExit('Embedded caret-word patch was not found.')
           Path('/tmp/caret-word.patch').write_bytes(base64.b64decode(match.group(1), validate=True))
           PY
+          sha256sum /tmp/caret-word.patch | tee /tmp/caret-word-report.txt
+          grep -q '^d254786012ea7827f8f241cd81186093bda3bbcf5f77eca531d9427ebf185132 ' /tmp/caret-word-report.txt
 
+      - name: Apply caret-word patch
+        shell: bash
+        run: |
+          set -euo pipefail
           patch=/tmp/caret-word.patch
           if git apply --check "$patch"; then
             git apply "$patch"
+            echo 'Patch applied.' | tee -a /tmp/caret-word-report.txt
           elif git apply --reverse --check "$patch"; then
-            echo 'Caret-word patch is already applied.'
+            echo 'Patch was already applied.' | tee -a /tmp/caret-word-report.txt
           else
-            echo 'Caret-word patch does not match the current branch.' >&2
+            echo 'Patch does not match the current branch.' | tee -a /tmp/caret-word-report.txt
+            git apply --check --verbose "$patch" 2>&1 | tee -a /tmp/caret-word-report.txt
             exit 1
           fi
 
-          python3 .github/scripts/security-regression.py
+      - name: Verify source invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/security-regression.py | tee -a /tmp/caret-word-report.txt
           git diff --check
+          git status --short | tee -a /tmp/caret-word-report.txt
 
+      - name: Commit code changes
+        shell: bash
+        run: |
+          set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
@@ -65,8 +82,23 @@ jobs:
             Mahou/Classes/KMHook.cs \
             Mahou/Classes/SelectionProbe.cs
           if git diff --cached --quiet; then
-            echo 'No code changes remain to commit.'
+            echo 'No code changes remain to commit.' | tee -a /tmp/caret-word-report.txt
             exit 0
           fi
           git commit -m 'feat: convert word before caret with Insert'
+          git rev-parse HEAD | tee -a /tmp/caret-word-report.txt
+
+      - name: Push code commit
+        shell: bash
+        run: |
+          set -euo pipefail
           git push origin HEAD:mixanizm-modern-v2.9.0.1
+
+      - name: Upload apply report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: caret-word-apply-report
+          path: /tmp/caret-word-report.txt
+          if-no-files-found: warn
+          retention-days: 7
