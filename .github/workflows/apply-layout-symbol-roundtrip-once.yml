@@ -1,0 +1,90 @@
+name: Apply layout-symbol round-trip patch once
+
+on:
+  push:
+    branches:
+      - mixanizm-modern-v2.9.0.1
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-layout-symbol-roundtrip
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+
+      - name: Decode and apply exact patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d .github/patches/layout-symbol-roundtrip.patch.gz.b64 | gzip -d > /tmp/layout-symbol-roundtrip.patch
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          files = [
+              Path('.github/scripts/security-regression.py'),
+              Path('Mahou/Classes/KMHook.cs'),
+              Path('Mahou/Classes/SelectionProbe.cs'),
+          ]
+          bom = b'\xef\xbb\xbf'
+          metadata = {}
+          for path in files:
+              raw = path.read_bytes()
+              has_bom = raw.startswith(bom)
+              if has_bom:
+                  raw = raw[len(bom):]
+              metadata[str(path)] = {'bom': has_bom, 'crlf': b'\r\n' in raw}
+              path.write_bytes(raw.decode('utf-8').replace('\r\n', '\n').encode('utf-8'))
+          Path('/tmp/layout-symbol-roundtrip-meta.json').write_text(json.dumps(metadata), encoding='utf-8')
+          PY
+
+          git apply --check /tmp/layout-symbol-roundtrip.patch
+          git apply /tmp/layout-symbol-roundtrip.patch
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          bom = b'\xef\xbb\xbf'
+          metadata = json.loads(Path('/tmp/layout-symbol-roundtrip-meta.json').read_text(encoding='utf-8'))
+          for name, meta in metadata.items():
+              path = Path(name)
+              text = path.read_text(encoding='utf-8').replace('\r\n', '\n')
+              raw = (text.replace('\n', '\r\n') if meta['crlf'] else text).encode('utf-8')
+              if meta['bom']:
+                  raw = bom + raw
+              path.write_bytes(raw)
+          PY
+
+      - name: Verify source invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/security-regression.py
+          python3 .github/scripts/ui-resource-regression.py
+          grep -Fq 'TryConvertRecentManualWordRoundTrip' Mahou/Classes/KMHook.cs
+          grep -Fq 'TryReplaceStandardExactTextAroundCaret' Mahou/Classes/SelectionProbe.cs
+          grep -Fq 'TrySelectAutomationExactTextAroundCaret' Mahou/Classes/SelectionProbe.cs
+
+      - name: Commit and push product changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/scripts/security-regression.py Mahou/Classes/KMHook.cs Mahou/Classes/SelectionProbe.cs
+          git commit -m 'fix: preserve layout-symbol letters on Insert round-trip'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
