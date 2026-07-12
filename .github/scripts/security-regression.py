@@ -138,6 +138,8 @@ required = {
              "TryConvertRecentManualWordRoundTrip",
              "RememberManualWordRoundTrip",
              "Restored a recent manual conversion exactly",
+             "ShouldPreferTrackedWordForManualConversion",
+             "Using the tracked physical-key word because it contains an internal layout-letter symbol",
              "RestoreCaretPastPreservedSeparators",
              "ReselectGeneratedCaretWordWithoutSeparators",
              "TrySelectRecentExactTextBeforeCaret",

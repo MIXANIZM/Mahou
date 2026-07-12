@@ -2841,6 +2841,31 @@ namespace Mahou {
 		static void CollapseGeneratedCaretWordSelection() {
 			DoSelf(() => KInputs.MakeInput(KInputs.AddPress(Keys.Right)), "collapse_generated_caret_word_selection");
 		}
+		static bool IsTrackedLetterOrDigitKey(Keys key) {
+			return (key >= Keys.A && key <= Keys.Z) ||
+			       (key >= Keys.D0 && key <= Keys.D9) ||
+			       (key >= Keys.NumPad0 && key <= Keys.NumPad9);
+		}
+		static bool IsLayoutLetterSymbolKey(Keys key) {
+			return key == Keys.Oemtilde || key == Keys.OemOpenBrackets || key == Keys.Oem6 ||
+			       key == Keys.Oem5 || key == Keys.Oem1 || key == Keys.Oem7 ||
+			       key == Keys.Oemcomma || key == Keys.OemPeriod || key == Keys.OemQuestion;
+		}
+		static bool ShouldPreferTrackedWordForManualConversion(List<YuKey> word) {
+			if (word == null || word.Count < 3) return false;
+			var firstLetter = -1;
+			var lastLetter = -1;
+			for (var i = 0; i < word.Count; i++) {
+				if (!IsTrackedLetterOrDigitKey(word[i].key)) continue;
+				if (firstLetter < 0) firstLetter = i;
+				lastLetter = i;
+			}
+			if (firstLetter < 0 || lastLetter <= firstLetter) return false;
+			for (var i = firstLetter + 1; i < lastLetter; i++) {
+				if (IsLayoutLetterSymbolKey(word[i].key)) return true;
+			}
+			return false;
+		}
 		static bool IsCaretWordCandidate(string text) {
 			if (String.IsNullOrEmpty(text) || text.Length > MaxCaretWordCharacters) return false;
 			var hasLetter = false;
@@ -3076,9 +3101,14 @@ namespace Mahou {
 					ConvertSelection();
 					if (selectionConversionSucceeded) return;
 				}
+				var wordSnapshot = MMain.c_word == null ? new List<YuKey>() : new List<YuKey>(MMain.c_word);
+				if (ShouldPreferTrackedWordForManualConversion(wordSnapshot)) {
+					Logging.Log("Using the tracked physical-key word because it contains an internal layout-letter symbol.");
+					ConvertLast(wordSnapshot);
+					return;
+				}
 				if (TryConvertWordWithoutVisibleSelection()) return;
 				if (TryConvertWordAroundCaret()) return;
-				var wordSnapshot = MMain.c_word == null ? new List<YuKey>() : new List<YuKey>(MMain.c_word);
 				ConvertLast(wordSnapshot);
 			} finally {
 				EndManualConversion();
