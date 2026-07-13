@@ -78,7 +78,17 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
           $testExe = Join-Path $root "artifacts/$platform/InsertSafetyRegression.exe"
-          $csc = Join-Path ([System.Runtime.InteropServices.RuntimeEnvironment]::GetRuntimeDirectory()) 'csc.exe'
+          $msbuildExe = (Get-Command msbuild -ErrorAction Stop).Source
+          $cscCandidates = @(
+            (Join-Path (Split-Path $msbuildExe -Parent) 'Roslyn\csc.exe'),
+            (Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'),
+            (Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe')
+          )
+          $csc = $cscCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $csc) {
+            throw "C# compiler not found. Checked: $($cscCandidates -join ', ')"
+          }
+          Write-Host "Using C# compiler: $csc"
           & $csc /nologo "/platform:$platform" "/out:$testExe" .github/tests/InsertSafetyRegression.cs
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           & $testExe (Join-Path $build1 'Mahou.exe')
