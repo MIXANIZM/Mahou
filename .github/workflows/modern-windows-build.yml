@@ -1,74 +1,204 @@
-name: Apply strict Edit allowlist once
+name: Modern Windows build
 
 on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: apply-strict-edit-allowlist-pr
+  group: modern-windows-build-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  apply:
-    if: github.actor != 'github-actions[bot]'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [x86, x64]
+
     steps:
-      - name: Checkout working branch
+      - name: Checkout current modern branch
         uses: actions/checkout@v4
         with:
           ref: mixanizm-modern-v2.9.0.1
-          fetch-depth: 0
 
-      - name: Decode and apply patch
-        shell: bash
+      - name: Verify security invariants
+        shell: pwsh
         run: |
-          set -euo pipefail
-          base64 -d .github/patches/restrict-standard-edit.patch.b64 > /tmp/restrict-standard-edit.patch
-          python3 - <<'PY'
-          from pathlib import Path
+          python .github/scripts/security-regression.py | Tee-Object -FilePath security-regression.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-          path = Path('Mahou/Classes/SelectionProbe.cs')
-          raw = path.read_bytes()
-          bom = b'\xef\xbb\xbf'
-          has_bom = raw.startswith(bom)
-          if has_bom:
-              raw = raw[len(bom):]
-          crlf = b'\r\n' in raw
-          Path('/tmp/selection-probe-meta').write_text(('1' if has_bom else '0') + ('1' if crlf else '0'))
-          path.write_bytes(raw.decode('utf-8').replace('\r\n', '\n').encode('utf-8'))
-          patch = Path('/tmp/restrict-standard-edit.patch')
-          patch.write_bytes(patch.read_bytes().replace(b'\r\n', b'\n'))
-          PY
-          patch -p1 --dry-run < /tmp/restrict-standard-edit.patch
-          patch -p1 < /tmp/restrict-standard-edit.patch
-          python3 - <<'PY'
-          from pathlib import Path
-
-          path = Path('Mahou/Classes/SelectionProbe.cs')
-          meta = Path('/tmp/selection-probe-meta').read_text()
-          text = path.read_text(encoding='utf-8').replace('\r\n', '\n')
-          raw = (text.replace('\n', '\r\n') if meta[1] == '1' else text).encode('utf-8')
-          if meta[0] == '1':
-              raw = b'\xef\xbb\xbf' + raw
-          path.write_bytes(raw)
-          PY
-
-      - name: Verify and commit
-        shell: bash
+      - name: Package source snapshot
+        if: matrix.platform == 'x86'
+        shell: pwsh
         run: |
-          set -euo pipefail
-          python3 .github/scripts/security-regression.py
-          python3 .github/scripts/ui-resource-regression.py
-          grep -Fq 'IsSupportedStandardEditClass' Mahou/Classes/SelectionProbe.cs
-          grep -Fq 'String.Equals(className, "Edit", StringComparison.OrdinalIgnoreCase)' Mahou/Classes/SelectionProbe.cs
-          ! grep -Fq 'IndexOf("Edit", StringComparison.OrdinalIgnoreCase)' Mahou/Classes/SelectionProbe.cs
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add Mahou/Classes/SelectionProbe.cs
-          git commit -m 'fix: restrict Insert to classic Edit controls'
-          git push origin HEAD:mixanizm-modern-v2.9.0.1
+          New-Item -ItemType Directory -Force -Path source-snapshot | Out-Null
+          git archive --format=zip --output=source-snapshot/MIXANIZM-Mahou-modern-source.zip HEAD
+
+      - name: Upload source snapshot
+        if: matrix.platform == 'x86'
+        uses: actions/upload-artifact@v4
+        with:
+          name: MIXANIZM-Mahou-modern-source
+          path: source-snapshot/MIXANIZM-Mahou-modern-source.zip
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Stamp source commit
+        shell: pwsh
+        run: |
+          $commit = (git rev-parse HEAD).Trim()
+          $source = 'static class ____ { public static string commit="' + $commit + '"; }'
+          Set-Content -Path Mahou/____commit.cs -Value $source -Encoding utf8
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build isolated Release ${{ matrix.platform }} twice
+        shell: pwsh
+        run: |
+          $platform = '${{ matrix.platform }}'
+          $root = $env:GITHUB_WORKSPACE
+          $build1 = Join-Path $root "artifacts/$platform/build1/"
+          $build2 = Join-Path $root "artifacts/$platform/build2/"
+          $obj1 = Join-Path $root "artifacts/$platform/obj1/"
+          $obj2 = Join-Path $root "artifacts/$platform/obj2/"
+          New-Item -ItemType Directory -Force -Path $build1,$build2,$obj1,$obj2 | Out-Null
+
+          & msbuild Mahou/Mahou.sln /m /t:Rebuild /p:Configuration=Release /p:Platform=$platform /p:Deterministic=true "/p:OutputPath=$build1" "/p:IntermediateOutputPath=$obj1" /v:minimal /fl "/flp:logfile=msbuild-$platform-build1.log;verbosity=normal"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          & msbuild Mahou/Mahou.sln /m /t:Rebuild /p:Configuration=Release /p:Platform=$platform /p:Deterministic=true "/p:OutputPath=$build2" "/p:IntermediateOutputPath=$obj2" /v:minimal /fl "/flp:logfile=msbuild-$platform-build2.log;verbosity=normal"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $testExe = Join-Path $root "artifacts/$platform/InsertSafetyRegression.exe"
+          $msbuildExe = (Get-Command msbuild -ErrorAction Stop).Source
+          $cscCandidates = @(
+            (Join-Path (Split-Path $msbuildExe -Parent) 'Roslyn\csc.exe'),
+            (Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'),
+            (Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe')
+          )
+          $csc = $cscCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $csc) {
+            throw "C# compiler not found. Checked: $($cscCandidates -join ', ')"
+          }
+          Write-Host "Using C# compiler: $csc"
+          & $csc /nologo "/platform:$platform" "/out:$testExe" .github/tests/InsertSafetyRegression.cs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $testExe (Join-Path $build1 'Mahou.exe')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $files = @('Mahou.exe','Mahou.exe.config','AS_dict.txt')
+          $lines = @()
+          foreach ($file in $files) {
+            $first = (Get-FileHash (Join-Path $build1 $file) -Algorithm SHA256).Hash.ToLowerInvariant()
+            $second = (Get-FileHash (Join-Path $build2 $file) -Algorithm SHA256).Hash.ToLowerInvariant()
+            $match = $first -eq $second
+            $lines += "$file first=$first second=$second match=$match"
+            if (-not $match) { throw "Non-deterministic output: $file" }
+          }
+          $lines | Set-Content "deterministic-build-$platform.txt" -Encoding utf8
+
+      - name: Create release provenance
+        shell: pwsh
+        run: |
+          $platform = '${{ matrix.platform }}'
+          $source = Join-Path $env:GITHUB_WORKSPACE "artifacts/$platform/build1"
+          $dest = "release/$platform"
+          $deterministicName = "deterministic-build-$platform.txt"
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          Copy-Item (Join-Path $source 'Mahou.exe') $dest -Force
+          Copy-Item (Join-Path $source 'Mahou.exe.config') $dest -Force
+          Copy-Item (Join-Path $source 'AS_dict.txt') $dest -Force
+          Copy-Item $deterministicName $dest -Force
+          Copy-Item 'security-regression.txt' $dest -Force
+          Copy-Item 'README-MIXANIZM.md' $dest -Force
+          Copy-Item 'SECURITY-AUDIT-MODERN.md' $dest -Force
+          Copy-Item 'KNOWN-LIMITATIONS.md' $dest -Force
+          Copy-Item 'TEST-PLAN-WINDOWS11.md' $dest -Force
+
+          $commit = (git rev-parse HEAD).Trim()
+          $files = @(
+            'Mahou.exe',
+            'Mahou.exe.config',
+            'AS_dict.txt',
+            $deterministicName,
+            'security-regression.txt',
+            'README-MIXANIZM.md',
+            'SECURITY-AUDIT-MODERN.md',
+            'KNOWN-LIMITATIONS.md',
+            'TEST-PLAN-WINDOWS11.md'
+          )
+          $hashLines = @()
+          $manifestFiles = @()
+          foreach ($file in $files) {
+            $hash = (Get-FileHash (Join-Path $dest $file) -Algorithm SHA256).Hash.ToLowerInvariant()
+            $hashLines += "$hash *$file"
+            $manifestFiles += [ordered]@{ path = $file; sha256 = $hash }
+          }
+          $hashLines | Set-Content (Join-Path $dest 'SHA256SUMS.txt') -Encoding utf8
+
+          $manifest = [ordered]@{
+            schema_version = 1
+            product = 'MIXANIZM Mahou'
+            version = '2.9.0.1-mixanizm'
+            source_commit = $commit
+            platform = $platform
+            target_framework = '.NET Framework 4.8'
+            deterministic_rebuild_verified = $true
+            legacy_self_update = 'disabled'
+            public_sync = 'disabled'
+            security_regression = 'passed'
+            runtime_test_status = 'required before release'
+            files = $manifestFiles
+          }
+          $manifest | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $dest 'build-manifest.json') -Encoding utf8
+
+          $sbom = [ordered]@{
+            bomFormat = 'CycloneDX'
+            specVersion = '1.5'
+            version = 1
+            metadata = [ordered]@{
+              component = [ordered]@{
+                type = 'application'
+                name = 'MIXANIZM Mahou'
+                version = '2.9.0.1-mixanizm'
+                properties = @(
+                  [ordered]@{ name = 'mixanizm:source-commit'; value = $commit },
+                  [ordered]@{ name = 'mixanizm:platform'; value = $platform },
+                  [ordered]@{ name = 'mixanizm:target-framework'; value = '.NET Framework 4.8' },
+                  [ordered]@{ name = 'mixanizm:deterministic-rebuild'; value = 'verified' }
+                )
+              }
+            }
+            components = @(
+              [ordered]@{ type = 'data'; name = 'Mahou AutoSwitch dictionary'; version = 'bundled'; scope = 'required' }
+            )
+          }
+          $sbom | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $dest 'sbom.cdx.json') -Encoding utf8
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: modern-build-log-${{ matrix.platform }}
+          path: |
+            msbuild-${{ matrix.platform }}-build1.log
+            msbuild-${{ matrix.platform }}-build2.log
+            deterministic-build-${{ matrix.platform }}.txt
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: MIXANIZM-Mahou-modern-${{ matrix.platform }}
+          path: release/${{ matrix.platform }}
+          if-no-files-found: error
+          retention-days: 14
