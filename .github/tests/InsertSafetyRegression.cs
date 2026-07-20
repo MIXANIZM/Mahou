@@ -73,7 +73,7 @@ static class InsertSafetyRegression {
 
         CheckRange("one\ttwo\u00a0three", 3, 0, 3);
         CheckRange("one\ttwo\u00a0three", 7, 4, 7);
-        CheckRane(one\ttwo\u00a0three", 13, 8, 13);
+        CheckRange("one\ttwo\u00a0three", 13, 8, 13);
         CheckRange("word, next", 4, 0, 4);
         CheckRange("word, next", 8, 6, 10);
 
