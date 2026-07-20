@@ -11,9 +11,10 @@
 
 Use a fresh disposable document and record the full text, caret, selection, keyboard layout and clipboard before every step.
 
-- In Notepad/Edit and RichEdit, test `one two three four` with the caret inside and after every word. Only the direct target word may change; the prefix, suffix and separators must remain byte-for-byte identical.
+- In a classic Win32 control whose exact window class is `Edit`, test `one two three four` with the caret inside and after every word. Only the direct target word may change; the prefix, suffix and separators must remain byte-for-byte identical.
 - In Word, repeat the same matrix in two documents and switch documents between Insert presses. Only the active, revalidated Word Range may change.
-- In Chrome textarea/contenteditable, Telegram and Discord, no-selection Insert must be a complete no-op until a direct adapter exists: no text, caret, selection, layout or clipboard change.
+- In modern Windows Notepad and every RichEdit-derived class (`RichEditD2DPT`, `RichEdit20W`, `RICHEDIT50W`), no-selection Insert must be a complete no-op until a dedicated verified adapter exists.
+- In Chrome textarea/contenteditable, Telegram and Discord, no-selection Insert must also be a complete no-op until a direct adapter exists: no text, caret, selection, layout or clipboard change.
 - Repeat Insert 20 times on one word, then on different words with mouse clicks and Left/Right/Home/End between presses. No blue selection may appear at any point.
 - Test held and rapidly repeated Insert. One hotkey event may run at most one mutating direct strategy.
 - Force an unsupported control, `SelectionProbe.State.Unknown`, a protected field and a direct-adapter failure. Every case must be a complete no-op.

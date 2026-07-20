@@ -4,6 +4,7 @@ using System.Reflection;
 static class InsertSafetyRegression {
     static int failures;
     static MethodInfo findWordBounds;
+    static MethodInfo supportedStandardEditClass;
 
     static void Check(bool condition, string message) {
         if (condition) return;
@@ -42,9 +43,22 @@ static class InsertSafetyRegression {
         var assembly = Assembly.LoadFrom(args[0]);
         var probe = assembly.GetType("Mahou.SelectionProbe", true);
         findWordBounds = probe.GetMethod("TryFindWordBounds", BindingFlags.Static | BindingFlags.NonPublic);
-        if (findWordBounds == null) {
-            Console.Error.WriteLine("FAIL: TryFindWordBounds not found");
+        supportedStandardEditClass = probe.GetMethod("IsSupportedStandardEditClass",
+                                                     BindingFlags.Static | BindingFlags.NonPublic);
+        if (findWordBounds == null || supportedStandardEditClass == null) {
+            Console.Error.WriteLine("FAIL: required SelectionProbe safety helpers not found");
             return 1;
+        }
+
+        Check((bool)supportedStandardEditClass.Invoke(null, new object[] { "Edit" }),
+              "classic Edit class must remain supported");
+        Check((bool)supportedStandardEditClass.Invoke(null, new object[] { "EDIT" }),
+              "classic Edit class matching must be case-insensitive");
+        foreach (var unsupportedClass in new[] {
+            "RichEditD2DPT", "RichEdit20W", "RICHEDIT50W", "RichEdit", "Scintilla", null
+        }) {
+            Check(!(bool)supportedStandardEditClass.Invoke(null, new object[] { unsupportedClass }),
+                  "non-classic editor must be rejected: " + (unsupportedClass ?? "<null>"));
         }
 
         const string words = "one two three four";
@@ -59,7 +73,7 @@ static class InsertSafetyRegression {
 
         CheckRange("one\ttwo\u00a0three", 3, 0, 3);
         CheckRange("one\ttwo\u00a0three", 7, 4, 7);
-        CheckRange("one\ttwo\u00a0three", 13, 8, 13);
+        CheckRane(one\ttwo\u00a0three", 13, 8, 13);
         CheckRange("word, next", 4, 0, 4);
         CheckRange("word, next", 8, 6, 10);
 
