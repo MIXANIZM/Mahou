@@ -128,6 +128,10 @@ namespace Mahou {
             return IntPtr.Size == 8 ? GetWindowLongPtr64(window, GWL_STYLE).ToInt64() : GetWindowLong32(window, GWL_STYLE);
         }
 
+        internal static bool IsSupportedStandardEditClass(string className) {
+            return String.Equals(className, "Edit", StringComparison.OrdinalIgnoreCase);
+        }
+
         static bool TryGetFocusedStandardEdit(out IntPtr foreground, out IntPtr focused, out bool sensitive) {
             foreground = GetForegroundWindow();
             focused = IntPtr.Zero;
@@ -141,7 +145,7 @@ namespace Mahou {
 
             var className = new StringBuilder(128);
             if (GetClassName(info.hwndFocus, className, className.Capacity) <= 0) return false;
-            if (className.ToString().IndexOf("Edit", StringComparison.OrdinalIgnoreCase) < 0) return false;
+            if (!IsSupportedStandardEditClass(className.ToString())) return false;
             focused = info.hwndFocus;
             sensitive = (GetStyle(focused) & ES_PASSWORD) != 0;
             return true;
