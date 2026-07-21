@@ -24,7 +24,7 @@ jobs:
           ref: mixanizm-modern-v2.9.0.1
           fetch-depth: 0
 
-      - name: Decode reviewed patch
+      - name: Decode reviewed patch and normalize target files
         shell: bash
         run: |
           set -euo pipefail
@@ -39,8 +39,27 @@ jobs:
           gzip -dc /tmp/agz-mah-0001-smart-caps.patch.gz > /tmp/agz-mah-0001-smart-caps.patch.crlf
           python3 - <<'PY'
           from pathlib import Path
-          source = Path('/tmp/agz-mah-0001-smart-caps.patch.crlf').read_bytes()
-          Path('/tmp/agz-mah-0001-smart-caps.patch').write_bytes(source.replace(b'\r\n', b'\n'))
+          import json
+
+          patch_source = Path('/tmp/agz-mah-0001-smart-caps.patch.crlf').read_bytes()
+          Path('/tmp/agz-mah-0001-smart-caps.patch').write_bytes(patch_source.replace(b'\r\n', b'\n'))
+
+          names = [
+              'Mahou/Classes/Configs.cs',
+              'Mahou/Classes/SelectionProbe.cs',
+              'Mahou/MahouUI.cs',
+          ]
+          bom = b'\xef\xbb\xbf'
+          meta = {}
+          for name in names:
+              path = Path(name)
+              raw = path.read_bytes()
+              has_bom = raw.startswith(bom)
+              if has_bom:
+                  raw = raw[len(bom):]
+              meta[name] = {'bom': has_bom, 'crlf': b'\r\n' in raw}
+              path.write_bytes(raw.replace(b'\r\n', b'\n'))
+          Path('/tmp/agz-mah-0001-line-meta.json').write_text(json.dumps(meta), encoding='utf-8')
           PY
           sha256sum /tmp/agz-mah-0001-smart-caps.patch
 
@@ -65,13 +84,30 @@ jobs:
           git push origin HEAD:mixanizm-modern-v2.9.0.1
           exit 1
 
-      - name: Apply reviewed patch
+      - name: Apply reviewed patch and restore file format
         if: steps.validate.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
           patch --fuzz=2 -p1 < /tmp/agz-mah-0001-smart-caps.patch
-          git diff --check
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          bom = b'\xef\xbb\xbf'
+          meta = json.loads(Path('/tmp/agz-mah-0001-line-meta.json').read_text(encoding='utf-8'))
+          for name, info in meta.items():
+              path = Path(name)
+              raw = path.read_bytes()
+              if raw.startswith(bom):
+                  raw = raw[len(bom):]
+              if info['crlf']:
+                  raw = raw.replace(b'\r\n', b'\n').replace(b'\n', b'\r\n')
+              if info['bom']:
+                  raw = bom + raw
+              path.write_bytes(raw)
+          PY
+          git -c core.whitespace=cr-at-eol diff --check
 
       - name: Run fast regression gates
         if: steps.validate.outcome == 'success'
