@@ -45,12 +45,28 @@ jobs:
           sha256sum /tmp/agz-mah-0001-smart-caps.patch
 
       - name: Validate reviewed patch
+        id: validate
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          git apply --check --verbose /tmp/agz-mah-0001-smart-caps.patch > /tmp/agz-mah-0001-apply.log 2>&1
+
+      - name: Persist validation diagnostic
+        if: steps.validate.outcome == 'failure'
         shell: bash
         run: |
           set -euo pipefail
-          git apply --check /tmp/agz-mah-0001-smart-caps.patch
+          cp /tmp/agz-mah-0001-apply.log .github/patches/agz-mah-0001-apply-diagnostic.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/patches/agz-mah-0001-apply-diagnostic.txt
+          git commit -m 'chore: record AGZ-MAH-0001 apply diagnostic'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
+          exit 1
 
       - name: Apply reviewed patch
+        if: steps.validate.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -58,6 +74,7 @@ jobs:
           git diff --check
 
       - name: Run fast regression gates
+        if: steps.validate.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -70,6 +87,7 @@ jobs:
           ! grep -Eq 'KInputs\.|GetClipStr\(|PasteText\(|NativeClipboard|\.Select\(\)' Mahou/Classes/SmartCaps.cs
 
       - name: Commit product and documentation changes
+        if: steps.validate.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -81,6 +99,7 @@ jobs:
           git rm .github/patches/agz-mah-0001-smart-caps.part04
           git rm .github/workflows/apply-agz-mah-0001-smart-caps-once.yml
           rm -f .github/patches/agz-mah-0001-trigger.txt
+          rm -f .github/patches/agz-mah-0001-apply-diagnostic.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
