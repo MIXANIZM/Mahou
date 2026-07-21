@@ -346,8 +346,8 @@ namespace Mahou {
             if (main == null || main.IsDisposed || !main.IsHandleCreated) return;
             try {
                 main.BeginInvoke((Action)(() => TryApply(word)));
-            } catch (InvalidOperationException) {
             } catch (ObjectDisposedException) {
+            } catch (InvalidOperationException) {
             }
         }
 
@@ -356,8 +356,8 @@ namespace Mahou {
             if (main == null || main.IsDisposed || !main.IsHandleCreated) return;
             try {
                 main.BeginInvoke((Action)(() => TryUndo(correction)));
-            } catch (InvalidOperationException) {
             } catch (ObjectDisposedException) {
+            } catch (InvalidOperationException) {
             }
         }
 
