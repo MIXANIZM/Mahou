@@ -127,13 +127,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          git checkout -- .github/workflows/modern-windows-build.yml
           rm -f .github/patches/agz-mah-0001-smart-caps.patch.gz.b64
           rm -f .github/patches/agz-mah-0001-smart-caps.part00
           rm -f .github/patches/agz-mah-0001-smart-caps.part01
           rm -f .github/patches/agz-mah-0001-smart-caps.part02
           rm -f .github/patches/agz-mah-0001-smart-caps.part03
           rm -f .github/patches/agz-mah-0001-smart-caps.part04
-          rm -f .github/workflows/apply-agz-mah-0001-smart-caps-once.yml
           rm -f .github/patches/agz-mah-0001-trigger.txt
           rm -f .github/patches/agz-mah-0001-apply-diagnostic.txt
           git config user.name 'github-actions[bot]'
