@@ -125,6 +125,7 @@
     <Compile Include="Classes\WinAPI.cs" />
     <Compile Include="Classes\RawInputForm.cs" />
     <Compile Include="Classes\SelectionProbe.cs" />
+    <Compile Include="Classes\SmartCaps.cs" />
     <Compile Include="Classes\SecretProtector.cs" />
     <Compile Include="Classes\StartupManager.cs" />
     <Compile Include="Classes\UserDataPaths.cs" />
@@ -145,6 +146,9 @@
     </Compile>
     <Compile Include="MahouUI.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MahouUI.SmartTyping.cs">
+      <DependentUpon>MahouUI.cs</DependentUpon>
     </Compile>
     <Compile Include="MahouUI.Security.cs">
       <DependentUpon>MahouUI.cs</DependentUpon>

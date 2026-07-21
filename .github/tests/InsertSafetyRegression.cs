@@ -5,6 +5,7 @@ static class InsertSafetyRegression {
     static int failures;
     static MethodInfo findWordBounds;
     static MethodInfo supportedStandardEditClass;
+    static MethodInfo findFreshTextBeforeCaret;
 
     static void Check(bool condition, string message) {
         if (condition) return;
@@ -16,6 +17,21 @@ static class InsertSafetyRegression {
         var args = new object[] { text, caret, 256, 0, 0 };
         var found = (bool)findWordBounds.Invoke(null, args);
         return found ? new[] { (int)args[3], (int)args[4] } : null;
+    }
+
+    static int[] FreshBounds(string text, int caret, string expected, int maxBoundaryCharacters) {
+        var args = new object[] { text, caret, expected, maxBoundaryCharacters, 0, 0 };
+        var found = (bool)findFreshTextBeforeCaret.Invoke(null, args);
+        return found ? new[] { (int)args[4], (int)args[5] } : null;
+    }
+
+    static void CheckFreshRange(string text, int caret, string expected, int expectedStart, int expectedEnd) {
+        var bounds = FreshBounds(text, caret, expected, 4);
+        Check(bounds != null, "fresh word not found before caret " + caret + " in [" + text + "]");
+        if (bounds == null) return;
+        Check(bounds[0] == expectedStart && bounds[1] == expectedEnd,
+              "unexpected fresh range: " + bounds[0] + ".." + bounds[1] +
+              ", expected " + expectedStart + ".." + expectedEnd);
     }
 
     static void CheckRange(string text, int caret, int expectedStart, int expectedEnd) {
@@ -45,7 +61,9 @@ static class InsertSafetyRegression {
         findWordBounds = probe.GetMethod("TryFindWordBounds", BindingFlags.Static | BindingFlags.NonPublic);
         supportedStandardEditClass = probe.GetMethod("IsSupportedStandardEditClass",
                                                      BindingFlags.Static | BindingFlags.NonPublic);
-        if (findWordBounds == null || supportedStandardEditClass == null) {
+        findFreshTextBeforeCaret = probe.GetMethod("TryFindFreshTextBeforeCaret",
+                                                    BindingFlags.Static | BindingFlags.NonPublic);
+        if (findWordBounds == null || supportedStandardEditClass == null || findFreshTextBeforeCaret == null) {
             Console.Error.WriteLine("FAIL: required SelectionProbe safety helpers not found");
             return 1;
         }
@@ -76,6 +94,15 @@ static class InsertSafetyRegression {
         CheckRange("one\ttwo\u00a0three", 13, 8, 13);
         CheckRange("word, next", 4, 0, 4);
         CheckRange("word, next", 8, 6, 10);
+
+        CheckFreshRange("ПРивет ", 7, "ПРивет", 0, 6);
+        CheckFreshRange("ПРивет,", 7, "ПРивет", 0, 6);
+        CheckFreshRange("ПРивет. ", 8, "ПРивет", 0, 6);
+        CheckFreshRange("one ПРивет\r\n", 12, "ПРивет", 4, 10);
+        Check(FreshBounds("XПРивет ", 8, "ПРивет", 4) == null,
+              "fresh exact lookup matched the tail of a longer word");
+        Check(FreshBounds("ПРивет abc", 10, "ПРивет", 4) == null,
+              "fresh exact lookup crossed non-boundary characters");
 
         var repeated = words;
         for (var i = 0; i < 20; i++) {

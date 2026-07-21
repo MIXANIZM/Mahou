@@ -478,6 +478,7 @@ namespace Mahou {
 			#region Other, when KeyDown
 			if (MSG == WinAPI.WM_KEYDOWN && !waitfornum && !IsHotkey) {
 				if (Key == Keys.Back) { //Removes last item from current word when user press Backspace
+					SmartCaps.HandleBackspaceKeyDown();
 					MahouUI.CCReset("back");
 					if (MMain.c_word.Count != 0) {
 						MMain.c_word.RemoveAt(MMain.c_word.Count - 1);
@@ -515,9 +516,11 @@ namespace Mahou {
 							Key != Keys.LControlKey &&
 							Key != Keys.RControlKey ))) { 
 					MahouUI.CCReset("cc/noShift.Hkey");
+					SmartCaps.ResetTypingContext();
 					ClearWord(true, true, true, "Pressed combination of key and modifiers(not shift) or key that changes caret position.", true, AS_IGN_RULES.Contains("C"));
 				}
 				if (Key == Keys.Space) {
+					SmartCaps.HandleBoundaryKeyDown(Key);
 					if (prevKEY != Keys.Space) {
 						Logging.Log("[FUN] > Adding one new empty word to words, and adding to it [Space] key.");
 						MMain.c_words.Add(new List<YuKey>());
@@ -540,6 +543,7 @@ namespace Mahou {
 					}
 				}
 				if (Key == Keys.Enter) { 
+					SmartCaps.HandleBoundaryKeyDown(Key);
 					if (prevKEY != Keys.Enter) {
 						if (MahouUI.Add1NL && MMain.c_word.Count != 0 && 
 						    MMain.c_word[MMain.c_word.Count - 1].key != Keys.Enter) {
@@ -571,6 +575,7 @@ namespace Mahou {
 						afterEOL = false;
 					}
 					if (sym == '\0') { sym = getSym(vkCode); }
+					SmartCaps.HandlePrintable(Key, sym);
 					MMain.c_word.Add(new YuKey() { key = Key, upper = sym_upr });
 					MMain.c_words[MMain.c_words.Count - 1].Add(new YuKey() { key = Key, upper = sym_upr });
 					Logging.Log("[WORD] > Added [" + Key + "]^"+sym_upr);
@@ -750,11 +755,17 @@ namespace Mahou {
 			#region Update LD
 			MMain.mahou.UpdateLDs();
 			#endregion
+			if (MSG == WinAPI.WM_KEYUP || MSG == WinAPI.WM_SYSKEYUP)
+				SmartCaps.HandleKeyUp(Key);
 			sym = '\0';
 			prevKEY = Key;
 			sym_upr = false;
 		}
 		public static void ListenMouse(ushort MSG) {
+			if (MSG == (ushort)WinAPI.RawMouseButtons.LeftDown || MSG == (ushort)WinAPI.RawMouseButtons.RightDown ||
+			    MSG == (ushort)WinAPI.RawMouseButtons.MiddleDown || MSG == (ushort)WinAPI.RawMouseButtons.Button4Down ||
+			    MSG == (ushort)WinAPI.RawMouseButtons.Button5Down)
+				SmartCaps.ResetForMouseClick();
 			if (MahouUI.__selection) {
 				if (MSG == (ushort)WinAPI.RawMouseButtons.LeftUp && ICheckings.IsICursor() && !MahouUI.__selection_nomouse) {
 					snipsel();

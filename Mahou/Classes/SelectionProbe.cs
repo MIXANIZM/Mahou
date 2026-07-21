@@ -279,6 +279,43 @@ namespace Mahou {
             return TryFindWordBounds(text, 0, maxCharacters, out start, out end) && start == 0 && end == text.Length;
         }
 
+        static bool IsFreshBoundaryCharacter(char value) {
+            return Char.IsWhiteSpace(value) || Char.IsPunctuation(value) || Char.IsSymbol(value);
+        }
+
+        internal static bool TryFindFreshTextBeforeCaret(string text, int caret, string expected,
+                                                         int maxBoundaryCharacters, out int start, out int end) {
+            start = 0;
+            end = 0;
+            if (String.IsNullOrEmpty(text) || String.IsNullOrEmpty(expected) ||
+                caret < 0 || caret > text.Length || maxBoundaryCharacters < 0 ||
+                !IsSingleWord(expected, expected.Length))
+                return false;
+
+            var maximumSuffix = Math.Min(maxBoundaryCharacters, caret);
+            for (var suffixLength = 0; suffixLength <= maximumSuffix; suffixLength++) {
+                var candidateEnd = caret - suffixLength;
+                var candidateStart = candidateEnd - expected.Length;
+                if (candidateStart < 0) break;
+                if (!String.Equals(text.Substring(candidateStart, expected.Length), expected, StringComparison.Ordinal))
+                    continue;
+                if (candidateStart > 0 && IsWordCharacter(text, candidateStart - 1)) continue;
+
+                var boundaryValid = true;
+                for (var i = candidateEnd; i < caret; i++) {
+                    if (IsFreshBoundaryCharacter(text[i])) continue;
+                    boundaryValid = false;
+                    break;
+                }
+                if (!boundaryValid) continue;
+
+                start = candidateStart;
+                end = candidateEnd;
+                return true;
+            }
+            return false;
+        }
+
         internal static State GetState() {
             var automation = ProbeAutomation();
             if (automation != State.Unknown) return automation;
@@ -318,6 +355,42 @@ namespace Mahou {
                     return DirectWordResult.NoWord;
                 word = new StandardEditWord(foreground, focused, wordStart, wordEnd,
                                             selectionStart, fullText.Substring(wordStart, wordEnd - wordStart));
+                return DirectWordResult.Ready;
+            } catch (UnauthorizedAccessException) {
+                return DirectWordResult.Sensitive;
+            } catch (Exception) {
+                return DirectWordResult.Failed;
+            }
+        }
+
+        internal static DirectWordResult TryGetStandardEditFreshTextBeforeCaret(string expected,
+                                                                                         int maxBoundaryCharacters,
+                                                                                         out StandardEditWord word) {
+            word = null;
+            try {
+                IntPtr foreground;
+                IntPtr focused;
+                bool sensitive;
+                if (!TryGetFocusedStandardEdit(out foreground, out focused, out sensitive))
+                    return DirectWordResult.Unavailable;
+                if (sensitive) return DirectWordResult.Sensitive;
+
+                int selectionStart;
+                int selectionEnd;
+                if (!TryGetSelection(focused, out selectionStart, out selectionEnd))
+                    return DirectWordResult.Unavailable;
+                if (selectionEnd > selectionStart) return DirectWordResult.Unavailable;
+
+                string fullText;
+                if (!TryGetStandardEditText(focused, out fullText) || selectionStart > fullText.Length)
+                    return DirectWordResult.Unavailable;
+
+                int wordStart;
+                int wordEnd;
+                if (!TryFindFreshTextBeforeCaret(fullText, selectionStart, expected, maxBoundaryCharacters,
+                                                 out wordStart, out wordEnd))
+                    return DirectWordResult.NoWord;
+                word = new StandardEditWord(foreground, focused, wordStart, wordEnd, selectionStart, expected);
                 return DirectWordResult.Ready;
             } catch (UnauthorizedAccessException) {
                 return DirectWordResult.Sensitive;
@@ -463,6 +536,74 @@ namespace Mahou {
                         ? selectionStart + delta
                         : targetStart + Math.Min(selectionStart - targetStart, replacement.Length);
                 selection.SetRange(newCaret, newCaret);
+                return DirectWordResult.Replaced;
+            } catch (UnauthorizedAccessException) {
+                return replacementApplied ? DirectWordResult.Replaced : DirectWordResult.Sensitive;
+            } catch (COMException) {
+                return replacementApplied ? DirectWordResult.Replaced : DirectWordResult.Unavailable;
+            } catch (Exception) {
+                return replacementApplied ? DirectWordResult.Replaced : DirectWordResult.Failed;
+            } finally {
+                ReleaseComObject(targetRangeObject);
+                ReleaseComObject(contextRangeObject);
+                ReleaseComObject(contentObject);
+                ReleaseComObject(documentObject);
+                ReleaseComObject(selectionObject);
+                ReleaseComObject(applicationObject);
+            }
+        }
+
+        internal static DirectWordResult TryReplaceActiveFreshTextBeforeCaret(string expected, string replacement,
+                                                                                        int maxBoundaryCharacters) {
+            if (String.IsNullOrEmpty(expected) || replacement == null || maxBoundaryCharacters < 0)
+                return DirectWordResult.Unavailable;
+
+            object applicationObject = null;
+            object selectionObject = null;
+            object documentObject = null;
+            object contentObject = null;
+            object contextRangeObject = null;
+            object targetRangeObject = null;
+            var replacementApplied = false;
+            try {
+                applicationObject = Marshal.GetActiveObject("Word.Application");
+                dynamic application = applicationObject;
+                selectionObject = application.Selection;
+                dynamic selection = selectionObject;
+                var selectionStart = (int)selection.Start;
+                var selectionEnd = (int)selection.End;
+                if (selectionEnd > selectionStart) return DirectWordResult.Unavailable;
+
+                documentObject = application.ActiveDocument;
+                dynamic document = documentObject;
+                contentObject = document.Content;
+                dynamic content = contentObject;
+                var documentEnd = Math.Max(0, (int)content.End - 1);
+                if (selectionStart < 0 || selectionStart > documentEnd) return DirectWordResult.Unavailable;
+
+                var contextStart = Math.Max(0, selectionStart - expected.Length - maxBoundaryCharacters);
+                contextRangeObject = document.Range(contextStart, selectionStart);
+                dynamic contextRange = contextRangeObject;
+                var contextText = (string)contextRange.Text ?? String.Empty;
+                var localCaret = selectionStart - contextStart;
+
+                int localStart;
+                int localEnd;
+                if (!TryFindFreshTextBeforeCaret(contextText, localCaret, expected, maxBoundaryCharacters,
+                                                 out localStart, out localEnd))
+                    return DirectWordResult.NoWord;
+
+                var targetStart = contextStart + localStart;
+                var targetEnd = contextStart + localEnd;
+                targetRangeObject = document.Range(targetStart, targetEnd);
+                dynamic targetRange = targetRangeObject;
+                var source = (string)targetRange.Text ?? String.Empty;
+                if (!String.Equals(source, expected, StringComparison.Ordinal)) return DirectWordResult.Failed;
+                if (!String.Equals(source, replacement, StringComparison.Ordinal)) targetRange.Text = replacement;
+                replacementApplied = true;
+
+                var delta = replacement.Length - source.Length;
+                selection.SetRange(selectionStart + delta, selectionStart + delta);
                 return DirectWordResult.Replaced;
             } catch (UnauthorizedAccessException) {
                 return replacementApplied ? DirectWordResult.Replaced : DirectWordResult.Sensitive;

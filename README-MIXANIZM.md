@@ -1,5 +1,9 @@
 # MIXANIZM Mahou — modernized 2.9.0.1 development line
 
+- Project profile: `standard`
+- Agatzub Development Ruleset: `v2.6.3`
+- Rules content commit: `2f312c4adbb54ffd533d2877d49cfd39633460ab`
+
 This branch is based on the latest preserved modern Mahou source lineage and keeps the
 full tabbed settings UI, AutoSwitch dictionary, snippets, selection conversion,
 translation panel, history and advanced layout controls.
@@ -10,6 +14,7 @@ translation panel, history and advanced layout controls.
 - Windows remains responsible for ordinary layout switching.
 - Insert is the shared default action for the last word or selected text.
 - AutoSwitch is opt-in and uses the dictionary shipped with the build.
+- Smart Caps is opt-in, local-only and corrects two accidental initial capitals only through verified direct text adapters.
 - JKL is disabled by default until its native helpers receive a separate audit and are
   packaged intentionally.
 - Settings and user data are stored in `%APPDATA%\MIXANIZM Mahou`.

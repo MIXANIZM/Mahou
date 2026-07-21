@@ -31,7 +31,7 @@ namespace Mahou {
 		public static string nPath = AppDomain.CurrentDomain.BaseDirectory, CustomSound, CustomSound2, Redefines;
 		public static int ACT_Match = 0, TrayHoverMahouMM = 0, explorer_pid, explorer_not_found_tries = 0;
 		public static bool LoggingEnabled, dummy, CapsLockDisablerTimer, LangPanelUpperArrow, mouseLTUpperArrow, caretLTUpperArrow,
-						   ShiftInHotkey, AltInHotkey, CtrlInHotkey, WinInHotkey, AutoStartAsAdmin, UseJKL, AutoSwitchEnabled, ReadOnlyNA,
+						   ShiftInHotkey, AltInHotkey, CtrlInHotkey, WinInHotkey, AutoStartAsAdmin, UseJKL, AutoSwitchEnabled, SmartCapsEnabled, ReadOnlyNA,
 						   SoundEnabled, UseCustomSound, SoundOnAutoSwitch, SoundOnConvLast, SoundOnSnippets, SoundOnLayoutSwitch,
 						   UseCustomSound2, SoundOnAutoSwitch2, SoundOnConvLast2, SoundOnSnippets2, SoundOnLayoutSwitch2, TrOnDoubleClick,
 						   TrEnabled, TrBorderAero, OnceSpecific, WriteInputHistory, ExcludeCaretLD, UsePaste,
@@ -200,6 +200,7 @@ namespace Mahou {
 			DeleteTrash();
 			MMain.MAHOU_HANDLE = Handle;
 			InitializeComponent();
+			InitializeSmartTypingUi();
 			HelpMeUnderstand = new ToolTip();			
 			HelpMeUnderstand.AutoPopDelay = 20000;
 			HelpMeUnderstand.InitialDelay = 500;
@@ -1205,6 +1206,7 @@ namespace Mahou {
 				MMain.MyConfs.Write("Functions", "ReadOnlyNA", chk_ReadOnlyNA.Checked.ToString());
 				MMain.MyConfs.Write("Functions", "WriteInputHistory", chk_WriteInputHistory.Checked.ToString());
 				try { MMain.MyConfs.Write("Functions", "WriteInputHistoryBackSpaceType", cbb_BackSpaceType.SelectedIndex.ToString()); } catch { }
+				SaveSmartTypingSettings();
 				#endregion
 				#region Layouts
 				MMain.MyConfs.Write("Layouts", "SwitchBetweenLayouts", chk_SwitchBetweenLayouts.Checked.ToString());
@@ -1733,6 +1735,7 @@ namespace Mahou {
 			WriteInputHistory = chk_WriteInputHistory.Checked = MMain.MyConfs.ReadBool("Functions", "WriteInputHistory");
 			WriteInputHistoryByDate = MMain.MyConfs.ReadBool("Functions", "WriteInputHistoryByDate");
 			WriteInputHistoryHourly = MMain.MyConfs.ReadBool("Functions", "WriteInputHistoryHourly");
+			LoadSmartTypingSettings();
 			#endregion
 			#region Layouts
 			SwitchBetweenLayouts = chk_SwitchBetweenLayouts.Checked = MMain.MyConfs.ReadBool("Layouts", "SwitchBetweenLayouts");
@@ -4220,6 +4223,7 @@ namespace Mahou {
 			tab_sounds.Text = MMain.Lang[Languages.Element.tab_Sounds];
 			tab_translator.Text = MMain.Lang[Languages.Element.tab_Translator];
 			tab_sync.Text = MMain.Lang[Languages.Element.tab_Sync];
+			RefreshSmartTypingLanguage();
 			#endregion
 			#region Functions
 			lnk_plugin.Text = "ST3 " + MMain.Lang[Languages.Element.Plugin];

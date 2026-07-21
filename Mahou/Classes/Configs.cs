@@ -595,6 +595,10 @@ namespace Mahou {
             CheckBool("Functions", "TrayIconVisible", "true");
             CheckBool("Functions", "AutoStartAsAdmin", "false");
             #endregion
+            #region SmartTyping section
+            CheckBool("SmartTyping", "SmartCapsEnabled", "false");
+            CheckString("SmartTyping", "SmartCapsExceptions", "");
+            #endregion
         	#region FirstStart section
             CheckBool("FirstStart", "First", "true");
         	#endregion

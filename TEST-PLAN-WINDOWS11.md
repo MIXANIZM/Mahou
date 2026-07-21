@@ -21,6 +21,18 @@ Use a fresh disposable document and record the full text, caret, selection, keyb
 - After every return from no-selection Insert, verify that no new selection exists and that ordinary typing and Backspace affect only the current caret position.
 - With an existing user-created selection, verify that Insert still converts that selection. Then clear the selection manually before testing the no-selection path again.
 
+## Smart typing — two initial capitals
+
+- The feature is disabled on a clean profile. Enable it on the **Smart typing / Умный ввод** tab.
+- In a classic Win32 `Edit` control and in Microsoft Word, type `ПРивет `, `БОльшой ` and `ABc `; the completed words must become `Привет `, `Большой ` and `Abc ` without any visible selection.
+- Type `СДЭКом `, `США `, `USA `, `McDonald `, `A1b `, an email address and a URL; every value must remain byte-for-byte unchanged.
+- Immediately press Backspace after a correction. The delimiter must be removed by the editor and the original casing must be restored without changing adjacent text.
+- Reject the same correction twice with immediate Backspace. Confirm that the normalized word appears in personal exceptions and is no longer corrected.
+- Edit and clear the exception list in settings, save, restart Mahou and confirm persistence.
+- In modern Windows Notepad/RichEdit, Chrome, Telegram, Discord, password fields and excluded applications, Smart Caps must be a complete no-op until a dedicated verified direct adapter exists.
+- Type quickly across word boundaries, switch windows between key-down and deferred correction, click the mouse, and move the caret. Stale candidates must be discarded without text, selection, caret, layout or clipboard changes.
+- Run together with AutoSwitch and snippets. If another feature changes the word first, Smart Caps must fail closed rather than apply to a different range.
+
 ## Clipboard
 
 Before every test copy a non-text object, run conversion, then paste the original object again.

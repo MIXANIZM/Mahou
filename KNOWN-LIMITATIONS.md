@@ -2,6 +2,7 @@
 
 - The binaries are unsigned test builds; Windows SmartScreen may warn.
 - Physical keyboard-hook behavior still requires Windows 11 testing on real hardware.
+- Smart Caps is opt-in and currently operates only through the verified classic Win32 `Edit` and Microsoft Word direct-range adapters; modern Notepad/RichEdit, browsers and messengers intentionally remain no-op without user selection.
 - The online translator sends selected text to the configured service only after explicit opt-in.
 - JKL native helpers are disabled by default and are not included in the portable artifact.
 - `Mahou.mm` can intentionally open local programs, files and URLs from user-authored configuration.
