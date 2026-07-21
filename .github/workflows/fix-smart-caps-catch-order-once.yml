@@ -1,5 +1,6 @@
 name: Fix Smart Caps catch order once
 
+# Armed after creation so GitHub evaluates this workflow on the existing draft PR.
 on:
   pull_request:
     branches:
