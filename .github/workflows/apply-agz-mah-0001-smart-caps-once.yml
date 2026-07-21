@@ -1,5 +1,6 @@
 name: Apply AGZ-MAH-0001 Smart Caps once
 
+# Re-armed on the existing draft PR after workflow registration.
 on:
   pull_request:
     branches:
