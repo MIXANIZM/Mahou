@@ -50,7 +50,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          git apply --check --verbose /tmp/agz-mah-0001-smart-caps.patch > /tmp/agz-mah-0001-apply.log 2>&1
+          patch --fuzz=2 -p1 --dry-run < /tmp/agz-mah-0001-smart-caps.patch > /tmp/agz-mah-0001-apply.log 2>&1
 
       - name: Persist validation diagnostic
         if: steps.validate.outcome == 'failure'
@@ -70,7 +70,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git apply /tmp/agz-mah-0001-smart-caps.patch
+          patch --fuzz=2 -p1 < /tmp/agz-mah-0001-smart-caps.patch
           git diff --check
 
       - name: Run fast regression gates
