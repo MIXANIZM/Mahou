@@ -94,6 +94,12 @@ jobs:
           & $testExe (Join-Path $build1 'Mahou.exe')
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+          $smartCapsTestExe = Join-Path $root "artifacts/$platform/SmartCapsRegression.exe"
+          & $csc /nologo "/platform:$platform" "/out:$smartCapsTestExe" .github/tests/SmartCapsRegression.cs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $smartCapsTestExe (Join-Path $build1 'Mahou.exe')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
           $files = @('Mahou.exe','Mahou.exe.config','AS_dict.txt')
           $lines = @()
           foreach ($file in $files) {
