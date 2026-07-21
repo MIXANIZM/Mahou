@@ -28,7 +28,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base64 -d .github/patches/agz-mah-0001-smart-caps.patch.gz.b64 > /tmp/agz-mah-0001-smart-caps.patch.gz
+          cat \
+            .github/patches/agz-mah-0001-smart-caps.part00 \
+            .github/patches/agz-mah-0001-smart-caps.part01 \
+            .github/patches/agz-mah-0001-smart-caps.part02 \
+            .github/patches/agz-mah-0001-smart-caps.part03 \
+            .github/patches/agz-mah-0001-smart-caps.part04 \
+            | base64 -d > /tmp/agz-mah-0001-smart-caps.patch.gz
           gzip -t /tmp/agz-mah-0001-smart-caps.patch.gz
           gzip -dc /tmp/agz-mah-0001-smart-caps.patch.gz > /tmp/agz-mah-0001-smart-caps.patch
           sha256sum /tmp/agz-mah-0001-smart-caps.patch
@@ -63,6 +69,11 @@ jobs:
         run: |
           set -euo pipefail
           git rm .github/patches/agz-mah-0001-smart-caps.patch.gz.b64
+          git rm .github/patches/agz-mah-0001-smart-caps.part00
+          git rm .github/patches/agz-mah-0001-smart-caps.part01
+          git rm .github/patches/agz-mah-0001-smart-caps.part02
+          git rm .github/patches/agz-mah-0001-smart-caps.part03
+          git rm .github/patches/agz-mah-0001-smart-caps.part04
           git rm .github/workflows/apply-agz-mah-0001-smart-caps-once.yml
           rm -f .github/patches/agz-mah-0001-trigger.txt
           git config user.name 'github-actions[bot]'
