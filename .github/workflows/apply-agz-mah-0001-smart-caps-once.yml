@@ -1,15 +1,15 @@
 name: Apply AGZ-MAH-0001 Smart Caps once
 
 on:
-  push:
+  pull_request:
     branches:
-      - mixanizm-modern-v2.9.0.1
+      - master
 
 permissions:
   contents: write
 
 concurrency:
-  group: apply-agz-mah-0001-smart-caps
+  group: apply-agz-mah-0001-smart-caps-pr
   cancel-in-progress: false
 
 jobs:
