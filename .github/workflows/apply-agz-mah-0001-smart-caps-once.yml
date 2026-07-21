@@ -36,7 +36,12 @@ jobs:
             .github/patches/agz-mah-0001-smart-caps.part04 \
             | base64 -d > /tmp/agz-mah-0001-smart-caps.patch.gz
           gzip -t /tmp/agz-mah-0001-smart-caps.patch.gz
-          gzip -dc /tmp/agz-mah-0001-smart-caps.patch.gz > /tmp/agz-mah-0001-smart-caps.patch
+          gzip -dc /tmp/agz-mah-0001-smart-caps.patch.gz > /tmp/agz-mah-0001-smart-caps.patch.crlf
+          python3 - <<'PY'
+          from pathlib import Path
+          source = Path('/tmp/agz-mah-0001-smart-caps.patch.crlf').read_bytes()
+          Path('/tmp/agz-mah-0001-smart-caps.patch').write_bytes(source.replace(b'\r\n', b'\n'))
+          PY
           sha256sum /tmp/agz-mah-0001-smart-caps.patch
 
       - name: Validate reviewed patch
@@ -50,7 +55,7 @@ jobs:
         run: |
           set -euo pipefail
           git apply /tmp/agz-mah-0001-smart-caps.patch
-          git -c core.whitespace=cr-at-eol diff --check
+          git diff --check
 
       - name: Run fast regression gates
         shell: bash
