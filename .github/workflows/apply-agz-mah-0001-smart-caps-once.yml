@@ -1,0 +1,59 @@
+name: Apply AGZ-MAH-0001 Smart Caps once
+
+on:
+  push:
+    branches:
+      - mixanizm-modern-v2.9.0.1
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-agz-mah-0001-smart-caps
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+
+      - name: Decode and apply reviewed patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d .github/patches/agz-mah-0001-smart-caps.patch.gz.b64 | gzip -d > /tmp/agz-mah-0001-smart-caps.patch
+          printf '%s  %s\n' '51f6b1044140763b0b5231cefe323c00c1b5329d57901c837d24980c6e76fd1b' '/tmp/agz-mah-0001-smart-caps.patch' | sha256sum -c -
+          git apply --check /tmp/agz-mah-0001-smart-caps.patch
+          git apply /tmp/agz-mah-0001-smart-caps.patch
+          git -c core.whitespace=cr-at-eol diff --check
+
+      - name: Run fast regression gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/security-regression.py
+          python3 .github/scripts/ui-resource-regression.py
+          grep -Fq 'CheckBool("SmartTyping", "SmartCapsEnabled", "false")' Mahou/Classes/Configs.cs
+          grep -Fq 'HasSingleSupportedScript' Mahou/Classes/SmartCaps.cs
+          grep -Fq 'TryReplaceActiveFreshTextBeforeCaret' Mahou/Classes/SelectionProbe.cs
+          grep -Fq 'SmartCapsRegression.exe' .github/workflows/modern-windows-build.yml
+          ! grep -Eq 'KInputs\.|GetClipStr\(|PasteText\(|NativeClipboard|\.Select\(\)' Mahou/Classes/SmartCaps.cs
+
+      - name: Commit product and documentation changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/patches/agz-mah-0001-smart-caps.patch.gz.b64
+          git rm .github/workflows/apply-agz-mah-0001-smart-caps-once.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'AGZ-MAH-0001 feat: add safe opt-in Smart Caps'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
