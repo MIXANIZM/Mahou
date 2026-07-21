@@ -127,17 +127,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git rm .github/patches/agz-mah-0001-smart-caps.patch.gz.b64
-          git rm .github/patches/agz-mah-0001-smart-caps.part00
-          git rm .github/patches/agz-mah-0001-smart-caps.part01
-          git rm .github/patches/agz-mah-0001-smart-caps.part02
-          git rm .github/patches/agz-mah-0001-smart-caps.part03
-          git rm .github/patches/agz-mah-0001-smart-caps.part04
-          git rm .github/workflows/apply-agz-mah-0001-smart-caps-once.yml
+          rm -f .github/patches/agz-mah-0001-smart-caps.patch.gz.b64
+          rm -f .github/patches/agz-mah-0001-smart-caps.part00
+          rm -f .github/patches/agz-mah-0001-smart-caps.part01
+          rm -f .github/patches/agz-mah-0001-smart-caps.part02
+          rm -f .github/patches/agz-mah-0001-smart-caps.part03
+          rm -f .github/patches/agz-mah-0001-smart-caps.part04
+          rm -f .github/workflows/apply-agz-mah-0001-smart-caps-once.yml
           rm -f .github/patches/agz-mah-0001-trigger.txt
           rm -f .github/patches/agz-mah-0001-apply-diagnostic.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
+          git status --short
           git commit -m 'AGZ-MAH-0001 feat: add safe opt-in Smart Caps'
           git push origin HEAD:mixanizm-modern-v2.9.0.1
