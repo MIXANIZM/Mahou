@@ -1,0 +1,59 @@
+name: Fix Smart Caps catch order once
+
+on:
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fix-smart-caps-catch-order
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+
+      - name: Fix exception-handler order
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('Mahou/Classes/SmartCaps.cs')
+          text = path.read_text(encoding='utf-8-sig')
+          old = '''            } catch (InvalidOperationException) {
+            } catch (ObjectDisposedException) {
+'''
+          new = '''            } catch (ObjectDisposedException) {
+            } catch (InvalidOperationException) {
+'''
+          count = text.count(old)
+          if count != 2:
+              raise SystemExit('Expected exactly two catch-order occurrences, found %d' % count)
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
+          git diff --check
+          python3 .github/scripts/security-regression.py
+          python3 .github/scripts/ui-resource-regression.py
+
+      - name: Commit product fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Mahou/Classes/SmartCaps.cs
+          git commit -m 'AGZ-MAH-0001 fix: order Smart Caps exception handlers'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
