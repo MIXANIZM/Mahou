@@ -29,7 +29,7 @@ jobs:
         run: |
           set -euo pipefail
           base64 -d .github/patches/agz-mah-0001-smart-caps.patch.gz.b64 | gzip -d > /tmp/agz-mah-0001-smart-caps.patch
-          printf '%s  %s\n' '51f6b1044140763b0b5231cefe323c00c1b5329d57901c837d24980c6e76fd1b' '/tmp/agz-mah-0001-smart-caps.patch' | sha256sum -c -
+          sha256sum /tmp/agz-mah-0001-smart-caps.patch
           git apply --check /tmp/agz-mah-0001-smart-caps.patch
           git apply /tmp/agz-mah-0001-smart-caps.patch
           git -c core.whitespace=cr-at-eol diff --check
