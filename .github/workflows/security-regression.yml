@@ -23,8 +23,9 @@ jobs:
         with:
           ref: mixanizm-modern-v2.9.0.1
           fetch-depth: 0
+          show-progress: false
 
-      - name: Verify and apply reviewed Smart Caps update
+      - name: Verify payload and apply reviewed update
         shell: bash
         run: |
           set -euo pipefail
@@ -43,8 +44,18 @@ jobs:
           rm -f .github/patches/agz-mah-0001-r2.part02
           rm -f .github/patches/agz-mah-0001-r2.part03
           git -c core.whitespace=cr-at-eol diff --check
+
+      - name: Run fast regression gates
+        shell: bash
+        run: |
+          set -euo pipefail
           python3 .github/scripts/security-regression.py
           python3 .github/scripts/ui-resource-regression.py
+
+      - name: Verify English and Russian localization completeness
+        shell: bash
+        run: |
+          set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
           import re
@@ -61,17 +72,12 @@ jobs:
               match = re.fullmatch(r'([A-Za-z_][A-Za-z0-9_]*)\s*,?', line)
               if match:
                   keys.add(match.group(1))
-          expected = {'tab_SmartTyping', 'SmartCapsEnabled', 'SmartCapsDescription', 'SmartCapsExceptions', 'SmartCapsClear', 'SmartCapsStatus'}
-          if not expected.issubset(keys):
+          required = {'tab_SmartTyping', 'SmartCapsEnabled', 'SmartCapsDescription', 'SmartCapsExceptions', 'SmartCapsClear', 'SmartCapsStatus'}
+          if not required.issubset(keys):
               raise SystemExit('Smart typing language keys are incomplete')
-          declarations = {
-              'English': text.index('Dictionary<Element, string> English'),
-              'Russian': text.index('Dictionary<Element, string> Russian'),
-          }
-          blocks = {
-              'English': text[declarations['English']:declarations['Russian']],
-              'Russian': text[declarations['Russian']:],
-          }
+          english = text.index('Dictionary<Element, string> English')
+          russian = text.index('Dictionary<Element, string> Russian')
+          blocks = {'English': text[english:russian], 'Russian': text[russian:]}
           for language, block in blocks.items():
               entries = set(re.findall(r'Element\.([A-Za-z_][A-Za-z0-9_]*)\s*,', block))
               missing = sorted(keys - entries)
@@ -80,6 +86,11 @@ jobs:
                   raise SystemExit('%s dictionary mismatch: missing=%r extra=%r' % (language, missing, extra))
               print('%s localization: %d/%d keys' % (language, len(entries), len(keys)))
           PY
+
+      - name: Verify exact changed-file set
+        shell: bash
+        run: |
+          set -euo pipefail
           python3 - <<'PY'
           import subprocess
 
@@ -104,6 +115,7 @@ jobs:
               'UNIVERSAL-CHAT-HANDOFF.md',
           }
           actual = set(subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines())
+          print('Changed files:', sorted(actual))
           if actual != expected:
               raise SystemExit('Unexpected changed-file set: expected=%r actual=%r' % (sorted(expected), sorted(actual)))
           print('Changed-file set verified: %d files' % len(actual))
