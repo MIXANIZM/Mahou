@@ -1,0 +1,61 @@
+{
+  "decode_error": "Error: Incorrect padding",
+  "expected_total_base64_characters": 100840,
+  "parts": [
+    {
+      "characters": 8000,
+      "name": ".github/patches/agz-mah-0003.part00",
+      "present": true,
+      "sha256_text": "0c785184892091437d20d2429d378999e8948f4910c5f7e1a0be5fcb24dcecca"
+    },
+    {
+      "characters": 8000,
+      "name": ".github/patches/agz-mah-0003.part01",
+      "present": true,
+      "sha256_text": "4e225e7d19fd5fb72a0084afa3116eaa7f4f55cef5e2c07b8b85bd3832ef5018"
+    },
+    {
+      "characters": 8000,
+      "name": ".github/patches/agz-mah-0003.part02",
+      "present": true,
+      "sha256_text": "5cb6c114a49060e4b0919f7ddff04c5315abc22a921816e5ef9f0f67724ffd4c"
+    },
+    {
+      "characters": 8000,
+      "name": ".github/patches/agz-mah-0003.part03",
+      "present": true,
+      "sha256_text": "d81c419973aa91d025d8eb98fa58b0cbb463dc549f20a1f1aa39ef13ec87b064"
+    },
+    {
+      "characters": 7999,
+      "name": ".github/patches/agz-mah-0003.part04",
+      "present": true,
+      "sha256_text": "0015ebad5af3c0274fa8a2d2de22e16c82bc0bdd6c6e3ebaf05e7cefafbd74a2"
+    },
+    {
+      "characters": 16000,
+      "count": 1,
+      "name": "AGZ-MAH-0003-PAYLOAD-05-06",
+      "sha256_text": "faa65754547e7d43cb8cbcf26c5669f1681d10a5389efd2dfd677ed0c10afedb"
+    },
+    {
+      "characters": 16000,
+      "count": 1,
+      "name": "AGZ-MAH-0003-PAYLOAD-07-08",
+      "sha256_text": "c464b24ed5722a93d2f02cdf3dec6502da42a20eab10722a106e33fbb8ff716e"
+    },
+    {
+      "characters": 16000,
+      "count": 2,
+      "name": "AGZ-MAH-0003-PAYLOAD-09-10",
+      "sha256_text": "1e3eea1014d944c8099a04bfcb230408376570ff5592f46b4a30065e482dc25d"
+    },
+    {
+      "characters": 12840,
+      "count": 1,
+      "name": "AGZ-MAH-0003-PAYLOAD-11-12",
+      "sha256_text": "bac006616f4319b9af1b58cba945165595a7568942b8fb5c7caf9c1a89a8682e"
+    }
+  ],
+  "total_base64_characters": 100839
+}
