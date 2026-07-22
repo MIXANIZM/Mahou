@@ -53,12 +53,28 @@ jobs:
           rm -f .github/patches/agz-mah-0001-r2.part03
 
       - name: Verify diff whitespace
+        id: diffcheck
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          git -c core.whitespace=cr-at-eol diff --check > /tmp/agz-mah-0001-r2-diffcheck.txt 2>&1
+
+      - name: Persist diff-check diagnostic
+        if: steps.diffcheck.outcome == 'failure'
         shell: bash
         run: |
           set -euo pipefail
-          git -c core.whitespace=cr-at-eol diff --check
+          cp /tmp/agz-mah-0001-r2-diffcheck.txt .github/patches/agz-mah-0001-r2-diffcheck.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/patches/agz-mah-0001-r2-diffcheck.txt
+          git commit -m 'chore: record AGZ-MAH-0001 r2 diff diagnostic'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
+          exit 1
 
       - name: Run fast regression gates
+        if: steps.diffcheck.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -66,6 +82,7 @@ jobs:
           python3 .github/scripts/ui-resource-regression.py
 
       - name: Verify English and Russian localization completeness
+        if: steps.diffcheck.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -101,6 +118,7 @@ jobs:
           PY
 
       - name: Verify exact changed-file set
+        if: steps.diffcheck.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
@@ -135,6 +153,7 @@ jobs:
           PY
 
       - name: Commit product update and restore read-only workflow
+        if: steps.diffcheck.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
