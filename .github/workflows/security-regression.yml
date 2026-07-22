@@ -53,15 +53,26 @@ jobs:
           enum_match = re.search(r'public enum Element\s*\{(.*?)\n\s*\}', text, re.S)
           if not enum_match:
               raise SystemExit('Languages.Element enum not found')
-          enum_text = re.sub(r'#region.*|#endregion.*|//.*', '', enum_match.group(1))
-          keys = set(re.findall(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*,', enum_text))
+          keys = set()
+          for line in enum_match.group(1).splitlines():
+              line = line.split('//', 1)[0].strip()
+              if not line or line.startswith('#'):
+                  continue
+              match = re.fullmatch(r'([A-Za-z_][A-Za-z0-9_]*)\s*,?', line)
+              if match:
+                  keys.add(match.group(1))
           expected = {'tab_SmartTyping', 'SmartCapsEnabled', 'SmartCapsDescription', 'SmartCapsExceptions', 'SmartCapsClear', 'SmartCapsStatus'}
           if not expected.issubset(keys):
               raise SystemExit('Smart typing language keys are incomplete')
-          for language in ('English', 'Russian'):
-              start = text.index('Dictionary<Element, string> ' + language)
-              next_start = text.find('Dictionary<Element, string>', start + 1)
-              block = text[start: next_start if next_start >= 0 else len(text)]
+          declarations = {
+              'English': text.index('Dictionary<Element, string> English'),
+              'Russian': text.index('Dictionary<Element, string> Russian'),
+          }
+          blocks = {
+              'English': text[declarations['English']:declarations['Russian']],
+              'Russian': text[declarations['Russian']:],
+          }
+          for language, block in blocks.items():
               entries = set(re.findall(r'Element\.([A-Za-z_][A-Za-z0-9_]*)\s*,', block))
               missing = sorted(keys - entries)
               extra = sorted(entries - keys)
