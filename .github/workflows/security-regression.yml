@@ -25,7 +25,7 @@ jobs:
           fetch-depth: 0
           show-progress: false
 
-      - name: Verify payload and apply reviewed update
+      - name: Reconstruct and verify payload
         shell: bash
         run: |
           set -euo pipefail
@@ -35,14 +35,27 @@ jobs:
             .github/patches/agz-mah-0001-r2.part02 \
             .github/patches/agz-mah-0001-r2.part03 \
             | base64 -d > /tmp/agz-mah-0001-r2.tar.gz
+          test "$(wc -c < /tmp/agz-mah-0001-r2.tar.gz)" -eq 42483
           printf '%s  %s\n' \
             'fab2835e867237bf56d0c1a008cf0ce85dbe7ca9f895ea4646fce6cafd431ba9' \
             '/tmp/agz-mah-0001-r2.tar.gz' | sha256sum -c -
+          tar -tzf /tmp/agz-mah-0001-r2.tar.gz > /tmp/agz-mah-0001-r2-files.txt
+          test "$(wc -l < /tmp/agz-mah-0001-r2-files.txt)" -eq 14
+
+      - name: Extract reviewed files and remove payload
+        shell: bash
+        run: |
+          set -euo pipefail
           tar -xzf /tmp/agz-mah-0001-r2.tar.gz
           rm -f .github/patches/agz-mah-0001-r2.part00
           rm -f .github/patches/agz-mah-0001-r2.part01
           rm -f .github/patches/agz-mah-0001-r2.part02
           rm -f .github/patches/agz-mah-0001-r2.part03
+
+      - name: Verify diff whitespace
+        shell: bash
+        run: |
+          set -euo pipefail
           git -c core.whitespace=cr-at-eol diff --check
 
       - name: Run fast regression gates
