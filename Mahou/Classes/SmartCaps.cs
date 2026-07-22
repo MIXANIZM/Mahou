@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Mahou {
     /// <summary>
-    /// Conservative, local-only correction for words that accidentally begin with two capital letters.
+    /// Conservative, local-only correction for accidental capitals inside a freshly typed word.
     /// The service never selects text and never uses keyboard or clipboard mutation. It only asks the
     /// existing direct Edit/Word adapters to replace an exact, freshly typed word after its delimiter.
     /// </summary>
@@ -65,9 +65,19 @@ namespace Mahou {
         static PendingCorrection pendingCorrection;
         static PendingCorrection pendingUndo;
         static int stateGeneration;
+        static int correctionsThisSession;
+        static int reversionsThisSession;
 
         internal static bool Enabled {
             get { lock (SyncRoot) return enabled; }
+        }
+
+        internal static int CorrectionsThisSession {
+            get { lock (SyncRoot) return correctionsThisSession; }
+        }
+
+        internal static int ReversionsThisSession {
+            get { lock (SyncRoot) return reversionsThisSession; }
         }
 
         internal static void Configure(bool isEnabled, string exceptionsRaw) {
@@ -146,30 +156,47 @@ namespace Mahou {
         internal static bool TryBuildCorrection(string value, out string corrected) {
             corrected = String.Empty;
             if (String.IsNullOrEmpty(value) || value.Length < 3 || value.Length > MaxWordCharacters) return false;
-            if (!Char.IsLetter(value[0]) || !Char.IsUpper(value[0])) return false;
-            if (!Char.IsLetter(value[1]) || !Char.IsUpper(value[1])) return false;
-            if (!Char.IsLetter(value[2]) || !Char.IsLower(value[2])) return false;
             if (!HasSingleSupportedScript(value)) return false;
 
-            for (var i = 3; i < value.Length; i++) {
+            var chars = value.ToCharArray();
+            var segmentStart = true;
+            var hasLowercaseLetter = false;
+            var changed = false;
+
+            for (var i = 0; i < value.Length; i++) {
                 var current = value[i];
                 if (Char.IsLetter(current)) {
-                    if (Char.IsUpper(current)) return false;
+                    if (Char.IsLower(current)) hasLowercaseLetter = true;
+                    if (!segmentStart && Char.IsUpper(current)) {
+                        var lowered = Char.ToLower(current, CultureInfo.CurrentCulture);
+                        if (lowered != current) {
+                            chars[i] = lowered;
+                            changed = true;
+                        }
+                    }
+                    segmentStart = false;
                     continue;
                 }
+
                 var category = CharUnicodeInfo.GetUnicodeCategory(current);
                 if (category == UnicodeCategory.NonSpacingMark ||
                     category == UnicodeCategory.SpacingCombiningMark ||
                     category == UnicodeCategory.EnclosingMark)
                     continue;
-                if ((current == '\'' || current == '’' || current == '-') && i > 0 && i + 1 < value.Length &&
-                    Char.IsLetter(value[i - 1]) && Char.IsLetter(value[i + 1]))
+
+                if ((current == '\'' || current == '’' || current == '-') &&
+                    i > 0 && i + 1 < value.Length &&
+                    Char.IsLetter(value[i - 1]) && Char.IsLetter(value[i + 1])) {
+                    segmentStart = true;
                     continue;
+                }
+
                 return false;
             }
 
-            var chars = value.ToCharArray();
-            chars[1] = Char.ToLower(chars[1], CultureInfo.CurrentCulture);
+            // Preserve acronyms and words typed entirely in capitals. Intentional mixed-case names
+            // remain reversible and can be learned through the personal-exception mechanism.
+            if (!hasLowercaseLetter || !changed) return false;
             corrected = new String(chars);
             return !String.Equals(value, corrected, StringComparison.Ordinal);
         }
@@ -372,9 +399,15 @@ namespace Mahou {
             if (KMHook.ExcludedProgram()) return;
 
             if (TryDirectReplace(word.Original, word.Corrected)) {
+                int corrections;
+                int reversions;
                 lock (SyncRoot) {
                     pendingCorrection = new PendingCorrection(word.Original, word.Corrected, word.Foreground, Environment.TickCount, stateGeneration);
+                    correctionsThisSession++;
+                    corrections = correctionsThisSession;
+                    reversions = reversionsThisSession;
                 }
+                NotifyUiStatus(corrections, reversions);
                 Logging.Log("Smart Caps corrected a fresh word; length=" + word.Original.Length + ".");
             }
         }
@@ -390,6 +423,14 @@ namespace Mahou {
             if (KMHook.ExcludedProgram()) return;
 
             if (!TryDirectReplace(correction.Corrected, correction.Original)) return;
+            int corrections;
+            int reversions;
+            lock (SyncRoot) {
+                reversionsThisSession++;
+                corrections = correctionsThisSession;
+                reversions = reversionsThisSession;
+            }
+            NotifyUiStatus(corrections, reversions);
             RegisterRejection(correction.Original);
             Logging.Log("Smart Caps correction was explicitly reverted with Backspace; length=" + correction.Original.Length + ".");
         }
@@ -428,6 +469,19 @@ namespace Mahou {
             result = SelectionProbe.TryReplaceActiveFreshTextBeforeCaret(
                 expected, replacement, MaxBoundaryCharacters);
             return result == SelectionProbe.DirectWordResult.Replaced;
+        }
+
+
+        static void NotifyUiStatus(int corrections, int reversions) {
+            var main = MMain.mahou;
+            if (main == null || main.IsDisposed || !main.IsHandleCreated) return;
+            Action update = () => main.UpdateSmartCapsStatusFromService(corrections, reversions);
+            try {
+                if (main.InvokeRequired) main.BeginInvoke(update);
+                else update();
+            } catch (ObjectDisposedException) {
+            } catch (InvalidOperationException) {
+            }
         }
 
         static void RegisterRejection(string original) {

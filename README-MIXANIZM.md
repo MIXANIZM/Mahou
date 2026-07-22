@@ -14,7 +14,8 @@ translation panel, history and advanced layout controls.
 - Windows remains responsible for ordinary layout switching.
 - Insert is the shared default action for the last word or selected text.
 - AutoSwitch is opt-in and uses the dictionary shipped with the build.
-- Smart Caps is opt-in, local-only and corrects two accidental initial capitals only through verified direct text adapters.
+- Smart Caps is opt-in, local-only and corrects accidental uppercase letters inside freshly typed words only through verified direct text adapters. All-caps words are skipped; intentional mixed-case names can be kept through personal exceptions.
+- The Smart Caps tab uses Mahou's common Russian/English localization and shows a session counter for corrections performed by Mahou itself.
 - JKL is disabled by default until its native helpers receive a separate audit and are
   packaged intentionally.
 - Settings and user data are stored in `%APPDATA%\MIXANIZM Mahou`.
@@ -44,7 +45,7 @@ path until physical keyboard-hook performance testing is available.
 ## Current status
 
 This is still a draft test branch. It requires physical Windows 11 testing of keyboard
-hooks, Insert word/selection conversion, AutoSwitch, snippets, modifier handling,
+hooks, Insert word/selection conversion, Smart Caps, AutoSwitch, snippets, modifier handling,
 translator behavior and the full settings UI before merge or public release. See
 `SECURITY-AUDIT-MODERN.md`.
 

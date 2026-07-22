@@ -23,7 +23,7 @@ static class SmartCapsRegression {
     static void Skips(string source) {
         var args = new object[] { source, null };
         var matched = (bool)tryBuildCorrection.Invoke(null, args);
-        Check(!matched, "unsafe or intentional casing was corrected: " + source);
+        Check(!matched, "safe no-op candidate was corrected: " + source);
     }
 
     static int Main(string[] args) {
@@ -42,16 +42,23 @@ static class SmartCapsRegression {
         }
 
         Converts("ПРивет", "Привет");
-        Converts("БОльшой", "Большой");
+        Converts("ПРИвет", "Привет");
+        Converts("ПРИВет", "Привет");
+        Converts("окоРОчка", "окорочка");
+        Converts("КуРиные", "Куриные");
         Converts("ABc", "Abc");
-        Converts("ÉTude", "Étude");
+        Converts("aBc", "abc");
+        Converts("ÉTUde", "Étude");
+        Converts("САнкт-ПЕтербург", "Санкт-Петербург");
+        Converts("McDonald", "Mcdonald");
+        Converts("СДЭКом", "Сдэком");
 
-        Skips("СДЭКом");
         Skips("США");
         Skips("USA");
-        Skips("McDonald");
+        Skips("Привет");
+        Skips("привет");
+        Skips("Санкт-Петербург");
         Skips("A1b");
-        Skips("ПРиВет");
         Skips("ПRивет");
         Skips("AБc");
         Skips("ΑΒγ");
@@ -59,8 +66,8 @@ static class SmartCapsRegression {
         Skips("test@example.com");
         Skips("https://Example.test");
 
-        var normalized = (string)normalizeExceptionKey.Invoke(null, new object[] { "  ПРИВЕТ  " });
-        Check(String.Equals(normalized, "привет", StringComparison.Ordinal),
+        var normalized = (string)normalizeExceptionKey.Invoke(null, new object[] { "  СДЭКом  " });
+        Check(String.Equals(normalized, "сдэком", StringComparison.Ordinal),
               "exception normalization is not trim + lowercase");
 
         if (failures != 0) return 1;

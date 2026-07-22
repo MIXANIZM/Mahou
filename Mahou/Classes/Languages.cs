@@ -18,6 +18,14 @@ public class Languages
 		tab_Sounds,
 		tab_Translator,
 		tab_Sync,
+		tab_SmartTyping,
+		#endregion
+		#region Smart typing
+		SmartCapsEnabled,
+		SmartCapsDescription,
+		SmartCapsExceptions,
+		SmartCapsClear,
+		SmartCapsStatus,
 		#endregion
 		#region Functions
 		AutoStart,
@@ -324,6 +332,14 @@ public class Languages
 		{ Element.tab_Sounds, "Sounds" }, 
 		{ Element.tab_Translator, "Translator" }, 
 		{ Element.tab_Sync, "Sync" }, 
+		{ Element.tab_SmartTyping, "Smart typing" },
+		#endregion
+		#region Smart typing
+		{ Element.SmartCapsEnabled, "Fix accidental capitals inside words" },
+		{ Element.SmartCapsDescription, "Mahou corrects extra capitals after a freshly typed word is completed, including a third initial capital and capitals in the middle. Words typed entirely in capitals are skipped. Immediate Backspace restores the original casing; two reversions add the word to personal exceptions. Password fields and excluded applications are never processed. Microsoft Word may correct two initial capitals itself; the counter below records Mahou only." },
+		{ Element.SmartCapsExceptions, "Personal exceptions — one word per line:" },
+		{ Element.SmartCapsClear, "Clear exceptions" },
+		{ Element.SmartCapsStatus, "Mahou corrections this session: {0}; reverted: {1}." },
 		#endregion
 		#region Functions
 		{ Element.AutoStart, "Start with Windows." }, 
@@ -656,6 +672,14 @@ Specify layout code 0 to disable this feature." },
 		{ Element.tab_Sounds, "Звуки" }, 
 		{ Element.tab_Translator, "Переводчик" }, 
 		{ Element.tab_Sync, "Синхронизация" }, 
+		{ Element.tab_SmartTyping, "Умный ввод" },
+		#endregion
+		#region Smart typing
+		{ Element.SmartCapsEnabled, "Исправлять случайные заглавные внутри слова" },
+		{ Element.SmartCapsDescription, "Mahou исправляет лишние заглавные после завершения свеженабранного слова, в том числе третью заглавную в начале и заглавные в середине. Слова, целиком набранные заглавными, пропускаются. Мгновенный Backspace возвращает исходный регистр; после двух отмен слово добавляется в личные исключения. Парольные поля и программы из списка исключений не обрабатываются. Microsoft Word может самостоятельно исправлять две первые заглавные; счётчик ниже показывает только действия Mahou." },
+		{ Element.SmartCapsExceptions, "Личные исключения — по одному слову в строке:" },
+		{ Element.SmartCapsClear, "Очистить исключения" },
+		{ Element.SmartCapsStatus, "Исправлений Mahou за этот запуск: {0}; отменено: {1}." },
 		#endregion
 		#region Functions
 		{ Element.AutoStart, "Запускать с Windows" }, 
