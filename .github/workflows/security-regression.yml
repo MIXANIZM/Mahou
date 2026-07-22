@@ -52,8 +52,7 @@ jobs:
           for name, expected_sha in expected.items():
               path = Path(name)
               raw = path.read_bytes()
-              has_bom = raw.startswith(bom)
-              if has_bom:
+              if raw.startswith(bom):
                   raw = raw[len(bom):]
               raw = raw.replace(b'\r\n', b'\n').replace(b'\n', b'\r\n')
               if name == 'Mahou/Classes/Languages.cs':
@@ -66,9 +65,8 @@ jobs:
                   raise SystemExit('%s blob mismatch: expected %s, got %s' % (name, expected_sha, actual_sha))
               print('%s %s' % (actual_sha, name))
           PY
-          rm -f .github/patches/agz-mah-0001-r2-diffcheck.txt
 
-      - name: Commit only exact reviewed product blobs
+      - name: Commit only explicit reviewed paths
         shell: bash
         run: |
           set -euo pipefail
@@ -76,30 +74,23 @@ jobs:
           git config core.autocrlf false
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-          python3 - <<'PY'
-          import subprocess
-
-          expected = {
-              '.github/patches/agz-mah-0001-r2-diffcheck.txt',
-              '.github/scripts/security-regression.py',
-              '.github/tests/SmartCapsRegression.cs',
-              'ARCHITECTURE.md',
-              'CHANGELOG.md',
-              'ISSUES.md',
-              'KNOWN-LIMITATIONS.md',
-              'Mahou/Classes/Languages.cs',
-              'Mahou/Classes/SmartCaps.cs',
-              'Mahou/MahouUI.SmartTyping.cs',
-              'README-MIXANIZM.md',
-              'TEST-PLAN-WINDOWS11.md',
-              'TESTING.md',
-              'UNIVERSAL-CHAT-HANDOFF.md',
-          }
-          actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
-          if actual != expected:
-              raise SystemExit('Unexpected staged files: expected=%r actual=%r' % (sorted(expected), sorted(actual)))
-          print('Exact staged-file set verified: %d paths.' % len(actual))
-          PY
+          git add -- \
+            .github/scripts/security-regression.py \
+            .github/tests/SmartCapsRegression.cs \
+            ARCHITECTURE.md \
+            CHANGELOG.md \
+            ISSUES.md \
+            KNOWN-LIMITATIONS.md \
+            Mahou/Classes/Languages.cs \
+            Mahou/Classes/SmartCaps.cs \
+            Mahou/MahouUI.SmartTyping.cs \
+            README-MIXANIZM.md \
+            TEST-PLAN-WINDOWS11.md \
+            TESTING.md \
+            UNIVERSAL-CHAT-HANDOFF.md
+          git rm -f --ignore-unmatch .github/patches/agz-mah-0001-r2-diffcheck.txt
+          echo 'Staged paths:'
+          git diff --cached --name-only
+          test "$(git diff --cached --name-only | wc -l)" -eq 14
           git commit -m 'chore: preserve reviewed Smart Caps file bytes'
           git push origin HEAD:mixanizm-modern-v2.9.0.1
