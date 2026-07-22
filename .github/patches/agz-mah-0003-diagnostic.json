@@ -1,5 +1,5 @@
 {
-  "decode_error": "Error: Incorrect padding",
+  "decode_error": "Error: Only base64 data is allowed",
   "expected_total_base64_characters": 100840,
   "parts": [
     {
@@ -27,10 +27,10 @@
       "sha256_text": "d81c419973aa91d025d8eb98fa58b0cbb463dc549f20a1f1aa39ef13ec87b064"
     },
     {
-      "characters": 7999,
+      "characters": 8000,
       "name": ".github/patches/agz-mah-0003.part04",
       "present": true,
-      "sha256_text": "0015ebad5af3c0274fa8a2d2de22e16c82bc0bdd6c6e3ebaf05e7cefafbd74a2"
+      "sha256_text": "115960169cac1f1d54bfb89537eb28231e48eebf3f4c749c4b30aa158692b3ac"
     },
     {
       "characters": 16000,
@@ -57,5 +57,5 @@
       "sha256_text": "bac006616f4319b9af1b58cba945165595a7568942b8fb5c7caf9c1a89a8682e"
     }
   ],
-  "total_base64_characters": 100839
+  "total_base64_characters": 100840
 }
