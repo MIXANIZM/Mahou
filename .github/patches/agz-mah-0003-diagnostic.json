@@ -33,29 +33,29 @@
       "sha256_text": "115960169cac1f1d54bfb89537eb28231e48eebf3f4c749c4b30aa158692b3ac"
     },
     {
-      "characters": 16000,
-      "count": 1,
+      "characters": 0,
+      "count": 0,
       "name": "AGZ-MAH-0003-PAYLOAD-05-06",
-      "sha256_text": "faa65754547e7d43cb8cbcf26c5669f1681d10a5389efd2dfd677ed0c10afedb"
+      "sha256_text": null
     },
     {
-      "characters": 16000,
-      "count": 1,
+      "characters": 0,
+      "count": 0,
       "name": "AGZ-MAH-0003-PAYLOAD-07-08",
-      "sha256_text": "c464b24ed5722a93d2f02cdf3dec6502da42a20eab10722a106e33fbb8ff716e"
+      "sha256_text": null
     },
     {
-      "characters": 16000,
-      "count": 2,
+      "characters": 0,
+      "count": 0,
       "name": "AGZ-MAH-0003-PAYLOAD-09-10",
-      "sha256_text": "1e3eea1014d944c8099a04bfcb230408376570ff5592f46b4a30065e482dc25d"
+      "sha256_text": null
     },
     {
-      "characters": 12840,
-      "count": 1,
+      "characters": 0,
+      "count": 0,
       "name": "AGZ-MAH-0003-PAYLOAD-11-12",
-      "sha256_text": "bac006616f4319b9af1b58cba945165595a7568942b8fb5c7caf9c1a89a8682e"
+      "sha256_text": null
     }
   ],
-  "total_base64_characters": 100840
+  "total_base64_characters": 40000
 }
