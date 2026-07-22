@@ -1,0 +1,744 @@
+Mahou/Classes/Languages.cs:5: trailing whitespace.
++	public enum Element { 
+Mahou/Classes/Languages.cs:319: trailing whitespace.
++	public static Dictionary<Element, string> English = new Dictionary<Element, string>() { 
+Mahou/Classes/Languages.cs:321: trailing whitespace.
++		{ Element.tab_Functions, "Functions" }, 
+Mahou/Classes/Languages.cs:322: trailing whitespace.
++		{ Element.tab_Layouts, "Layouts" }, 
+Mahou/Classes/Languages.cs:323: trailing whitespace.
++		{ Element.tab_Appearence, "Appearance" }, 
+Mahou/Classes/Languages.cs:324: trailing whitespace.
++		{ Element.tab_Timings, "Timings" }, 
+Mahou/Classes/Languages.cs:325: trailing whitespace.
++		{ Element.tab_Excluded, "Excluded" }, 
+Mahou/Classes/Languages.cs:326: trailing whitespace.
++		{ Element.tab_Snippets, "Snippets" }, 
+Mahou/Classes/Languages.cs:328: trailing whitespace.
++		{ Element.tab_Hotkeys, "Hotkeys" }, 
+Mahou/Classes/Languages.cs:329: trailing whitespace.
++		{ Element.tab_LangPanel, "Language panel" }, 
+Mahou/Classes/Languages.cs:330: trailing whitespace.
++		{ Element.tab_Updates, "Updates" }, 
+Mahou/Classes/Languages.cs:331: trailing whitespace.
++		{ Element.tab_About, "About" }, 
+Mahou/Classes/Languages.cs:332: trailing whitespace.
++		{ Element.tab_Sounds, "Sounds" }, 
+Mahou/Classes/Languages.cs:333: trailing whitespace.
++		{ Element.tab_Translator, "Translator" }, 
+Mahou/Classes/Languages.cs:334: trailing whitespace.
++		{ Element.tab_Sync, "Sync" }, 
+Mahou/Classes/Languages.cs:345: trailing whitespace.
++		{ Element.AutoStart, "Start with Windows." }, 
+Mahou/Classes/Languages.cs:348: trailing whitespace.
++		{ Element.TrayIcon, "Show tray icon." }, 
+Mahou/Classes/Languages.cs:349: trailing whitespace.
++		{ Element.ConvertSelectionLS, "Convert selection layout switching." }, 
+Mahou/Classes/Languages.cs:350: trailing whitespace.
++		{ Element.ReSelect, "Re-select text after conversion." }, 
+Mahou/Classes/Languages.cs:351: trailing whitespace.
++		{ Element.RePress, "Re-press modifiers after hotkey action." }, 
+Mahou/Classes/Languages.cs:352: trailing whitespace.
++		{ Element.Add1Space, "Consider 1 space as part of last word." }, 
+Mahou/Classes/Languages.cs:354: trailing whitespace.
++		{ Element.ConvertSelectionLSPlus, "Convert selection layout switching+." }, 
+Mahou/Classes/Languages.cs:355: trailing whitespace.
++		{ Element.HighlightScroll, "Highlight Scroll-Lock when layout 1 is active." }, 
+Mahou/Classes/Languages.cs:356: trailing whitespace.
++		{ Element.UpdatesCheck, "Check for updates at startup." }, 
+Mahou/Classes/Languages.cs:357: trailing whitespace.
++		{ Element.SilentUpdate, "Silent update at startup." }, 
+Mahou/Classes/Languages.cs:358: trailing whitespace.
++		{ Element.Logging, "Enable logging for debugging." }, 
+Mahou/Classes/Languages.cs:359: trailing whitespace.
++		{ Element.CapsTimer, "Activate Caps Lock disabler timer." }, 
+Mahou/Classes/Languages.cs:360: trailing whitespace.
++		{ Element.DisplayInTray, "Display in tray:" }, 
+Mahou/Classes/Languages.cs:361: trailing whitespace.
++		{ Element.JustIcon, "Mahou's icon" }, 
+Mahou/Classes/Languages.cs:362: trailing whitespace.
++		{ Element.ContryFlags, "Country flags" }, 
+Mahou/Classes/Languages.cs:363: trailing whitespace.
++		{ Element.TextLayout, "Text of layout" }, 
+Mahou/Classes/Languages.cs:364: trailing whitespace.
++		{ Element.BlockCtrlHKs, "Block Mahou hotkeys with Ctrl." }, 
+Mahou/Classes/Languages.cs:365: trailing whitespace.
++		{ Element.MCDSSupport, "Enable MCDS support." }, 
+Mahou/Classes/Languages.cs:366: trailing whitespace.
++		{ Element.OneLayoutWholeWord, "Use layout for whole word in CS." }, 
+Mahou/Classes/Languages.cs:367: trailing whitespace.
++		{ Element.GuessKeyCodeFix, "Use guess key code fix." }, 
+Mahou/Classes/Languages.cs:368: trailing whitespace.
++		{ Element.ConfigsInAppData, "Configs in AppData." }, 
+Mahou/Classes/Languages.cs:369: trailing whitespace.
++		{ Element.RemapCapslockAsF18, "Remap Caps Lock as F18." }, 
+Mahou/Classes/Languages.cs:376: trailing whitespace.
++		{ Element.SwitchBetween, "Switch between layouts" }, 
+Mahou/Classes/Languages.cs:377: trailing whitespace.
++		{ Element.EmulateLS, "Emulate layout switching." }, 
+Mahou/Classes/Languages.cs:378: trailing whitespace.
++		{ Element.EmulateType, "Emulation type:" }, 
+Mahou/Classes/Languages.cs:379: trailing whitespace.
++		{ Element.ChangeLayoutBy1Key, "Change to specific layout by keys:" }, 
+Mahou/Classes/Languages.cs:380: trailing whitespace.
++		{ Element.OneLayout, "One layout for all programs." }, 
+Mahou/Classes/Languages.cs:381: trailing whitespace.
++		{ Element.QWERTZ, "Fix for QWERTZ keyboard." }, 
+Mahou/Classes/Languages.cs:382: trailing whitespace.
++		{ Element.KeysType, "Keys type:" }, 
+Mahou/Classes/Languages.cs:383: trailing whitespace.
++		{ Element.SelectKeyType, "Select key." }, 
+Mahou/Classes/Languages.cs:388: trailing whitespace.
++		{ Element.PersistentLayout, "Persistent layout" }, 
+Mahou/Classes/Languages.cs:389: trailing whitespace.
++		{ Element.SwitchOnlyOnWindowChange, "Change only when active window changes." }, 
+Mahou/Classes/Languages.cs:390: trailing whitespace.
++		{ Element.SwitchOnlyOnce, "Change layout only once per window." }, 
+Mahou/Classes/Languages.cs:391: trailing whitespace.
++		{ Element.ActivatePLFP, "Activate persistent layout for processes:" }, 
+Mahou/Classes/Languages.cs:392: trailing whitespace.
++		{ Element.CheckInterval, "Check interval (ms):" }, 
+Mahou/Classes/Languages.cs:395: trailing whitespace.
++		{ Element.LDMouseDisplay, "Display current language tooltip around mouse." }, 
+Mahou/Classes/Languages.cs:396: trailing whitespace.
++		{ Element.LDCaretDisplay, "Display current language tooltip around caret." }, 
+Mahou/Classes/Languages.cs:397: trailing whitespace.
++		{ Element.LDOnlyOnChange, "Only on change." }, 
+Mahou/Classes/Languages.cs:398: trailing whitespace.
++		{ Element.LDDifferentAppearence, "Use different appearance for layouts." }, 
+Mahou/Classes/Languages.cs:399: trailing whitespace.
++		{ Element.Language, "Language:" }, 
+Mahou/Classes/Languages.cs:400: trailing whitespace.
++		{ Element.LDAppearence, "Language tooltip appearance:" }, 
+Mahou/Classes/Languages.cs:401: trailing whitespace.
++		{ Element.LDAroundMouse, "Around mouse" }, 
+Mahou/Classes/Languages.cs:402: trailing whitespace.
++		{ Element.LDAroundCaret, "Around caret" }, 
+Mahou/Classes/Languages.cs:403: trailing whitespace.
++		{ Element.LDTransparentBG, "Transparent color." }, 
+Mahou/Classes/Languages.cs:404: trailing whitespace.
++		{ Element.LDFont, "Font" }, 
+Mahou/Classes/Languages.cs:405: trailing whitespace.
++		{ Element.LDFore, "Foreground color:" }, 
+Mahou/Classes/Languages.cs:406: trailing whitespace.
++		{ Element.LDBack, "Background color:" }, 
+Mahou/Classes/Languages.cs:407: trailing whitespace.
++		{ Element.LDText, "Tooltip text:" }, 
+Mahou/Classes/Languages.cs:408: trailing whitespace.
++		{ Element.LDSize, "Size" }, 
+Mahou/Classes/Languages.cs:409: trailing whitespace.
++		{ Element.LDPosition, "Position" }, 
+Mahou/Classes/Languages.cs:410: trailing whitespace.
++		{ Element.LDWidth, "Width" }, 
+Mahou/Classes/Languages.cs:411: trailing whitespace.
++		{ Element.LDHeight, "Height" }, 
+Mahou/Classes/Languages.cs:412: trailing whitespace.
++		{ Element.MCDSTopIndent, "Top" }, 
+Mahou/Classes/Languages.cs:413: trailing whitespace.
++		{ Element.MCDSBottomIndent, "Bottom" }, 
+Mahou/Classes/Languages.cs:420: trailing whitespace.
++		{ Element.LDForMouseRefreshRate, "Language tooltip around mouse refresh rate(ms):" }, 
+Mahou/Classes/Languages.cs:421: trailing whitespace.
++		{ Element.LDForCaretRefreshRate, "Language tooltip around caret refresh rate(ms):" }, 
+Mahou/Classes/Languages.cs:422: trailing whitespace.
++		{ Element.DoubleHKDelay, "Double hotkey wait time for second press(ms):" }, 
+Mahou/Classes/Languages.cs:423: trailing whitespace.
++		{ Element.TrayFlagsRefreshRate, "Flags in tray icon refresh rate(ms):" }, 
+Mahou/Classes/Languages.cs:424: trailing whitespace.
++		{ Element.ScrollLockRefreshRate, "Scroll Lock refresh rate(ms):" }, 
+Mahou/Classes/Languages.cs:425: trailing whitespace.
++		{ Element.CapsLockRefreshRate, "Caps Lock update rate(ms):" }, 
+Mahou/Classes/Languages.cs:426: trailing whitespace.
++		{ Element.MoreTriesToGetSelectedText, "Use more tries to get selected text:" }, 
+Mahou/Classes/Languages.cs:432: trailing whitespace.
++		{ Element.ExcludedPrograms, "Excluded programs:" }, 
+Mahou/Classes/Languages.cs:433: trailing whitespace.
++		{ Element.Change1KeyLayoutInExcluded, "Change layout by 1 key even in excluded." }, 
+Mahou/Classes/Languages.cs:434: trailing whitespace.
++		{ Element.AllowConvertSWL, "Allow convert selection/word/line conversion." }, 
+Mahou/Classes/Languages.cs:437: trailing whitespace.
++		{ Element.SnippetsEnabled, "Enable snippets." }, 
+Mahou/Classes/Languages.cs:438: trailing whitespace.
++		{ Element.SnippetSpaceAfter, "Add 1 space after snippets." }, 
+Mahou/Classes/Languages.cs:439: trailing whitespace.
++		{ Element.SnippetSwitchToGuessLayout, "Switch to guess layout after snippet." }, 
+Mahou/Classes/Languages.cs:440: trailing whitespace.
++		{ Element.SnippetsCount, "Snippets: " }, 
+Mahou/Classes/Languages.cs:441: trailing whitespace.
++		{ Element.SnippetsExpandKey, "Snippet expand key: " }, 
+Mahou/Classes/Languages.cs:442: trailing whitespace.
++		{ Element.SnippetsExpKeyOther, "Other" }, 
+Mahou/Classes/Languages.cs:443: trailing whitespace.
++		{ Element.SnippetsNCRules, "Disable snippets/autoswitch rules (Regex)" }, 
+Mahou/Classes/Languages.cs:446: trailing whitespace.
++		{ Element.AutoSwitchEnabled, "Enable auto-switch." }, 
+Mahou/Classes/Languages.cs:447: trailing whitespace.
++		{ Element.AutoSwitchSpaceAfter, "Add 1 space after auto-switch." }, 
+Mahou/Classes/Languages.cs:448: trailing whitespace.
++		{ Element.AutoSwitchSwitchToGuessLayout, "Switch to guess layout after auto-switch." }, 
+Mahou/Classes/Languages.cs:449: trailing whitespace.
++		{ Element.AutoSwitchUpdateDictionary, "Update auto-switch dictionary." }, 
+Mahou/Classes/Languages.cs:451: trailing whitespace.
++		{ Element.AutoSwitchDictionaryWordsCount, "Words: " }, 
+Mahou/Classes/Languages.cs:452: trailing whitespace.
++		{ Element.DownloadAutoSwitchDictionaryInZip, "Download auto-switch dictionary in zip." }, 
+Mahou/Classes/Languages.cs:453: trailing whitespace.
++		{ Element.AutoSwitchDictionaryTooBigToDisplay, "Too big dictionary, it will take a lot time to display, dictionary display disabled.\r\nDictionary WON'T be updated every time you press [Apply] button, it will be updated once only after restart or after disabling=>Apply=>enabling=>Apply AutoSwitch feature or through \"[Hidden] Toggle AutoSwitch Hotkey\" also only once." }, 
+Mahou/Classes/Languages.cs:456: trailing whitespace.
++		{ Element.ToggleMainWnd, "Toggle settings window" }, 
+Mahou/Classes/Languages.cs:457: trailing whitespace.
++		{ Element.ConvertLast, "Convert last word" }, 
+Mahou/Classes/Languages.cs:458: trailing whitespace.
++		{ Element.ConvertSelected, "Convert selected text" }, 
+Mahou/Classes/Languages.cs:459: trailing whitespace.
++		{ Element.ConvertLine, "Convert last line" }, 
+Mahou/Classes/Languages.cs:460: trailing whitespace.
++		{ Element.ConvertWords, "Convert specific last words count" }, 
+Mahou/Classes/Languages.cs:461: trailing whitespace.
++		{ Element.ToggleSymbolIgnore, "Toggle symbol ignore mode" }, 
+Mahou/Classes/Languages.cs:462: trailing whitespace.
++		{ Element.SelectedToTitleCase, "Selected text words to Title Case" }, 
+Mahou/Classes/Languages.cs:463: trailing whitespace.
++		{ Element.SelectedToRandomCase, "Selected text words to RanDoM cASe" }, 
+Mahou/Classes/Languages.cs:464: trailing whitespace.
++		{ Element.SelectedToSwapCase, "Selected text words to sWAP cASE" }, 
+Mahou/Classes/Languages.cs:465: trailing whitespace.
++		{ Element.SelectedToUpperCase, "Selected text to UPPER CASE" }, 
+Mahou/Classes/Languages.cs:466: trailing whitespace.
++		{ Element.SelectedToLowerCase, "Selected text to lower case" }, 
+Mahou/Classes/Languages.cs:467: trailing whitespace.
++		{ Element.SelectedTransliteration, "Selected text transliteration" }, 
+Mahou/Classes/Languages.cs:468: trailing whitespace.
++		{ Element.ExitMahou, "Exit" }, 
+Mahou/Classes/Languages.cs:469: trailing whitespace.
++		{ Element.RestartMahou, "Restart" }, 
+Mahou/Classes/Languages.cs:470: trailing whitespace.
++		{ Element.Enabled, "Enabled" }, 
+Mahou/Classes/Languages.cs:471: trailing whitespace.
++		{ Element.DoubleHK, "Double hotkey" }, 
+Mahou/Classes/Languages.cs:472: trailing whitespace.
++		{ Element.ToggleLangPanel, "Toggle language panel" }, 
+Mahou/Classes/Languages.cs:473: trailing whitespace.
++		{ Element.TranslateSelection, "Show selected text translation" }, 
+Mahou/Classes/Languages.cs:474: trailing whitespace.
++		{ Element.ToggleMahou, "Toogle Pause Mahou" }, 
+Mahou/Classes/Languages.cs:475: trailing whitespace.
++		{ Element.CycleCase, "Cycle selected text case" }, 
+Mahou/Classes/Languages.cs:476: trailing whitespace.
++		{ Element.CustomConversion, "Custom text conversion" }, 
+Mahou/Classes/Languages.cs:477: trailing whitespace.
++		{ Element.ShowCMenuUnderMouse, "Show tray context menu under mouse" }, 
+Mahou/Classes/Languages.cs:489: trailing whitespace.
++		{ Element.EnableTranslatePanel, "Enable Translator." }, 
+Mahou/Classes/Languages.cs:490: trailing whitespace.
++		{ Element.ShowTranslationOnDoubleClick, "Show on Double Click." }, 
+Mahou/Classes/Languages.cs:491: trailing whitespace.
++		{ Element.TranslateLanguages, "Translate languages:" }, 
+Mahou/Classes/Languages.cs:492: trailing whitespace.
++		{ Element.Translation, "Translation" }, 
+Mahou/Classes/Languages.cs:493: trailing whitespace.
++		{ Element.TextFont, "Text Font:" }, 
+Mahou/Classes/Languages.cs:494: trailing whitespace.
++		{ Element.TitleFont, "Title Font:" }, 
+Mahou/Classes/Languages.cs:495: trailing whitespace.
++		{ Element.Direct, "Direct(faster/can: 429 Too Many)" }, 
+Mahou/Classes/Languages.cs:496: trailing whitespace.
++		{ Element.WebScript, "Web Script(slower/stable)" }, 
+Mahou/Classes/Languages.cs:497: trailing whitespace.
++		{ Element.DirectV2, "Direct-v2(faster/more stable)" }, 
+Mahou/Classes/Languages.cs:498: trailing whitespace.
++		{ Element.Method, "Method" }, 
+Mahou/Classes/Languages.cs:501: trailing whitespace.
++		{ Element.CheckForUpdates, "Check for updates" }, 
+Mahou/Classes/Languages.cs:502: trailing whitespace.
++		{ Element.YouHaveLatest, "You have latest version." }, 
+Mahou/Classes/Languages.cs:503: trailing whitespace.
++		{ Element.TimeToUpdate, "I think it is time to update." }, 
+Mahou/Classes/Languages.cs:504: trailing whitespace.
++		{ Element.UpdateMahou, "<- Update Mahou to new version" }, 
+Mahou/Classes/Languages.cs:505: trailing whitespace.
++		{ Element.DownloadUpdate, "Download update" }, 
+Mahou/Classes/Languages.cs:506: trailing whitespace.
++		{ Element.ProxyConfig, "Proxy configuration" }, 
+Mahou/Classes/Languages.cs:507: trailing whitespace.
++		{ Element.ProxyServer, "Server:Port" }, 
+Mahou/Classes/Languages.cs:508: trailing whitespace.
++		{ Element.ProxyLogin, "Login:" }, 
+Mahou/Classes/Languages.cs:509: trailing whitespace.
++		{ Element.ProxyPass, "Password:" }, 
+Mahou/Classes/Languages.cs:510: trailing whitespace.
++		{ Element.Error, "Error..." }, 
+Mahou/Classes/Languages.cs:515: trailing whitespace.
++		{ Element.DbgInf, "Debug info" }, 
+Mahou/Classes/Languages.cs:516: trailing whitespace.
++		{ Element.DbgInf_Copied, "Copied!" }, 
+Mahou/Classes/Languages.cs:517: trailing whitespace.
++		{ Element.Site, "Site" }, 
+Mahou/Classes/Languages.cs:518: trailing whitespace.
++		{ Element.Releases, "Releases" }, 
+Mahou/Classes/Languages.cs:537: trailing whitespace.
++		{ Element.EnableSounds, "Enable sounds." }, 
+Mahou/Classes/Languages.cs:538: trailing whitespace.
++		{ Element.PlaySoundWhen, "Play sound when:" }, 
+Mahou/Classes/Languages.cs:539: trailing whitespace.
++		{ Element.SoundOnAutoSwitch, "On Auto-Switch conversion." }, 
+Mahou/Classes/Languages.cs:540: trailing whitespace.
++		{ Element.SoundOnSnippets, "On Snippets expansion." }, 
+Mahou/Classes/Languages.cs:541: trailing whitespace.
++		{ Element.SoundOnConvertLast, "On Last Word conversion." }, 
+Mahou/Classes/Languages.cs:542: trailing whitespace.
++		{ Element.SoundOnLayoutSwitching, "Layout switching." }, 
+Mahou/Classes/Languages.cs:543: trailing whitespace.
++		{ Element.UseCustomSound, "Use custom sound:" }, 
+Mahou/Classes/Languages.cs:544: trailing whitespace.
++		{ Element.Select, "Select" }, 
+Mahou/Classes/Languages.cs:554: trailing whitespace.
++		{ Element.Checking, "Checking..." }, 
+Mahou/Classes/Languages.cs:555: trailing whitespace.
++		{ Element.Keys, "Keys" }, 
+Mahou/Classes/Languages.cs:556: trailing whitespace.
++		{ Element.Key_Left, "Left" }, 
+Mahou/Classes/Languages.cs:557: trailing whitespace.
++		{ Element.Key_Right, "Right" }, 
+Mahou/Classes/Languages.cs:558: trailing whitespace.
++		{ Element.Layouts, "Layouts" }, 
+Mahou/Classes/Languages.cs:559: trailing whitespace.
++		{ Element.Plugin, "plugin" }, 
+Mahou/Classes/Languages.cs:560: trailing whitespace.
++		{ Element.Layout, "Layout" }, 
+Mahou/Classes/Languages.cs:561: trailing whitespace.
++		{ Element.Hotkey, "Hotkey" }, 
+Mahou/Classes/Languages.cs:562: trailing whitespace.
++		{ Element.UpdateFound, "New version available!" }, 
+Mahou/Classes/Languages.cs:563: trailing whitespace.
++		{ Element.UpdateComplete, "Mahou successfully updated!" }, 
+Mahou/Classes/Languages.cs:564: trailing whitespace.
++		{ Element.ShowHide, "Show" }, 
+Mahou/Classes/Languages.cs:565: trailing whitespace.
++		{ Element.Mahou, "Mahou (魔法) – magic layout switcher." }, 
+Mahou/Classes/Languages.cs:566: trailing whitespace.
++		{ Element.Download, "Download" }, 
+Mahou/Classes/Languages.cs:579: trailing whitespace.
++		{ Element.ButtonOK, "OK" }, 
+Mahou/Classes/Languages.cs:580: trailing whitespace.
++		{ Element.ButtonApply, "Apply" }, 
+Mahou/Classes/Languages.cs:581: trailing whitespace.
++		{ Element.ButtonCancel, "Cancel" }, 
+Mahou/Classes/Languages.cs:584: trailing whitespace.
++		{ Element.TT_SwitchBetween, "While this option is disabled, [Convert word], [Convert line] and [Convert selection with \"Convert selection layout switching\" enabled]\n" + 
+Mahou/Classes/Languages.cs:587: trailing whitespace.
++		{ Element.TT_ConvertSelectionSwitch, "This function can add layout switching to convert selection,\nnow it can be used together with [Use layout for whole word in CS],\nin that case it will cause layout switching before conversion.\nConversion mode will be used from [Use layout for whole word in CS] function.\n+ Mode can't be enabled while function [Use layout for whole word in CS] enabled.\n\nCan cause bugs!!\r\nIf enabled, Convert selection will use layout switching.\nAll symbols will be written as the must(if layout before switching was the one where they are written it).\nThere also a plus version of that function." }, 
+Mahou/Classes/Languages.cs:588: trailing whitespace.
++		{ Element.TT_BlockCtrl, "Blocks hotkeys that use Control,\nwhen [Switch layout by key] is set to Left/Right Ctrl." }, 
+Mahou/Classes/Languages.cs:589: trailing whitespace.
++		{ Element.TT_CapsDis, "If enabled, timer which disables CapsLock(led) will work.\r\nDelay can be configured in [Timings] tab." }, 
+Mahou/Classes/Languages.cs:590: trailing whitespace.
++		{ Element.TT_EmulateLS, "If enabled, layout switching will emulate press of keys selected on right.\nNow it is possible to enable this function with [Switch between layouts] function." }, 
+Mahou/Classes/Languages.cs:594: trailing whitespace.
++		{ Element.TT_Add1NL, "If enabled, ONE Enter(line break) will be adding to last word,\r\n\r\nso the convert last word will work if you accidentally press Enter after the word." }, 
+Mahou/Classes/Languages.cs:595: trailing whitespace.
++		{ Element.TT_ReSelect, "If enabled, any [Convert selected] will select text again after conversion.\nYou can also specify which hotkeys are being affected in [Hidden] tab, default value is: tTRSULCNB for all hotkeys that use selection" }, 
+Mahou/Classes/Languages.cs:596: trailing whitespace.
++		{ Element.TT_ScrollTip, "Highlight Scroll Lock when active language 1, selected in Layouts tab.\nUnnesesary to keep enabled [Switch between layouts] function enabled for this function to work, just select layout #1 below it and then disable it if you need to." }, 
+Mahou/Classes/Languages.cs:597: trailing whitespace.
++		{ Element.TT_LDOnlyOnChange, "Display language tooltip only on layout change.\nDisplay time - 2×[Refresh rate for mouse + for caret]." }, 
+Mahou/Classes/Languages.cs:603: trailing whitespace.
++										"\n4.Convert unsupported symbols differently, if you change layout before conversion." }, 
+Mahou/Classes/Languages.cs:604: trailing whitespace.
++		{ Element.TT_LDForMouse, "If enabled, when hovering text form with, a language tooltip will be displayed around the mouse." }, 
+Mahou/Classes/Languages.cs:605: trailing whitespace.
++		{ Element.TT_LDForCaret, "If enabled, a language tooltip will be displayed around the caret." }, 
+Mahou/Classes/Languages.cs:606: trailing whitespace.
++		{ Element.TT_Snippets, "If enabled, pressing SPACE will expand small (which starts with \"->\") word, to big (which is between \"====>\" and \"<====\") word/text fragment." }, 
+Mahou/Classes/Languages.cs:607: trailing whitespace.
++		{ Element.TT_Logging, "Designed ONLY to search for errors, BIG PERFORMANCE IMPACT, logs are saved in Mahou's folder, in folder Logs." }, 
+Mahou/Classes/Languages.cs:608: trailing whitespace.
++		{ Element.TT_LDDifferentAppearence, "If enabled, you can select different appearance for main layouts(1&2), for others will be used from [around mouse] or [around caret]." }, 
+Mahou/Classes/Languages.cs:609: trailing whitespace.
++		{ Element.TT_TrayDisplayType, "Allows to choose what to display in tray icon.\nIf [Layout text] is selected, its appearance will be same as in Appearance tab's [Layout 1] and [Layout 2] appearance, and [around caret]/[around mouse] for any other layout.\nAlso it is possible to use flags for any other layout, just enable [Use flags] in [around caret]/[around mouse]." }, 
+Mahou/Classes/Languages.cs:611: trailing whitespace.
++										"WON'T WORK IF YOU HAVE MORE THAN 2 LAYOUTS AND FUNCTION \"Switch between layouts\" disabled!" }, 
+Mahou/Classes/Languages.cs:612: trailing whitespace.
++		{ Element.TT_ConvertWords, "Allow to convert specific last word count by pressing hotkey and then 0-9 (0 = 10) on keyboard." }, 
+Mahou/Classes/Languages.cs:613: trailing whitespace.
++		{ Element.TT_ExcludedPrograms, "Programs(excluded) in which convert hotkeys won't work.\nSeparators - spaces and new lines.\r\nIf process name has spaces in it replace it with _, if process name has the _ just write it so.\r\nExample: Process Name: foo_bar 2000.exe\r\nIn Mahou: foo_bar_2000.exe." }, 
+Mahou/Classes/Languages.cs:614: trailing whitespace.
++		{ Element.TT_MCDSSupport, "Add the ability to display language tooltip around caret in Sublime Text 3.\nFor it to work you need to install a plugin, link on right.\nSettings available in appearance tab:\nTop: Your ST3 titlebar + tab bar height,\nBottom: Your y pixels to ST3 console edit box(ctrl+`).\nFor different windows/themes settings will be different!" }, 
+Mahou/Classes/Languages.cs:615: trailing whitespace.
++		{ Element.TT_LDText, "Leave empty for auto-detect.\r\nEnter Alt+255(Numpad) to disable displaying of this layout, when display flags feature active." }, 
+Mahou/Classes/Languages.cs:629: trailing whitespace.
++		{ Element.TT_ConfigsInAppData, "If enabled Mahou will copy current configs to AppData, and will use them.\r\nAlso logs and snippets will be stored in %AppData%\\Mahou.\r\nAfter this checkbox state changed other checkboxes/datas configurations from user interface will not be saved, because they will be loaded from another configs(if switched, from Mahou's directory or from %AppData%\\Mahou).\r\nUseful if you need to run Mahou from Program Files directory by multiple users, and while some of them have no write access to it,\r\nalso it makes possible to have different configurations for each user." },		
+Mahou/Classes/Languages.cs:634: trailing whitespace.
++		{ Element.TT_UseJKL, "Allows Mahou to retrieve layout from jkl.exe.\r\nAllows always to get right keyboard layout.(Highly recommended)\r\n" },	
+Mahou/Classes/Languages.cs:661: trailing whitespace.
++		{ Element.tab_Functions, "Функции" }, 
+Mahou/Classes/Languages.cs:662: trailing whitespace.
++		{ Element.tab_Layouts, "Раскладки" }, 
+Mahou/Classes/Languages.cs:663: trailing whitespace.
++		{ Element.tab_Appearence, "Вид" }, 
+Mahou/Classes/Languages.cs:664: trailing whitespace.
++		{ Element.tab_Timings, "Тайминги" }, 
+Mahou/Classes/Languages.cs:665: trailing whitespace.
++		{ Element.tab_Excluded, "Исключения" }, 
+Mahou/Classes/Languages.cs:666: trailing whitespace.
++		{ Element.tab_Snippets, "Сниппеты" }, 
+Mahou/Classes/Languages.cs:667: trailing whitespace.
++		{ Element.tab_AutoSwitch, "Автозамена" }, 
+Mahou/Classes/Languages.cs:668: trailing whitespace.
++		{ Element.tab_Hotkeys, "Горячие клавиши" }, 
+Mahou/Classes/Languages.cs:669: trailing whitespace.
++		{ Element.tab_LangPanel, "Языковая панель" }, 
+Mahou/Classes/Languages.cs:670: trailing whitespace.
++		{ Element.tab_Updates, "Обновления" }, 
+Mahou/Classes/Languages.cs:671: trailing whitespace.
++		{ Element.tab_About, "О..." },  
+Mahou/Classes/Languages.cs:672: trailing whitespace.
++		{ Element.tab_Sounds, "Звуки" }, 
+Mahou/Classes/Languages.cs:673: trailing whitespace.
++		{ Element.tab_Translator, "Переводчик" }, 
+Mahou/Classes/Languages.cs:674: trailing whitespace.
++		{ Element.tab_Sync, "Синхронизация" }, 
+Mahou/Classes/Languages.cs:685: trailing whitespace.
++		{ Element.AutoStart, "Запускать с Windows" }, 
+Mahou/Classes/Languages.cs:688: trailing whitespace.
++		{ Element.TrayIcon, "Показывать значок в трее." }, 
+Mahou/Classes/Languages.cs:689: trailing whitespace.
++		{ Element.ConvertSelectionLS, "Смена раскладки в Конвертации выделения." }, 
+Mahou/Classes/Languages.cs:690: trailing whitespace.
++		{ Element.ReSelect, "Выделять заново текст после конвертации." }, 
+Mahou/Classes/Languages.cs:691: trailing whitespace.
++		{ Element.RePress, "Нажимать снова модификаторы горячих клавиш." }, 
+Mahou/Classes/Languages.cs:692: trailing whitespace.
++		{ Element.Add1Space, "Считать Пробел частью последнего слова." }, 
+Mahou/Classes/Languages.cs:694: trailing whitespace.
++		{ Element.ConvertSelectionLSPlus, "Смена раскладки в Конвертации выделения+." }, 
+Mahou/Classes/Languages.cs:695: trailing whitespace.
++		{ Element.HighlightScroll, "Включать Scroll Lock, когда активна раскладка #1." }, 
+Mahou/Classes/Languages.cs:696: trailing whitespace.
++		{ Element.UpdatesCheck, "Проверять обновления при запуске." }, 
+Mahou/Classes/Languages.cs:697: trailing whitespace.
++		{ Element.SilentUpdate, "Тихо обновлять при запуске." }, 
+Mahou/Classes/Languages.cs:698: trailing whitespace.
++		{ Element.Logging, "Включить журналирование действий." }, 
+Mahou/Classes/Languages.cs:699: trailing whitespace.
++		{ Element.CapsTimer, "Включить таймер-выключатель Caps Lock." }, 
+Mahou/Classes/Languages.cs:700: trailing whitespace.
++		{ Element.DisplayInTray, "Показывать в трее:" }, 
+Mahou/Classes/Languages.cs:701: trailing whitespace.
++		{ Element.JustIcon, "Значок Mahou" }, 
+Mahou/Classes/Languages.cs:702: trailing whitespace.
++		{ Element.ContryFlags, "Флаги стран" }, 
+Mahou/Classes/Languages.cs:703: trailing whitespace.
++		{ Element.TextLayout, "Текст раскладки" }, 
+Mahou/Classes/Languages.cs:704: trailing whitespace.
++		{ Element.BlockCtrlHKs, "Блокировать горячие клавиши, содержащие Ctrl." }, 
+Mahou/Classes/Languages.cs:705: trailing whitespace.
++		{ Element.MCDSSupport, "Включить поддержку MCDS." }, 
+Mahou/Classes/Languages.cs:706: trailing whitespace.
++		{ Element.OneLayoutWholeWord, "Считать раскладку для всего слова в КВ." }, 
+Mahou/Classes/Languages.cs:707: trailing whitespace.
++		{ Element.GuessKeyCodeFix, "Исправление кодов клавиш." }, 
+Mahou/Classes/Languages.cs:708: trailing whitespace.
++		{ Element.ConfigsInAppData, "Конфигурация в AppData." }, 
+Mahou/Classes/Languages.cs:709: trailing whitespace.
++		{ Element.RemapCapslockAsF18, "Переопределить Caps Lock как F18." }, 
+Mahou/Classes/Languages.cs:716: trailing whitespace.
++		{ Element.SwitchBetween, "Переключаться между раскладками" }, 
+Mahou/Classes/Languages.cs:717: trailing whitespace.
++		{ Element.EmulateLS, "Эмулировать переключение раскладки." }, 
+Mahou/Classes/Languages.cs:718: trailing whitespace.
++		{ Element.EmulateType, "Тип эмуляции:" }, 
+Mahou/Classes/Languages.cs:719: trailing whitespace.
++		{ Element.ChangeLayoutBy1Key, "Переключать раскладки по клавишам:" }, 
+Mahou/Classes/Languages.cs:720: trailing whitespace.
++		{ Element.QWERTZ, "Исправление для QWERTZ клавиатур." }, 
+Mahou/Classes/Languages.cs:721: trailing whitespace.
++		{ Element.KeysType, "Тип клавиш:" }, 
+Mahou/Classes/Languages.cs:722: trailing whitespace.
++		{ Element.SelectKeyType, "Выбрать из списка." }, 
+Mahou/Classes/Languages.cs:723: trailing whitespace.
++		{ Element.SetHotkeyType, "Указать свою клавишу." }, 
+Mahou/Classes/Languages.cs:727: trailing whitespace.
++		{ Element.PersistentLayout, "Постоянная раскладка" }, 
+Mahou/Classes/Languages.cs:728: trailing whitespace.
++		{ Element.SwitchOnlyOnWindowChange, "Менять только когда меняются окна." }, 
+Mahou/Classes/Languages.cs:729: trailing whitespace.
++		{ Element.SwitchOnlyOnce, "Менять 1 раз для окна." }, 
+Mahou/Classes/Languages.cs:730: trailing whitespace.
++		{ Element.ActivatePLFP, "Постоянная раскладка для процессов:" }, 
+Mahou/Classes/Languages.cs:731: trailing whitespace.
++		{ Element.CheckInterval, "Интервал проверки (мс):" }, 
+Mahou/Classes/Languages.cs:732: trailing whitespace.
++		{ Element.OneLayout, "Единая раскладка для всех программ." }, 
+Mahou/Classes/Languages.cs:735: trailing whitespace.
++		{ Element.LDMouseDisplay, "Отображать подсказку текущего языка рядом с мышью." }, 
+Mahou/Classes/Languages.cs:736: trailing whitespace.
++		{ Element.LDCaretDisplay, "Отображать подсказку текущего языка рядом с кареткой." }, 
+Mahou/Classes/Languages.cs:737: trailing whitespace.
++		{ Element.LDOnlyOnChange, "Только при смене." }, 
+Mahou/Classes/Languages.cs:738: trailing whitespace.
++		{ Element.LDDifferentAppearence, "Использовать разный вид для раскладок." }, 
+Mahou/Classes/Languages.cs:739: trailing whitespace.
++		{ Element.Language, "Язык:" }, 
+Mahou/Classes/Languages.cs:740: trailing whitespace.
++		{ Element.LDAppearence, "Вид подсказки языка:" }, 
+Mahou/Classes/Languages.cs:741: trailing whitespace.
++		{ Element.LDAroundMouse, "Возле мыши" }, 
+Mahou/Classes/Languages.cs:742: trailing whitespace.
++		{ Element.LDAroundCaret, "Возле каретки" }, 
+Mahou/Classes/Languages.cs:743: trailing whitespace.
++		{ Element.LDTransparentBG, "Прозрачный фон." }, 
+Mahou/Classes/Languages.cs:744: trailing whitespace.
++		{ Element.LDFont, "Шрифт" }, 
+Mahou/Classes/Languages.cs:745: trailing whitespace.
++		{ Element.LDFore, "Цвет текста:" }, 
+Mahou/Classes/Languages.cs:746: trailing whitespace.
++		{ Element.LDBack, "Цвет фона:" }, 
+Mahou/Classes/Languages.cs:747: trailing whitespace.
++		{ Element.LDText, "Текст подсказки:" }, 
+Mahou/Classes/Languages.cs:748: trailing whitespace.
++		{ Element.LDSize, "Размер" }, 
+Mahou/Classes/Languages.cs:749: trailing whitespace.
++		{ Element.LDPosition, "Позиция" }, 
+Mahou/Classes/Languages.cs:750: trailing whitespace.
++		{ Element.LDWidth, "Ширина" }, 
+Mahou/Classes/Languages.cs:751: trailing whitespace.
++		{ Element.LDHeight, "Высота" }, 
+Mahou/Classes/Languages.cs:752: trailing whitespace.
++		{ Element.MCDSTopIndent, "Сверху" }, 
+Mahou/Classes/Languages.cs:753: trailing whitespace.
++		{ Element.MCDSBottomIndent, "Снизу" }, 
+Mahou/Classes/Languages.cs:754: trailing whitespace.
++		{ Element.UseFlags, "Использовать флаги." }, 
+Mahou/Classes/Languages.cs:760: trailing whitespace.
++		{ Element.LDForMouseRefreshRate, "Скорость обновления подсказки языка возле мыши (мс):" }, 
+Mahou/Classes/Languages.cs:761: trailing whitespace.
++		{ Element.LDForCaretRefreshRate, "Скорость обновления подсказки языка возле каретки (мс)" }, 
+Mahou/Classes/Languages.cs:762: trailing whitespace.
++		{ Element.DoubleHKDelay, "Время ожидания следующего нажатия двойных горячих клавиш (мс):" }, 
+Mahou/Classes/Languages.cs:763: trailing whitespace.
++		{ Element.TrayFlagsRefreshRate, "Скорость обновления флагов в трее (мс):" }, 
+Mahou/Classes/Languages.cs:764: trailing whitespace.
++		{ Element.ScrollLockRefreshRate, "Скорость обновления Scroll Lock (мс):" }, 
+Mahou/Classes/Languages.cs:765: trailing whitespace.
++		{ Element.CapsLockRefreshRate, "Скорость обновления Caps Lock (мс):" }, 
+Mahou/Classes/Languages.cs:766: trailing whitespace.
++		{ Element.MoreTriesToGetSelectedText, "Использовать больше попыток взятия текста:" }, 
+Mahou/Classes/Languages.cs:772: trailing whitespace.
++		{ Element.ExcludedPrograms, "Программы-исключения:" }, 
+Mahou/Classes/Languages.cs:773: trailing whitespace.
++		{ Element.Change1KeyLayoutInExcluded, "Менять раскладку одной клавишей даже в исключениях." }, 
+Mahou/Classes/Languages.cs:774: trailing whitespace.
++		{ Element.AllowConvertSWL, "Разрешить конвертацию выделения/слова/линии." }, 
+Mahou/Classes/Languages.cs:777: trailing whitespace.
++		{ Element.SnippetsEnabled, "Включить сниппеты." }, 
+Mahou/Classes/Languages.cs:779: trailing whitespace.
++		{ Element.SnippetSwitchToGuessLayout, "Переключать на предполагаемую раскладку сниппетов." }, 
+Mahou/Classes/Languages.cs:780: trailing whitespace.
++		{ Element.SnippetsCount, "Сниппетов: " }, 
+Mahou/Classes/Languages.cs:781: trailing whitespace.
++		{ Element.SnippetsExpandKey, "Клавиша развертывания:" }, 
+Mahou/Classes/Languages.cs:782: trailing whitespace.
++		{ Element.SnippetsExpKeyOther, "Другая" }, 
+Mahou/Classes/Languages.cs:783: trailing whitespace.
++		{ Element.SnippetsNCRules, "Правила отмены сниппетов/автозамены (Regex)" }, 
+Mahou/Classes/Languages.cs:785: trailing whitespace.
++		{ Element.AutoSwitchEnabled, "Включить автозамену." }, 
+Mahou/Classes/Languages.cs:786: trailing whitespace.
++		{ Element.AutoSwitchSpaceAfter, "Добавлять 1 пробел после автозамены." }, 
+Mahou/Classes/Languages.cs:787: trailing whitespace.
++		{ Element.AutoSwitchSwitchToGuessLayout, "Переключать на предполагаемую раскладку автозамены." }, 
+Mahou/Classes/Languages.cs:788: trailing whitespace.
++		{ Element.AutoSwitchUpdateDictionary, "Обновить словарь." }, 
+Mahou/Classes/Languages.cs:790: trailing whitespace.
++		{ Element.AutoSwitchDictionaryWordsCount, "Слов: " }, 
+Mahou/Classes/Languages.cs:791: trailing whitespace.
++		{ Element.DownloadAutoSwitchDictionaryInZip, "Скачивать словарь автозамены в zip-архиве." }, 
+Mahou/Classes/Languages.cs:792: trailing whitespace.
++		{ Element.AutoSwitchDictionaryTooBigToDisplay, "Словарь слишком большой, уйдет много времени на его отображение, поэтому оно отключено.\r\nСловарь НЕ будет обновляться каждый раз по нажатию кнопки «Применить», только один раз при запуске или при выключении функции Автозамены=>Применить=>включении=>Применить, или через горячую клавишу „[Hidden] Toggle AutoSwitch Hotkey“, тоже только один раз." }, 
+Mahou/Classes/Languages.cs:796: trailing whitespace.
++		{ Element.ToggleMainWnd, "Переключить видимость главного окна" }, 
+Mahou/Classes/Languages.cs:797: trailing whitespace.
++		{ Element.ConvertLast, "Конвертация последнего слова" }, 
+Mahou/Classes/Languages.cs:798: trailing whitespace.
++		{ Element.ConvertSelected, "Конвертация выделенного текста" }, 
+Mahou/Classes/Languages.cs:799: trailing whitespace.
++		{ Element.ConvertLine, "Конвертация последней линии" }, 
+Mahou/Classes/Languages.cs:800: trailing whitespace.
++		{ Element.ConvertWords, "Конвертация нескольких слов" }, 
+Mahou/Classes/Languages.cs:801: trailing whitespace.
++		{ Element.ToggleSymbolIgnore, "Переключить игнорирование символов" }, 
+Mahou/Classes/Languages.cs:802: trailing whitespace.
++		{ Element.SelectedToTitleCase, "Выделенные слова в Заглавный регистр" }, 
+Mahou/Classes/Languages.cs:803: trailing whitespace.
++		{ Element.SelectedToRandomCase, "Выделенные слова в СЛУчАйнЫй регистр" }, 
+Mahou/Classes/Languages.cs:804: trailing whitespace.
++		{ Element.SelectedToSwapCase, "Выделенные слова в оБРАТНЫЙ регистр" }, 
+Mahou/Classes/Languages.cs:805: trailing whitespace.
++		{ Element.SelectedToUpperCase, "Выделенные слова в ВЕРХНИЙ РЕГИСТР" }, 
+Mahou/Classes/Languages.cs:806: trailing whitespace.
++		{ Element.SelectedToLowerCase, "Выделенные слова в нижний регистр" }, 
+Mahou/Classes/Languages.cs:807: trailing whitespace.
++		{ Element.SelectedTransliteration, "Транслитерация выделенного текста" }, 
+Mahou/Classes/Languages.cs:808: trailing whitespace.
++		{ Element.ExitMahou, "Выход" }, 
+Mahou/Classes/Languages.cs:809: trailing whitespace.
++		{ Element.RestartMahou, "Перезапустить" }, 
+Mahou/Classes/Languages.cs:810: trailing whitespace.
++		{ Element.Enabled, "Включена" }, 
+Mahou/Classes/Languages.cs:811: trailing whitespace.
++		{ Element.DoubleHK, "Двойная горячая клавиша" }, 
+Mahou/Classes/Languages.cs:812: trailing whitespace.
++		{ Element.ToggleLangPanel, "Переключить видимость панели языка" }, 
+Mahou/Classes/Languages.cs:813: trailing whitespace.
++		{ Element.TranslateSelection, "Показать перевод выделенного текста" }, 
+Mahou/Classes/Languages.cs:814: trailing whitespace.
++		{ Element.ToggleMahou, "Переключать паузу Mahou" }, 
+Mahou/Classes/Languages.cs:815: trailing whitespace.
++		{ Element.CycleCase, "Цикличное переключение регистра" }, 
+Mahou/Classes/Languages.cs:816: trailing whitespace.
++		{ Element.CustomConversion, "Особое изменение текста" }, 
+Mahou/Classes/Languages.cs:817: trailing whitespace.
++		{ Element.ShowCMenuUnderMouse, "Показать меню трея рядом с мышью" }, 
+Mahou/Classes/Languages.cs:829: trailing whitespace.
++		{ Element.EnableTranslatePanel, "Включить переводчик." }, 
+Mahou/Classes/Languages.cs:830: trailing whitespace.
++		{ Element.ShowTranslationOnDoubleClick, "Показывать при двойном клике." }, 
+Mahou/Classes/Languages.cs:831: trailing whitespace.
++		{ Element.TranslateLanguages, "Языки перевода:" }, 
+Mahou/Classes/Languages.cs:832: trailing whitespace.
++		{ Element.Translation, "Перевод" }, 
+Mahou/Classes/Languages.cs:833: trailing whitespace.
++		{ Element.TextFont, "Шрифт текста:" }, 
+Mahou/Classes/Languages.cs:834: trailing whitespace.
++		{ Element.TitleFont, "Шрифт заголовка:" }, 
+Mahou/Classes/Languages.cs:835: trailing whitespace.
++		{ Element.Direct, "Напрямую (быстрее|может:429 Too Many)" }, 
+Mahou/Classes/Languages.cs:836: trailing whitespace.
++		{ Element.WebScript, "Веб-скрипт (медленнее|без ошибок)" }, 
+Mahou/Classes/Languages.cs:837: trailing whitespace.
++		{ Element.DirectV2, "Напрямую-v2(быстрее|стабильнее)" }, 
+Mahou/Classes/Languages.cs:838: trailing whitespace.
++		{ Element.Method, "Метод" }, 
+Mahou/Classes/Languages.cs:841: trailing whitespace.
++		{ Element.CheckForUpdates, "Проверить наличие обновлений" }, 
+Mahou/Classes/Languages.cs:842: trailing whitespace.
++		{ Element.Checking, "Проверяю..." }, 
+Mahou/Classes/Languages.cs:843: trailing whitespace.
++		{ Element.YouHaveLatest, "У вас последняя версия." }, 
+Mahou/Classes/Languages.cs:844: trailing whitespace.
++		{ Element.TimeToUpdate, "Думаю, пора обновиться." }, 
+Mahou/Classes/Languages.cs:845: trailing whitespace.
++		{ Element.UpdateMahou, "<- Обновить Mahou" }, 
+Mahou/Classes/Languages.cs:846: trailing whitespace.
++		{ Element.DownloadUpdate, "Скачать обновление" }, 
+Mahou/Classes/Languages.cs:847: trailing whitespace.
++		{ Element.ProxyConfig, "Конфигурация прокси" }, 
+Mahou/Classes/Languages.cs:848: trailing whitespace.
++		{ Element.ProxyServer, "Сервер:порт" }, 
+Mahou/Classes/Languages.cs:849: trailing whitespace.
++		{ Element.ProxyLogin, "Логин:" }, 
+Mahou/Classes/Languages.cs:850: trailing whitespace.
++		{ Element.ProxyPass, "Пароль:" }, 
+Mahou/Classes/Languages.cs:851: trailing whitespace.
++		{ Element.Error, "Ошибка..." }, 
+Mahou/Classes/Languages.cs:853: trailing whitespace.
++			"проверьте подключение к Интернету или ваши настройки прокси..."}, 
+Mahou/Classes/Languages.cs:857: trailing whitespace.
++		{ Element.DbgInf, "Отладочная информация" }, 
+Mahou/Classes/Languages.cs:858: trailing whitespace.
++		{ Element.DbgInf_Copied, "Скопировано!" }, 
+Mahou/Classes/Languages.cs:859: trailing whitespace.
++		{ Element.Site, "Сайт" }, 
+Mahou/Classes/Languages.cs:860: trailing whitespace.
++		{ Element.Releases, "Релизы" }, 
+Mahou/Classes/Languages.cs:865: trailing whitespace.
++			"\r\nПочитайте wiki или спросите меня, если у вас есть возникли вопросы по поводу Mahou (эл. почта и ссылка на wiki ниже).\r\nУдачи."}, 
+Mahou/Classes/Languages.cs:876: trailing whitespace.
++		{ Element.EnableSounds, "Включить звуки." }, 
+Mahou/Classes/Languages.cs:877: trailing whitespace.
++		{ Element.PlaySoundWhen, "Воспроизводить при:" }, 
+Mahou/Classes/Languages.cs:878: trailing whitespace.
++		{ Element.SoundOnAutoSwitch, "конвертации автозамены." }, 
+Mahou/Classes/Languages.cs:879: trailing whitespace.
++		{ Element.SoundOnSnippets, "развертывании сниппетов." }, 
+Mahou/Classes/Languages.cs:880: trailing whitespace.
++		{ Element.SoundOnConvertLast, "конвертации последнего слова." }, 
+Mahou/Classes/Languages.cs:881: trailing whitespace.
++		{ Element.SoundOnLayoutSwitching, "смене раскладки." }, 
+Mahou/Classes/Languages.cs:882: trailing whitespace.
++		{ Element.UseCustomSound, "Свой звук:" }, 
+Mahou/Classes/Languages.cs:883: trailing whitespace.
++		{ Element.Select, "Выбрать" }, 
+Mahou/Classes/Languages.cs:893: trailing whitespace.
++		{ Element.Keys, "Клавиши" }, 
+Mahou/Classes/Languages.cs:894: trailing whitespace.
++		{ Element.Key_Left, "Левый" }, 
+Mahou/Classes/Languages.cs:895: trailing whitespace.
++		{ Element.Key_Right, "Правый" }, 
+Mahou/Classes/Languages.cs:896: trailing whitespace.
++		{ Element.Layouts, "Раскладки" }, 
+Mahou/Classes/Languages.cs:897: trailing whitespace.
++		{ Element.Layout, "Раскладка" }, 
+Mahou/Classes/Languages.cs:898: trailing whitespace.
++		{ Element.Plugin, "плагин" }, 
+Mahou/Classes/Languages.cs:899: trailing whitespace.
++		{ Element.Hotkey, "Горячая клавиша" }, 
+Mahou/Classes/Languages.cs:900: trailing whitespace.
++		{ Element.UpdateFound, "Доступна новая версия!" }, 
+Mahou/Classes/Languages.cs:901: trailing whitespace.
++		{ Element.UpdateComplete, "Mahou успешно обновлен!" }, 
+Mahou/Classes/Languages.cs:902: trailing whitespace.
++		{ Element.ShowHide, "Показать" }, 
+Mahou/Classes/Languages.cs:903: trailing whitespace.
++		{ Element.Mahou, "Mahou (魔法) – волшебный переключатель раскладок." }, 
+Mahou/Classes/Languages.cs:904: trailing whitespace.
++		{ Element.Download, "Скачать" }, 
+Mahou/Classes/Languages.cs:917: trailing whitespace.
++		{ Element.ButtonOK, "ОК" }, 
+Mahou/Classes/Languages.cs:918: trailing whitespace.
++		{ Element.ButtonApply, "Применить" }, 
+Mahou/Classes/Languages.cs:919: trailing whitespace.
++		{ Element.ButtonCancel, "Отмена" }, 
+Mahou/Classes/Languages.cs:924: trailing whitespace.
++		                                  "Если есть программа, с которой «Конвертация слова», «Конвертация линии» или «Конвертация выделения с включённой „Смена раскладки в Конвертации выделения“» не работают, то попробуйте включить эту функцию.\nТакже теперь можно включать эту функцию *вместе* с эмуляцией переключения раскладки,\nэто решает проблемы в программах типа MS Office 2016, функция не работает в консольных приложениях без getconbl.dll." }, 
+Mahou/Classes/Languages.cs:925: trailing whitespace.
++		{ Element.TT_ConvertSelectionSwitch, "Эту функцию можно включать, чтобы происходила смена раскладки при Конвертации выделения.\nТеперь можно включать вместе с функцией «Считать раскладку для всего слова в КВ»,\nв этом случае будет производиться смена раскладки перед конвертацией.\nСам режим конвертации будет использоваться из «Считать раскладку для всего слова в КВ».\n+Режим невозможно включить, если активна функция «Считать раскладку для всего слова в КВ»\n\nМожет вызвать проблемы, если используется без «Считать раскладку для всего слова в КВ»!!\r\nЕсли включена, Конвертация выделения будет менять раскладку после конвертации.\nВсе символы будут напечатаны с Mahou правильно, если перед переключением стояла раскладка, в которой они были написаны пользователем.\nТакже есть улучшение функции – «Смена раскладки в Конвертации выделения+»." }, 
+Mahou/Classes/Languages.cs:926: trailing whitespace.
++		{ Element.TT_BlockCtrl, "Блокирует горячие клавиши, содержащие Control,\nможет пригодиться, если «Переключать язык клавишей» установлен на левую/правую клавишу Ctrl." }, 
+Mahou/Classes/Languages.cs:927: trailing whitespace.
++		{ Element.TT_CapsDis, "Если включено, то будет работать таймер, который выключает индикатор Caps Lock (светодиод).\r\nЗадержку можно настроить во вкладке «Тайминги»." }, 
+Mahou/Classes/Languages.cs:928: trailing whitespace.
++		{ Element.TT_EmulateLS, "Если включено, Mahou будет эмулировать выбранные клавиши (в списке «Тип эмуляции» справа) для смены раскладки.\nСледует выбирать то сочетание клавиш, которое используется в системе для смены языка ввода.\nЭту функцию теперь можно включать вместе с функцией «Переключаться между раскладками»." }, 
+Mahou/Classes/Languages.cs:932: trailing whitespace.
++		{ Element.TT_Add1NL, "Если включено, то к последнему введенному слову будет добавляться ОДИН перевод строки,\r\nблагодаря чему конвертация последнего слова будет работать, если вы случайно нажали Enter после слова." }, 
+Mahou/Classes/Languages.cs:933: trailing whitespace.
++		{ Element.TT_ReSelect, "Если включено, любые «Конвертации выделения» будут выделять текст заново.\nМожно также указать для каких горячих клавиш распространяется эффект во вкладке [Hidden], по-умолчанию для всех гор. клавиш использующих выделение: tTRSULCNB." }, 
+Mahou/Classes/Languages.cs:934: trailing whitespace.
++		{ Element.TT_ScrollTip, "Подсвечивать лампочку Scroll Lock, когда активна раскладка #1, выбранная во вкладке «Раскладки».\nНеобязательно оставлять включенным функцию «Переключаться между раскладками», достаточно просто выбрать раскладку #1 ниже неё." }, 
+Mahou/Classes/Languages.cs:935: trailing whitespace.
++		{ Element.TT_LDOnlyOnChange, "Отображать подсказку языка только при смене раскладки.\nВремя отображения - 2×[Скорость обновления возле каретки + возле мыши]." }, 
+Mahou/Classes/Languages.cs:941: trailing whitespace.
++										"\n4.Конвертировать не поддерживаемые символы по-разному, если менять раскладку перед конвертацией." }, 
+Mahou/Classes/Languages.cs:942: trailing whitespace.
++		{ Element.TT_LDForMouse, "Если включена, то при наведении курсора мыши на текстовое поле будет отображаться подсказка языка." }, 
+Mahou/Classes/Languages.cs:943: trailing whitespace.
++		{ Element.TT_LDForCaret, "Если включена, то возле мигающего (текстового) указателя будет отображаться подсказка языка." }, 
+Mahou/Classes/Languages.cs:944: trailing whitespace.
++		{ Element.TT_Snippets, "Если включено, нажатие ПРОБЕЛА увеличит маленькое слово (которое имеет суффикс «->») в большой кусок текста (который между «====>» и «<====»)." }, 
+Mahou/Classes/Languages.cs:945: trailing whitespace.
++		{ Element.TT_Logging, "Предназначено ТОЛЬКО для поиска ошибок, оказывает БОЛЬШОЕ ВЛИЯНИЕ НА СКОРОСТЬ РАБОТЫ, журналы сохраняются в папке [Logs] рядом с Mahou.exe." }, 
+Mahou/Classes/Languages.cs:946: trailing whitespace.
++		{ Element.TT_LDDifferentAppearence, "Если включено, то вы сможете выбрать разный вид для двух раскладок (1&2), для других будут использоваться стандартные из „возле мыши“ или „возле каретки“." }, 
+Mahou/Classes/Languages.cs:949: trailing whitespace.
++										"НЕ БУДЕТ РАБОТАТЬ, если у вас больше 2 раскладок и функция «Переключаться между раскладками» выключена!" }, 
+Mahou/Classes/Languages.cs:950: trailing whitespace.
++		{ Element.TT_ConvertWords, "Дает возможность конвертировать специфическое количество последних слов, после горячей клавиши нажмите 0-9(0 = 10) на клавиатуре." }, 
+Mahou/Classes/Languages.cs:951: trailing whitespace.
++		{ Element.TT_ExcludedPrograms, "Программы (исключения), в которых горячие клавиши Конвертирования/Смены раскладки не будут работать.\nРазделители – пробелы и новые строки.\r\nЕсли в именах процессов есть Пробел, заменяйте его на _ , сам _ тоже можно заменять на _ .\r\nНапример: Имя процесса: mon_hun online.exe\r\nВ Mahou: mon_hun_online.exe." }, 
+Mahou/Classes/Languages.cs:952: trailing whitespace.
++		{ Element.TT_MCDSSupport, "Дает возможность отображения подсказки текущего языка возле каретки в Sublime Text 3.\nДля его работы нужно установить плагин, ссылка справа.\nНастройки во вкладке Вид.\nСверху: Высота заголовка окна + высота панели вкладок ST3,\nСнизу: Ваши Y пиксели от конца окна до формы ввода консоли ST3(ctrl+`).\nДля разных Windows/тем потребуются разные настройки!" }, 
+Mahou/Classes/Languages.cs:953: trailing whitespace.
++		{ Element.TT_LDText, "Оставьте пустым для автоопределения.\r\nВведите Alt+255 (на цифровом блоке) для отключения показа подсказки в этой раскладке при активной функции отображении флагов." }, 
+Mahou/Classes/Languages.cs:967: trailing whitespace.
++		{ Element.TT_ConfigsInAppData, "Если включено, Mahou скопирует текущую конфигурацию (Mahou.ini) в AppData, и будет использовать оттуда.\r\nТакже логи и сниппеты будут храниться в %AppData%\\Mahou.\r\nКогда состояние этой галочки изменено, все другие галочки/данные конфигурации, измененные в пользовательском интерфейсе, не будут сохранены,\r\nт.к. произойдет смена конфигурации и загрузка выбранной (из папки Mahou или из %AppData%\\Mahou).\r\nПолезно, если нужно запускать Mahou в папке Program Files, а прав на запись у всех пользователей - нет,\r\nи еще это даёт возможность иметь разные настройки для каждого пользователя." },		
