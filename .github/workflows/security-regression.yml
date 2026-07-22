@@ -29,6 +29,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          git config core.autocrlf false
           cat \
             .github/patches/agz-mah-0001-r2.part00 \
             .github/patches/agz-mah-0001-r2.part01 \
