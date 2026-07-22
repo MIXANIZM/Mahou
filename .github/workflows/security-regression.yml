@@ -4,207 +4,35 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: security-regression-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  apply-smart-caps-r2:
-    if: github.actor != 'github-actions[bot]'
+  source-audit:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout working branch
+      - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Verify security invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/security-regression.py | tee security-regression.txt
+          python3 .github/scripts/ui-resource-regression.py | tee -a security-regression.txt
+
+      - name: Upload security report
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          ref: mixanizm-modern-v2.9.0.1
-          fetch-depth: 0
-          show-progress: false
-
-      - name: Reconstruct and verify payload
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-          import json
-
-          path = Path('Mahou/Classes/Languages.cs')
-          raw = path.read_bytes()
-          bom = b'\xef\xbb\xbf'
-          has_bom = raw.startswith(bom)
-          if has_bom:
-              raw = raw[len(bom):]
-          meta = {
-              'bom': has_bom,
-              'crlf': b'\r\n' in raw,
-          }
-          Path('/tmp/agz-mah-0001-r2-languages-eol.json').write_text(json.dumps(meta), encoding='utf-8')
-          print('Languages.cs original format:', meta)
-          PY
-          cat \
-            .github/patches/agz-mah-0001-r2.part00 \
-            .github/patches/agz-mah-0001-r2.part01 \
-            .github/patches/agz-mah-0001-r2.part02 \
-            .github/patches/agz-mah-0001-r2.part03 \
-            | base64 -d > /tmp/agz-mah-0001-r2.tar.gz
-          test "$(wc -c < /tmp/agz-mah-0001-r2.tar.gz)" -eq 42483
-          printf '%s  %s\n' \
-            'fab2835e867237bf56d0c1a008cf0ce85dbe7ca9f895ea4646fce6cafd431ba9' \
-            '/tmp/agz-mah-0001-r2.tar.gz' | sha256sum -c -
-          tar -tzf /tmp/agz-mah-0001-r2.tar.gz > /tmp/agz-mah-0001-r2-files.txt
-          test "$(wc -l < /tmp/agz-mah-0001-r2-files.txt)" -eq 14
-
-      - name: Extract reviewed files and preserve legacy file format
-        shell: bash
-        run: |
-          set -euo pipefail
-          tar -xzf /tmp/agz-mah-0001-r2.tar.gz
-          python3 - <<'PY'
-          from pathlib import Path
-          import json
-
-          path = Path('Mahou/Classes/Languages.cs')
-          meta = json.loads(Path('/tmp/agz-mah-0001-r2-languages-eol.json').read_text(encoding='utf-8'))
-          bom = b'\xef\xbb\xbf'
-          raw = path.read_bytes()
-          if raw.startswith(bom):
-              raw = raw[len(bom):]
-          raw = raw.replace(b'\r\n', b'\n')
-          if meta['crlf']:
-              raw = raw.replace(b'\n', b'\r\n')
-          if meta['bom']:
-              raw = bom + raw
-          path.write_bytes(raw)
-          print('Languages.cs restored format:', meta)
-          PY
-          rm -f .github/patches/agz-mah-0001-r2.part00
-          rm -f .github/patches/agz-mah-0001-r2.part01
-          rm -f .github/patches/agz-mah-0001-r2.part02
-          rm -f .github/patches/agz-mah-0001-r2.part03
-
-      - name: Verify diff whitespace and localization scope
-        shell: bash
-        run: |
-          set -euo pipefail
-          git -c core.whitespace=cr-at-eol diff --check
-          test "$(git diff --numstat -- Mahou/Classes/Languages.cs)" = $'24\t0\tMahou/Classes/Languages.cs'
-          python3 - <<'PY'
-          from pathlib import Path
-
-          path = Path('Mahou/Classes/Languages.cs')
-          required = (
-              'tab_SmartTyping',
-              'SmartCapsEnabled',
-              'SmartCapsDescription',
-              'SmartCapsExceptions',
-              'SmartCapsClear',
-              'SmartCapsStatus',
-          )
-          seen = {key: 0 for key in required}
-          for number, raw in enumerate(path.read_bytes().splitlines(keepends=True), 1):
-              body = raw.rstrip(b'\r\n')
-              text = body.decode('utf-8-sig', errors='replace')
-              matched = [key for key in required if key in text]
-              if not matched:
-                  continue
-              if body.endswith((b' ', b'\t')):
-                  raise SystemExit('Trailing whitespace in new localization line %d' % number)
-              for key in matched:
-                  seen[key] += 1
-          missing = {key: count for key, count in seen.items() if count < 3}
-          if missing:
-              raise SystemExit('Expected enum + English + Russian entries: %r' % missing)
-          print('Smart typing localization lines have clean whitespace.')
-          PY
-
-      - name: Run fast regression gates
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 .github/scripts/security-regression.py
-          python3 .github/scripts/ui-resource-regression.py
-
-      - name: Verify English and Russian localization completeness
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-
-          text = Path('Mahou/Classes/Languages.cs').read_text(encoding='utf-8-sig')
-          enum_match = re.search(r'public enum Element\s*\{(.*?)\n\s*\}', text, re.S)
-          if not enum_match:
-              raise SystemExit('Languages.Element enum not found')
-          keys = set()
-          for line in enum_match.group(1).splitlines():
-              line = line.split('//', 1)[0].strip()
-              if not line or line.startswith('#'):
-                  continue
-              match = re.fullmatch(r'([A-Za-z_][A-Za-z0-9_]*)\s*,?', line)
-              if match:
-                  keys.add(match.group(1))
-          required = {'tab_SmartTyping', 'SmartCapsEnabled', 'SmartCapsDescription', 'SmartCapsExceptions', 'SmartCapsClear', 'SmartCapsStatus'}
-          if not required.issubset(keys):
-              raise SystemExit('Smart typing language keys are incomplete')
-          english = text.index('Dictionary<Element, string> English')
-          russian = text.index('Dictionary<Element, string> Russian')
-          blocks = {'English': text[english:russian], 'Russian': text[russian:]}
-          for language, block in blocks.items():
-              entries = set(re.findall(r'Element\.([A-Za-z_][A-Za-z0-9_]*)\s*,', block))
-              missing = sorted(keys - entries)
-              extra = sorted(entries - keys)
-              if missing or extra:
-                  raise SystemExit('%s dictionary mismatch: missing=%r extra=%r' % (language, missing, extra))
-              print('%s localization: %d/%d keys' % (language, len(entries), len(keys)))
-          PY
-
-      - name: Verify exact changed-file set
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import subprocess
-
-          expected = {
-              '.github/patches/agz-mah-0001-r2.part00',
-              '.github/patches/agz-mah-0001-r2.part01',
-              '.github/patches/agz-mah-0001-r2.part02',
-              '.github/patches/agz-mah-0001-r2.part03',
-              '.github/scripts/security-regression.py',
-              '.github/tests/SmartCapsRegression.cs',
-              '.github/workflows/security-regression.yml',
-              'ARCHITECTURE.md',
-              'CHANGELOG.md',
-              'ISSUES.md',
-              'KNOWN-LIMITATIONS.md',
-              'Mahou/Classes/Languages.cs',
-              'Mahou/Classes/SmartCaps.cs',
-              'Mahou/MahouUI.SmartTyping.cs',
-              'README-MIXANIZM.md',
-              'TEST-PLAN-WINDOWS11.md',
-              'TESTING.md',
-              'UNIVERSAL-CHAT-HANDOFF.md',
-          }
-          actual = set(subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines())
-          print('Changed files:', sorted(actual))
-          if actual != expected:
-              raise SystemExit('Unexpected changed-file set: expected=%r actual=%r' % (sorted(expected), sorted(actual)))
-          print('Changed-file set verified: %d files' % len(actual))
-          PY
-
-      - name: Commit product update without workflow mutation
-        shell: bash
-        run: |
-          set -euo pipefail
-          git checkout HEAD -- .github/workflows/security-regression.yml
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-          git commit -m 'AGZ-MAH-0001 fix: localize and expand Smart Caps'
-          git push origin HEAD:mixanizm-modern-v2.9.0.1
+          name: security-regression-report
+          path: security-regression.txt
+          if-no-files-found: warn
+          retention-days: 14
