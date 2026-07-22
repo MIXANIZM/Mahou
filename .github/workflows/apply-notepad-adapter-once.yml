@@ -71,9 +71,12 @@ jobs:
                   prefix = marker + '\n'
                   if not body.startswith(prefix):
                       continue
+                  value = ''.join(body[len(prefix):].split())
                   if marker in selected:
-                      raise SystemExit('Duplicate payload marker: ' + marker)
-                  selected[marker] = ''.join(body[len(prefix):].split())
+                      if selected[marker] != value:
+                          raise SystemExit('Conflicting duplicate payload marker: ' + marker)
+                      continue
+                  selected[marker] = value
 
           missing = [marker for marker in markers if marker not in selected]
           if missing:
