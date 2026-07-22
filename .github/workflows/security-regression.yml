@@ -198,10 +198,11 @@ jobs:
           print('Changed-file set verified: %d files' % len(actual))
           PY
 
-      - name: Commit product update and restore read-only workflow
+      - name: Commit product update without workflow mutation
         shell: bash
         run: |
           set -euo pipefail
+          git checkout HEAD -- .github/workflows/security-regression.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
