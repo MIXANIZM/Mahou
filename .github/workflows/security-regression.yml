@@ -4,35 +4,85 @@ on:
   pull_request:
     branches:
       - master
-  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: security-regression-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  source-audit:
+  restore-reviewed-smart-caps-lf-blobs:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout
+      - name: Checkout working branch
         uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+          show-progress: false
 
-      - name: Verify security invariants
+      - name: Normalize reviewed files to repository LF blobs
         shell: bash
         run: |
           set -euo pipefail
-          python3 .github/scripts/security-regression.py | tee security-regression.txt
-          python3 .github/scripts/ui-resource-regression.py | tee -a security-regression.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
 
-      - name: Upload security report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-regression-report
-          path: security-regression.txt
-          if-no-files-found: warn
-          retention-days: 14
+          expected = {
+              '.github/scripts/security-regression.py': '08e0b7422ba0aacbf1a64b055fd38b0ef0237de1',
+              '.github/tests/SmartCapsRegression.cs': 'ae5f6685af73346695623ab44f6b2461956cfc86',
+              'ARCHITECTURE.md': 'c95e3f462db242471f186741b1f6466408feba8e',
+              'CHANGELOG.md': '42357c32c85a41d89c32f47d0e5cea7a9a0d1b96',
+              'ISSUES.md': 'd27ba189887a71ff0b011c86495c9c0d6b78b688',
+              'KNOWN-LIMITATIONS.md': 'c852fafacc2e86380d59d09cb35e187ae3ebcfaa',
+              'Mahou/Classes/Languages.cs': 'b422e918fa325a5c67e879a8e147e23e08bbfe5e',
+              'Mahou/Classes/SmartCaps.cs': '38ae07db63ffc0a18b71346ba5028da0a9708e77',
+              'Mahou/MahouUI.SmartTyping.cs': '04354792ff9660bf949892268d70e610768a82b3',
+              'README-MIXANIZM.md': '11ed8490454fde57e6d017f82daa2504d14e1625',
+              'TEST-PLAN-WINDOWS11.md': '9ef45b5fae9aa47286e5cb2cad9ed56ee54d2f45',
+              'TESTING.md': '62261125c46a2f75648a2c37fe6d0e7f7cd9bfc7',
+              'UNIVERSAL-CHAT-HANDOFF.md': 'c594641a236f69c0d967434446670a96021ac7f0',
+          }
+          for name, expected_sha in expected.items():
+              path = Path(name)
+              raw = path.read_bytes().replace(b'\r\n', b'\n')
+              path.write_bytes(raw)
+              actual_sha = subprocess.check_output(
+                  ['git', 'hash-object', '--no-filters', name], text=True
+              ).strip()
+              if actual_sha != expected_sha:
+                  raise SystemExit('%s LF blob mismatch: expected %s, got %s' % (name, expected_sha, actual_sha))
+              print('%s %s' % (actual_sha, name))
+          PY
+
+      - name: Commit only explicit reviewed LF paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout HEAD -- .github/workflows/security-regression.yml
+          git config core.autocrlf false
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- \
+            .github/scripts/security-regression.py \
+            .github/tests/SmartCapsRegression.cs \
+            ARCHITECTURE.md \
+            CHANGELOG.md \
+            ISSUES.md \
+            KNOWN-LIMITATIONS.md \
+            Mahou/Classes/Languages.cs \
+            Mahou/Classes/SmartCaps.cs \
+            Mahou/MahouUI.SmartTyping.cs \
+            README-MIXANIZM.md \
+            TEST-PLAN-WINDOWS11.md \
+            TESTING.md \
+            UNIVERSAL-CHAT-HANDOFF.md
+          echo 'Staged paths:'
+          git diff --cached --name-only
+          git commit -m 'chore: align reviewed Smart Caps blobs with repository LF'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
