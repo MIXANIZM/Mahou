@@ -29,7 +29,23 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git config core.autocrlf false
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          path = Path('Mahou/Classes/Languages.cs')
+          raw = path.read_bytes()
+          bom = b'\xef\xbb\xbf'
+          has_bom = raw.startswith(bom)
+          if has_bom:
+              raw = raw[len(bom):]
+          meta = {
+              'bom': has_bom,
+              'crlf': b'\r\n' in raw,
+          }
+          Path('/tmp/agz-mah-0001-r2-languages-eol.json').write_text(json.dumps(meta), encoding='utf-8')
+          print('Languages.cs original format:', meta)
+          PY
           cat \
             .github/patches/agz-mah-0001-r2.part00 \
             .github/patches/agz-mah-0001-r2.part01 \
@@ -43,21 +59,39 @@ jobs:
           tar -tzf /tmp/agz-mah-0001-r2.tar.gz > /tmp/agz-mah-0001-r2-files.txt
           test "$(wc -l < /tmp/agz-mah-0001-r2-files.txt)" -eq 14
 
-      - name: Extract reviewed files and remove payload
+      - name: Extract reviewed files and preserve legacy file format
         shell: bash
         run: |
           set -euo pipefail
           tar -xzf /tmp/agz-mah-0001-r2.tar.gz
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          path = Path('Mahou/Classes/Languages.cs')
+          meta = json.loads(Path('/tmp/agz-mah-0001-r2-languages-eol.json').read_text(encoding='utf-8'))
+          bom = b'\xef\xbb\xbf'
+          raw = path.read_bytes()
+          if raw.startswith(bom):
+              raw = raw[len(bom):]
+          raw = raw.replace(b'\r\n', b'\n')
+          if meta['crlf']:
+              raw = raw.replace(b'\n', b'\r\n')
+          if meta['bom']:
+              raw = bom + raw
+          path.write_bytes(raw)
+          print('Languages.cs restored format:', meta)
+          PY
           rm -f .github/patches/agz-mah-0001-r2.part00
           rm -f .github/patches/agz-mah-0001-r2.part01
           rm -f .github/patches/agz-mah-0001-r2.part02
           rm -f .github/patches/agz-mah-0001-r2.part03
 
-      - name: Verify diff whitespace and legacy localization scope
+      - name: Verify diff whitespace and localization scope
         shell: bash
         run: |
           set -euo pipefail
-          git -c core.whitespace=cr-at-eol diff --check -- . ':(exclude)Mahou/Classes/Languages.cs'
+          git -c core.whitespace=cr-at-eol diff --check
           test "$(git diff --numstat -- Mahou/Classes/Languages.cs)" = $'24\t0\tMahou/Classes/Languages.cs'
           python3 - <<'PY'
           from pathlib import Path
