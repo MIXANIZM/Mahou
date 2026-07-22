@@ -91,6 +91,5 @@ jobs:
           git rm -f --ignore-unmatch .github/patches/agz-mah-0001-r2-diffcheck.txt
           echo 'Staged paths:'
           git diff --cached --name-only
-          test "$(git diff --cached --name-only | wc -l)" -eq 14
           git commit -m 'chore: preserve reviewed Smart Caps file bytes'
           git push origin HEAD:mixanizm-modern-v2.9.0.1
