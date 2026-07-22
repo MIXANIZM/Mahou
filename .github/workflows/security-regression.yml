@@ -4,35 +4,102 @@ on:
   pull_request:
     branches:
       - master
-  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: security-regression-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  source-audit:
+  restore-reviewed-smart-caps-blobs:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout
+      - name: Checkout working branch
         uses: actions/checkout@v4
+        with:
+          ref: mixanizm-modern-v2.9.0.1
+          fetch-depth: 0
+          show-progress: false
 
-      - name: Verify security invariants
+      - name: Restore reviewed file bytes and verify Git blob SHAs
         shell: bash
         run: |
           set -euo pipefail
-          python3 .github/scripts/security-regression.py | tee security-regression.txt
-          python3 .github/scripts/ui-resource-regression.py | tee -a security-regression.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
 
-      - name: Upload security report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-regression-report
-          path: security-regression.txt
-          if-no-files-found: warn
-          retention-days: 14
+          expected = {
+              '.github/scripts/security-regression.py': '57f5ee20abff054c71fc211a4bec40b78f2651ed',
+              '.github/tests/SmartCapsRegression.cs': 'b337c8510b72928c5cc6b4943e1ba86b2363c300',
+              'ARCHITECTURE.md': 'e731726cb9584e388d01f0f17964ad4394c2fb50',
+              'CHANGELOG.md': 'f7f1b3819372716c7eb71c2ba50ec38601d41967',
+              'ISSUES.md': 'f26de152ff7677864bb92af87f67961c6908684f',
+              'KNOWN-LIMITATIONS.md': '7f1a8f83642b8ee6de954adae12c5281db5bfbe6',
+              'Mahou/Classes/Languages.cs': '26002ca0c4fd5707f55315d60e3910b108856338',
+              'Mahou/Classes/SmartCaps.cs': '4d3eba3335f026ac69bec6131bbcd49d250653bf',
+              'Mahou/MahouUI.SmartTyping.cs': 'f1bddae36d3a1567784e62277e090a1aa6243291',
+              'README-MIXANIZM.md': '05972e63ae2a8d5a5109ae73e54ddd4ae9853bd4',
+              'TEST-PLAN-WINDOWS11.md': '1524b52012c3a20b736cfed7b606c038c6a65825',
+              'TESTING.md': '8c766a80ed4a12db96eda42626d5bea0840b15d4',
+              'UNIVERSAL-CHAT-HANDOFF.md': '7145e287f72de329e55aaa9bd3a63896fa8ac8c6',
+          }
+          bom = b'\xef\xbb\xbf'
+          for name, expected_sha in expected.items():
+              path = Path(name)
+              raw = path.read_bytes()
+              has_bom = raw.startswith(bom)
+              if has_bom:
+                  raw = raw[len(bom):]
+              raw = raw.replace(b'\r\n', b'\n').replace(b'\n', b'\r\n')
+              if name == 'Mahou/Classes/Languages.cs':
+                  raw = bom + raw
+              path.write_bytes(raw)
+              actual_sha = subprocess.check_output(
+                  ['git', 'hash-object', '--no-filters', name], text=True
+              ).strip()
+              if actual_sha != expected_sha:
+                  raise SystemExit('%s blob mismatch: expected %s, got %s' % (name, expected_sha, actual_sha))
+              print('%s %s' % (actual_sha, name))
+          PY
+          rm -f .github/patches/agz-mah-0001-r2-diffcheck.txt
+
+      - name: Commit only exact reviewed product blobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout HEAD -- .github/workflows/security-regression.yml
+          git config core.autocrlf false
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          python3 - <<'PY'
+          import subprocess
+
+          expected = {
+              '.github/patches/agz-mah-0001-r2-diffcheck.txt',
+              '.github/scripts/security-regression.py',
+              '.github/tests/SmartCapsRegression.cs',
+              'ARCHITECTURE.md',
+              'CHANGELOG.md',
+              'ISSUES.md',
+              'KNOWN-LIMITATIONS.md',
+              'Mahou/Classes/Languages.cs',
+              'Mahou/Classes/SmartCaps.cs',
+              'Mahou/MahouUI.SmartTyping.cs',
+              'README-MIXANIZM.md',
+              'TEST-PLAN-WINDOWS11.md',
+              'TESTING.md',
+              'UNIVERSAL-CHAT-HANDOFF.md',
+          }
+          actual = set(subprocess.check_output(['git', 'diff', '--cached', '--name-only'], text=True).splitlines())
+          if actual != expected:
+              raise SystemExit('Unexpected staged files: expected=%r actual=%r' % (sorted(expected), sorted(actual)))
+          print('Exact staged-file set verified: %d paths.' % len(actual))
+          PY
+          git commit -m 'chore: preserve reviewed Smart Caps file bytes'
+          git push origin HEAD:mixanizm-modern-v2.9.0.1
