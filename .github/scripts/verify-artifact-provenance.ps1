@@ -2,6 +2,9 @@
 param(
     [Parameter(Mandatory = $true)][string]$ExpectedCommit,
     [Parameter(Mandatory = $true)][string]$ExpectedTree,
+    [Parameter(Mandatory = $true)][ValidateSet('x86', 'x64')][string]$ExpectedPlatform,
+    [Parameter(Mandatory = $true)][string]$ExpectedRepository,
+    [Parameter(Mandatory = $true)][string]$ExpectedRuntimeVersion,
     [Parameter(Mandatory = $true)][string]$ZipPath
 )
 
@@ -23,6 +26,12 @@ function Get-RelativeArtifactPath {
 
 Assert-FullSha -Name 'ExpectedCommit' -Value $ExpectedCommit
 Assert-FullSha -Name 'ExpectedTree' -Value $ExpectedTree
+if ([string]::IsNullOrWhiteSpace($ExpectedRepository)) {
+    throw 'ExpectedRepository must not be empty'
+}
+if ([string]::IsNullOrWhiteSpace($ExpectedRuntimeVersion)) {
+    throw 'ExpectedRuntimeVersion must not be empty'
+}
 $expectedCommit = $ExpectedCommit.ToLowerInvariant()
 $expectedTree = $ExpectedTree.ToLowerInvariant()
 $resolvedZip = (Resolve-Path -LiteralPath $ZipPath).Path
@@ -64,8 +73,25 @@ try {
     if ([string]$manifest.source_tree -ne $expectedTree) {
         throw "Source tree mismatch: expected $expectedTree, manifest has $($manifest.source_tree)"
     }
+    if (-not [string]::Equals(
+            [string]$manifest.platform,
+            $ExpectedPlatform,
+            [System.StringComparison]::Ordinal)) {
+        throw "Platform mismatch: expected $ExpectedPlatform, manifest has $($manifest.platform)"
+    }
+    if (-not [string]::Equals(
+            [string]$manifest.source_repository,
+            $ExpectedRepository,
+            [System.StringComparison]::Ordinal)) {
+        throw "Source repository mismatch: expected $ExpectedRepository, manifest has $($manifest.source_repository)"
+    }
+    if (-not [string]::Equals(
+            [string]$manifest.runtime_version,
+            $ExpectedRuntimeVersion,
+            [System.StringComparison]::Ordinal)) {
+        throw "Runtime version mismatch: expected $ExpectedRuntimeVersion, manifest has $($manifest.runtime_version)"
+    }
     if ($manifest.product -ne 'Mahou') { throw "Unexpected product: $($manifest.product)" }
-    if ($manifest.platform -notin @('x86', 'x64')) { throw "Unexpected platform: $($manifest.platform)" }
     if ($manifest.configuration -ne 'Release') { throw "Unexpected configuration: $($manifest.configuration)" }
     if ($manifest.deterministic_build -ne $true) { throw 'Manifest does not prove a deterministic build' }
     if ($manifest.security_regression_passed -ne $true) { throw 'Manifest does not prove the security regression passed' }
@@ -131,6 +157,7 @@ try {
     Write-Host "mahou_exe_sha256=$((Get-FileHash -LiteralPath $exePath -Algorithm SHA256).Hash.ToLowerInvariant())"
     Write-Host "source_commit=$expectedCommit"
     Write-Host "source_tree=$expectedTree"
+    Write-Host "source_repository=$ExpectedRepository"
     Write-Host "runtime_version=$($manifest.runtime_version)"
     Write-Host "platform=$($manifest.platform)"
 }

@@ -25,7 +25,9 @@ The `Modern Windows build` workflow:
 
 ## Artifact handoff
 
-Follow `ARTIFACT-PROVENANCE.md`. Before giving a ZIP to a user, run `.github/scripts/verify-artifact-provenance.ps1` with the expected full commit and tree. When the retained incident archive is available, `.github/scripts/test-artifact-provenance.ps1 -LegacyZipPath <path>` must reject the real `0f9b75c...` ZIP for the current expected source.
+Follow `ARTIFACT-PROVENANCE.md`. Before giving a ZIP to a user, run `.github/scripts/verify-artifact-provenance.ps1` with the expected full commit, tree, platform, repository, and runtime version. When the retained incident archive is available, `.github/scripts/test-artifact-provenance.ps1 -LegacyZipPath <path>` must reject the real `0f9b75c...` ZIP for the current expected source.
+
+After merge, never represent a PR-head artifact as a merge-head artifact. Run a new `workflow_dispatch` on `mixanizm-modern-v2.9.0.1` only after that branch points to the exact merged commit, then verify the new run and artifact against that commit.
 
 ## Manual Windows checks
 

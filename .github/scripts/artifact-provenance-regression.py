@@ -13,6 +13,9 @@ packager = (ROOT / ".github/scripts/new-build-provenance.ps1").read_text(encodin
 verifier = (ROOT / ".github/scripts/verify-artifact-provenance.ps1").read_text(encoding="utf-8")
 tests = (ROOT / ".github/scripts/test-artifact-provenance.ps1").read_text(encoding="utf-8")
 documentation = (ROOT / "ARTIFACT-PROVENANCE.md").read_text(encoding="utf-8")
+legacy_fixture = (
+    ROOT / ".github/tests/fixtures/legacy-build-manifest-v1.json"
+).read_text(encoding="utf-8")
 
 all_workflows = "\n".join(
     path.read_text(encoding="utf-8")
@@ -40,6 +43,19 @@ for forbidden_name in (
     if forbidden_name in all_workflows:
         errors.append("generic artifact name remains in workflow: %s" % forbidden_name)
 
+expected_action_pins = (
+    "actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0",
+    "microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2",
+    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2",
+)
+for action_pin in expected_action_pins:
+    if action_pin not in all_workflows:
+        errors.append("required immutable action pin is missing: %s" % action_pin)
+
+for action_use in re.findall(r"^\s*uses:\s*([^#\s]+)", all_workflows, re.MULTILINE):
+    if not re.fullmatch(r"[^@\s]+@[0-9a-f]{40}", action_use):
+        errors.append("workflow action is not pinned to a full commit SHA: %s" % action_use)
+
 for workflow_name, workflow in (
     ("modern-windows-build.yml", modern_workflow),
     ("security-regression.yml", security_workflow),
@@ -63,6 +79,10 @@ for marker in (
     "artifact-evidence-",
     "new-build-provenance.ps1",
     "test-artifact-provenance.ps1",
+    "-ExpectedPlatform $platform",
+    "-ExpectedRepository '${{ github.repository }}'",
+    "-ExpectedRuntimeVersion $env:RUNTIME_VERSION",
+    "legacy-build-manifest-v1.json",
 ):
     if marker not in modern_workflow:
         errors.append("modern build provenance marker missing: %s" % marker)
@@ -93,6 +113,9 @@ for marker in (
     "Expected commit is not embedded in Mahou.exe",
     "Executable version mismatch",
     "Source tree mismatch",
+    "Platform mismatch",
+    "Source repository mismatch",
+    "Runtime version mismatch",
     "build-manifest.json must be at the archive root",
 ):
     if marker not in verifier:
@@ -100,6 +123,9 @@ for marker in (
 
 for marker in (
     "intentionally wrong expected commit",
+    "intentionally wrong expected tree",
+    "intentionally wrong expected platform",
+    "one-byte Mahou.exe.config modification",
     "nested manifest or sibling archive content",
     "legacy artifact",
     "positive and negative regression tests passed",
@@ -108,10 +134,23 @@ for marker in (
         errors.append("provenance negative test marker missing: %s" % marker)
 
 for marker in (
+    '"schema_version": 1',
+    '"product": "MIXANIZM Mahou"',
+    '"version": "2.9.0.1-mixanizm"',
+    '"source_commit": "0f9b75c37413af986aa92170f44b2fd5b397d5a5"',
+    '"deterministic_rebuild_verified": true',
+    '"security_regression": "passed"',
+):
+    if marker not in legacy_fixture:
+        errors.append("legacy schema-v1 fixture marker missing: %s" % marker)
+
+for marker in (
     "Mahou-2.9.0.1-dev-win-x86-<short-sha>-run<run-id>.zip",
     "verify-artifact-provenance.ps1",
     "0f9b75c37413af986aa92170f44b2fd5b397d5a5",
     "8254770086",
+    "workflow_dispatch",
+    "exact merged commit",
 ):
     if marker not in documentation:
         errors.append("artifact handoff documentation marker missing: %s" % marker)
