@@ -24,7 +24,17 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 
 ## Active task
 
-`AGZ-MAH-0001`: revise optional Smart Caps after the first Windows smoke test.
+`AGZ-MAH-0004`: add a dedicated artifact provenance gate after a retained build from `0f9b75c37413af986aa92170f44b2fd5b397d5a5` was mistakenly handed to the user as `Mahou-x86-full.zip`.
+
+Current task branch: `agz-mah-0004-artifact-provenance`, based exactly on development head `c636c10b55c3d3141487a9c00943cfb09082cdbc` and tree `c30a7457847944eae0ac2fda950ad36bbfc4ba9c`.
+
+Scope is limited to CI/package scripts, provenance tests, and artifact handoff documentation. It must not change Insert, Smart Caps, classic Edit, Word, Notepad, browser/messenger, selection, or layout behavior. PR #3 is damaged transport history and must not be used or cleaned up without separate permission.
+
+The new gate requires immutable runtime/platform/commit/run artifact names, full commit/tree manifests, complete package hashes, embedded executable commit/version verification, post-upload ID/digest evidence, and positive/negative/retained-legacy-ZIP tests. See `ARTIFACT-PROVENANCE.md`.
+
+## Deferred product task
+
+`AGZ-MAH-0001`: revised optional Smart Caps still requires the focused Windows smoke test described below.
 
 User findings on `e2c1911...`:
 
@@ -53,4 +63,4 @@ Revised required behavior:
 
 ## Exact next step
 
-Commit the localization and broader accidental-capital correction, run security and deterministic x86/x64 CI with the updated `SmartCapsRegression`, then provide a new test artifact. The smoke test must include a pattern Word does not autocorrect itself, such as `окоРОчка `, and confirm that the Mahou-only session counter increments.
+Finish the isolated AGZ-MAH-0004 provenance implementation, run local security and deterministic x86/x64 checks, open a Draft PR against `mixanizm-modern-v2.9.0.1`, and inspect its GitHub Actions evidence. Do not merge, tag, release, or hand off a ZIP until the exact commit/tree verifier passes, including rejection of the retained `0f9b75c...` incident archive.

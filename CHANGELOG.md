@@ -4,6 +4,9 @@
 
 ### Added
 
+- Immutable artifact names containing runtime version, platform, source commit, and GitHub Actions run ID.
+- Full commit/tree build manifests, complete package SHA-256 coverage, post-upload evidence, and a fail-closed handoff verification script.
+- Positive, wrong-commit, and legacy-artifact provenance regression checks.
 - Opt-in local Smart Caps settings and personal exceptions through verified direct text adapters.
 - Mahou-only session counters for performed and reverted Smart Caps corrections.
 - Smart Caps strings in the common English and Russian localization dictionaries.
@@ -14,6 +17,8 @@
 
 ### Security
 
+- Generic artifact names are forbidden; build artifacts are uploaded only after deterministic rebuild, security, manifest, checksum, and provenance checks pass.
+- Build workflows use read-only permissions, disable persisted checkout credentials, and never commit or push generated evidence.
 - Smart Caps is prohibited from using synthetic selection, keyboard rewriting, clipboard mutation, or unsupported text controls.
 - The status counter stores only numeric session totals and never exposes typed word content.
 

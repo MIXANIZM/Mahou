@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - mixanizm-modern-v2.9.0.1
   workflow_dispatch:
 
 permissions:
@@ -12,6 +13,9 @@ permissions:
 concurrency:
   group: modern-windows-build-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
+env:
+  RUNTIME_VERSION: 2.9.0.1-dev
 
 jobs:
   build:
@@ -23,39 +27,51 @@ jobs:
         platform: [x86, x64]
 
     steps:
-      - name: Checkout current modern branch
+      - name: Checkout requested source
         uses: actions/checkout@v4
         with:
-          ref: mixanizm-modern-v2.9.0.1
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
 
-      - name: Verify security invariants
+      - name: Resolve immutable build identity
+        id: metadata
+        shell: pwsh
+        run: |
+          $platform = '${{ matrix.platform }}'
+          $runtimeVersion = $env:RUNTIME_VERSION
+          $commit = (git rev-parse HEAD).Trim().ToLowerInvariant()
+          $tree = (git show -s --format=%T HEAD).Trim().ToLowerInvariant()
+          $shortSha = (git rev-parse --short=7 HEAD).Trim().ToLowerInvariant()
+          $sourceRef = if ($env:GITHUB_HEAD_REF) { $env:GITHUB_HEAD_REF } else { $env:GITHUB_REF_NAME }
+          $artifactName = "Mahou-$runtimeVersion-win-$platform-$shortSha-run$env:GITHUB_RUN_ID"
+          $timestamp = [DateTime]::UtcNow.ToString('o')
+
+          "commit=$commit" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "tree=$tree" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "short_sha=$shortSha" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "source_ref=$sourceRef" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "artifact_name=$artifactName" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "build_timestamp_utc=$timestamp" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+
+      - name: Verify security and provenance invariants
         shell: pwsh
         run: |
           python .github/scripts/security-regression.py | Tee-Object -FilePath security-regression.txt
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-      - name: Package source snapshot
-        if: matrix.platform == 'x86'
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path source-snapshot | Out-Null
-          git archive --format=zip --output=source-snapshot/MIXANIZM-Mahou-modern-source.zip HEAD
-
-      - name: Upload source snapshot
-        if: matrix.platform == 'x86'
-        uses: actions/upload-artifact@v4
-        with:
-          name: MIXANIZM-Mahou-modern-source
-          path: source-snapshot/MIXANIZM-Mahou-modern-source.zip
-          if-no-files-found: error
-          retention-days: 7
+          python .github/scripts/ui-resource-regression.py | Tee-Object -FilePath ui-resource-regression.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python .github/scripts/artifact-provenance-regression.py | Tee-Object -FilePath artifact-provenance-regression.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Stamp source commit
         shell: pwsh
         run: |
-          $commit = (git rev-parse HEAD).Trim()
+          $commit = '${{ steps.metadata.outputs.commit }}'
           $source = 'static class ____ { public static string commit="' + $commit + '"; }'
-          Set-Content -Path Mahou/____commit.cs -Value $source -Encoding utf8
+          [System.IO.File]::WriteAllText(
+            (Join-Path $env:GITHUB_WORKSPACE 'Mahou/____commit.cs'),
+            $source + "`n",
+            (New-Object System.Text.UTF8Encoding($false)))
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
@@ -111,12 +127,12 @@ jobs:
           }
           $lines | Set-Content "deterministic-build-$platform.txt" -Encoding utf8
 
-      - name: Create release provenance
+      - name: Create immutable release provenance
         shell: pwsh
         run: |
           $platform = '${{ matrix.platform }}'
           $source = Join-Path $env:GITHUB_WORKSPACE "artifacts/$platform/build1"
-          $dest = "release/$platform"
+          $dest = Join-Path $env:GITHUB_WORKSPACE "release/$platform"
           $deterministicName = "deterministic-build-$platform.txt"
           New-Item -ItemType Directory -Force -Path $dest | Out-Null
           Copy-Item (Join-Path $source 'Mahou.exe') $dest -Force
@@ -124,87 +140,110 @@ jobs:
           Copy-Item (Join-Path $source 'AS_dict.txt') $dest -Force
           Copy-Item $deterministicName $dest -Force
           Copy-Item 'security-regression.txt' $dest -Force
+          Copy-Item 'ui-resource-regression.txt' $dest -Force
+          Copy-Item 'artifact-provenance-regression.txt' $dest -Force
           Copy-Item 'README-MIXANIZM.md' $dest -Force
           Copy-Item 'SECURITY-AUDIT-MODERN.md' $dest -Force
           Copy-Item 'KNOWN-LIMITATIONS.md' $dest -Force
           Copy-Item 'TEST-PLAN-WINDOWS11.md' $dest -Force
+          Copy-Item 'ARTIFACT-PROVENANCE.md' $dest -Force
 
-          $commit = (git rev-parse HEAD).Trim()
-          $files = @(
-            'Mahou.exe',
-            'Mahou.exe.config',
-            'AS_dict.txt',
-            $deterministicName,
-            'security-regression.txt',
-            'README-MIXANIZM.md',
-            'SECURITY-AUDIT-MODERN.md',
-            'KNOWN-LIMITATIONS.md',
-            'TEST-PLAN-WINDOWS11.md'
-          )
-          $hashLines = @()
-          $manifestFiles = @()
-          foreach ($file in $files) {
-            $hash = (Get-FileHash (Join-Path $dest $file) -Algorithm SHA256).Hash.ToLowerInvariant()
-            $hashLines += "$hash *$file"
-            $manifestFiles += [ordered]@{ path = $file; sha256 = $hash }
-          }
-          $hashLines | Set-Content (Join-Path $dest 'SHA256SUMS.txt') -Encoding utf8
+          & .github/scripts/new-build-provenance.ps1 `
+            -ArtifactDirectory $dest `
+            -Platform $platform `
+            -SourceRepository '${{ github.repository }}' `
+            -SourceCommit '${{ steps.metadata.outputs.commit }}' `
+            -SourceTree '${{ steps.metadata.outputs.tree }}' `
+            -SourceRef '${{ steps.metadata.outputs.source_ref }}' `
+            -WorkflowName '${{ github.workflow }}' `
+            -WorkflowRunId '${{ github.run_id }}' `
+            -WorkflowRunAttempt '${{ github.run_attempt }}' `
+            -BuildTimestampUtc '${{ steps.metadata.outputs.build_timestamp_utc }}' `
+            -RuntimeVersion $env:RUNTIME_VERSION `
+            -Configuration Release `
+            -DeterministicBuild `
+            -SecurityRegressionPassed
 
-          $manifest = [ordered]@{
-            schema_version = 1
-            product = 'MIXANIZM Mahou'
-            version = '2.9.0.1-mixanizm'
-            source_commit = $commit
-            platform = $platform
-            target_framework = '.NET Framework 4.8'
-            deterministic_rebuild_verified = $true
-            legacy_self_update = 'disabled'
-            public_sync = 'disabled'
-            security_regression = 'passed'
-            runtime_test_status = 'required before release'
-            files = $manifestFiles
-          }
-          $manifest | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $dest 'build-manifest.json') -Encoding utf8
+      - name: Validate positive and negative handoff cases
+        shell: pwsh
+        run: |
+          $platform = '${{ matrix.platform }}'
+          $artifactName = '${{ steps.metadata.outputs.artifact_name }}'
+          $release = Join-Path $env:GITHUB_WORKSPACE "release/$platform"
+          $testRoot = Join-Path $env:GITHUB_WORKSPACE "provenance-test/$platform"
+          $legacyRoot = Join-Path $testRoot 'legacy'
+          New-Item -ItemType Directory -Force -Path $testRoot,$legacyRoot | Out-Null
 
-          $sbom = [ordered]@{
-            bomFormat = 'CycloneDX'
-            specVersion = '1.5'
-            version = 1
-            metadata = [ordered]@{
-              component = [ordered]@{
-                type = 'application'
-                name = 'MIXANIZM Mahou'
-                version = '2.9.0.1-mixanizm'
-                properties = @(
-                  [ordered]@{ name = 'mixanizm:source-commit'; value = $commit },
-                  [ordered]@{ name = 'mixanizm:platform'; value = $platform },
-                  [ordered]@{ name = 'mixanizm:target-framework'; value = '.NET Framework 4.8' },
-                  [ordered]@{ name = 'mixanizm:deterministic-rebuild'; value = 'verified' }
-                )
-              }
-            }
-            components = @(
-              [ordered]@{ type = 'data'; name = 'Mahou AutoSwitch dictionary'; version = 'bundled'; scope = 'required' }
-            )
-          }
-          $sbom | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $dest 'sbom.cdx.json') -Encoding utf8
+          $currentZip = Join-Path $testRoot "$artifactName.zip"
+          Compress-Archive -Path (Join-Path $release '*') -DestinationPath $currentZip -CompressionLevel Optimal
 
-      - name: Upload build logs
-        if: always()
+          Copy-Item (Join-Path $release '*') $legacyRoot -Recurse -Force
+          $legacyManifestPath = Join-Path $legacyRoot 'build-manifest.json'
+          $legacyManifest = Get-Content $legacyManifestPath -Raw -Encoding utf8 | ConvertFrom-Json
+          $legacyManifest.source_commit = '0f9b75c37413af986aa92170f44b2fd5b397d5a5'
+          $legacyManifest | ConvertTo-Json -Depth 10 | Set-Content $legacyManifestPath -Encoding utf8
+          $legacyZip = Join-Path $testRoot 'Mahou-x86-full.zip'
+          Compress-Archive -Path (Join-Path $legacyRoot '*') -DestinationPath $legacyZip -CompressionLevel Optimal
+
+          & .github/scripts/test-artifact-provenance.ps1 `
+            -ExpectedCommit '${{ steps.metadata.outputs.commit }}' `
+            -ExpectedTree '${{ steps.metadata.outputs.tree }}' `
+            -ZipPath $currentZip `
+            -LegacyZipPath $legacyZip
+
+      - name: Upload verified Windows build
+        id: upload_build
         uses: actions/upload-artifact@v4
         with:
-          name: modern-build-log-${{ matrix.platform }}
+          name: ${{ steps.metadata.outputs.artifact_name }}
+          path: release/${{ matrix.platform }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Create post-upload evidence
+        shell: pwsh
+        run: |
+          $platform = '${{ matrix.platform }}'
+          $artifactName = '${{ steps.metadata.outputs.artifact_name }}'
+          $artifactDigest = '${{ steps.upload_build.outputs.artifact-digest }}'
+          $zipSha256 = $artifactDigest -replace '^sha256:', ''
+          $exePath = Join-Path $env:GITHUB_WORKSPACE "release/$platform/Mahou.exe"
+          $evidence = [ordered]@{
+            schema_version = 1
+            artifact_name = $artifactName
+            artifact_id = '${{ steps.upload_build.outputs.artifact-id }}'
+            artifact_digest = $artifactDigest
+            workflow_run_url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+            artifact_url = '${{ steps.upload_build.outputs.artifact-url }}'
+            source_commit = '${{ steps.metadata.outputs.commit }}'
+            source_tree = '${{ steps.metadata.outputs.tree }}'
+            zip_sha256 = $zipSha256.ToLowerInvariant()
+            mahou_exe_sha256 = (Get-FileHash $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          }
+          $evidencePath = Join-Path $env:GITHUB_WORKSPACE "artifact-evidence-$platform.json"
+          [System.IO.File]::WriteAllText(
+            $evidencePath,
+            (($evidence | ConvertTo-Json -Depth 6) + "`n"),
+            (New-Object System.Text.UTF8Encoding($false)))
+
+      - name: Upload post-upload evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.metadata.outputs.artifact_name }}-evidence
+          path: artifact-evidence-${{ matrix.platform }}.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload verified build logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.metadata.outputs.artifact_name }}-logs
           path: |
             msbuild-${{ matrix.platform }}-build1.log
             msbuild-${{ matrix.platform }}-build2.log
             deterministic-build-${{ matrix.platform }}.txt
-          if-no-files-found: warn
-          retention-days: 7
-
-      - name: Upload Windows build
-        uses: actions/upload-artifact@v4
-        with:
-          name: MIXANIZM-Mahou-modern-${{ matrix.platform }}
-          path: release/${{ matrix.platform }}
+            security-regression.txt
+            ui-resource-regression.txt
+            artifact-provenance-regression.txt
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 7
