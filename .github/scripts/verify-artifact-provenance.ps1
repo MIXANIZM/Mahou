@@ -40,6 +40,11 @@ try {
         throw "Expected exactly one build-manifest.json, found $($manifests.Count)"
     }
     $artifactRoot = $manifests[0].Directory.FullName
+    if (-not [System.IO.Path]::GetFullPath($artifactRoot).Equals(
+            [System.IO.Path]::GetFullPath($tempRoot),
+            [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw 'build-manifest.json must be at the archive root; nested or sibling content is forbidden'
+    }
     $manifest = Get-Content -LiteralPath $manifests[0].FullName -Raw -Encoding UTF8 | ConvertFrom-Json
 
     $requiredFields = @(

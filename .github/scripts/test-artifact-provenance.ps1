@@ -27,6 +27,35 @@ if (-not $wrongCommitRejected) {
     throw 'Provenance verifier accepted an intentionally wrong expected commit'
 }
 
+$layoutTestRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('mahou-provenance-layout-' + [Guid]::NewGuid().ToString('N'))
+try {
+    $nestedPackage = Join-Path $layoutTestRoot 'package'
+    New-Item -ItemType Directory -Path $nestedPackage -Force | Out-Null
+    Expand-Archive -LiteralPath $ZipPath -DestinationPath $nestedPackage -Force
+    [System.IO.File]::WriteAllText((Join-Path $layoutTestRoot 'untracked-sibling.txt'), 'must be rejected')
+    $malformedZip = Join-Path ([System.IO.Path]::GetTempPath()) ('mahou-provenance-malformed-' + [Guid]::NewGuid().ToString('N') + '.zip')
+    Compress-Archive -Path (Join-Path $layoutTestRoot '*') -DestinationPath $malformedZip -CompressionLevel Optimal
+    $malformedRejected = $false
+    try {
+        & $verifier -ExpectedCommit $ExpectedCommit -ExpectedTree $ExpectedTree -ZipPath $malformedZip
+    }
+    catch {
+        $malformedRejected = $true
+        Write-Host "Expected negative result for nested manifest with sibling content: $($_.Exception.Message)"
+    }
+    if (-not $malformedRejected) {
+        throw 'Provenance verifier accepted nested manifest or sibling archive content'
+    }
+}
+finally {
+    if ($malformedZip -and (Test-Path -LiteralPath $malformedZip)) {
+        Remove-Item -LiteralPath $malformedZip -Force
+    }
+    if (Test-Path -LiteralPath $layoutTestRoot) {
+        Remove-Item -LiteralPath $layoutTestRoot -Recurse -Force
+    }
+}
+
 if (-not [string]::IsNullOrWhiteSpace($LegacyZipPath)) {
     $legacyRejected = $false
     try {

@@ -93,12 +93,14 @@ for marker in (
     "Expected commit is not embedded in Mahou.exe",
     "Executable version mismatch",
     "Source tree mismatch",
+    "build-manifest.json must be at the archive root",
 ):
     if marker not in verifier:
         errors.append("handoff verifier invariant missing: %s" % marker)
 
 for marker in (
     "intentionally wrong expected commit",
+    "nested manifest or sibling archive content",
     "legacy artifact",
     "positive and negative regression tests passed",
 ):

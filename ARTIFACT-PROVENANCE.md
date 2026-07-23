@@ -65,6 +65,7 @@ The script extracts into a new temporary directory and rejects the archive if:
 - deterministic/security status is not true;
 - any issued file is missing from `SHA256SUMS.txt`;
 - any hash differs or an unsafe path is present;
+- the manifest is nested or the archive contains sibling content outside its package root;
 - executable file version differs from the manifest runtime version;
 - the expected full commit is not embedded in `Mahou.exe`.
 
@@ -76,7 +77,8 @@ The test wrapper runs:
 
 1. a positive verification with the correct commit and tree;
 2. a negative verification of the same ZIP with an intentionally wrong expected commit;
-3. a negative verification of a legacy archive when `-LegacyZipPath` is supplied.
+3. a negative verification of a nested manifest with untracked sibling content;
+4. a negative verification of a legacy archive when `-LegacyZipPath` is supplied.
 
 The provenance incident archive is:
 
