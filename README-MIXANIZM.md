@@ -51,3 +51,7 @@ translator behavior and the full settings UI before merge or public release. See
 
 Original Mahou is GPL v2+ software. Original authorship remains credited in the source
 history and license; MIXANIZM maintains this modernization branch.
+
+## Test artifact provenance
+
+Test ZIP names include the runtime version, platform, short source commit, and GitHub Actions run ID. Every archive carries its full source commit/tree manifest and SHA-256 inventory, with separate post-upload artifact evidence. A ZIP must pass the fail-closed handoff procedure in `ARTIFACT-PROVENANCE.md`; generic filenames are not valid provenance.

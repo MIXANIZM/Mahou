@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - mixanizm-modern-v2.9.0.1
   workflow_dispatch:
 
 permissions:
@@ -18,21 +19,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout requested source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
 
-      - name: Verify security invariants
+      - name: Verify security and provenance invariants
         shell: bash
         run: |
           set -euo pipefail
-          python3 .github/scripts/security-regression.py | tee security-regression.txt
-          python3 .github/scripts/ui-resource-regression.py | tee -a security-regression.txt
-
-      - name: Upload security report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: security-regression-report
-          path: security-regression.txt
-          if-no-files-found: warn
-          retention-days: 14
+          python3 .github/scripts/security-regression.py
+          python3 .github/scripts/ui-resource-regression.py
+          python3 .github/scripts/artifact-provenance-regression.py

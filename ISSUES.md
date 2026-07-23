@@ -1,5 +1,10 @@
 # Active
 
+- [AGZ-MAH-0004] [IN PROGRESS] 2026-07-23
+  Add an immutable artifact provenance gate after the wrong x86 artifact from commit `0f9b75c37413af986aa92170f44b2fd5b397d5a5` was handed to the user under the generic name `Mahou-x86-full.zip`.
+  Requirements: unique runtime/platform/commit/run artifact names; full commit and tree manifest; complete package SHA-256 coverage; embedded executable commit/version verification; post-upload artifact ID/digest evidence; positive, wrong-SHA, and retained-legacy-ZIP regression checks; read-only workflows only. This task must not change text mutation behavior or use PR #3.
+  Current target: branch `agz-mah-0004-artifact-provenance`, based exactly on `c636c10b55c3d3141487a9c00943cfb09082cdbc`.
+
 - [AGZ-MAH-0001] [IN PROGRESS] 2026-07-22
   Expand opt-in local Smart Caps from only two initial capitals to accidental capitals anywhere after the first letter of each word segment, for example `ПРИвет → Привет`, `окоРОчка → окорочка` and `САнкт-ПЕтербург → Санкт-Петербург`.
   Requirements: default off; Russian and English UI through the common localization dictionaries; direct verified adapters only; no synthetic selection, keyboard rewrite, clipboard access, or cloud processing; all-caps words remain unchanged; immediate Backspace restores the original casing; two explicit Backspace rejections create a local personal exception; the settings tab shows a session counter for Mahou corrections and reversions.
