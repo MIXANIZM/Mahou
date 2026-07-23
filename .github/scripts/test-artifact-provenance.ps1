@@ -11,6 +11,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $verifier = Join-Path $PSScriptRoot 'verify-artifact-provenance.ps1'
+$Utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 
 function Assert-ProvenanceRejected {
     param(
@@ -136,6 +137,63 @@ finally {
     }
     if (Test-Path -LiteralPath $tamperTestRoot) {
         Remove-Item -LiteralPath $tamperTestRoot -Recurse -Force
+    }
+}
+
+$inventoryTestRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('mahou-provenance-inventory-' + [Guid]::NewGuid().ToString('N'))
+$inventoryZip = $null
+try {
+    New-Item -ItemType Directory -Path $inventoryTestRoot -Force | Out-Null
+    Expand-Archive -LiteralPath $ZipPath -DestinationPath $inventoryTestRoot -Force
+    $manifestPath = Join-Path $inventoryTestRoot 'build-manifest.json'
+    $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    $configEntries = @($manifest.files | Where-Object { [string]$_.path -eq 'Mahou.exe.config' })
+    if ($configEntries.Count -ne 1) {
+        throw "Expected exactly one Mahou.exe.config manifest entry, found $($configEntries.Count)"
+    }
+    $wrongManifestHash = '0000000000000000000000000000000000000000000000000000000000000000'
+    if ([string]$configEntries[0].sha256 -eq $wrongManifestHash) {
+        $wrongManifestHash = 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+    }
+    $configEntries[0].sha256 = $wrongManifestHash
+    [System.IO.File]::WriteAllText(
+        $manifestPath,
+        (($manifest | ConvertTo-Json -Depth 10) + "`n"),
+        $Utf8WithoutBom)
+
+    $sumsPath = Join-Path $inventoryTestRoot 'SHA256SUMS.txt'
+    $sumsLines = @(Get-Content -LiteralPath $sumsPath -Encoding UTF8)
+    $newManifestHash = (Get-FileHash -LiteralPath $manifestPath -Algorithm SHA256).Hash.ToLowerInvariant()
+    $manifestHashUpdated = $false
+    for ($index = 0; $index -lt $sumsLines.Count; $index++) {
+        if ($sumsLines[$index] -match '^[0-9a-fA-F]{64} \*build-manifest\.json$') {
+            $sumsLines[$index] = "$newManifestHash *build-manifest.json"
+            $manifestHashUpdated = $true
+        }
+    }
+    if (-not $manifestHashUpdated) {
+        throw 'SHA256SUMS.txt does not contain build-manifest.json'
+    }
+    [System.IO.File]::WriteAllText(
+        $sumsPath,
+        (($sumsLines -join "`n") + "`n"),
+        $Utf8WithoutBom)
+
+    $inventoryZip = Join-Path ([System.IO.Path]::GetTempPath()) ('mahou-provenance-inventory-' + [Guid]::NewGuid().ToString('N') + '.zip')
+    Compress-Archive -Path (Join-Path $inventoryTestRoot '*') -DestinationPath $inventoryZip -CompressionLevel Optimal
+    Assert-ProvenanceRejected `
+        -Case 'a manifest files inventory inconsistent with SHA256SUMS.txt' `
+        -ExpectedMessage 'Manifest hash mismatch with SHA256SUMS.txt for Mahou.exe.config' `
+        -Verification {
+            Invoke-ExpectedVerification -Commit $ExpectedCommit -Tree $ExpectedTree -Platform $ExpectedPlatform -Archive $inventoryZip
+        }
+}
+finally {
+    if ($inventoryZip -and (Test-Path -LiteralPath $inventoryZip)) {
+        Remove-Item -LiteralPath $inventoryZip -Force
+    }
+    if (Test-Path -LiteralPath $inventoryTestRoot) {
+        Remove-Item -LiteralPath $inventoryTestRoot -Recurse -Force
     }
 }
 

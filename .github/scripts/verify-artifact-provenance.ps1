@@ -66,6 +66,9 @@ try {
             throw "Manifest field is missing or empty: $field"
         }
     }
+    if ($null -eq $manifest.files -or @($manifest.files).Count -eq 0) {
+        throw 'Manifest files inventory is missing or empty'
+    }
 
     if ([string]$manifest.source_commit -ne $expectedCommit) {
         throw "Source commit mismatch: expected $expectedCommit, manifest has $($manifest.source_commit)"
@@ -123,7 +126,7 @@ try {
         if ($actualHash -ne $expectedHash) {
             throw "SHA-256 mismatch for $relative`: expected $expectedHash, found $actualHash"
         }
-        $listed[$relative] = $true
+        $listed[$relative] = $expectedHash
     }
 
     $issuedFiles = @(Get-ChildItem -LiteralPath $artifactRoot -File -Recurse |
@@ -134,6 +137,64 @@ try {
     }
     if ($listed.Count -ne $issuedFiles.Count) {
         throw "SHA256SUMS coverage mismatch: $($listed.Count) entries for $($issuedFiles.Count) issued files"
+    }
+
+    $generatedProvenanceFiles = @('build-manifest.json', 'sbom.cdx.json', 'SHA256SUMS.txt')
+    $manifestListed = @{}
+    foreach ($entry in @($manifest.files)) {
+        if ($null -eq $entry -or [string]::IsNullOrWhiteSpace([string]$entry.path)) {
+            throw 'Manifest files entry is missing path'
+        }
+        if ([string]::IsNullOrWhiteSpace([string]$entry.sha256)) {
+            throw "Manifest files entry is missing sha256: $($entry.path)"
+        }
+        $relative = ([string]$entry.path).Replace('\', '/')
+        $manifestHash = ([string]$entry.sha256).ToLowerInvariant()
+        if ($relative.StartsWith('/') -or $relative.Contains('../') -or $relative.Contains('/..')) {
+            throw "Unsafe path in manifest files inventory: $relative"
+        }
+        if ($relative -in $generatedProvenanceFiles) {
+            throw "Manifest files inventory must contain payload files only: $relative"
+        }
+        if ($manifestHash -notmatch '^[0-9a-f]{64}$') {
+            throw "Invalid manifest SHA-256 for $relative`: $manifestHash"
+        }
+        if ($manifestListed.ContainsKey($relative)) {
+            throw "Duplicate manifest file entry: $relative"
+        }
+        if (-not $listed.ContainsKey($relative)) {
+            throw "Manifest file is not covered by SHA256SUMS.txt: $relative"
+        }
+        if ($listed[$relative] -ne $manifestHash) {
+            throw "Manifest hash mismatch with SHA256SUMS.txt for $relative`: manifest has $manifestHash, SHA256SUMS.txt has $($listed[$relative])"
+        }
+        $filePath = [System.IO.Path]::GetFullPath((Join-Path $artifactRoot $relative))
+        $rootPrefix = $artifactRoot.TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
+        if (-not $filePath.StartsWith($rootPrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "Manifest entry escapes artifact root: $relative"
+        }
+        if (-not (Test-Path -LiteralPath $filePath -PathType Leaf)) {
+            throw "Manifest payload file is missing: $relative"
+        }
+        $actualHash = (Get-FileHash -LiteralPath $filePath -Algorithm SHA256).Hash.ToLowerInvariant()
+        if ($actualHash -ne $manifestHash) {
+            throw "Manifest file hash mismatch for $relative`: expected $manifestHash, found $actualHash"
+        }
+        $manifestListed[$relative] = $manifestHash
+    }
+
+    $payloadFiles = @($issuedFiles | Where-Object {
+        $relative = Get-RelativeArtifactPath -Root $artifactRoot -Path $_.FullName
+        $relative -notin $generatedProvenanceFiles
+    })
+    foreach ($file in $payloadFiles) {
+        $relative = Get-RelativeArtifactPath -Root $artifactRoot -Path $file.FullName
+        if (-not $manifestListed.ContainsKey($relative)) {
+            throw "Payload file is missing from manifest files inventory: $relative"
+        }
+    }
+    if ($manifestListed.Count -ne $payloadFiles.Count) {
+        throw "Manifest files coverage mismatch: $($manifestListed.Count) entries for $($payloadFiles.Count) payload files"
     }
 
     $exePath = Join-Path $artifactRoot 'Mahou.exe'

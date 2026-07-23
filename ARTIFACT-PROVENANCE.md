@@ -25,7 +25,7 @@ GitHub Actions log and evidence artifacts use the same immutable base name with 
 
 Each Windows build archive contains:
 
-- `build-manifest.json` with repository, full commit, full tree, ref, workflow, run, attempt, platform, configuration, timestamp, deterministic-build status, and security-regression status;
+- `build-manifest.json` with repository, full commit, full tree, ref, workflow, run, attempt, platform, configuration, timestamp, deterministic-build status, security-regression status, and a `manifest.files` inventory of payload paths and SHA-256 values;
 - `SHA256SUMS.txt` covering every issued file except `SHA256SUMS.txt` itself;
 - `Mahou.exe` with the full source commit embedded by the build;
 - `Mahou.exe.config` and the other controlled package files;
@@ -69,6 +69,7 @@ The script extracts into a new temporary directory and rejects the archive if:
 - deterministic/security status is not true;
 - any issued file is missing from `SHA256SUMS.txt`;
 - any hash differs or an unsafe path is present;
+- `manifest.files` is missing, duplicated, unsafe, inconsistent with `SHA256SUMS.txt`, or does not exactly cover the payload files;
 - the manifest is nested or the archive contains sibling content outside its package root;
 - executable file version differs from the manifest runtime version;
 - the expected full commit is not embedded in `Mahou.exe`.
@@ -85,7 +86,8 @@ The test wrapper runs:
 4. a negative verification with an intentionally wrong expected platform;
 5. a negative verification after changing one byte in `Mahou.exe.config`;
 6. a negative verification of a nested manifest with untracked sibling content;
-7. a negative verification of a legacy archive when `-LegacyZipPath` is supplied.
+7. a negative verification where `manifest.files` contains a false payload hash while the modified manifest itself remains correctly covered by `SHA256SUMS.txt`;
+8. a negative verification of a legacy archive when `-LegacyZipPath` is supplied.
 
 The provenance incident archive is:
 

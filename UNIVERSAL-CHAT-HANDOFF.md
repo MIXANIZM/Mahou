@@ -30,7 +30,7 @@ Current task branch: `agz-mah-0004-artifact-provenance`, based exactly on develo
 
 Scope is limited to CI/package scripts, provenance tests, and artifact handoff documentation. It must not change Insert, Smart Caps, classic Edit, Word, Notepad, browser/messenger, selection, or layout behavior. PR #3 is damaged transport history and must not be used or cleaned up without separate permission.
 
-The new gate requires immutable runtime/platform/commit/run artifact names, full commit/tree manifests, complete package hashes, embedded executable commit/version verification, post-upload ID/digest evidence, and positive/negative/retained-legacy-ZIP tests. See `ARTIFACT-PROVENANCE.md`.
+The gate requires immutable runtime/platform/commit/run artifact names, full commit/tree manifests, complete package hashes, exact cross-checking of `build-manifest.json.files` against payload and `SHA256SUMS.txt`, embedded executable commit/version verification, post-upload ID/digest evidence, and positive/negative/retained-legacy-ZIP tests. See `ARTIFACT-PROVENANCE.md`.
 
 ## Deferred product task
 
@@ -60,7 +60,8 @@ Revised required behavior:
 - Do not restore UI Automation `.Select()`, `Shift+Left`, `Ctrl+Shift+Left`, generated-selection collapse/reselect, stale round-trip, or tracked-buffer `ConvertLast` fallbacks.
 - Do not merge PR #2, tag, release, or publish without explicit permission.
 - Do not describe revised Smart Caps as verified until GitHub x86/x64 CI passes and the user completes the focused Windows smoke test.
+- Do not enable paid GitHub features, paid runners, or paid CI capacity without explicit user permission; use the economical CI mode from ruleset v2.6.3.
 
 ## Exact next step
 
-Finish the isolated AGZ-MAH-0004 provenance implementation, run local security and deterministic x86/x64 checks, open a Draft PR against `mixanizm-modern-v2.9.0.1`, and inspect its GitHub Actions evidence. Do not merge, tag, release, or hand off a ZIP until the exact commit/tree verifier passes, including rejection of the retained `0f9b75c...` incident archive.
+Inspect the final exact-head CI and artifact evidence for Draft PR #4. Keep it Draft and unmerged until explicit permission. After provenance is accepted and merged into the development branch, start the transactional text-mutation contract as a separate task branch before hardening classic Edit, Word, or adding a Notepad adapter.
