@@ -11,6 +11,7 @@ Snapshot date: 2026-07-25
 - Runtime line: `2.9.0.1-dev`
 - Agatzub Development Ruleset: `v2.7.0`
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
+- Last verified Smart Caps source commit: `0b43bb688115e0051114f38a745fce9e830452fd`
 
 The old `master` branch is not the current working line for modernized Mahou. New bounded tasks normally branch from `mixanizm-modern-v2.9.0.1` unless a task handoff explicitly states otherwise.
 
@@ -37,7 +38,17 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - Its current diff is transport and workflow history from the attempted Notepad-adapter task, not an accepted or integrated Notepad implementation.
 - It must not be used as a source branch, cleaned up, closed, rebased, or modified without a separate decision.
 
-## Completed project task
+## Completed project tasks
+
+### AGZ-MAH-0001 — Smart Caps verification
+
+- Verified at exact source commit `0b43bb688115e0051114f38a745fce9e830452fd` and tree `bd0d80d350cea61cbdd2a9cecdfa6002f2c88ee9`.
+- Automated checks passed: Modern Windows build run `30128168029` and Security regression run `30128168156`.
+- Verified artifact: `Mahou-2.9.0.1-dev-win-x64-0b43bb6-run30128168029`; ZIP SHA-256 `e344355bfd51ca5ebfa5f0b0dd24a06af94e02497a3ce39e18ef8a59511c3a6c`.
+- The user confirmed the complete focused Windows smoke passed, including localization, default-off behavior, Word and classic Win32 `Edit` direct correction without visible selection, expected no-op inputs, Backspace reversal, session counters, persistent personal exceptions, disabled/closed behavior, and fail-closed checks in modern Notepad, Chrome, Telegram and a password field.
+- Counter deltas matched the test plan: `+8` Mahou corrections and `+2` Mahou reversions.
+- Verified support remains Microsoft Word and the exact classic Win32 `Edit` class. Unsupported controls remain strict no-op.
+- Verification does not authorize merge, tag, release, signing or publication.
 
 ### AGZ-MAH-0004 — immutable artifact provenance gate
 
@@ -48,11 +59,11 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 
 ## Product task status
 
-- `AGZ-MAH-0001` Smart Caps remains unverified and deferred until a supervisor creates a new bounded executor handoff. Earlier apparent Word corrections were not proof of Mahou behavior.
+- `AGZ-MAH-0001` Smart Caps is verified only for the exact implementation, artifact, adapters and Windows scenarios recorded above.
 - `AGZ-MAH-0003` Notepad direct adapter remains deferred. Unsupported modern Notepad/RichEdit controls stay fail-closed until a dedicated implementation and real Windows verification are completed.
 - `AGZ-MAH-0002` collapsed-caret Insert safety is verified for the accepted checkpoint recorded in `ISSUES.md` and `UNIVERSAL-CHAT-HANDOFF.md`.
 
-No product implementation task is active as part of the ruleset transition.
+No product implementation task is currently active.
 
 ## Coordination model
 
@@ -65,4 +76,4 @@ No product implementation task is active as part of the ruleset transition.
 
 - No public release is approved from the current modernization line.
 - No tag or GitHub Release is authorized by this state document.
-- Authenticode signing, final independent review, applicable CI, and real Windows checks remain release gates.
+- Authenticode signing, final independent review, applicable CI, and remaining release-specific Windows checks remain release gates.
