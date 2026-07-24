@@ -3,14 +3,29 @@
 ## Project
 
 - Repository: `MIXANIZM/Mahou`
-- Development branch: `mixanizm-modern-v2.9.0.1`
-- Draft PR: `#2`
-- Last user-verified checkpoint: `d4b37a3dac8b4b35d682c82a9ced7b87eaf9adda`
-- Last Smart Caps candidate tested by the user: `e2c19110e56e6ed7ab30f4b8cb503431e32b7537` — not verified
+- Legacy default branch: `master`
+- Current development branch: `mixanizm-modern-v2.9.0.1`
+- Main development pull request: Draft PR #2
 - Runtime line: `2.9.0.1-dev`
-- Ruleset: `v2.6.3`, content commit `2f312c4adbb54ffd533d2877d49cfd39633460ab`
+- Agatzub Development Ruleset: `v2.7.0`
+- Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
+- Last user-verified Insert safety checkpoint: `d4b37a3dac8b4b35d682c82a9ced7b87eaf9adda`
+- Last Smart Caps candidate tested by the user: `e2c19110e56e6ed7ab30f4b8cb503431e32b7537` — not verified
 
-## Goal
+The old `master` branch is not the working line for modernized Mahou. Read `PROJECT_STATE.md` before choosing or assigning work.
+
+## Coordination model
+
+Mahou now follows the central supervisor/executor workflow:
+
+- one active project supervisor chat maintains the overall state, chooses the next bounded task, prepares an executor handoff, and accepts or rejects the result;
+- one temporary executor chat performs one bounded task, reports back, and does not begin the next task;
+- the supervisor does not perform long implementation or debugging cycles by default;
+- GitHub, `PROJECT_STATE.md`, `ISSUES.md`, and this handoff are the recoverable source of project state.
+
+Detailed role rules come from `standards/CHAT-ROLES-AND-WORKFLOW.md` at the exact rules content commit pinned above. Project-specific instructions are in `AGENTS.md`.
+
+## Project goal
 
 Modernize and harden Mahou while preserving useful layout-switching behavior and making every automatic text mutation fail closed.
 
@@ -20,48 +35,61 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 - Modern Windows Notepad/RichEdit, Chrome, Telegram, Discord, unknown controls, protected fields, and failed probes are no-op without a user-created selection.
 - Modern Notepad was manually verified not to add, remove, highlight, or corrupt text.
 - Microsoft Word and the exact classic Win32 `Edit` class remain the only supported direct collapsed-caret adapters.
-- Draft PR remains open and unmerged.
+- Draft PR #2 remains open, Draft, and unmerged.
 
-## Active task
+## Completed task
 
-`AGZ-MAH-0004`: add a dedicated artifact provenance gate after a retained build from `0f9b75c37413af986aa92170f44b2fd5b397d5a5` was mistakenly handed to the user as `Mahou-x86-full.zip`.
+`AGZ-MAH-0004` is completed and merged through PR #4 into `mixanizm-modern-v2.9.0.1`.
 
-Current task branch: `agz-mah-0004-artifact-provenance`, based exactly on development head `c636c10b55c3d3141487a9c00943cfb09082cdbc` and tree `c30a7457847944eae0ac2fda950ad36bbfc4ba9c`.
+The accepted provenance gate provides:
 
-Scope is limited to CI/package scripts, provenance tests, and artifact handoff documentation. It must not change Insert, Smart Caps, classic Edit, Word, Notepad, browser/messenger, selection, or layout behavior. PR #3 is damaged transport history and must not be used or cleaned up without separate permission.
+- immutable runtime/platform/commit/run artifact names;
+- full repository, commit, tree, ref, workflow, run, platform, configuration and timestamp identity;
+- SHA-256 coverage and exact manifest inventory checks;
+- executable runtime-version and embedded-commit verification;
+- post-upload artifact ID, digest, run, ZIP and executable evidence;
+- fail-closed positive and negative provenance regression tests;
+- an explicit rule that a PR-head artifact cannot be represented as a merge-head artifact.
 
-The gate requires immutable runtime/platform/commit/run artifact names, full commit/tree manifests, complete package hashes, exact cross-checking of `build-manifest.json.files` against payload and `SHA256SUMS.txt`, embedded executable commit/version verification, post-upload ID/digest evidence, and positive/negative/retained-legacy-ZIP tests. See `ARTIFACT-PROVENANCE.md`.
+This task did not change Insert, Smart Caps, Word, classic Edit, Notepad, browser/messenger, selection, caret, layout, or other runtime behavior.
 
-## Deferred product task
+## Open pull requests
 
-`AGZ-MAH-0001`: revised optional Smart Caps still requires the focused Windows smoke test described below.
+### Draft PR #1
 
-User findings on `e2c1911...`:
+Open and unmerged against `master`. It belongs to an earlier stabilization line and is not the current development line. Do not modify, close, rebase, or retarget it without a separate decision.
 
-- the new tab stayed in English while the rest of Mahou was Russian;
-- `ПРивет → Привет` continued after Mahou was fully closed, proving that Microsoft Word's own autocorrect masked the test;
-- Word did not correct a third initial capital or capitals in the middle of a word.
+### Draft PR #2
 
-Revised required behavior:
+Open and unmerged from `mixanizm-modern-v2.9.0.1` into `master`. This is the main modernization PR. Keep it Draft; do not merge, mark Ready, tag, release, or publish without explicit permission and completion of the applicable checks.
 
-- default off and configurable through the common Russian/English localization dictionaries;
-- local-only, no network;
-- correct accidental uppercase letters anywhere after the first letter of each word segment, including a third initial capital and capitals in the middle;
-- preserve all-caps words; intentional mixed-case names are reversible and learnable as personal exceptions;
-- show a session counter that changes only when Mahou itself performs or reverses a correction;
-- use only verified direct classic `Edit` and Word range replacement;
-- no selection, keyboard rewrite, Backspace injection, or clipboard mutation;
-- skip mixed-script, numeric, URL/email/code-like, excluded, protected, stale, and unsupported contexts;
-- immediate physical Backspace restores original casing;
-- two explicit Backspace reversions add the normalized word to local exceptions.
+### Draft PR #3
+
+Open and unmerged against `mixanizm-modern-v2.9.0.1`. Its present diff is transport and workflow history from the attempted Notepad-adapter task, not an accepted or integrated Notepad implementation. Do not use it as a source branch and do not modify, close, rebase, or clean it up without a separate decision.
+
+## Deferred product tasks
+
+### AGZ-MAH-0001 — Smart Caps
+
+The revised optional Smart Caps behavior remains unverified. The last user test was invalid as proof of Mahou correction because Microsoft Word continued correcting after Mahou was closed. The English-only tab also exposed a localization mismatch.
+
+Do not continue Smart Caps until the supervisor creates a new bounded executor handoff with exact acceptance criteria and a focused Windows smoke test.
+
+### AGZ-MAH-0003 — modern Notepad adapter
+
+The direct Notepad/RichEdit adapter remains deferred. Unsupported controls must continue to fail closed. PR #3 is not an accepted implementation and must not be used as one.
 
 ## Important prohibitions
 
 - Do not restore UI Automation `.Select()`, `Shift+Left`, `Ctrl+Shift+Left`, generated-selection collapse/reselect, stale round-trip, or tracked-buffer `ConvertLast` fallbacks.
-- Do not merge PR #2, tag, release, or publish without explicit permission.
-- Do not describe revised Smart Caps as verified until GitHub x86/x64 CI passes and the user completes the focused Windows smoke test.
-- Do not enable paid GitHub features, paid runners, or paid CI capacity without explicit user permission; use the economical CI mode from ruleset v2.6.3.
+- Do not change PR #1 or PR #3 without a separate explicit task and permission.
+- Do not merge or mark Ready PR #2, create a tag or Release, or publish a user build without explicit permission.
+- Do not describe Smart Caps or a Notepad adapter as verified until the exact implementation passes applicable CI and the user completes the focused real Windows smoke test.
+- Do not enable paid GitHub features, paid runners, or paid CI capacity without explicit permission.
+- Do not hand off an artifact unless it passes `ARTIFACT-PROVENANCE.md` against the exact expected commit and tree.
 
-## Exact next step
+## Next management step
 
-Inspect the final exact-head CI and artifact evidence for Draft PR #4. Keep it Draft and unmerged until explicit permission. After provenance is accepted and merged into the development branch, start the transactional text-mutation contract as a separate task branch before hardening classic Edit, Word, or adding a Notepad adapter.
+Create or appoint one project supervisor chat. The supervisor must restore state from the current GitHub branch, `PROJECT_STATE.md`, `ISSUES.md`, and this handoff, then choose exactly one next bounded task and prepare a separate executor handoff.
+
+No temporary executor should start Smart Caps, Notepad work, Insert changes, release work, or another product task without that handoff.
