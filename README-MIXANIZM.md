@@ -1,8 +1,8 @@
 # MIXANIZM Mahou — modernized 2.9.0.1 development line
 
 - Project profile: `standard`
-- Agatzub Development Ruleset: `v2.6.3`
-- Rules content commit: `2f312c4adbb54ffd533d2877d49cfd39633460ab`
+- Agatzub Development Ruleset: `v2.7.0`
+- Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
 
 This branch is based on the latest preserved modern Mahou source lineage and keeps the
 full tabbed settings UI, AutoSwitch dictionary, snippets, selection conversion,
@@ -48,6 +48,11 @@ This is still a draft test branch. It requires physical Windows 11 testing of ke
 hooks, Insert word/selection conversion, Smart Caps, AutoSwitch, snippets, modifier handling,
 translator behavior and the full settings UI before merge or public release. See
 `SECURITY-AUDIT-MODERN.md`.
+
+The current GitHub snapshot is maintained in `PROJECT_STATE.md`. Task status is kept in
+`ISSUES.md`, and `UNIVERSAL-CHAT-HANDOFF.md` is the recovery handoff for the active project
+supervisor. Short project-specific agent instructions are in `AGENTS.md`; the full
+supervisor/executor workflow comes from the pinned central ruleset.
 
 Original Mahou is GPL v2+ software. Original authorship remains credited in the source
 history and license; MIXANIZM maintains this modernization branch.
