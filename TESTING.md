@@ -50,4 +50,30 @@ Follow `TEST-PLAN-WINDOWS11.md`. For Mahou text mutation, use disposable documen
 
 For `AGZ-MAH-0007`, no positive user Chrome mutation smoke is requested because no mutation API passed the acceptance gate and no active mutation code remains. The local diagnostic page can still be used to confirm the fail-closed prototype result and event logging if a supervisor requests that limited check.
 
+## Telegram Desktop direct-path investigation
+
+`AGZ-MAH-0008` is `BLOCKED` because no interactive Windows Telegram process was available to the executor. The architecture record is `docs/TELEGRAM-SMART-CAPS-ARCHITECTURE.md`; no Telegram adapter or mutation test exists.
+
+A future continuation must use the exact installed Telegram Desktop for Windows build and only the ordinary new-message composer in Saved Messages or another dedicated private test chat. Before any mutation it must record and revalidate:
+
+- executable path, file and product version, digital signature, architecture, install source, foreground window, focused control, HWND classes, and process ID;
+- UI Automation ancestry, control type, automation ID, name, framework ID, class name, password/protected state, and all available patterns;
+- MSAA role/state and IAccessible2 interface availability;
+- exact full fixed test text, exact collapsed caret, exact selection state, target word boundaries, delimiter, composition state, candidate age, and active-chat identity;
+- ordinary new-message mode rather than search, caption, edit-message, forward comment, passcode, or another field.
+
+A writable primitive is acceptable only after a real bounded test proves all of the following without programmatic selection, keyboard simulation, clipboard access, or whole-field replacement:
+
+- only the exact target word changes;
+- prefix and suffix remain identical;
+- the caret is exact and selection remains collapsed;
+- formatting entities and draft state remain intact;
+- the active composer and active chat remain unchanged;
+- no message is sent;
+- the complete post-state can be re-read and verified;
+- one normal Telegram undo action reverts exactly the correction;
+- stale window, focus, chat, element, source, caret, composition, or candidate state causes a complete no-op.
+
+Reading text or caret, or merely detecting `IAccessibleEditableText`, is not proof of a safe write path. If any required property is uncertain, the test must stop and Telegram must remain no-op.
+
 A feature is `VERIFIED` only after its exact commit passes applicable CI and the user confirms its required real behavior. A negative architecture decision can be accepted when the rejected methods, automated checks, environment limitations, and strict no-op result are all recorded.
