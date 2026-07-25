@@ -17,8 +17,15 @@
 - Safe capitalization after sentence boundaries.
 - Conservative typo correction.
 - Optional local ghost-text completion.
+- Chrome Smart Caps through a separately authorized Chrome extension and Native Messaging host. The desktop-only UI Automation path was rejected by `AGZ-MAH-0006`; no extension or host implementation is authorized by that decision.
 
 # Completed
+
+- [AGZ-MAH-0006] [DIRECT-PATH-NOT-SAFE] 2026-07-25
+  Investigated a direct desktop Smart Caps path for ordinary Chrome `input[type=text]` and `textarea` controls from exact starting commit `d7e0e90a149d8d792260011b5902b80770a055d7`.
+  UI Automation can expose text and, where `TextPattern2` is available, a collapsed caret range, but it exposes no client-side text-range replacement. `ValuePattern.SetValue` is a whole-control rewrite and cannot prove target-only mutation, exact caret preservation, one normal browser undo unit, expected DOM events, composition safety, or protection against a stale full-value overwrite.
+  No runtime adapter, full-field rewrite, synthetic selection, keyboard selection, clipboard mutation, tracked-word fallback, CDP/JavaScript injection, extension, or Native Messaging host was added. Chrome Smart Caps remains strict no-op. The architecture decision and local disposable event probe are recorded under `docs/`.
+  This result is documentation-only. No runtime artifact exists, and no merge, Ready state, tag, signing, release, or publication is authorized.
 
 - [AGZ-MAH-0005] [VERIFIED] 2026-07-25
   Verified existing real-selection `Insert` conversion and full OLE clipboard preservation at exact source commit `3418d09de20ea327302a26858a7b752862bd429e` and tree `7920a089324fbd85d70b3669c7f86eb18ec5706a`.
