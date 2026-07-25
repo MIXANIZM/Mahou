@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mahou Chrome Smart Caps diagnostic</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; color-scheme: light dark; }
+    body { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+    label { display: block; margin: 18px 0 6px; font-weight: 600; }
+    input, textarea, [contenteditable] { box-sizing: border-box; width: 100%; padding: 10px; font: 16px/1.4 monospace; }
+    textarea { min-height: 110px; }
+    [contenteditable] { min-height: 70px; border: 1px solid CanvasText; }
+    #log { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 480px; overflow: auto; border: 1px solid CanvasText; padding: 10px; font: 13px/1.35 monospace; }
+    .actions { display: flex; gap: 8px; margin: 16px 0; }
+    button { padding: 8px 12px; }
+  </style>
+</head>
+<body>
+  <h1>Mahou Chrome Smart Caps diagnostic</h1>
+  <p>This local page sends no data. It records DOM editing, composition, focus, and selection events for disposable test text.</p>
+
+  <label for="single">Ordinary input[type=text]</label>
+  <input id="single" type="text" autocomplete="off" spellcheck="false" value="one ПРИвет three">
+
+  <label for="multi">Textarea</label>
+  <textarea id="multi" autocomplete="off" spellcheck="false">one ПРИвет three</textarea>
+
+  <label for="editable">Contenteditable — intentionally unsupported</label>
+  <div id="editable" contenteditable="true" spellcheck="false">one ПРИвет three</div>
+
+  <label for="password">Password — must remain protected/no-op</label>
+  <input id="password" type="password" autocomplete="off" value="NeverReadOrMutateThis">
+
+  <div class="actions">
+    <button id="clear" type="button">Clear log</button>
+    <button id="snapshot" type="button">Record snapshot</button>
+  </div>
+
+  <h2>Event log</h2>
+  <div id="log" role="log" aria-live="polite"></div>
+
+  <script>
+    'use strict';
+
+    const logNode = document.getElementById('log');
+    const controls = [
+      document.getElementById('single'),
+      document.getElementById('multi'),
+      document.getElementById('editable'),
+      document.getElementById('password')
+    ];
+    let sequence = 0;
+
+    function safeValue(element) {
+      if (element.type === 'password') return '<protected>';
+      if (element.isContentEditable) return element.textContent;
+      return element.value;
+    }
+
+    function selectionState(element) {
+      if (element.isContentEditable) {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) return { kind: 'dom', rangeCount: 0 };
+        const range = selection.getRangeAt(0);
+        return {
+          kind: 'dom',
+          rangeCount: selection.rangeCount,
+          collapsed: selection.isCollapsed,
+          anchorOffset: selection.anchorOffset,
+          focusOffset: selection.focusOffset,
+          startOffset: range.startOffset,
+          endOffset: range.endOffset
+        };
+      }
+      return {
+        kind: 'text-control',
+        start: element.selectionStart,
+        end: element.selectionEnd,
+        direction: element.selectionDirection
+      };
+    }
+
+    function describeTarget(target) {
+      if (!(target instanceof Element)) return '<non-element>';
+      return target.id || target.tagName.toLowerCase();
+    }
+
+    function record(type, target, extra = {}) {
+      const entry = {
+        n: ++sequence,
+        at: performance.now().toFixed(3),
+        type,
+        target: describeTarget(target),
+        active: describeTarget(document.activeElement),
+        value: safeValue(target),
+        selection: selectionState(target),
+        ...extra
+      };
+      logNode.textContent += JSON.stringify(entry) + '\n';
+      logNode.scrollTop = logNode.scrollHeight;
+    }
+
+    const eventNames = [
+      'focus', 'blur', 'select',
+      'keydown', 'keyup',
+      'beforeinput', 'input', 'change',
+      'compositionstart', 'compositionupdate', 'compositionend'
+    ];
+
+    for (const control of controls) {
+      for (const eventName of eventNames) {
+        control.addEventListener(eventName, event => {
+          const extra = {};
+          if ('key' in event) {
+            extra.key = event.key;
+            extra.code = event.code;
+            extra.isComposing = event.isComposing;
+          }
+          if ('inputType' in event) {
+            extra.inputType = event.inputType;
+            extra.data = event.data;
+            extra.isComposing = event.isComposing;
+          }
+          if (event.type.startsWith('composition')) extra.data = event.data;
+          record(event.type, control, extra);
+        }, true);
+      }
+    }
+
+    document.addEventListener('selectionchange', () => {
+      const active = document.activeElement;
+      if (controls.includes(active)) record('selectionchange', active);
+    });
+
+    document.getElementById('clear').addEventListener('click', () => {
+      logNode.textContent = '';
+      sequence = 0;
+    });
+
+    document.getElementById('snapshot').addEventListener('click', () => {
+      for (const control of controls) record('snapshot', control);
+    });
+
+    for (const control of controls) record('initial', control);
+  </script>
+</body>
+</html>
