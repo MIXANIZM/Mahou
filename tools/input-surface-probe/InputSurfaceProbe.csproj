@@ -47,6 +47,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="ProbeCore.cs" />
     <Compile Include="WindowsProbe.cs" />
+    <Compile Include="AccessibilityProbe.cs" />
     <EmbeddedResource Include="probe-commit.txt" />
     <None Include="App.config" />
     <None Include="app.manifest" />
