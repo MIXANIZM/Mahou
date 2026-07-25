@@ -4,6 +4,13 @@
 
 # Awaiting supervisor decision
 
+- [AGZ-MAH-0007] [BROWSER-CONTEXT-MUTATION-NOT-SAFE] 2026-07-25
+  Investigated the isolated Manifest V3 Chrome editing core from exact starting commit `faaf170d12e5bbcbd49c0b66edf4bac75c1e3049` without Native Messaging or Mahou runtime integration.
+  `setRangeText()` can express an exact range and caret adjustment but does not provide the required normal trusted editing-event plus single browser undo/redo transaction contract. Deprecated `execCommand('insertText')` can preserve browser undo in some configurations but exact replacement requires a temporary programmatic selection, which is forbidden. Whole-value assignment and synthetic events were also rejected.
+  A minimal action-activated MV3 prototype with only `activeTab` and `scripting` remains fail-closed: it verifies the exact diagnostic marker, supported control, composition, request age/ID, focus, tab/frame/document/element/value/caret/selection, boundaries, prefix, and suffix, then reports `mutation-api-not-accepted` without changing text.
+  Automated source and Node contract checks pass locally. A real unpacked-extension smoke was unavailable because the execution Chromium is managed with extension installation and all URLs blocked; no CDP, remote debugging, local server, or policy bypass was used.
+  Draft PR is for supervisor review only. No merge, Ready state, tag, signing, release, publication, Native Messaging, or Mahou runtime change is authorized.
+
 - [AGZ-MAH-0003] [DEFERRED] 2026-07-25
   Design a dedicated verified direct adapter for modern Windows Notepad/RichEdit. Until then, collapsed-caret `Insert` and Smart Caps remain strict no-op in those controls.
   Draft PR #3 remains open, but its current diff is transport and workflow history from the attempted task, not an accepted or integrated Notepad implementation. Do not use, modify, close, rebase, or clean up PR #3 without a separate decision.
@@ -17,7 +24,7 @@
 - Safe capitalization after sentence boundaries.
 - Conservative typo correction.
 - Optional local ghost-text completion.
-- Chrome Smart Caps through a separately authorized Chrome extension and Native Messaging host. The desktop-only UI Automation path was rejected by `AGZ-MAH-0006`; no extension or host implementation is authorized by that decision.
+- Chrome Smart Caps remains unsupported. `AGZ-MAH-0006` rejected the desktop-only path and `AGZ-MAH-0007` rejected the tested browser-context editing core under the strict range/caret/selection/undo/events gate. Native Messaging was not started.
 
 # Completed
 
