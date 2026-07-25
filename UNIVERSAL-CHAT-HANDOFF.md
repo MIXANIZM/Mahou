@@ -14,6 +14,7 @@
 - Verified Smart Caps artifact: `Mahou-2.9.0.1-dev-win-x64-0b43bb6-run30128168029`
 - Verified selected-text conversion source commit: `3418d09de20ea327302a26858a7b752862bd429e`
 - Verified selected-text conversion artifact: `Mahou-2.9.0.1-dev-win-x64-3418d09-run30134239498`
+- Chrome desktop-only Smart Caps decision: `DIRECT-PATH-NOT-SAFE` under `AGZ-MAH-0006`
 
 The old `master` branch is not the working line for modernized Mahou. Read `PROJECT_STATE.md` before choosing or assigning work.
 
@@ -49,10 +50,29 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 - Immediate Backspace restored the original casing. The focused smoke produced the expected session deltas of `+8` Mahou corrections and `+2` Mahou reversions.
 - Two explicit rejections created a local personal exception, the third occurrence remained unchanged, and the exception persisted after restart.
 - With Mahou closed, the tested words were not corrected by Mahou.
-- Modern Notepad, Chrome, Telegram and the tested password field remained fail-closed while Mahou and Smart Caps were running: no text, selection, caret, layout, clipboard or counter change.
+- Modern Notepad, Chrome, Telegram and the tested password field remain fail-closed while Mahou and Smart Caps are running: no text, selection, caret, layout, clipboard or counter change.
+- `AGZ-MAH-0006` confirmed that UI Automation provides no acceptable Chrome replace-range primitive. Chrome `input[type=text]`, `textarea`, `contenteditable`, password fields, and unknown controls therefore remain strict no-op for Smart Caps.
 - Draft PR #2 remains open, Draft, and unmerged.
 
 ## Completed tasks
+
+### AGZ-MAH-0006 — Chrome Smart Caps direct-path architecture decision
+
+Investigated on 2026-07-25 from exact starting commit `d7e0e90a149d8d792260011b5902b80770a055d7`.
+
+Result: `DIRECT-PATH-NOT-SAFE`.
+
+Evidence and decision:
+
+- the existing UI Automation path in `SelectionProbe` is read-only and does not mutate Chrome text;
+- `TextPattern`/`TextPattern2` can expose text and, where supported, a collapsed caret range, but UI Automation text ranges have no client-side replace operation;
+- `ValuePattern.SetValue` changes the whole element value rather than an exact range;
+- a whole-field rewrite cannot prove exact target-only mutation, adjacent-text preservation, exact caret restoration, one normal browser undo unit, expected DOM events, composition/IME safety, or protection against a stale-value overwrite;
+- no unsafe mutation was introduced to create favorable runtime evidence;
+- no Mahou runtime code, runtime version, Smart Caps algorithm, counters, Backspace reversal, Chrome Insert path, Telegram path, Notepad path, extension, or Native Messaging host changed;
+- the decision and a self-contained local Chrome event probe are recorded in `docs/CHROME-SMART-CAPS-ARCHITECTURE.md` and `docs/CHROME-SMART-CAPS-DIAGNOSTIC.html`.
+
+This was a documentation-only architecture result. It has no runtime artifact and no user Windows smoke requirement. A Chrome extension plus Native Messaging is only a recommendation for a separately authorized future task.
 
 ### AGZ-MAH-0005 — selected-text conversion and clipboard verification
 
@@ -106,7 +126,7 @@ The accepted provenance gate provides:
 - SHA-256 coverage and exact manifest inventory checks;
 - executable runtime-version and embedded-commit verification;
 - post-upload artifact ID, digest, run, ZIP and executable evidence;
-- fail-closed positive and negative provenance regression tests;
+- fail-closed positive and negative provenance tests;
 - an explicit rule that a PR-head artifact cannot be represented as a merge-head artifact.
 
 This task did not change Insert, Smart Caps, Word, classic Edit, Notepad, browser/messenger, selection, caret, layout, or other runtime behavior.
@@ -125,15 +145,21 @@ Open and unmerged from `mixanizm-modern-v2.9.0.1` into `master`. This is the mai
 
 Open and unmerged against `mixanizm-modern-v2.9.0.1`. Its present diff is transport and workflow history from the attempted Notepad-adapter task, not an accepted or integrated Notepad implementation. Do not use it as a source branch and do not modify, close, rebase, or clean it up without a separate decision.
 
-## Deferred product task
+## Deferred product tasks
 
 ### AGZ-MAH-0003 — modern Notepad adapter
 
 The direct Notepad/RichEdit adapter remains deferred. Unsupported controls must continue to fail closed. PR #3 is not an accepted implementation and must not be used as one.
 
+### Future Chrome extension and Native Messaging path
+
+`AGZ-MAH-0006` rejected a desktop-only UI Automation adapter. A browser-context extension plus Native Messaging host may be considered only through a new bounded task. It is not implemented or authorized by the architecture decision.
+
 ## Important prohibitions
 
 - Do not restore UI Automation `.Select()`, `Shift+Left`, `Ctrl+Shift+Left`, generated-selection collapse/reselect, stale round-trip, or tracked-buffer `ConvertLast` fallbacks.
+- Do not use `ValuePattern.SetValue` or another whole-field rewrite as a Chrome Smart Caps substitute.
+- Do not add Chrome DevTools remote debugging, CDP injection, JavaScript injection into unrelated pages, an extension, Native Messaging, a local server, DLL injection, or persistent accessibility hooks without a separate authorized task.
 - Do not change PR #1 or PR #3 without a separate explicit task and permission.
 - Do not merge or mark Ready PR #2, create a tag or Release, or publish a user build without explicit permission.
 - Do not extend the verified Smart Caps or selected-text conversion scope beyond the exact source commit, artifact and Windows scenarios recorded above without a new bounded task and applicable verification.
@@ -142,6 +168,6 @@ The direct Notepad/RichEdit adapter remains deferred. Unsupported controls must 
 
 ## Next management step
 
-The project supervisor should review and accept the documentation-only AGZ-MAH-0005 verification result, keep PR #2 Draft and unmerged, then choose exactly one next bounded task and prepare a separate executor handoff.
+The project supervisor should review the documentation-only `AGZ-MAH-0006` result, keep PR #2 Draft and unmerged, and decide whether to accept `DIRECT-PATH-NOT-SAFE`. Any future Chrome extension/Native Messaging work requires a new bounded handoff.
 
-No temporary executor should start Notepad work, Insert changes, release work or another product task without that handoff.
+No temporary executor should start Chrome extension, Native Messaging, Telegram, Notepad, Insert, release work, or another product task without that handoff.
