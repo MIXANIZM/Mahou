@@ -1,0 +1,190 @@
+name: Input surface probe
+
+on:
+  pull_request:
+    branches:
+      - mixanizm-modern-v2.9.0.1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: input-surface-probe-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test-package:
+    runs-on: windows-2022
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout requested source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Resolve immutable probe identity
+        id: metadata
+        shell: pwsh
+        run: |
+          $commit = (git rev-parse HEAD).Trim().ToLowerInvariant()
+          $tree = (git show -s --format=%T HEAD).Trim().ToLowerInvariant()
+          $shortSha = (git rev-parse --short=7 HEAD).Trim().ToLowerInvariant()
+          $sourceRef = if ($env:GITHUB_HEAD_REF) { $env:GITHUB_HEAD_REF } else { $env:GITHUB_REF_NAME }
+          $artifactName = "Mahou-Input-Surface-Probe-v1-win-x64-$shortSha-run$env:GITHUB_RUN_ID"
+          "commit=$commit" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "tree=$tree" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "short_sha=$shortSha" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "source_ref=$sourceRef" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "artifact_name=$artifactName" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+
+      - name: Verify read-only source boundary
+        shell: pwsh
+        run: |
+          python .github/scripts/input-surface-probe-regression.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Stamp exact probe commit
+        shell: pwsh
+        run: |
+          [System.IO.File]::WriteAllText(
+            (Join-Path $env:GITHUB_WORKSPACE 'tools/input-surface-probe/probe-commit.txt'),
+            '${{ steps.metadata.outputs.commit }}' + "`n",
+            (New-Object System.Text.UTF8Encoding($false)))
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2
+
+      - name: Build standalone x64 probe
+        shell: pwsh
+        run: |
+          $output = Join-Path $env:GITHUB_WORKSPACE 'artifacts/probe/'
+          $obj = Join-Path $env:GITHUB_WORKSPACE 'artifacts/probe-obj/'
+          New-Item -ItemType Directory -Force -Path $output,$obj | Out-Null
+          & msbuild tools/input-surface-probe/InputSurfaceProbe.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 /p:Deterministic=true "/p:OutputPath=$output" "/p:IntermediateOutputPath=$obj" /v:minimal /fl "/flp:logfile=probe-msbuild.log;verbosity=normal"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build and run probe contract tests
+        shell: pwsh
+        run: |
+          $output = Join-Path $env:GITHUB_WORKSPACE 'artifacts/tests/'
+          $obj = Join-Path $env:GITHUB_WORKSPACE 'artifacts/tests-obj/'
+          New-Item -ItemType Directory -Force -Path $output,$obj | Out-Null
+          & msbuild tools/input-surface-probe/tests/InputSurfaceProbe.Tests.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 /p:Deterministic=true "/p:OutputPath=$output" "/p:IntermediateOutputPath=$obj" /v:minimal /fl "/flp:logfile=probe-tests-msbuild.log;verbosity=normal"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & (Join-Path $output 'Mahou.InputSurfaceProbe.Tests.exe')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Verify embedded source identity
+        shell: pwsh
+        run: |
+          $exe = Join-Path $env:GITHUB_WORKSPACE 'artifacts/probe/Mahou.InputSurfaceProbe.exe'
+          $identity = (& $exe --version-json | ConvertFrom-Json)
+          if ($identity.schema_version -ne '1') { throw "Unexpected probe schema: $($identity.schema_version)" }
+          if ($identity.probe_commit -ne '${{ steps.metadata.outputs.commit }}') { throw "Embedded probe commit mismatch" }
+
+      - name: Package immutable x64 probe ZIP
+        id: package
+        shell: pwsh
+        run: |
+          $artifactName = '${{ steps.metadata.outputs.artifact_name }}'
+          $packageRoot = Join-Path $env:GITHUB_WORKSPACE 'probe-package'
+          $stage = Join-Path $packageRoot $artifactName
+          New-Item -ItemType Directory -Force -Path $stage | Out-Null
+
+          Copy-Item 'artifacts/probe/Mahou.InputSurfaceProbe.exe' $stage -Force
+          Copy-Item 'artifacts/probe/Mahou.InputSurfaceProbe.exe.config' $stage -Force
+          Copy-Item 'tools/input-surface-probe/README.md' (Join-Path $stage 'README.md') -Force
+          Copy-Item 'docs/INPUT-SURFACE-PROBE.md' $stage -Force
+          Copy-Item 'docs/INPUT-SURFACE-CAPABILITY-MAP.md' $stage -Force
+
+          $payloadFiles = Get-ChildItem $stage -File | Sort-Object Name
+          $manifestFiles = @()
+          foreach ($file in $payloadFiles) {
+            $manifestFiles += [ordered]@{
+              name = $file.Name
+              sha256 = (Get-FileHash $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+              size_bytes = $file.Length
+            }
+          }
+
+          $manifest = [ordered]@{
+            schema_version = 1
+            artifact_type = 'read-only-input-surface-probe'
+            artifact_name = $artifactName
+            repository = '${{ github.repository }}'
+            source_ref = '${{ steps.metadata.outputs.source_ref }}'
+            source_commit = '${{ steps.metadata.outputs.commit }}'
+            source_tree = '${{ steps.metadata.outputs.tree }}'
+            platform = 'windows'
+            architecture = 'x64'
+            configuration = 'Release'
+            probe_schema_version = '1'
+            probe_commit_embedded = '${{ steps.metadata.outputs.commit }}'
+            mahou_runtime_changed = $false
+            mahou_runtime_version = '2.9.0.1-dev (unchanged)'
+            workflow_name = '${{ github.workflow }}'
+            workflow_run_id = '${{ github.run_id }}'
+            workflow_run_attempt = '${{ github.run_attempt }}'
+            workflow_run_url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+            built_at_utc = [DateTime]::UtcNow.ToString('o')
+            files = $manifestFiles
+          }
+          [System.IO.File]::WriteAllText(
+            (Join-Path $stage 'probe-manifest.json'),
+            (($manifest | ConvertTo-Json -Depth 8) + "`n"),
+            (New-Object System.Text.UTF8Encoding($false)))
+
+          $sumLines = @()
+          Get-ChildItem $stage -File | Sort-Object Name | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            $sumLines += "$hash  $($_.Name)"
+          }
+          [System.IO.File]::WriteAllLines(
+            (Join-Path $stage 'SHA256SUMS.txt'),
+            $sumLines,
+            (New-Object System.Text.UTF8Encoding($false)))
+
+          $zipPath = Join-Path $packageRoot "$artifactName.zip"
+          Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zipPath -CompressionLevel Optimal
+          $zipHash = (Get-FileHash $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          [System.IO.File]::WriteAllText(
+            (Join-Path $packageRoot "$artifactName.zip.sha256"),
+            "$zipHash  $artifactName.zip`n",
+            (New-Object System.Text.UTF8Encoding($false)))
+
+          $evidence = [ordered]@{
+            schema_version = 1
+            artifact_name = $artifactName
+            source_commit = '${{ steps.metadata.outputs.commit }}'
+            source_tree = '${{ steps.metadata.outputs.tree }}'
+            workflow_run_url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+            probe_zip_sha256 = $zipHash
+            probe_exe_sha256 = (Get-FileHash (Join-Path $stage 'Mahou.InputSurfaceProbe.exe') -Algorithm SHA256).Hash.ToLowerInvariant()
+          }
+          [System.IO.File]::WriteAllText(
+            (Join-Path $packageRoot 'artifact-evidence.json'),
+            (($evidence | ConvertTo-Json -Depth 6) + "`n"),
+            (New-Object System.Text.UTF8Encoding($false)))
+
+          "zip_sha256=$zipHash" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+
+      - name: Upload immutable probe package
+        id: upload_probe
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ${{ steps.metadata.outputs.artifact_name }}
+          path: |
+            probe-package/${{ steps.metadata.outputs.artifact_name }}.zip
+            probe-package/${{ steps.metadata.outputs.artifact_name }}.zip.sha256
+            probe-package/artifact-evidence.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Verify uploaded artifact digest is present
+        shell: pwsh
+        run: |
+          if (-not '${{ steps.upload_probe.outputs.artifact-digest }}') { throw 'Artifact digest missing' }
+          Write-Host "Probe ZIP SHA-256: ${{ steps.package.outputs.zip_sha256 }}"
