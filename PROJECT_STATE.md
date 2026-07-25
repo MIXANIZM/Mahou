@@ -12,6 +12,7 @@ Snapshot date: 2026-07-25
 - Agatzub Development Ruleset: `v2.7.0`
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
 - Last verified Smart Caps source commit: `0b43bb688115e0051114f38a745fce9e830452fd`
+- Last verified selected-text conversion source commit: `3418d09de20ea327302a26858a7b752862bd429e`
 
 The old `master` branch is not the current working line for modernized Mahou. New bounded tasks normally branch from `mixanizm-modern-v2.9.0.1` unless a task handoff explicitly states otherwise.
 
@@ -40,6 +41,17 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 
 ## Completed project tasks
 
+### AGZ-MAH-0005 — selected-text conversion and clipboard verification
+
+- Verified at exact source commit `3418d09de20ea327302a26858a7b752862bd429e` and tree `7920a089324fbd85d70b3669c7f86eb18ec5706a`.
+- Automated checks passed: Modern Windows build run `30134239498` and Security regression run `30134239469`.
+- Verified artifact: `Mahou-2.9.0.1-dev-win-x64-3418d09-run30134239498`; ZIP SHA-256 `c0f0643e251319bc20d9f528f4b199a13f780af7292a45c84dcacd210d328d28`; `Mahou.exe` SHA-256 `b3821d0a3116728db91cd46bf6091a578db19214cea7c3e7b465393b8876a95a`.
+- The user confirmed existing user-created selection conversion worked forward and backward in Word, modern Notepad, downloaded local Chrome `textarea` and `contenteditable` controls, Telegram Desktop and the other applicable tested applications.
+- The user confirmed real selection retained priority, ordinary insert mode remained usable, protected fields remained no-op, and repeated conversions did not corrupt text, caret, selection, layout or application stability.
+- Unicode text, Word rich formatting, images, Excel cell ranges and Explorer file-drop clipboard data remained available after conversion.
+- In browsers and messengers, no-selection `Insert` remains fail-closed. Microsoft Word's separately verified direct word-around-caret behavior remains supported.
+- Verification does not authorize merge, tag, release, signing or publication.
+
 ### AGZ-MAH-0001 — Smart Caps verification
 
 - Verified at exact source commit `0b43bb688115e0051114f38a745fce9e830452fd` and tree `bd0d80d350cea61cbdd2a9cecdfa6002f2c88ee9`.
@@ -59,6 +71,7 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 
 ## Product task status
 
+- `AGZ-MAH-0005` selected-text conversion and full clipboard preservation are verified only for the exact source, artifact and Windows scenarios recorded above.
 - `AGZ-MAH-0001` Smart Caps is verified only for the exact implementation, artifact, adapters and Windows scenarios recorded above.
 - `AGZ-MAH-0003` Notepad direct adapter remains deferred. Unsupported modern Notepad/RichEdit controls stay fail-closed until a dedicated implementation and real Windows verification are completed.
 - `AGZ-MAH-0002` collapsed-caret Insert safety is verified for the accepted checkpoint recorded in `ISSUES.md` and `UNIVERSAL-CHAT-HANDOFF.md`.
