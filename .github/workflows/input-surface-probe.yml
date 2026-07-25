@@ -63,8 +63,14 @@ jobs:
           $output = Join-Path $env:GITHUB_WORKSPACE 'artifacts/probe/'
           $obj = Join-Path $env:GITHUB_WORKSPACE 'artifacts/probe-obj/'
           New-Item -ItemType Directory -Force -Path $output,$obj | Out-Null
-          & msbuild tools/input-surface-probe/InputSurfaceProbe.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 /p:Deterministic=true "/p:OutputPath=$output" "/p:IntermediateOutputPath=$obj" /v:minimal /fl "/flp:logfile=probe-msbuild.log;verbosity=normal"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $consoleLog = Join-Path $env:GITHUB_WORKSPACE 'probe-msbuild-console.log'
+          & msbuild tools/input-surface-probe/InputSurfaceProbe.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 /p:Deterministic=true "/p:OutputPath=$output" "/p:IntermediateOutputPath=$obj" /v:minimal /fl "/flp:logfile=probe-msbuild.log;verbosity=normal" *> $consoleLog
+          $exitCode = $LASTEXITCODE
+          if ($exitCode -ne 0) {
+            Get-Content $consoleLog | Select-String -Pattern 'error |error:|warning |warning:' | ForEach-Object { Write-Host $_.Line }
+            exit $exitCode
+          }
+          Get-Content $consoleLog
 
       - name: Build and run probe contract tests
         shell: pwsh
@@ -72,8 +78,14 @@ jobs:
           $output = Join-Path $env:GITHUB_WORKSPACE 'artifacts/tests/'
           $obj = Join-Path $env:GITHUB_WORKSPACE 'artifacts/tests-obj/'
           New-Item -ItemType Directory -Force -Path $output,$obj | Out-Null
-          & msbuild tools/input-surface-probe/tests/InputSurfaceProbe.Tests.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 /p:Deterministic=true "/p:OutputPath=$output" "/p:IntermediateOutputPath=$obj" /v:minimal /fl "/flp:logfile=probe-tests-msbuild.log;verbosity=normal"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $consoleLog = Join-Path $env:GITHUB_WORKSPACE 'probe-tests-msbuild-console.log'
+          & msbuild tools/input-surface-probe/tests/InputSurfaceProbe.Tests.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 /p:Deterministic=true "/p:OutputPath=$output" "/p:IntermediateOutputPath=$obj" /v:minimal /fl "/flp:logfile=probe-tests-msbuild.log;verbosity=normal" *> $consoleLog
+          $exitCode = $LASTEXITCODE
+          if ($exitCode -ne 0) {
+            Get-Content $consoleLog | Select-String -Pattern 'error |error:|warning |warning:' | ForEach-Object { Write-Host $_.Line }
+            exit $exitCode
+          }
+          Get-Content $consoleLog
           & (Join-Path $output 'Mahou.InputSurfaceProbe.Tests.exe')
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
