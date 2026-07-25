@@ -17,7 +17,12 @@
 
 # Blocked
 
-- None.
+- [AGZ-MAH-0008] [BLOCKED] 2026-07-25
+  Investigated the Telegram Desktop Smart Caps direct-path boundary from exact starting commit `076ee95325809bd0581c9e0f24e9dbb1022c6603` on branch `agz-mah-0008-telegram-smart-caps-path`.
+  The available executor environment has no interactive Windows desktop or running Telegram process, so it cannot capture the exact installed version, executable/signature, HWND and UI Automation identity, MSAA/IAccessible2 interfaces, exact caret, composition state, active-chat signal, Telegram undo behavior, formatting/draft preservation, or message-send safety required by the acceptance gate.
+  Official API documentation confirms that UI Automation Text/TextRange is not an exact range-write primitive and that `ValuePattern.SetValue()` is whole-field replacement. IAccessible2 defines `IAccessibleEditableText::replaceText`, but runtime exposure and Telegram-specific atomicity, caret, draft/entity, active-chat, post-state, and one-step undo behavior remain unmeasured; interface presence alone is insufficient.
+  No runtime adapter, diagnostic mutation, keyboard simulation, clipboard path, whole-field rewrite, version change, artifact, or user smoke package was added. Telegram remains strict no-op without a real user-created selection.
+  Decision record: `docs/TELEGRAM-SMART-CAPS-ARCHITECTURE.md`. The exact next step, if separately continued, is a read-only probe and bounded Saved Messages test on the user's real Windows Telegram build before any mutation candidate is considered.
 
 # Deferred product ideas
 
@@ -49,7 +54,7 @@
 
 - [AGZ-MAH-0004] [COMPLETED] 2026-07-23
   Added the immutable artifact provenance gate and merged it through PR #4 into `mixanizm-modern-v2.9.0.1`.
-  The accepted result includes immutable runtime/platform/commit/run artifact names, full commit/tree manifests, complete SHA-256 coverage, embedded executable identity verification, post-upload artifact evidence, and fail-closed positive and negative provenance checks.
+  The accepted result includes immutable runtime/platform/commit/run artifact names, full commit/tree manifests, complete SHA-256 coverage, embedded commit verification, post-upload artifact evidence, and fail-closed positive and negative provenance checks.
   This task did not change Mahou runtime behavior or text-mutation behavior. PR #4 is closed and merged.
 
 - [AGZ-MAH-0002] [VERIFIED] 2026-07-21

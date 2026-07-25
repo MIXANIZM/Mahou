@@ -14,6 +14,7 @@
 - Verified selected-text conversion source commit: `3418d09de20ea327302a26858a7b752862bd429e`
 - Chrome desktop-only decision: `DIRECT-PATH-NOT-SAFE` under `AGZ-MAH-0006`
 - Chrome browser-context editing-core result awaiting supervisor decision: `BROWSER-CONTEXT-MUTATION-NOT-SAFE` under `AGZ-MAH-0007`
+- Telegram Desktop direct-path result awaiting supervisor decision: `BLOCKED` under `AGZ-MAH-0008`, Draft PR #10
 
 The old `master` branch is not the working line for modernized Mahou. Read `PROJECT_STATE.md` before choosing or assigning work.
 
@@ -40,7 +41,43 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 - Smart Caps is local, optional, disabled on a clean profile, and verified only for its exact recorded source/artifact/scenarios.
 - Draft PR #2 remains open, Draft, and unmerged.
 
-## Result awaiting supervisor decision
+## Results awaiting supervisor decision
+
+### AGZ-MAH-0008 — Telegram Desktop Smart Caps direct path
+
+Starting point:
+
+```text
+076ee95325809bd0581c9e0f24e9dbb1022c6603
+```
+
+Task branch and PR:
+
+```text
+agz-mah-0008-telegram-smart-caps-path
+Draft PR #10
+```
+
+Result:
+
+```text
+BLOCKED
+```
+
+Evidence and boundary:
+
+- exact starting head, PR #1/#2/#3 state, and starting-head Security regression run `30158873642` plus Modern Windows build run `30158873679` were confirmed;
+- central Agatzub rules remain stable at pinned `v2.7.0`; no newer stable version was found;
+- the executor environment has no interactive Windows desktop or running Telegram process;
+- exact installed Telegram version, install source, executable/signature, architecture, HWND classes, UIA tree and patterns, MSAA/IAccessible2 interfaces, exact caret, composition, active-chat signal, one-step undo, draft/entity preservation, and message-send safety could not be measured and were not guessed;
+- Microsoft UI Automation Text/TextRange is not an exact range-write primitive; `.Select()` and whole-field `ValuePattern.SetValue()` remain forbidden;
+- IAccessible2 defines `IAccessibleEditableText::replaceText`, but actual Telegram exposure and all required Telegram-specific safety properties remain unmeasured; interface presence alone is insufficient;
+- official `telegramdesktop/tdesktop` source reconnaissance at commit `2a6fd2cb752f8b3caca9b3589b2e89d28b36f00d` confirms a Qt-based custom `Ui::InputField` compose subsystem but is not claimed to match the installed user build or establish its Windows accessibility provider;
+- no runtime adapter, mutation probe, keyboard simulation, clipboard path, whole-field rewrite, runtime version change, artifact, or user smoke package was added;
+- Telegram remains strict no-op without a real user-created selection;
+- primary record: `docs/TELEGRAM-SMART-CAPS-ARCHITECTURE.md`.
+
+The supervisor must decide whether to accept the blocked result or arrange a separately controlled continuation in a real Windows Telegram session. The executor must not begin that continuation, Notepad, Chrome, release, or another task without a new handoff.
 
 ### AGZ-MAH-0007 — Chrome Manifest V3 editing-core prototype
 
@@ -106,15 +143,20 @@ Open and unmerged from `mixanizm-modern-v2.9.0.1` into `master`. Keep it Draft; 
 
 Open and unmerged against `mixanizm-modern-v2.9.0.1`. Its current diff is preserved transport/workflow history, not an accepted Notepad adapter. Do not use or modify it without a separate decision.
 
+### Draft PR #10
+
+Open and Draft from `agz-mah-0008-telegram-smart-caps-path` into `mixanizm-modern-v2.9.0.1`. It records the blocked Telegram direct-path investigation only. It contains no runtime adapter or artifact and must not be marked Ready or merged without supervisor review and separate permission.
+
 ## Important prohibitions
 
-- Do not restore UI Automation `.Select()`, keyboard selection, generated-selection fallback, Backspace/retype, clipboard mutation, or whole-field Chrome rewrite.
+- Do not restore UI Automation `.Select()`, keyboard selection, generated-selection fallback, Backspace/retype, clipboard mutation, or whole-field rewrite.
+- Do not treat Qt ancestry, Telegram process name, UIA read access, caret access, or `IAccessibleEditableText` presence alone as proof of a safe Telegram mutation path.
 - Do not activate the AGZ-MAH-0007 prototype mutation: the retained code must remain strict no-op unless a future separately authorized architecture supplies a method that passes every gate.
-- Do not start Native Messaging, Mahou integration, Telegram, Notepad, Edge, local server, CDP, remote debugging, DLL injection, Chrome Web Store, signing, or release work from this result.
+- Do not start Native Messaging, Mahou integration, Telegram mutation, Notepad, Edge, local server, CDP, remote debugging, DLL injection, signing, or release work from these results.
 - Do not change PR #1 or PR #3 without a separate explicit task.
-- Do not merge or mark Ready PR #2, create a tag or Release, or publish a user build without explicit permission.
+- Do not merge or mark Ready PR #2 or PR #10, create a tag or Release, or publish a user build without explicit permission.
 - Do not hand off an artifact unless it passes `ARTIFACT-PROVENANCE.md` against the exact expected commit and tree.
 
 ## Next management step
 
-The project supervisor should inspect the AGZ-MAH-0007 Draft PR, confirm its exact head and CI, and accept or reject the negative architecture result. The executor must not begin another task.
+The project supervisor should inspect Draft PR #10, confirm its exact final head and CI, and accept the blocked `AGZ-MAH-0008` result or explicitly authorize a controlled real-Windows continuation. The executor must not begin another task.

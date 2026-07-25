@@ -15,6 +15,7 @@ Snapshot date: 2026-07-25
 - Last verified selected-text conversion source commit: `3418d09de20ea327302a26858a7b752862bd429e`
 - Chrome desktop-only decision: `DIRECT-PATH-NOT-SAFE` under `AGZ-MAH-0006`
 - Chrome browser-context editing-core result awaiting supervisor decision: `BROWSER-CONTEXT-MUTATION-NOT-SAFE` under `AGZ-MAH-0007`
+- Telegram Desktop direct-path investigation result awaiting supervisor decision: `BLOCKED` under `AGZ-MAH-0008`
 
 The old `master` branch is not the current working line for modernized Mahou. New bounded tasks normally branch from `mixanizm-modern-v2.9.0.1` unless a task handoff explicitly states otherwise.
 
@@ -41,7 +42,18 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - Its current diff is transport and workflow history from the attempted Notepad-adapter task, not an accepted or integrated Notepad implementation.
 - It must not be used as a source branch, cleaned up, closed, rebased, or modified without a separate decision.
 
-## Task result awaiting supervisor decision
+## Task results awaiting supervisor decision
+
+### AGZ-MAH-0008 — Telegram Desktop Smart Caps direct path
+
+- Investigated from exact starting commit `076ee95325809bd0581c9e0f24e9dbb1022c6603` on branch `agz-mah-0008-telegram-smart-caps-path`.
+- Result: `BLOCKED`.
+- The executor environment has no interactive Windows desktop or running Telegram process, so it cannot capture the exact installed Telegram identity, focused composer signature, UIA/MSAA/IAccessible2 interfaces, caret, composition, active-chat stability, one-step Telegram undo, draft/entity preservation, or message-send safety required by the acceptance gate.
+- Official documentation establishes that UI Automation Text/TextRange is not an exact range-write primitive and `ValuePattern.SetValue()` is a forbidden whole-field write.
+- IAccessible2 specifies `IAccessibleEditableText::replaceText`, but actual Telegram exposure and all Telegram-specific safety properties remain unmeasured. Interface presence alone is not accepted.
+- Official Telegram source reconnaissance at `telegramdesktop/tdesktop` commit `2a6fd2cb752f8b3caca9b3589b2e89d28b36f00d` confirms a Qt-based custom `Ui::InputField` compose subsystem, but that source is not claimed to match the installed user build and does not establish its Windows accessibility provider.
+- No runtime adapter, mutation probe, version change, artifact, or user smoke package was created. Telegram remains strict no-op without a real user-created selection.
+- Primary decision record: `docs/TELEGRAM-SMART-CAPS-ARCHITECTURE.md`.
 
 ### AGZ-MAH-0007 — Chrome Manifest V3 editing-core prototype
 
@@ -85,6 +97,7 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 
 ## Product task status
 
+- `AGZ-MAH-0008` is blocked pending exact real-Windows Telegram accessibility and undo evidence. It does not add Telegram support.
 - `AGZ-MAH-0007` is a negative browser-context editing-core result awaiting supervisor acceptance. It does not add Chrome support.
 - `AGZ-MAH-0006` established that a Chrome desktop-only direct adapter is not safe.
 - `AGZ-MAH-0005` and `AGZ-MAH-0001` remain verified only for their exact recorded sources, artifacts, and Windows scenarios.
