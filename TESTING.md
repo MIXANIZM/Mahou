@@ -6,9 +6,24 @@
 python .github/scripts/security-regression.py
 python .github/scripts/ui-resource-regression.py
 python .github/scripts/artifact-provenance-regression.py
+python .github/scripts/chrome-extension-editing-core-regression.py
+node .github/tests/chrome-extension-editing-core.test.js
 ```
 
-These gates check source-level safety invariants, common Russian/English Smart Caps localization markers, and UI resource consistency. They do not replace runtime testing.
+The first three gates check source-level Mahou safety invariants, common Russian/English Smart Caps localization markers, UI resource consistency, and artifact provenance. The Chrome editing-core gates separately check the test-only MV3 manifest, permission boundary, absence of active mutation/network/remote-code/Native Messaging paths, exact diagnostic marker, fixed candidates, fail-closed control and stale-state rules, adjacent-text preservation contracts, and post-mutation verification logic. None of these source tests replace runtime testing.
+
+## Chrome editing-core workflow
+
+The read-only `Chrome extension editing core` workflow runs the static Python gate and the dependency-free Node contract tests for changes to the prototype, diagnostic page, decision document, or their tests.
+
+The retained prototype intentionally performs no mutation and must report:
+
+```text
+BROWSER-CONTEXT-MUTATION-NOT-SAFE
+mutation-api-not-accepted
+```
+
+A successful negative test means the field value, caret, selection, undo/redo history, and clipboard remain unchanged. It is not proof of Chrome Smart Caps support.
 
 ## Windows CI
 
@@ -18,7 +33,7 @@ The `Modern Windows build` workflow:
 - builds Release x64 twice and compares controlled files byte-for-byte;
 - runs `InsertSafetyRegression` against the built executable;
 - runs `SmartCapsRegression`, including third-initial, interior-capital, hyphenated-word, all-caps, mixed-script, numeric, URL and email cases;
-- packages manifests, SHA-256 sums, security report, and test documentation.
+- packages manifests, SHA-256 sums, security report, and test documentation;
 - names every build/log/evidence artifact with the runtime version, platform, short source commit, and workflow run ID;
 - verifies the generated archive with the exact full commit and tree, rejects an intentionally wrong expected commit, and rejects a legacy-manifest fixture before upload;
 - creates a separate post-upload evidence JSON containing artifact ID/digest, run URL, source commit/tree, ZIP SHA-256, and executable SHA-256.
@@ -31,6 +46,8 @@ After merge, never represent a PR-head artifact as a merge-head artifact. Run a 
 
 ## Manual Windows checks
 
-Follow `TEST-PLAN-WINDOWS11.md`. For text mutation, use disposable documents and verify text, caret, selection, keyboard layout, clipboard and the Mahou-only session counter before and after each operation.
+Follow `TEST-PLAN-WINDOWS11.md`. For Mahou text mutation, use disposable documents and verify text, caret, selection, keyboard layout, clipboard and the Mahou-only session counter before and after each operation.
 
-A feature is `VERIFIED` only after its exact commit passes applicable CI and the user confirms its real Windows behavior.
+For `AGZ-MAH-0007`, no positive user Chrome mutation smoke is requested because no mutation API passed the acceptance gate and no active mutation code remains. The local diagnostic page can still be used to confirm the fail-closed prototype result and event logging if a supervisor requests that limited check.
+
+A feature is `VERIFIED` only after its exact commit passes applicable CI and the user confirms its required real behavior. A negative architecture decision can be accepted when the rejected methods, automated checks, environment limitations, and strict no-op result are all recorded.
