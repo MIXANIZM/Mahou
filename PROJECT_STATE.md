@@ -41,6 +41,17 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 
 ## Completed project tasks
 
+### AGZ-MAH-0006 — Chrome Smart Caps direct-path architecture decision
+
+- Investigated from exact starting commit `d7e0e90a149d8d792260011b5902b80770a055d7`.
+- Result: `DIRECT-PATH-NOT-SAFE`.
+- UI Automation can provide read access to text and possibly a collapsed caret range, but its text ranges are read-only from the client side and expose no exact replace-range operation.
+- `ValuePattern.SetValue` is a full-control rewrite and was rejected because it cannot prove exact target-only mutation, adjacent-text preservation, exact caret restoration, one normal Chrome undo action, expected DOM events, composition/IME safety, or protection against stale whole-field overwrite.
+- No Mahou runtime code, runtime version, Smart Caps algorithm, counters, Backspace reversal, Insert path, Telegram path, Notepad path, extension, or Native Messaging host was changed.
+- Chrome `input[type=text]`, `textarea`, `contenteditable`, password fields, and unknown controls remain strict no-op for Smart Caps.
+- The architecture decision and disposable local Chrome event probe are recorded in `docs/CHROME-SMART-CAPS-ARCHITECTURE.md` and `docs/CHROME-SMART-CAPS-DIAGNOSTIC.html`.
+- No runtime artifact exists for this documentation-only result. It does not authorize merge, Ready state, tag, release, signing, or publication.
+
 ### AGZ-MAH-0005 — selected-text conversion and clipboard verification
 
 - Verified at exact source commit `3418d09de20ea327302a26858a7b752862bd429e` and tree `7920a089324fbd85d70b3669c7f86eb18ec5706a`.
@@ -66,11 +77,12 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 
 - Completed and merged through PR #4 into `mixanizm-modern-v2.9.0.1`.
 - Added immutable artifact names, full source commit/tree manifests, complete SHA-256 coverage, embedded executable identity checks, post-upload evidence, and fail-closed positive and negative provenance tests.
-- Did not change Mahou runtime behavior, Insert, Smart Caps, Word, classic Edit, Notepad, selection, caret, or layout behavior.
+- Did not change Mahou runtime behavior, Insert, Smart Caps, Word, classic Edit, Notepad, selection, caret, layout behavior, or other runtime behavior.
 - PR #4 is closed and merged.
 
 ## Product task status
 
+- `AGZ-MAH-0006` established that a Chrome desktop-only direct Smart Caps adapter is not safe through the allowed UI Automation/Win32 surface. Chrome remains strict no-op. A Chrome extension plus Native Messaging is only a future architecture recommendation and requires a separate authorized task.
 - `AGZ-MAH-0005` selected-text conversion and full clipboard preservation are verified only for the exact source, artifact and Windows scenarios recorded above.
 - `AGZ-MAH-0001` Smart Caps is verified only for the exact implementation, artifact, adapters and Windows scenarios recorded above.
 - `AGZ-MAH-0003` Notepad direct adapter remains deferred. Unsupported modern Notepad/RichEdit controls stay fail-closed until a dedicated implementation and real Windows verification are completed.
