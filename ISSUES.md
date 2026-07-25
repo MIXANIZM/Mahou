@@ -20,6 +20,13 @@
 
 # Completed
 
+- [AGZ-MAH-0005] [VERIFIED] 2026-07-25
+  Verified existing real-selection `Insert` conversion and full OLE clipboard preservation at exact source commit `3418d09de20ea327302a26858a7b752862bd429e` and tree `7920a089324fbd85d70b3669c7f86eb18ec5706a`.
+  GitHub Actions passed: Modern Windows build run `30134239498` and Security regression run `30134239469`. The immutable x64 artifact was `Mahou-2.9.0.1-dev-win-x64-3418d09-run30134239498`; ZIP SHA-256 `c0f0643e251319bc20d9f528f4b199a13f780af7292a45c84dcacd210d328d28`; `Mahou.exe` SHA-256 `b3821d0a3116728db91cd46bf6091a578db19214cea7c3e7b465393b8876a95a`.
+  The user confirmed the complete focused Windows smoke passed. Existing selections converted forward and back in Microsoft Word, modern Windows Notepad, downloaded local Chrome `textarea` and `contenteditable` controls, Telegram Desktop and the other applicable tested applications. Selection priority, caret behavior, ordinary insert mode, protected-field no-op behavior and repeated-operation stability worked as required.
+  Unicode text, Word rich formatting, images, Excel cell ranges and Explorer file-drop clipboard data remained usable after conversion. In browsers and messengers, no-selection `Insert` remains a safe no-op; Microsoft Word's separately verified direct word-around-caret path continues to work.
+  This verification records runtime evidence only. It does not authorize merge, marking PR #2 Ready, tagging, signing, release or publication.
+
 - [AGZ-MAH-0001] [VERIFIED] 2026-07-25
   Verified the opt-in local Smart Caps implementation at exact source commit `0b43bb688115e0051114f38a745fce9e830452fd` with the immutable x64 artifact `Mahou-2.9.0.1-dev-win-x64-0b43bb6-run30128168029`.
   GitHub Actions passed: Modern Windows build run `30128168029` and Security regression run `30128168156`. The artifact ZIP SHA-256 was independently confirmed as `e344355bfd51ca5ebfa5f0b0dd24a06af94e02497a3ce39e18ef8a59511c3a6c`, and its manifest identified the expected source commit and tree `bd0d80d350cea61cbdd2a9cecdfa6002f2c88ee9`.

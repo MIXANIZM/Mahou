@@ -12,6 +12,8 @@
 - Last user-verified Insert safety checkpoint: `d4b37a3dac8b4b35d682c82a9ced7b87eaf9adda`
 - Verified Smart Caps source commit: `0b43bb688115e0051114f38a745fce9e830452fd`
 - Verified Smart Caps artifact: `Mahou-2.9.0.1-dev-win-x64-0b43bb6-run30128168029`
+- Verified selected-text conversion source commit: `3418d09de20ea327302a26858a7b752862bd429e`
+- Verified selected-text conversion artifact: `Mahou-2.9.0.1-dev-win-x64-3418d09-run30134239498`
 
 The old `master` branch is not the working line for modernized Mahou. Read `PROJECT_STATE.md` before choosing or assigning work.
 
@@ -32,9 +34,14 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 
 ## Verified current behavior
 
+- Existing user-created selection has priority over collapsed-caret word conversion.
+- Selected text converts forward and backward in Microsoft Word, modern Windows Notepad, downloaded local Chrome `textarea` and `contenteditable` controls, Telegram Desktop and the other applicable tested applications.
+- Unicode text, Word rich formatting, images, Excel cell ranges and Explorer file-drop clipboard data remain available after selected-text conversion.
+- Protected/password fields suppress conversion.
+- Repeated selected-text conversion remains stable and ordinary insert mode remains usable afterward.
 - Collapsed-caret `Insert` never creates synthetic blue selection.
 - Modern Windows Notepad/RichEdit, Chrome, Telegram, Discord, unknown controls, protected fields, and failed probes are no-op without a user-created selection.
-- Modern Notepad was manually verified not to add, remove, highlight, or corrupt text.
+- Modern Notepad was manually verified not to add, remove, highlight, or corrupt text when no selection exists.
 - Microsoft Word and the exact classic Win32 `Edit` class remain the only supported direct collapsed-caret adapters.
 - Smart Caps is local, optional and disabled on a clean configuration.
 - Smart Caps directly corrected the focused Russian test cases in Microsoft Word and the exact classic Win32 `Edit` adapter without visible selection.
@@ -46,6 +53,32 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 - Draft PR #2 remains open, Draft, and unmerged.
 
 ## Completed tasks
+
+### AGZ-MAH-0005 — selected-text conversion and clipboard verification
+
+Verified on 2026-07-25 at exact source commit `3418d09de20ea327302a26858a7b752862bd429e` and source tree `7920a089324fbd85d70b3669c7f86eb18ec5706a`.
+
+Verification evidence:
+
+- Modern Windows build run `30134239498`: passed;
+- Security regression run `30134239469`: passed;
+- immutable x64 artifact `Mahou-2.9.0.1-dev-win-x64-3418d09-run30134239498`;
+- artifact ZIP SHA-256 `c0f0643e251319bc20d9f528f4b199a13f780af7292a45c84dcacd210d328d28`;
+- `Mahou.exe` SHA-256 `b3821d0a3116728db91cd46bf6091a578db19214cea7c3e7b465393b8876a95a`;
+- manifest, SHA-256 inventory, executable identity, embedded commit and retained evidence independently checked;
+- complete focused real-Windows selected-text and clipboard smoke confirmed by the user.
+
+The user confirmed:
+
+- forward and reverse conversion of a real user-created selection;
+- selection priority over the caret-word path;
+- expected Word direct word-around-caret behavior;
+- browser and messenger no-selection fail-closed behavior;
+- protected-field no-op behavior;
+- stable repeated conversion without text, caret, selection or overwrite corruption;
+- preservation of Unicode text, Word rich formatting, images, Excel ranges and Explorer file-drop clipboard data.
+
+The verified scope is the exact implementation, artifact and scenarios above. It does not authorize merge, marking PR #2 Ready, tagging, releasing, signing or publication.
 
 ### AGZ-MAH-0001 — Smart Caps verification
 
@@ -103,12 +136,12 @@ The direct Notepad/RichEdit adapter remains deferred. Unsupported controls must 
 - Do not restore UI Automation `.Select()`, `Shift+Left`, `Ctrl+Shift+Left`, generated-selection collapse/reselect, stale round-trip, or tracked-buffer `ConvertLast` fallbacks.
 - Do not change PR #1 or PR #3 without a separate explicit task and permission.
 - Do not merge or mark Ready PR #2, create a tag or Release, or publish a user build without explicit permission.
-- Do not extend the verified Smart Caps scope beyond the exact source commit, direct adapters and fail-closed scenarios recorded above without a new bounded task and applicable verification.
+- Do not extend the verified Smart Caps or selected-text conversion scope beyond the exact source commit, artifact and Windows scenarios recorded above without a new bounded task and applicable verification.
 - Do not enable paid GitHub features, paid runners, or paid CI capacity without explicit permission.
 - Do not hand off an artifact unless it passes `ARTIFACT-PROVENANCE.md` against the exact expected commit and tree.
 
 ## Next management step
 
-The project supervisor should review and accept the documentation-only AGZ-MAH-0001 verification result, keep PR #2 Draft and unmerged, then choose exactly one next bounded task and prepare a separate executor handoff.
+The project supervisor should review and accept the documentation-only AGZ-MAH-0005 verification result, keep PR #2 Draft and unmerged, then choose exactly one next bounded task and prepare a separate executor handoff.
 
 No temporary executor should start Notepad work, Insert changes, release work or another product task without that handoff.
