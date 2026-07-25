@@ -15,6 +15,28 @@ Text controls are treated by capability, not by a permissive class-name guess.
 
 The collapsed-caret path must never use synthetic selection, UI Automation `.Select()`, keyboard selection, clipboard mutation, tracked-word deletion/retyping, or compatibility fallback.
 
+## Input-surface capability probe
+
+`AGZ-MAH-0009` adds a separate executable under `tools/input-surface-probe/`. It is not referenced by the Mahou solution and does not participate in input processing.
+
+The probe performs one read-only capture after a countdown and exits. It inspects only the foreground process and focused control. It records redacted process/window/UIA/MSAA/IAccessible2 capability metadata, protected state, possible caret/selection/length readability and a deterministic capability fingerprint. It never retrieves actual text, window titles, UIA Name content, URLs, clipboard content or passwords.
+
+The normalized families are evidence labels only:
+
+- `CLASSIC_WIN32_EDIT`;
+- `RICHEDIT`;
+- `WORD_OBJECT_MODEL`;
+- `WPF`;
+- `WINUI_UWP`;
+- `CHROMIUM_BROWSER`;
+- `ELECTRON_WEBVIEW`;
+- `QT_CUSTOM`;
+- `CUSTOM_UNKNOWN`.
+
+No classification, process filename, framework, pattern, readable caret, readable length or editable-interface presence can activate a Mahou mutation path. A dedicated adapter remains mandatory for every family except the already verified exact classic `Edit` and Word adapters.
+
+Detailed boundaries are in `docs/INPUT-SURFACE-CAPABILITY-MAP.md` and `docs/INPUT-SURFACE-PROBE.md`.
+
 ## Smart Caps
 
 Smart Caps is an optional service connected to the keyboard event stream. It tracks only a short fresh word and schedules a correction after a boundary key is committed. It lowercases accidental uppercase letters after the first letter of each apostrophe/hyphen-delimited word segment, while words typed entirely in capitals remain unchanged. Before mutation it revalidates age, foreground window, exclusion policy, exact source text, and direct-adapter availability. Unsupported or stale contexts are discarded.
@@ -25,7 +47,7 @@ Intentional mixed-case names cannot be distinguished perfectly from accidental i
 
 ## Telegram Desktop boundary
 
-`AGZ-MAH-0008` did not establish a safe Telegram Desktop mutation primitive because the executor environment could not inspect the exact installed Windows process and ordinary new-message composer.
+`AGZ-MAH-0008` is accepted as `BLOCKED`: it did not establish a safe Telegram Desktop mutation primitive because the executor environment could not inspect the exact installed Windows process and ordinary new-message composer.
 
 The official Telegram Desktop source confirms a Qt-based custom `Ui::InputField` compose subsystem, but source class ancestry is not an activation signature and does not prove the Windows accessibility provider or installed build behavior.
 
@@ -34,7 +56,7 @@ UI Automation Text/TextRange remains read-only for general text mutation; `.Sele
 Until that complete evidence exists:
 
 - Telegram is not included in `SmartCaps.TryDirectReplace`;
-- process name, Qt class, UIA read access, caret access, or interface presence alone are insufficient;
+- process name, Qt class, UIA read access, caret access, capability-probe classification or interface presence alone are insufficient;
 - search, caption, edit-message, forward-comment, passcode, and every other Telegram field remain mandatory no-op;
 - other Qt applications remain mandatory no-op.
 
