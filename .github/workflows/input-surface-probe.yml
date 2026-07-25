@@ -58,19 +58,37 @@ jobs:
         uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2
 
       - name: Build standalone x64 probe
+        id: build_probe
         shell: pwsh
         run: |
           $output = Join-Path $env:GITHUB_WORKSPACE 'artifacts/probe/'
           $obj = Join-Path $env:GITHUB_WORKSPACE 'artifacts/probe-obj/'
           New-Item -ItemType Directory -Force -Path $output,$obj | Out-Null
           $consoleLog = Join-Path $env:GITHUB_WORKSPACE 'probe-msbuild-console.log'
-          & msbuild tools/input-surface-probe/InputSurfaceProbe.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 /p:Deterministic=true "/p:OutputPath=$output" "/p:IntermediateOutputPath=$obj" /v:minimal /fl "/flp:logfile=probe-msbuild.log;verbosity=normal" *> $consoleLog
+          & msbuild tools/input-surface-probe/InputSurfaceProbe.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 /p:Deterministic=true "/p:OutputPath=$output" "/p:IntermediateOutputPath=$obj" /v:minimal /fl "/flp:logfile=probe-msbuild.log;verbosity=diagnostic" *> $consoleLog
           $exitCode = $LASTEXITCODE
+          "exit_code=$exitCode" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
           if ($exitCode -ne 0) {
-            Get-Content $consoleLog | Select-String -Pattern 'error |error:|warning |warning:' | ForEach-Object { Write-Host $_.Line }
-            exit $exitCode
+            Write-Host 'Standalone probe compilation failed; diagnostics will be uploaded.'
+          } else {
+            Get-Content $consoleLog
           }
-          Get-Content $consoleLog
+
+      - name: Upload probe compiler diagnostics
+        if: steps.build_probe.outputs.exit_code != '0'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: input-surface-probe-compiler-diagnostics-${{ github.run_id }}
+          path: |
+            probe-msbuild-console.log
+            probe-msbuild.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Fail after preserving compiler diagnostics
+        if: steps.build_probe.outputs.exit_code != '0'
+        shell: pwsh
+        run: exit 1
 
       - name: Build and run probe contract tests
         shell: pwsh
