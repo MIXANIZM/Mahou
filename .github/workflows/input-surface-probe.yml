@@ -97,21 +97,50 @@ jobs:
         run: exit 1
 
       - name: Build and run probe contract tests
+        id: contract_tests
         shell: pwsh
         run: |
           $output = Join-Path $env:GITHUB_WORKSPACE 'artifacts/tests/'
           $obj = Join-Path $env:GITHUB_WORKSPACE 'artifacts/tests-obj/'
           New-Item -ItemType Directory -Force -Path $output,$obj | Out-Null
           $consoleLog = Join-Path $env:GITHUB_WORKSPACE 'probe-tests-msbuild-console.log'
-          & msbuild tools/input-surface-probe/tests/InputSurfaceProbe.Tests.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 /p:Deterministic=true "/p:OutputPath=$output" "/p:IntermediateOutputPath=$obj" /v:minimal /fl "/flp:logfile=probe-tests-msbuild.log;verbosity=normal" *> $consoleLog
-          $exitCode = $LASTEXITCODE
-          if ($exitCode -ne 0) {
-            Get-Content $consoleLog | Select-String -Pattern 'error |error:|warning |warning:' | ForEach-Object { Write-Host $_.Line }
-            exit $exitCode
+          $runLog = Join-Path $env:GITHUB_WORKSPACE 'probe-tests-run.log'
+          $ErrorActionPreference = 'Continue'
+          if (Test-Path variable:PSNativeCommandUseErrorActionPreference) {
+            $PSNativeCommandUseErrorActionPreference = $false
           }
-          Get-Content $consoleLog
-          & (Join-Path $output 'Mahou.InputSurfaceProbe.Tests.exe')
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & msbuild tools/input-surface-probe/tests/InputSurfaceProbe.Tests.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 /p:Deterministic=true "/p:OutputPath=$output" "/p:IntermediateOutputPath=$obj" /v:minimal /fl "/flp:logfile=probe-tests-msbuild.log;verbosity=diagnostic" *> $consoleLog
+          $exitCode = $LASTEXITCODE
+          if ($exitCode -eq 0) {
+            & (Join-Path $output 'Mahou.InputSurfaceProbe.Tests.exe') *> $runLog
+            $exitCode = $LASTEXITCODE
+          }
+          "exit_code=$exitCode" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          if ($exitCode -ne 0) {
+            Write-Host 'Probe contract tests failed; diagnostics will be uploaded.'
+          } else {
+            Get-Content $consoleLog
+            Get-Content $runLog
+          }
+          $global:LASTEXITCODE = 0
+          exit 0
+
+      - name: Upload probe contract test diagnostics
+        if: steps.contract_tests.outputs.exit_code != '0'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: input-surface-probe-test-diagnostics-${{ github.run_id }}
+          path: |
+            probe-tests-msbuild-console.log
+            probe-tests-msbuild.log
+            probe-tests-run.log
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Fail after preserving contract test diagnostics
+        if: steps.contract_tests.outputs.exit_code != '0'
+        shell: pwsh
+        run: exit 1
 
       - name: Verify embedded source identity
         shell: pwsh
