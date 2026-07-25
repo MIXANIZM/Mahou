@@ -65,6 +65,10 @@ jobs:
           $obj = Join-Path $env:GITHUB_WORKSPACE 'artifacts/probe-obj/'
           New-Item -ItemType Directory -Force -Path $output,$obj | Out-Null
           $consoleLog = Join-Path $env:GITHUB_WORKSPACE 'probe-msbuild-console.log'
+          $ErrorActionPreference = 'Continue'
+          if (Test-Path variable:PSNativeCommandUseErrorActionPreference) {
+            $PSNativeCommandUseErrorActionPreference = $false
+          }
           & msbuild tools/input-surface-probe/InputSurfaceProbe.csproj /m /t:Rebuild /p:Configuration=Release /p:Platform=x64 /p:Deterministic=true "/p:OutputPath=$output" "/p:IntermediateOutputPath=$obj" /v:minimal /fl "/flp:logfile=probe-msbuild.log;verbosity=diagnostic" *> $consoleLog
           $exitCode = $LASTEXITCODE
           "exit_code=$exitCode" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
@@ -73,6 +77,8 @@ jobs:
           } else {
             Get-Content $consoleLog
           }
+          $global:LASTEXITCODE = 0
+          exit 0
 
       - name: Upload probe compiler diagnostics
         if: steps.build_probe.outputs.exit_code != '0'
