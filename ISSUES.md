@@ -4,6 +4,13 @@
 
 # Awaiting supervisor decision
 
+- [AGZ-MAH-0009] [PROBE_READY] 2026-07-25
+  Created a standalone read-only Windows x64 input-surface probe on branch `agz-mah-0009-input-surface-capability-map` from exact base `2ca9c1540dbf68428e8c48180c56e4af98d5e59d`.
+  The one-shot probe captures only redacted foreground-process and focused-control capability metadata: process identity/version/architecture/signer, HWND classes, UIA metadata/patterns/protected state, MSAA role/state, IAccessible2 interface presence, caret/selection/length readability, cautious classification and a normalized fingerprint.
+  The source and contract gates prohibit text/window-title/UIA-Name-content/URL/clipboard/password collection, writable methods, programmatic selection, keyboard simulation, hooks, continuous monitoring and injection. Interface presence is metadata only and all write capability remains unverified.
+  Added `docs/INPUT-SURFACE-CAPABILITY-MAP.md`, `docs/INPUT-SURFACE-PROBE.md`, a dedicated x64 build/test/package workflow, redaction/classification/password tests and immutable probe ZIP provenance. Mahou runtime code and runtime version `2.9.0.1-dev` are unchanged.
+  The probe is ready for supervisor review and later read-only user snapshots. It does not add a Notepad, Chrome, Telegram, WhatsApp, WPF, WinUI, Electron, WebView, Qt or unknown-control adapter.
+
 - [AGZ-MAH-0007] [BROWSER-CONTEXT-MUTATION-NOT-SAFE] 2026-07-25
   Investigated the isolated Manifest V3 Chrome editing core from exact starting commit `faaf170d12e5bbcbd49c0b66edf4bac75c1e3049` without Native Messaging or Mahou runtime integration.
   `setRangeText()` can express an exact range and caret adjustment but does not provide the required normal trusted editing-event plus single browser undo/redo transaction contract. Deprecated `execCommand('insertText')` can preserve browser undo in some configurations but exact replacement requires a temporary programmatic selection, which is forbidden. Whole-value assignment and synthetic events were also rejected.
@@ -15,14 +22,14 @@
   Design a dedicated verified direct adapter for modern Windows Notepad/RichEdit. Until then, collapsed-caret `Insert` and Smart Caps remain strict no-op in those controls.
   Draft PR #3 remains open, but its current diff is transport and workflow history from the attempted task, not an accepted or integrated Notepad implementation. Do not use, modify, close, rebase, or clean up PR #3 without a separate decision.
 
-# Blocked
+# Accepted blocked results
 
-- [AGZ-MAH-0008] [BLOCKED] 2026-07-25
-  Investigated the Telegram Desktop Smart Caps direct-path boundary from exact starting commit `076ee95325809bd0581c9e0f24e9dbb1022c6603` on branch `agz-mah-0008-telegram-smart-caps-path`.
-  The available executor environment has no interactive Windows desktop or running Telegram process, so it cannot capture the exact installed version, executable/signature, HWND and UI Automation identity, MSAA/IAccessible2 interfaces, exact caret, composition state, active-chat signal, Telegram undo behavior, formatting/draft preservation, or message-send safety required by the acceptance gate.
-  Official API documentation confirms that UI Automation Text/TextRange is not an exact range-write primitive and that `ValuePattern.SetValue()` is whole-field replacement. IAccessible2 defines `IAccessibleEditableText::replaceText`, but runtime exposure and Telegram-specific atomicity, caret, draft/entity, active-chat, post-state, and one-step undo behavior remain unmeasured; interface presence alone is insufficient.
-  No runtime adapter, diagnostic mutation, keyboard simulation, clipboard path, whole-field rewrite, version change, artifact, or user smoke package was added. Telegram remains strict no-op without a real user-created selection.
-  Decision record: `docs/TELEGRAM-SMART-CAPS-ARCHITECTURE.md`. The exact next step, if separately continued, is a read-only probe and bounded Saved Messages test on the user's real Windows Telegram build before any mutation candidate is considered.
+- [AGZ-MAH-0008] [BLOCKED] [ACCEPTED] 2026-07-25
+  The Telegram Desktop Smart Caps direct-path investigation from exact starting commit `076ee95325809bd0581c9e0f24e9dbb1022c6603` was accepted and merged through PR #10 into `mixanizm-modern-v2.9.0.1` at merge commit `2ca9c1540dbf68428e8c48180c56e4af98d5e59d`.
+  The executor environment had no interactive Windows desktop or running Telegram process, so it could not capture the exact installed version, executable/signature, HWND and UI Automation identity, MSAA/IAccessible2 interfaces, exact caret, composition state, active-chat signal, Telegram undo behavior, formatting/draft preservation, or message-send safety required by the acceptance gate.
+  Official API documentation confirms that UI Automation Text/TextRange is not an exact range-write primitive and that `ValuePattern.SetValue()` is whole-field replacement. IAccessible2 defines `IAccessibleEditableText::replaceText`, but runtime exposure and Telegram-specific atomicity, caret, draft/entity, active-chat, post-state and one-step undo behavior remain unmeasured; interface presence alone is insufficient.
+  No runtime adapter, diagnostic mutation, keyboard simulation, clipboard path, whole-field rewrite, version change, artifact or user mutation smoke package was added. Telegram remains strict no-op without a real user-created selection.
+  Decision record: `docs/TELEGRAM-SMART-CAPS-ARCHITECTURE.md`. `AGZ-MAH-0009` now supplies the separately scoped read-only capability probe requested as the next evidence tool; it still cannot authorize mutation.
 
 # Deferred product ideas
 
@@ -65,3 +72,4 @@
 - Draft PR #1 is open, based on `master`, and belongs to an earlier stabilization line. It is not the current working line and must not be changed without a separate decision.
 - Draft PR #2 is open and is the main modernization PR from `mixanizm-modern-v2.9.0.1` into `master`. Keep it Draft and unmerged.
 - Draft PR #3 is open against `mixanizm-modern-v2.9.0.1` and remains preserved transport history, not an accepted Notepad adapter.
+- PR #10 is closed and merged into `mixanizm-modern-v2.9.0.1`; it records only the accepted `BLOCKED` Telegram investigation.
