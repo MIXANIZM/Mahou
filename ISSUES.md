@@ -4,6 +4,13 @@
 
 # Awaiting supervisor decision
 
+- [AGZ-MAH-0010] [DOCUMENTATION_COMPLETE / CI_PASSED / DRAFT] 2026-07-27
+  Recorded the completed real-Windows read-only input-surface evidence from probe commit `cef38006dfe6093ee1b233703ad79215bb2a9758` on branch `agz-mah-0010-user-probe-evidence` from exact base `f82a3b233d250f4bfb432327063c6832ab24ea5a`.
+  Updated the capability map, probe guide, project state, handoff, architecture and testing documentation. Added only reviewed sanitized JSON reports under `docs/evidence/input-surface-probe/`; reports contain no actual text, titles, URLs, usernames, clipboard content or personal paths.
+  The evidence distinguishes Chrome input/textarea from contenteditable and Obsidian title from CodeMirror body, keeps WhatsApp Desktop blocked at `DesktopChildSiteBridge`, and confirms that read capability does not imply safe write capability.
+  Mahou runtime code and version `2.9.0.1-dev` are unchanged. No mutation experiment, runtime adapter, candidate artifact, version change, merge, release or PR #3 work was performed.
+  Draft PR #12 remains open and awaits supervisor acceptance and merge decision.
+
 - [AGZ-MAH-0007] [BROWSER-CONTEXT-MUTATION-NOT-SAFE] 2026-07-25
   Investigated the isolated Manifest V3 Chrome editing core from exact starting commit `faaf170d12e5bbcbd49c0b66edf4bac75c1e3049` without Native Messaging or Mahou runtime integration.
   `setRangeText()` can express an exact range and caret adjustment but does not provide the required normal trusted editing-event plus single browser undo/redo transaction contract. Deprecated `execCommand('insertText')` can preserve browser undo in some configurations but exact replacement requires a temporary programmatic selection, which is forbidden. Whole-value assignment and synthetic events were also rejected.
@@ -28,12 +35,6 @@
 - Chrome Smart Caps remains unsupported. `AGZ-MAH-0006` rejected the desktop-only path and `AGZ-MAH-0007` rejected the tested browser-context editing core under the strict range/caret/selection/undo/events gate. Native Messaging was not started.
 
 # Completed
-
-- [AGZ-MAH-0010] [COMPLETED] 2026-07-27
-  Recorded the completed real-Windows read-only input-surface evidence from probe commit `cef38006dfe6093ee1b233703ad79215bb2a9758` on branch `agz-mah-0010-user-probe-evidence` from exact base `f82a3b233d250f4bfb432327063c6832ab24ea5a`.
-  Updated the capability map, probe guide, project state, handoff, architecture and testing documentation. Added only reviewed sanitized JSON reports under `docs/evidence/input-surface-probe/`; reports contain no actual text, titles, URLs, usernames, clipboard content or personal paths.
-  The evidence distinguishes Chrome input/textarea from contenteditable and Obsidian title from CodeMirror body, keeps WhatsApp Desktop blocked at `DesktopChildSiteBridge`, and confirms that read capability does not imply safe write capability.
-  Mahou runtime code and version `2.9.0.1-dev` are unchanged. No mutation experiment, runtime adapter, candidate artifact, version change, merge, release or PR #3 work was performed.
 
 - [AGZ-MAH-0009] [USER_PROBE_EVIDENCE_COMPLETE] 2026-07-27
   The standalone read-only Windows x64 probe was merged through PR #11 into the development line at `f82a3b233d250f4bfb432327063c6832ab24ea5a`. Probe source commit `cef38006dfe6093ee1b233703ad79215bb2a9758` passed Security regression run `30163258945`, Input surface probe run `30163258946`, and Modern Windows build run `30163258943`.
