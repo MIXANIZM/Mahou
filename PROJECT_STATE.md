@@ -1,6 +1,6 @@
 # Project state — MIXANIZM Mahou
 
-Snapshot date: 2026-07-27
+Snapshot date: 2026-07-28
 
 ## Authoritative development line
 
@@ -8,7 +8,7 @@ Snapshot date: 2026-07-27
 - Legacy default branch: `master`
 - Current development branch: `mixanizm-modern-v2.9.0.1`
 - Main development pull request: Draft PR #2, from `mixanizm-modern-v2.9.0.1` into `master`
-- Current development head at the start of `AGZ-MAH-0010`: `f82a3b233d250f4bfb432327063c6832ab24ea5a`
+- Current development head at the start of `AGZ-MAH-0011`: `779b50dcc27cbe58f69ddadd54d526a0394663df`
 - Runtime line: `2.9.0.1-dev`
 - Agatzub Development Ruleset: `v2.7.0`
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
@@ -18,6 +18,8 @@ Snapshot date: 2026-07-27
 - Chrome browser-context editing-core result: accepted `BROWSER-CONTEXT-MUTATION-NOT-SAFE` under `AGZ-MAH-0007`, merged through PR #9
 - Telegram Desktop direct-path result: accepted `BLOCKED` under `AGZ-MAH-0008`
 - Input-surface capability probe: `AGZ-MAH-0009: USER_PROBE_EVIDENCE_COMPLETE`
+- Input-surface evidence record: `AGZ-MAH-0010`, accepted and merged through PR #12 at `779b50dcc27cbe58f69ddadd54d526a0394663df`
+- Modern Notepad direct-path feasibility: `AGZ-MAH-0011: DIRECT-PATH-NOT-SAFE`
 
 The old `master` branch is not the current working line for modernized Mahou. New bounded tasks normally branch from `mixanizm-modern-v2.9.0.1` unless a task handoff explicitly states otherwise.
 
@@ -46,29 +48,18 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 
 ## Current bounded task result
 
-### AGZ-MAH-0010 — Record user input-surface evidence
+### AGZ-MAH-0011 — Modern Notepad RichEdit write feasibility
 
-- Exact base: `f82a3b233d250f4bfb432327063c6832ab24ea5a`.
-- Task branch: `agz-mah-0010-user-probe-evidence`.
-- Scope: documentation and sanitized evidence only.
-- Probe source commit: `cef38006dfe6093ee1b233703ad79215bb2a9758`.
-- Mahou runtime source and runtime version remain unchanged.
-- No mutation experiment, runtime adapter, artifact, version change, merge, release, or PR #3 work is included.
+- Exact base: `779b50dcc27cbe58f69ddadd54d526a0394663df`.
+- Task branch: `agz-mah-0011-notepad-richedit-feasibility`.
+- Scope: documented Windows accessibility/RichEdit interoperability feasibility and read-only installed-build evidence.
+- Result: `DIRECT-PATH-NOT-SAFE`.
+- Mahou runtime source and runtime version `2.9.0.1-dev` remain unchanged.
+- No text mutation, executable harness, runtime adapter, candidate artifact, merge, release, or PR #3 work is included.
 
-Recorded real-Windows results:
+The installed Notepad `11.2605.34.0` x64 control was identified as `RichEditD2DPT`. UIA exposed only `TextPattern` and `ValuePattern`. A read-only `AccessibleObjectFromWindow(OBJID_NATIVEOM)` call returned an object supporting `ITextDocument`, proving that the installed build marshalled that object in this observation, but not that Microsoft supports this RichEdit acquisition route across versions.
 
-- Word -> `WORD_OBJECT_MODEL`;
-- modern Notepad `RichEditD2DPT` -> `RICHEDIT`;
-- AnyDesk exact classic `Edit` -> `CLASSIC_WIN32_EDIT`;
-- Chrome input/textarea -> identical `CHROMIUM_BROWSER` UIA `Edit` surfaces with `TextPattern` + `ValuePattern`;
-- Chrome contenteditable -> separate `CHROMIUM_BROWSER` UIA `Group` with `TextPattern`;
-- Telegram Desktop 7.0.5 -> `QT_CUSTOM`, `Ui::InputField::Inner`, `TextPattern` + `ValuePattern`;
-- WhatsApp Web in Opera -> Chromium Edit family;
-- WhatsApp Desktop -> `CUSTOM_UNKNOWN`, `DesktopChildSiteBridge`, internal editor not reached;
-- Obsidian title -> Electron Group/TextPattern;
-- Obsidian CodeMirror body -> Electron Edit/TextPattern + ValuePattern.
-
-Eight sanitized JSON reports were committed under `docs/evidence/input-surface-probe/`. Raw JSON for Word, modern Notepad, and AnyDesk was not available in the supplied files; their normalized user-confirmed evidence is documented without inventing raw reports.
+Microsoft documents RichEdit TOM acquisition through `EM_GETOLEINTERFACE`, whose pointer-bearing message contract is not an acceptable cross-process path here. The generic `OBJID_NATIVEOM` mechanism does not document RichEdit as a supported provider. Consequently independent `ITextRange` replacement and one normal Notepad Undo unit cannot be accepted through that acquisition path. The full evidence and gate decision are in `docs/NOTEPAD-RICHEDIT-FEASIBILITY.md`.
 
 ## Completed evidence result
 
@@ -138,10 +129,11 @@ RichEdit is first because it may expose native range, caret and undo semantics. 
 ## Product task status
 
 - `AGZ-MAH-0009` is `USER_PROBE_EVIDENCE_COMPLETE`.
-- `AGZ-MAH-0010` records that evidence without changing Mahou runtime behavior.
+- `AGZ-MAH-0010` was accepted and merged through PR #12 without changing Mahou runtime behavior.
+- `AGZ-MAH-0011` records `DIRECT-PATH-NOT-SAFE`; modern Notepad remains strict no-op and no adapter was added.
 - `AGZ-MAH-0008` remains accepted `BLOCKED` for Telegram mutation.
 - `AGZ-MAH-0007` is accepted with result `BROWSER-CONTEXT-MUTATION-NOT-SAFE` and merged through PR #9; it does not add Chrome support.
-- `AGZ-MAH-0003` Notepad direct adapter remains deferred. PR #3 is not an accepted implementation.
+- `AGZ-MAH-0003` is superseded by the negative `AGZ-MAH-0011` feasibility result. PR #3 is not an accepted implementation.
 
 ## Coordination model
 

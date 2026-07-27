@@ -4,20 +4,18 @@
 
 # Awaiting supervisor decision
 
-- [AGZ-MAH-0010] [DOCUMENTATION_COMPLETE / CI_PASSED / DRAFT] 2026-07-27
-  Recorded the completed real-Windows read-only input-surface evidence from probe commit `cef38006dfe6093ee1b233703ad79215bb2a9758` on branch `agz-mah-0010-user-probe-evidence` from exact base `f82a3b233d250f4bfb432327063c6832ab24ea5a`.
-  Updated the capability map, probe guide, project state, handoff, architecture and testing documentation. Added only reviewed sanitized JSON reports under `docs/evidence/input-surface-probe/`; reports contain no actual text, titles, URLs, usernames, clipboard content or personal paths.
-  The evidence distinguishes Chrome input/textarea from contenteditable and Obsidian title from CodeMirror body, keeps WhatsApp Desktop blocked at `DesktopChildSiteBridge`, and confirms that read capability does not imply safe write capability.
-  Mahou runtime code and version `2.9.0.1-dev` are unchanged. No mutation experiment, runtime adapter, candidate artifact, version change, merge, release or PR #3 work was performed.
-  Draft PR #12 remains open and awaits supervisor acceptance and merge decision.
+- [AGZ-MAH-0011] [DIRECT-PATH-NOT-SAFE / DOCUMENTATION_COMPLETE / DRAFT] 2026-07-28
+  Investigated the documented Windows accessibility/RichEdit interoperability contract for an exact-range write in a disposable empty modern Notepad document from exact base `779b50dcc27cbe58f69ddadd54d526a0394663df`.
+  The installed `RichEditD2DPT` control exposed UIA `TextPattern` and `ValuePattern`; a read-only `OBJID_NATIVEOM` probe also returned an object supporting `ITextDocument`. However, Microsoft documents RichEdit TOM acquisition through the pointer-bearing `EM_GETOLEINTERFACE` path, not a RichEdit-specific external `OBJID_NATIVEOM` contract. The generic object-model mechanism and one observed build do not establish a supported version-gated mutation contract.
+  Exact independent `ITextRange` replacement is expressible after a valid TOM object is acquired, but cross-process acquisition support and a single ordinary Notepad Undo unit are not documented for this route. No text mutation, harness, adapter, runtime/version change, artifact, merge, release, or PR #3 work was performed. Modern Notepad remains strict no-op.
 
 - [AGZ-MAH-0007] [BROWSER-CONTEXT-MUTATION-NOT-SAFE] 2026-07-25
   Investigated the isolated Manifest V3 Chrome editing core from exact starting commit `faaf170d12e5bbcbd49c0b66edf4bac75c1e3049` without Native Messaging or Mahou runtime integration.
   `setRangeText()` can express an exact range and caret adjustment but does not provide the required normal trusted editing-event plus single browser undo/redo transaction contract. Deprecated `execCommand('insertText')` can preserve browser undo in some configurations but exact replacement requires a temporary programmatic selection, which is forbidden. Whole-value assignment and synthetic events were also rejected.
   The retained prototype performs no mutation and reports `mutation-api-not-accepted`. No Chrome support, Mahou runtime change, merge, release or publication is authorized.
 
-- [AGZ-MAH-0003] [DEFERRED] 2026-07-25
-  Design a dedicated verified direct adapter for modern Windows Notepad/RichEdit. Until then, collapsed-caret `Insert` and Smart Caps remain strict no-op in those controls.
+- [AGZ-MAH-0003] [SUPERSEDED BY AGZ-MAH-0011 / DIRECT-PATH-NOT-SAFE] 2026-07-25
+  The documented-contract feasibility gate was completed by `AGZ-MAH-0011`; it did not establish a safe external direct adapter for modern Windows Notepad/RichEdit. Collapsed-caret `Insert` and Smart Caps remain strict no-op in those controls.
   Draft PR #3 remains open, but its current diff is transport and workflow history from the attempted task, not an accepted or integrated Notepad implementation. Do not use, modify, close, rebase, or clean up PR #3 without a separate decision.
 
 # Accepted blocked results
@@ -35,6 +33,9 @@
 - Chrome Smart Caps remains unsupported. `AGZ-MAH-0006` rejected the desktop-only path and `AGZ-MAH-0007` rejected the tested browser-context editing core under the strict range/caret/selection/undo/events gate. Native Messaging was not started.
 
 # Completed
+
+- [AGZ-MAH-0010] [ACCEPTED / MERGED] 2026-07-27
+  Recorded the completed real-Windows read-only input-surface evidence without changing Mahou runtime behavior. PR #12 was accepted and merged into `mixanizm-modern-v2.9.0.1` at merge commit `779b50dcc27cbe58f69ddadd54d526a0394663df`.
 
 - [AGZ-MAH-0009] [USER_PROBE_EVIDENCE_COMPLETE] 2026-07-27
   The standalone read-only Windows x64 probe was merged through PR #11 into the development line at `f82a3b233d250f4bfb432327063c6832ab24ea5a`. Probe source commit `cef38006dfe6093ee1b233703ad79215bb2a9758` passed Security regression run `30163258945`, Input surface probe run `30163258946`, and Modern Windows build run `30163258943`.
@@ -76,3 +77,4 @@
 - Draft PR #3 is open against `mixanizm-modern-v2.9.0.1` and remains preserved transport history, not an accepted Notepad adapter.
 - PR #10 is closed and merged and records only the accepted `BLOCKED` Telegram investigation.
 - PR #11 is closed and merged and adds the read-only input-surface capability probe, not a runtime adapter.
+- PR #12 is closed and merged and records only the accepted sanitized input-surface evidence.
