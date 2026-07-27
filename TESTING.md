@@ -112,6 +112,19 @@ This documentation-only task requires:
 
 The task does not create or hand off a candidate artifact. The dedicated `Input surface probe` workflow is not required to rebuild the already immutable user probe merely because documentation and archived reports were recorded.
 
+## AGZ-MAH-0011 checks
+
+This documentation-only Windows accessibility/RichEdit interoperability task requires:
+
+1. primary Microsoft documentation review for UIA, `OBJID_NATIVEOM`, RichEdit TOM acquisition, independent `ITextRange` behavior and Undo;
+2. a read-only installed-build capture of Notepad/package/binary identity, focused control identity, supported UIA patterns and COM interface availability;
+3. no text mutation before the documented-contract gate passes;
+4. changed-file review proving that only documentation changed and Mahou runtime source/version remain untouched;
+5. static security and input-surface-probe regression gates;
+6. Security regression and Modern Windows build on the exact task head.
+
+The documented RichEdit-specific external acquisition contract was not established, so the result is `DIRECT-PATH-NOT-SAFE`. No mutation smoke, executable harness or candidate artifact is created. A dedicated feasibility workflow is not added because there is no executable feasibility code to build or run.
+
 ## Recommended research order
 
 Future separately authorized tasks should investigate:
@@ -151,7 +164,7 @@ The `Modern Windows build` workflow:
 - verifies the generated archive with the exact full commit and tree, rejects an intentionally wrong expected commit, and rejects a legacy-manifest fixture before upload;
 - creates a separate post-upload evidence JSON containing artifact ID/digest, run URL, source commit/tree, ZIP SHA-256, and executable SHA-256.
 
-`AGZ-MAH-0010` must leave both the existing `Security regression` and `Modern Windows build` green because it changes only documentation/evidence while leaving Mahou runtime sources and runtime version untouched.
+`AGZ-MAH-0011` must leave both the existing `Security regression` and `Modern Windows build` green because it changes only documentation while leaving Mahou runtime sources and runtime version untouched.
 
 ## Artifact handoff
 

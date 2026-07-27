@@ -9,7 +9,7 @@
 - Runtime line: `2.9.0.1-dev`
 - Agatzub Development Ruleset: `v2.7.0`
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
-- Current development head at the `AGZ-MAH-0010` start: `f82a3b233d250f4bfb432327063c6832ab24ea5a`
+- Current development head at the `AGZ-MAH-0011` start: `779b50dcc27cbe58f69ddadd54d526a0394663df`
 - Last user-verified Insert safety checkpoint: `d4b37a3dac8b4b35d682c82a9ced7b87eaf9adda`
 - Verified Smart Caps source: `0b43bb688115e0051114f38a745fce9e830452fd`
 - Verified selected-text conversion source: `3418d09de20ea327302a26858a7b752862bd429e`
@@ -41,23 +41,25 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 
 ## Current bounded task
 
-### AGZ-MAH-0010 — Record Windows input-surface evidence
+### AGZ-MAH-0011 — Modern Notepad RichEdit write feasibility
 
 Starting point:
 
 ```text
 Base branch: mixanizm-modern-v2.9.0.1
-Exact base: f82a3b233d250f4bfb432327063c6832ab24ea5a
-Task branch: agz-mah-0010-user-probe-evidence
-Probe commit: cef38006dfe6093ee1b233703ad79215bb2a9758
+Exact base: 779b50dcc27cbe58f69ddadd54d526a0394663df
+Task branch: agz-mah-0011-notepad-richedit-feasibility
+Decision: DIRECT-PATH-NOT-SAFE
 ```
 
 Scope and result:
 
-- documentation and sanitized read-only evidence only;
+- documented Windows accessibility/RichEdit interoperability feasibility and read-only installed-build evidence;
 - no Mahou runtime source or runtime version change;
-- no mutation experiment, adapter, candidate artifact, signing, merge, release, or PR #3 work;
-- `AGZ-MAH-0009: USER_PROBE_EVIDENCE_COMPLETE`.
+- no text mutation, executable harness, adapter, candidate artifact, signing, merge, release, or PR #3 work;
+- Microsoft documents RichEdit TOM acquisition through pointer-bearing `EM_GETOLEINTERFACE`, not a RichEdit-specific external `OBJID_NATIVEOM` contract;
+- the observed installed-build `OBJID_NATIVEOM`/`ITextDocument` success is evidence, not a supported version-gated write contract;
+- one ordinary Notepad Undo unit therefore remains unproven.
 
 Recorded user evidence:
 
@@ -83,6 +85,7 @@ Eight reviewed sanitized JSON reports are stored in `docs/evidence/input-surface
 - Obsidian title and CodeMirror body are distinct Electron surfaces.
 - WhatsApp Desktop remains blocked because the probe reached only `Microsoft.UI.Content.DesktopChildSiteBridge`, not an internal editor.
 - UIA `TextPattern` and `ValuePattern` do not provide the accepted exact-range mutation, application undo, event, composition, stale-state and post-state contract.
+- `AGZ-MAH-0011` found no documented RichEdit-specific external `OBJID_NATIVEOM` contract; observed COM availability on one Notepad build must not become a mutation allow-list.
 - The only verified direct write adapters remain Word document `Range` and exact classic Win32 `Edit`.
 
 ## Recommended research order
@@ -125,6 +128,10 @@ BROWSER-CONTEXT-MUTATION-NOT-SAFE
 ```
 
 The retained test-only MV3 prototype performs no mutation. `setRangeText()` did not satisfy trusted events plus one browser undo transaction; `execCommand('insertText')` required forbidden temporary programmatic selection; whole-field assignment and synthetic events remain rejected. Native Messaging was not started.
+
+### AGZ-MAH-0010 — Input-surface evidence record
+
+Accepted and merged through PR #12 into `mixanizm-modern-v2.9.0.1` at merge commit `779b50dcc27cbe58f69ddadd54d526a0394663df`. It changed documentation and sanitized evidence only.
 
 ### AGZ-MAH-0008 — Telegram Desktop direct path
 
@@ -171,8 +178,8 @@ Open and unmerged against `mixanizm-modern-v2.9.0.1`. Its current diff is preser
 - Do not combine Obsidian title and CodeMirror body into one inferred editor contract.
 - Do not start mutation work from the WhatsApp Desktop bridge evidence; the internal editor was not reached.
 - Do not change PR #1 or PR #3 without a separate explicit task.
-- Do not merge or mark Ready PR #2 or the AGZ-MAH-0010 task PR, create a tag or Release, or publish a Mahou user build without explicit permission.
+- Do not merge or mark Ready PR #2 or the AGZ-MAH-0011 task PR, create a tag or Release, or publish a Mahou user build without explicit permission.
 
 ## Next management step
 
-The project supervisor should inspect the `AGZ-MAH-0010` Draft PR, confirm that only documentation and sanitized evidence changed, and review the applicable Security regression and Modern Windows build results. After acceptance, the supervisor—not this executor—may choose whether to open a separate research task in the documented priority order.
+The project supervisor should inspect the `AGZ-MAH-0011` Draft PR, confirm the `DIRECT-PATH-NOT-SAFE` decision and documentation-only diff, and review the Security regression and Modern Windows build results. A future task may reopen modern Notepad only if a documented supported external range-write contract becomes available.

@@ -81,6 +81,20 @@ The recommended order for separately authorized architecture tasks is:
 
 RichEdit is first because it may expose native range, caret and undo semantics that can be tested as a bounded direct adapter. UIA TextPattern/ValuePattern alone is already insufficient for Chromium and Qt, so their read metadata does not justify earlier mutation work.
 
+## Modern Notepad RichEdit feasibility boundary
+
+`AGZ-MAH-0011` completed the documented-contract gate for modern Notepad and records:
+
+```text
+DIRECT-PATH-NOT-SAFE
+```
+
+On the observed Notepad `11.2605.34.0` x64 build, the focused `RichEditD2DPT` control exposed UIA `TextPattern` and `ValuePattern`; a read-only `AccessibleObjectFromWindow(OBJID_NATIVEOM)` call returned a cross-process object supporting `ITextDocument`. This observation does not establish a supported RichEdit contract. Microsoft documents RichEdit TOM acquisition through `EM_GETOLEINTERFACE`, while the generic `OBJID_NATIVEOM` documentation does not identify RichEdit as a supported provider.
+
+TOM can create an independent `ITextRange` and `ITextRange::SetText` can replace that range after a valid document object is acquired. The missing supported external acquisition contract is therefore decisive. In addition, one normal application-level Notepad Undo unit is not documented for this route. Version checks cannot convert an undocumented acquisition mechanism into a supported adapter.
+
+No mutation smoke or executable harness was authorized after that gate failed. Mahou must not add an `OBJID_NATIVEOM`/TOM Notepad adapter, pointer-bearing cross-process RichEdit messages, UIA selection, whole-value writes, keyboard/clipboard paths, hooks, injection, or process-memory operations. Full evidence is in `docs/NOTEPAD-RICHEDIT-FEASIBILITY.md`.
+
 Each future adapter must independently prove:
 
 - exact supported application/build/control identity;
