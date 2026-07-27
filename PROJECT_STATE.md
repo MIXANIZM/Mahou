@@ -15,7 +15,7 @@ Snapshot date: 2026-07-27
 - Last verified Smart Caps source commit: `0b43bb688115e0051114f38a745fce9e830452fd`
 - Last verified selected-text conversion source commit: `3418d09de20ea327302a26858a7b752862bd429e`
 - Chrome desktop-only decision: `DIRECT-PATH-NOT-SAFE` under `AGZ-MAH-0006`
-- Chrome browser-context editing-core result awaiting supervisor decision: `BROWSER-CONTEXT-MUTATION-NOT-SAFE` under `AGZ-MAH-0007`
+- Chrome browser-context editing-core result: accepted `BROWSER-CONTEXT-MUTATION-NOT-SAFE` under `AGZ-MAH-0007`, merged through PR #9
 - Telegram Desktop direct-path result: accepted `BLOCKED` under `AGZ-MAH-0008`
 - Input-surface capability probe: `AGZ-MAH-0009: USER_PROBE_EVIDENCE_COMPLETE`
 
@@ -103,7 +103,8 @@ RichEdit is first because it may expose native range, caret and undo semantics. 
 
 ### AGZ-MAH-0007 — Chrome Manifest V3 editing-core prototype
 
-- Result: `BROWSER-CONTEXT-MUTATION-NOT-SAFE`.
+- Result: accepted `BROWSER-CONTEXT-MUTATION-NOT-SAFE`.
+- Accepted and merged through PR #9 into `mixanizm-modern-v2.9.0.1` at merge commit `076ee95325809bd0581c9e0f24e9dbb1022c6603`.
 - `setRangeText()` does not provide the required trusted editing-event plus single browser undo/redo contract.
 - `execCommand('insertText')` requires a temporary programmatic selection for exact replacement and was rejected.
 - Whole-field assignment and synthetic events remain rejected.
@@ -139,7 +140,7 @@ RichEdit is first because it may expose native range, caret and undo semantics. 
 - `AGZ-MAH-0009` is `USER_PROBE_EVIDENCE_COMPLETE`.
 - `AGZ-MAH-0010` records that evidence without changing Mahou runtime behavior.
 - `AGZ-MAH-0008` remains accepted `BLOCKED` for Telegram mutation.
-- `AGZ-MAH-0007` remains a negative browser-context editing-core result awaiting supervisor acceptance.
+- `AGZ-MAH-0007` is accepted with result `BROWSER-CONTEXT-MUTATION-NOT-SAFE` and merged through PR #9; it does not add Chrome support.
 - `AGZ-MAH-0003` Notepad direct adapter remains deferred. PR #3 is not an accepted implementation.
 
 ## Coordination model
