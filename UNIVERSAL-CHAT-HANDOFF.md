@@ -9,22 +9,18 @@
 - Runtime line: `2.9.0.1-dev`
 - Agatzub Development Ruleset: `v2.7.0`
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
-- Current development head at the `AGZ-MAH-0009` handoff start: `2ca9c1540dbf68428e8c48180c56e4af98d5e59d`
+- Current development head at the `AGZ-MAH-0010` start: `f82a3b233d250f4bfb432327063c6832ab24ea5a`
 - Last user-verified Insert safety checkpoint: `d4b37a3dac8b4b35d682c82a9ced7b87eaf9adda`
-- Verified Smart Caps source commit: `0b43bb688115e0051114f38a745fce9e830452fd`
-- Verified selected-text conversion source commit: `3418d09de20ea327302a26858a7b752862bd429e`
-- Chrome desktop-only decision: `DIRECT-PATH-NOT-SAFE` under `AGZ-MAH-0006`
-- Chrome browser-context editing-core result awaiting supervisor decision: `BROWSER-CONTEXT-MUTATION-NOT-SAFE` under `AGZ-MAH-0007`
-- Telegram Desktop direct-path result: accepted `BLOCKED` under `AGZ-MAH-0008`, merged through PR #10
-- Input-surface capability probe result awaiting supervisor decision: `PROBE_READY` under `AGZ-MAH-0009`
+- Verified Smart Caps source: `0b43bb688115e0051114f38a745fce9e830452fd`
+- Verified selected-text conversion source: `3418d09de20ea327302a26858a7b752862bd429e`
 
-The old `master` branch is not the working line for modernized Mahou. Read `PROJECT_STATE.md` before choosing or assigning work.
+The old `master` branch is not the working line for modernized Mahou. Read `PROJECT_STATE.md` and `ISSUES.md` before choosing or assigning work.
 
 ## Coordination model
 
 Mahou follows the central supervisor/executor workflow:
 
-- one active project supervisor chat maintains the overall state, chooses the next bounded task, prepares an executor handoff, and accepts or rejects the result;
+- one active project supervisor chat maintains overall state, chooses the next bounded task, prepares executor handoffs, and accepts or rejects results;
 - one temporary executor chat performs one bounded task, reports back, and does not begin the next task;
 - GitHub, `PROJECT_STATE.md`, `ISSUES.md`, and this handoff are the recoverable source of project state.
 
@@ -35,69 +31,92 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 ## Verified current behavior
 
 - Existing user-created selection has priority over collapsed-caret word conversion.
-- Selected text converts forward and backward in the verified applications and preserves the tested OLE clipboard formats.
+- Selected text converts forward and backward in verified applications and preserves tested OLE clipboard formats.
 - Protected/password fields suppress conversion.
 - Collapsed-caret `Insert` never creates synthetic blue selection.
-- Microsoft Word and the exact classic Win32 `Edit` class remain the only supported direct collapsed-caret adapters.
-- Modern Notepad/RichEdit, Chrome, Telegram, Discord, WPF, WinUI/UWP, Electron/WebView, Qt/custom, unknown controls, protected fields, and failed probes remain no-op without a user-created selection.
+- Microsoft Word document `Range` and exact classic Win32 `Edit` remain the only supported direct collapsed-caret adapters.
+- Modern Notepad/RichEdit, Chrome, Telegram, Discord, WhatsApp, WPF, WinUI/UWP, Electron/WebView, Qt/custom, unknown controls, protected fields, and failed probes remain no-op without a user-created selection.
 - Smart Caps is local, optional, disabled on a clean profile, and verified only for its exact recorded source/artifact/scenarios.
 - Draft PR #2 remains open, Draft, and unmerged.
 
-## Result awaiting supervisor decision
+## Current bounded task
 
-### AGZ-MAH-0009 — Input surface capability map
+### AGZ-MAH-0010 — Record Windows input-surface evidence
 
 Starting point:
 
 ```text
 Base branch: mixanizm-modern-v2.9.0.1
-Exact base: 2ca9c1540dbf68428e8c48180c56e4af98d5e59d
-Task branch: agz-mah-0009-input-surface-capability-map
+Exact base: f82a3b233d250f4bfb432327063c6832ab24ea5a
+Task branch: agz-mah-0010-user-probe-evidence
+Probe commit: cef38006dfe6093ee1b233703ad79215bb2a9758
 ```
 
-Result:
+Scope and result:
 
-```text
-PROBE_READY
-```
+- documentation and sanitized read-only evidence only;
+- no Mahou runtime source or runtime version change;
+- no mutation experiment, adapter, candidate artifact, signing, merge, release, or PR #3 work;
+- `AGZ-MAH-0009: USER_PROBE_EVIDENCE_COMPLETE`.
 
-Product result and boundary:
+Recorded user evidence:
 
-- a standalone .NET Framework 4.8 x64 console probe exists under `tools/input-surface-probe/` and is not referenced by Mahou runtime;
-- it performs one capture after a short countdown, inspects only the foreground process and focused control, writes one redacted JSON report, and exits;
-- it records process filename/architecture/version/signer, top/focused HWND classes, UIA control/framework/class/automation-ID summary/patterns/protection, MSAA role/state, IAccessible2 interface presence, caret/selection/length readability and a normalized capability fingerprint where available;
-- it never records actual text, window-title content, UIA Name content, document/chat/contact names, user paths, browser URLs, clipboard contents, chat history or passwords;
-- protected/password controls suppress caret, selection and length output;
-- it contains no writable text method, programmatic selection, keyboard simulation, clipboard API, hook, continuous monitor, hotkey, process-memory write or injection path;
-- UIA ValuePattern, Word object model or IAccessibleEditableText presence is reported only as `write_capabilities_unverified` metadata;
-- classifications are `CLASSIC_WIN32_EDIT`, `RICHEDIT`, `WORD_OBJECT_MODEL`, `WPF`, `WINUI_UWP`, `CHROMIUM_BROWSER`, `ELECTRON_WEBVIEW`, `QT_CUSTOM` and `CUSTOM_UNKNOWN`;
-- unknown controls remain unknown, and no classification/fingerprint/process/framework match can activate a mutation path;
-- the only verified direct Mahou adapters remain exact classic `Edit` and Microsoft Word document `Range`;
-- documentation explains Word vs Chrome, Telegram/Qt vs Chrome, application-specific Electron/WebView risk, and why UIA read evidence does not imply safe exact-range writing;
-- tests cover forbidden APIs, redaction, password suppression, deterministic classification/fingerprint, unknown retention, schema version and embedded probe commit;
-- a dedicated workflow builds/tests the standalone x64 executable and creates an immutable probe ZIP with manifest and SHA-256;
-- existing Security regression and Modern Windows build remain required;
-- Mahou runtime code and version `2.9.0.1-dev` are unchanged;
-- no merge, release, signing, runtime adapter, Chrome, Telegram or Notepad implementation is included.
+| Surface | Normalized result |
+| --- | --- |
+| Microsoft Word | `WORD_OBJECT_MODEL` |
+| Modern Notepad | `RICHEDIT`, focused class `RichEditD2DPT` |
+| AnyDesk classic field | `CLASSIC_WIN32_EDIT`, exact class `Edit` |
+| Chrome input/textarea | identical `CHROMIUM_BROWSER / Edit / TextPattern + ValuePattern` |
+| Chrome contenteditable | separate `CHROMIUM_BROWSER / Group / TextPattern` |
+| Telegram Desktop 7.0.5 | `QT_CUSTOM / Ui::InputField::Inner / TextPattern + ValuePattern` |
+| WhatsApp Web in Opera | Chromium Edit family |
+| WhatsApp Desktop | `CUSTOM_UNKNOWN / DesktopChildSiteBridge`; internal editor not reached |
+| Obsidian title | Electron Group/TextPattern |
+| Obsidian CodeMirror body | Electron Edit/TextPattern + ValuePattern |
 
-Suggested later read-only user captures are documented for classic Edit, Word, modern Notepad, Chrome input/textarea/contenteditable, Telegram Desktop, WhatsApp Desktop, and one WPF/WinUI application if available. No text mutation test belongs to this task.
+Eight reviewed sanitized JSON reports are stored in `docs/evidence/input-surface-probe/`. They contain no actual text, titles, URLs, usernames, clipboard content, or personal paths. Raw JSON for Word, modern Notepad, and AnyDesk was not available in the supplied files; only the user-confirmed normalized evidence is recorded for those surfaces.
+
+## Evidence interpretation
+
+- Read capability does not imply safe write capability.
+- Chrome input/textarea and contenteditable are distinct Chromium surfaces.
+- Obsidian title and CodeMirror body are distinct Electron surfaces.
+- WhatsApp Desktop remains blocked because the probe reached only `Microsoft.UI.Content.DesktopChildSiteBridge`, not an internal editor.
+- UIA `TextPattern` and `ValuePattern` do not provide the accepted exact-range mutation, application undo, event, composition, stale-state and post-state contract.
+- The only verified direct write adapters remain Word document `Range` and exact classic Win32 `Edit`.
+
+## Recommended research order
+
+1. modern RichEdit / Notepad;
+2. Telegram Qt input;
+3. Chromium Edit;
+4. Chromium contenteditable;
+5. Electron CodeMirror;
+6. WhatsApp Desktop bridge remains blocked.
+
+RichEdit is first because it may expose native range, caret and undo semantics suitable for a bounded application-specific adapter. Chromium and Qt already demonstrate that UIA TextPattern/ValuePattern alone is insufficient.
+
+## Probe verification history
+
+The immutable probe source commit `cef38006dfe6093ee1b233703ad79215bb2a9758` passed:
+
+- Security regression run `30163258945`;
+- Input surface probe run `30163258946`;
+- Modern Windows build run `30163258943`.
+
+The probe performs one capture, collects only redacted capability metadata, and exits. It contains no writable text methods, programmatic selection, keyboard simulation, clipboard APIs, hooks, continuous monitoring, process-memory writes or injection.
 
 Primary records:
 
 ```text
 docs/INPUT-SURFACE-CAPABILITY-MAP.md
 docs/INPUT-SURFACE-PROBE.md
+docs/evidence/input-surface-probe/
 ```
 
-The supervisor should verify the exact task head, all three applicable CI workflows, the immutable x64 probe ZIP and SHA-256, then accept or return specific findings. The executor must not begin a mutation continuation or another task.
+## Other project results
 
-### AGZ-MAH-0007 — Chrome Manifest V3 editing-core prototype
-
-Starting point:
-
-```text
-faaf170d12e5bbcbd49c0b66edf4bac75c1e3049
-```
+### AGZ-MAH-0007 — Chrome browser-context editing core
 
 Result:
 
@@ -105,36 +124,9 @@ Result:
 BROWSER-CONTEXT-MUTATION-NOT-SAFE
 ```
 
-Evidence and boundary:
+The retained test-only MV3 prototype performs no mutation. `setRangeText()` did not satisfy trusted events plus one browser undo transaction; `execCommand('insertText')` required forbidden temporary programmatic selection; whole-field assignment and synthetic events remain rejected. Native Messaging was not started.
 
-- created a minimal test-only MV3 prototype under `integrations/chrome-smart-caps/prototype-extension/`;
-- permissions are exactly `activeTab` and `scripting`, with explicit toolbar-action activation and no host permissions;
-- the content path is restricted by exact marker `AGZ-MAH-0007-DIAGNOSTIC-V1`, main frame, active document/tab, and focused exact control;
-- fixed candidates are only `окоРОчка -> окорочка`, `ПРИвет -> Привет`, and `КуРиные -> Куриные`;
-- strict rejection covers password, contenteditable, readonly, disabled, hidden, detached, unknown controls, non-collapsed selection, composition, invalid/duplicate/expired request, wrong frame/page/tab, stale document/element/value/caret/focus, invalid boundary, and changed neighbors;
-- `setRangeText()` was rejected because its documented contract does not provide the required normal trusted edit-event plus one browser undo/redo transaction;
-- deprecated `execCommand('insertText')` was rejected because exact replacement requires a temporary programmatic selection and its event behavior is browser/configuration dependent;
-- full `.value` assignment and synthetic events remain forbidden;
-- final code performs no mutation and reports `mutation-api-not-accepted`;
-- static Python and dependency-free Node tests pass locally;
-- a dedicated read-only PR workflow runs those checks;
-- the available Chromium was `144.0.7559.96`, but managed policy blocked extension installation and all URLs, so no real unpacked-extension smoke is claimed and no forbidden workaround was used;
-- no Native Messaging, Mahou runtime code, version, counters, Backspace reversal, personal exceptions, Telegram, Notepad, release, or publication work was performed.
-
-Primary decision document: `docs/CHROME-EXTENSION-EDITING-CORE.md`.
-
-## Accepted blocked result
-
-### AGZ-MAH-0008 — Telegram Desktop Smart Caps direct path
-
-Starting point and integration:
-
-```text
-Starting commit: 076ee95325809bd0581c9e0f24e9dbb1022c6603
-Task branch: agz-mah-0008-telegram-smart-caps-path
-PR #10: merged
-Merge commit: 2ca9c1540dbf68428e8c48180c56e4af98d5e59d
-```
+### AGZ-MAH-0008 — Telegram Desktop direct path
 
 Result:
 
@@ -142,34 +134,15 @@ Result:
 BLOCKED — ACCEPTED
 ```
 
-Evidence and boundary:
-
-- exact starting head and CI were confirmed before integration;
-- central Agatzub rules remain stable at pinned `v2.7.0`; no newer stable version was found;
-- the executor environment had no interactive Windows desktop or running Telegram process;
-- exact installed Telegram version, install source, executable/signature, architecture, HWND classes, UIA tree and patterns, MSAA/IAccessible2 interfaces, exact caret, composition, active-chat signal, one-step undo, draft/entity preservation, and message-send safety could not be measured and were not guessed;
-- Microsoft UI Automation Text/TextRange is not an exact range-write primitive; `.Select()` and whole-field `ValuePattern.SetValue()` remain forbidden;
-- IAccessible2 defines `IAccessibleEditableText::replaceText`, but actual Telegram exposure and all required Telegram-specific safety properties remain unmeasured; interface presence alone is insufficient;
-- official `telegramdesktop/tdesktop` source reconnaissance confirms a Qt-based custom `Ui::InputField` compose subsystem but is not claimed to match the installed user build or establish its Windows accessibility provider;
-- no runtime adapter, mutation probe, keyboard simulation, clipboard path, whole-field rewrite, runtime version change or user mutation smoke package was added;
-- Telegram remains strict no-op without a real user-created selection;
-- primary record: `docs/TELEGRAM-SMART-CAPS-ARCHITECTURE.md`.
-
-`AGZ-MAH-0009` is the separately scoped read-only evidence tool requested after this accepted blocked result. It cannot itself satisfy or bypass the Telegram mutation gate.
-
-## Completed tasks
-
-### AGZ-MAH-0006 — Chrome desktop-only architecture decision
-
-Result `DIRECT-PATH-NOT-SAFE`: UI Automation exposes no acceptable exact replace-range operation and whole-field `ValuePattern.SetValue` was rejected. Chrome remained strict no-op.
+The new read-only Telegram 7.0.5 evidence identifies the focused Qt composer surface but does not establish safe writing. Telegram remains strict no-op without a user-created selection.
 
 ### AGZ-MAH-0005 — selected-text and clipboard verification
 
-Verified at source `3418d09de20ea327302a26858a7b752862bd429e`; Modern Windows build `30134239498` and Security regression `30134239469` passed; the user confirmed the complete focused Windows smoke.
+Verified at source `3418d09de20ea327302a26858a7b752862bd429e`; the user confirmed the complete focused Windows smoke.
 
 ### AGZ-MAH-0001 — Smart Caps verification
 
-Verified at source `0b43bb688115e0051114f38a745fce9e830452fd`; Modern Windows build `30128168029` and Security regression `30128168156` passed; the user confirmed the complete focused Windows smoke.
+Verified at source `0b43bb688115e0051114f38a745fce9e830452fd`; the user confirmed the complete focused Windows smoke.
 
 ### AGZ-MAH-0004 — immutable artifact provenance gate
 
@@ -192,15 +165,14 @@ Open and unmerged against `mixanizm-modern-v2.9.0.1`. Its current diff is preser
 ## Important prohibitions
 
 - Do not restore UI Automation `.Select()`, keyboard selection, generated-selection fallback, Backspace/retype, clipboard mutation, or whole-field rewrite.
-- Do not turn any `AGZ-MAH-0009` classification, fingerprint, read capability, process name, framework ID, UIA pattern or IAccessible2 interface presence into a mutation allow-list.
-- Do not treat Qt ancestry, Telegram process name, UIA read access, caret access, or `IAccessibleEditableText` presence alone as proof of a safe Telegram mutation path.
-- Do not activate the AGZ-MAH-0007 prototype mutation: the retained code must remain strict no-op unless a future separately authorized architecture supplies a method that passes every gate.
-- Do not start Native Messaging, Mahou integration, Telegram mutation, Notepad, Edge, local server, CDP, remote debugging, DLL injection, signing, or release work from these results.
+- Do not turn any probe classification, fingerprint, read capability, process name, framework ID, UIA pattern or interface presence into a mutation allow-list.
+- Do not treat Qt ancestry, Telegram process name, UIA read access, caret access or ValuePattern presence as proof of a safe Telegram mutation path.
+- Do not combine Chromium input/textarea and contenteditable into one inferred editor contract.
+- Do not combine Obsidian title and CodeMirror body into one inferred editor contract.
+- Do not start mutation work from the WhatsApp Desktop bridge evidence; the internal editor was not reached.
 - Do not change PR #1 or PR #3 without a separate explicit task.
-- Do not merge or mark Ready PR #2 or the AGZ-MAH-0009 task PR, create a tag or Release, or publish a Mahou user build without explicit permission.
-- Do not represent the standalone probe ZIP as a Mahou runtime release.
-- Do not hand off an artifact unless its exact commit/tree, embedded commit, manifest and SHA-256 match the applicable workflow evidence.
+- Do not merge or mark Ready PR #2 or the AGZ-MAH-0010 task PR, create a tag or Release, or publish a Mahou user build without explicit permission.
 
 ## Next management step
 
-The project supervisor should inspect the AGZ-MAH-0009 Draft PR, exact final head, `Input surface probe`, `Security regression` and `Modern Windows build` runs, and the immutable x64 probe ZIP/SHA-256. The supervisor should then accept `PROBE_READY` or return specific corrections. The executor must not begin another task.
+The project supervisor should inspect the `AGZ-MAH-0010` Draft PR, confirm that only documentation and sanitized evidence changed, and review the applicable Security regression and Modern Windows build results. After acceptance, the supervisor—not this executor—may choose whether to open a separate research task in the documented priority order.
