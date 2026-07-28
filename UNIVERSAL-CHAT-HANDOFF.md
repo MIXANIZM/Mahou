@@ -12,6 +12,7 @@
 - Current development head at the `AGZ-MAH-0011` start: `779b50dcc27cbe58f69ddadd54d526a0394663df`
 - Current development head at the `AGZ-MAH-0012` start: `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`
 - Current development head at the `AGZ-MAH-0013` start: `1a930137f7254111f8ef200da3e86c54e697ab5e`
+- Current development head at the `AGZ-MAH-0015` start: `363a83b227cfa14e798e442960640e7caed03913`
 - Last user-verified Insert safety checkpoint: `d4b37a3dac8b4b35d682c82a9ced7b87eaf9adda`
 - Verified Smart Caps source: `0b43bb688115e0051114f38a745fce9e830452fd`
 - Verified selected-text conversion source: `3418d09de20ea327302a26858a7b752862bd429e`
@@ -37,11 +38,31 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 - Protected/password fields suppress conversion.
 - Collapsed-caret `Insert` never creates synthetic blue selection.
 - Microsoft Word document `Range` and exact classic Win32 `Edit` remain the only supported direct collapsed-caret adapters.
-- Modern Notepad/RichEdit, Chrome, Telegram, Discord, WhatsApp, WPF, WinUI/UWP, Electron/WebView, Qt/custom, unknown controls, protected fields, and failed probes remain no-op without a user-created selection.
+- Collapsed-caret Insert and Smart Caps remain no-op in modern Notepad/RichEdit, Chrome, Telegram, Discord, WhatsApp, WPF, WinUI/UWP, Electron/WebView, Qt/custom, unknown controls, protected fields, and failed probes without a supported direct adapter.
+- `AGZ-MAH-0014` invalidated the broader AutoSwitch no-op claim for modern Notepad: exact source `363a83b227cfa14e798e442960640e7caed03913` destructively produced `gпривет` from `ghbdtn` and could delete the token.
 - Smart Caps is local, optional, disabled on a clean profile, and verified only for its exact recorded source/artifact/scenarios.
 - Draft PR #2 remains open, Draft, and unmerged.
 
 ## Current bounded task
+
+### AGZ-MAH-0015 — contain AutoSwitch in modern Notepad
+
+Starting point:
+
+```text
+Base branch: mixanizm-modern-v2.9.0.1
+Exact base: 363a83b227cfa14e798e442960640e7caed03913
+Task branch: agz-mah-0015-autoswitch-notepad-containment
+Candidate result: AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT
+```
+
+The AutoSwitch pipeline is a keyboard replay path, not an exact-range adapter. It separately removes the trigger, deletes `YuKey.Length` characters, optionally waits, replays converted keys under another layout, and adds a space. The old path captured neither the foreground/focused control nor the source context; JKL layout callbacks could run later. Modern Notepad's RichEdit processing and Undo grouping do not make those packets an atomic replacement, which accounts for the observed partial deletion, complete deletion, and split Undo.
+
+The task blocks exact `notepad.exe` + `RichEditD2DPT` before mutation scheduling and carries an immutable source context through every AutoSwitch-only immediate/deferred mutation gate. The blocked surface emits no Backspace/Delete, replacement, layout, caret, selection, clipboard, or Undo-producing input. Focus/control changes cancel deferred work. Chrome and Word retain their existing routes. No positive Notepad support is added and PR #3 is not used.
+
+Runtime version remains `2.9.0.1-dev`. AutoSwitch must not be called verified; exact-head CI and focused user smoke remain required.
+
+## Previous bounded task
 
 ### AGZ-MAH-0013 — main PR release-readiness reconciliation
 

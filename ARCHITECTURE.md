@@ -99,6 +99,16 @@ TOM can create an independent `ITextRange` and `ITextRange::SetText` can replace
 
 No mutation smoke or executable harness was authorized after that gate failed. Mahou must not add an `OBJID_NATIVEOM`/TOM Notepad adapter, pointer-bearing cross-process RichEdit messages, UIA selection, whole-value writes, keyboard/clipboard paths, hooks, injection, or process-memory operations. Full evidence is in `docs/NOTEPAD-RICHEDIT-FEASIBILITY.md`.
 
+### AutoSwitch containment on modern Notepad
+
+`AGZ-MAH-0014` proved that the older general AutoSwitch keyboard-replay path bypassed the collapsed-caret adapter boundary. For a matched dictionary token it removed the trigger with one `SendInput`, calculated deletion from the intercepted `YuKey` list rather than current editor text, removed that many characters with another `SendInput`, optionally slept, replayed virtual keys under the target layout, and emitted any trailing space separately. The JKL route stored the replacement in `jklXHidServ.ActionOnLayout` for later execution.
+
+That path assumed the same caret, focus, control, and committed text state throughout, but retained no source snapshot and performed no revalidation. Modern Notepad `RichEditD2DPT` provides no contract making the packets an atomic range replacement or one Undo record. The independently queued deletion/replay packets therefore explain the accepted observations: a source character can survive before the converted token, the token can be deleted without replacement, and Undo can be split.
+
+`AGZ-MAH-0015` is containment, not support. AutoSwitch captures the foreground HWND, focused-control HWND, process ID, executable name, and control class before matching. Exact `notepad.exe` + `RichEditD2DPT`, protected classic Edit, incomplete identity, and stale identity fail closed. The same snapshot is checked before immediate Backspace, layout change, word deletion, converted-key replay, trailing-space insertion, error restoration, and inside delayed JKL or configured-delay execution. A focus/control change makes the pending action a no-op.
+
+This guard does not create an exact-range writer and does not change manual Insert, Smart Caps, selected-text conversion, snippets, or clipboard architecture. Chrome and Microsoft Word continue through their existing AutoSwitch routes. PR #3 remains outside the accepted implementation.
+
 Each future adapter must independently prove:
 
 - exact supported application/build/control identity;

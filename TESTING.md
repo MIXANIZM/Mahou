@@ -6,12 +6,28 @@
 python .github/scripts/security-regression.py
 python .github/scripts/ui-resource-regression.py
 python .github/scripts/artifact-provenance-regression.py
+python .github/scripts/autoswitch-containment-regression.py
 python .github/scripts/chrome-extension-editing-core-regression.py
 node .github/tests/chrome-extension-editing-core.test.js
 python .github/scripts/input-surface-probe-regression.py
 ```
 
-The first three gates check source-level Mahou safety invariants, common Russian/English Smart Caps localization markers, UI resource consistency, and artifact provenance. The Chrome editing-core gates separately check the test-only MV3 manifest, permission boundary, absence of active mutation/network/remote-code/Native Messaging paths, exact diagnostic marker, fixed candidates, fail-closed control and stale-state rules, adjacent-text preservation contracts, and post-mutation verification logic. The input-surface probe gate checks that the standalone executable source contains no mutation, selection, keyboard, clipboard, hook, injection, actual-text or window-title APIs and retains the required schema, embedded commit, redaction and password-suppression markers. None of these source tests replace runtime testing.
+The AutoSwitch containment gate locks the exact `notepad.exe` + `RichEditD2DPT` rejection, source-context capture, immediate/deferred revalidation call sites, workflow integration, and unchanged runtime version. The other source gates check Mahou safety invariants, common Russian/English Smart Caps localization markers, UI resource consistency, and artifact provenance. The Chrome editing-core gates separately check the test-only MV3 manifest, permission boundary, absence of active mutation/network/remote-code/Native Messaging paths, exact diagnostic marker, fixed candidates, fail-closed control and stale-state rules, adjacent-text preservation contracts, and post-mutation verification logic. The input-surface probe gate checks that the standalone executable source contains no mutation, selection, keyboard, clipboard, hook, injection, actual-text or window-title APIs and retains the required schema, embedded commit, redaction and password-suppression markers. None of these source tests replace runtime testing.
+
+## AGZ-MAH-0015 checks
+
+The Modern Windows build compiles and runs `AutoSwitchContainmentRegression.exe` for both x86 and x64 against the built `Mahou.exe`. Deterministic cases prove:
+
+1. modern Notepad `RichEditD2DPT` is rejected before deletion;
+2. no Backspace/Delete or replacement event is emitted and `ghbdtn` remains unchanged;
+3. the full token cannot be deleted;
+4. changed foreground or focused-control identity cancels delayed work;
+5. Chrome and Microsoft Word routing remains allowed;
+6. protected classic Edit and unknown contexts fail closed;
+7. the block remains limited to the exact modern Notepad surface;
+8. runtime version remains `2.9.0.1-dev`.
+
+The source regression runs in both Security regression and Modern Windows build. Required completion gates are all fast source regressions, executable x86/x64 containment tests, two deterministic Release builds per platform, exact changed-file/version review, and green exact-head CI. Physical Windows smoke must confirm strict no-op in modern Notepad and unchanged Chrome/Word behavior; it must not be reported as positive Notepad support or general AutoSwitch verification.
 
 ## Input surface probe workflow
 

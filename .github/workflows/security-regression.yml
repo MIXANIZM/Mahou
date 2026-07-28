@@ -32,3 +32,4 @@ jobs:
           python3 .github/scripts/security-regression.py
           python3 .github/scripts/ui-resource-regression.py
           python3 .github/scripts/artifact-provenance-regression.py
+          python3 .github/scripts/autoswitch-containment-regression.py

@@ -62,6 +62,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python .github/scripts/artifact-provenance-regression.py | Tee-Object -FilePath artifact-provenance-regression.txt
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python .github/scripts/autoswitch-containment-regression.py | Tee-Object -FilePath autoswitch-containment-regression.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Stamp source commit
         shell: pwsh
@@ -116,6 +118,12 @@ jobs:
           & $smartCapsTestExe (Join-Path $build1 'Mahou.exe')
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+          $autoSwitchTestExe = Join-Path $root "artifacts/$platform/AutoSwitchContainmentRegression.exe"
+          & $csc /nologo "/platform:$platform" "/out:$autoSwitchTestExe" .github/tests/AutoSwitchContainmentRegression.cs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $autoSwitchTestExe (Join-Path $build1 'Mahou.exe')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
           $files = @('Mahou.exe','Mahou.exe.config','AS_dict.txt')
           $lines = @()
           foreach ($file in $files) {
@@ -140,6 +148,7 @@ jobs:
           Copy-Item (Join-Path $source 'AS_dict.txt') $dest -Force
           Copy-Item $deterministicName $dest -Force
           Copy-Item 'security-regression.txt' $dest -Force
+          Copy-Item 'autoswitch-containment-regression.txt' $dest -Force
           Copy-Item 'ui-resource-regression.txt' $dest -Force
           Copy-Item 'artifact-provenance-regression.txt' $dest -Force
           Copy-Item 'README-MIXANIZM.md' $dest -Force
