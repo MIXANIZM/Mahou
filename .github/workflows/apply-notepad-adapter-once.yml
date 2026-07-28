@@ -1,0 +1,230 @@
+name: Apply verified Notepad adapter once
+
+on:
+  pull_request:
+    branches:
+      - mixanizm-modern-v2.9.0.1
+
+permissions:
+  contents: write
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: apply-notepad-adapter-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply-notepad-adapter:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout task branch
+        uses: actions/checkout@v4
+        with:
+          ref: agz-mah-0003-notepad-direct-adapter
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Reconstruct and verify reviewed payload
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          import os
+          import urllib.request
+
+          repo_parts = [
+              Path('.github/patches/agz-mah-0003.part00'),
+              Path('.github/patches/agz-mah-0003.part01'),
+              Path('.github/patches/agz-mah-0003.part02'),
+              Path('.github/patches/agz-mah-0003.part03'),
+              Path('.github/patches/agz-mah-0003.part04'),
+          ]
+          markers = [
+              'AGZ-MAH-0003-PAYLOAD-05-06',
+              'AGZ-MAH-0003-PAYLOAD-07-08',
+              'AGZ-MAH-0003-PAYLOAD-09-10',
+              'AGZ-MAH-0003-PAYLOAD-11-12',
+          ]
+          token = os.environ['GH_TOKEN']
+          request = urllib.request.Request(
+              'https://api.github.com/repos/MIXANIZM/Mahou/issues/3/comments?per_page=100',
+              headers={
+                  'Authorization': 'Bearer ' + token,
+                  'Accept': 'application/vnd.github+json',
+                  'X-GitHub-Api-Version': '2022-11-28',
+              },
+          )
+          with urllib.request.urlopen(request, timeout=30) as response:
+              comments = json.load(response)
+
+          selected = {}
+          for comment in comments:
+              body = comment.get('body') or ''
+              for marker in markers:
+                  prefix = marker + '\n'
+                  if not body.startswith(prefix):
+                      continue
+                  value = ''.join(body[len(prefix):].split())
+                  if marker in selected:
+                      if selected[marker] != value:
+                          raise SystemExit('Conflicting duplicate payload marker: ' + marker)
+                      continue
+                  selected[marker] = value
+
+          missing = [marker for marker in markers if marker not in selected]
+          if missing:
+              raise SystemExit('Missing payload comments: ' + ', '.join(missing))
+
+          chunks = []
+          for path in repo_parts:
+              if not path.is_file():
+                  raise SystemExit('Missing repository payload part: ' + str(path))
+              chunks.append(''.join(path.read_text(encoding='utf-8').split()))
+          chunks.extend(selected[marker] for marker in markers)
+          payload = ''.join(chunks)
+          Path('/tmp/agz-mah-0003.b64').write_text(payload, encoding='ascii')
+          print('Reconstructed base64 characters:', len(payload))
+          PY
+          base64 -d /tmp/agz-mah-0003.b64 > /tmp/agz-mah-0003.tar.gz
+          test "$(wc -c < /tmp/agz-mah-0003.tar.gz)" -eq 75630
+          printf '%s  %s\n' \
+            'f03144f011bd712d5ec46ab58b6d8602deb8d9043a82617512f0b6072b43a9af' \
+            '/tmp/agz-mah-0003.tar.gz' | sha256sum -c -
+          tar -tzf /tmp/agz-mah-0003.tar.gz | sort > /tmp/agz-mah-0003-actual-files.txt
+          cat > /tmp/agz-mah-0003-expected-files.txt <<'EOF'
+          .github/scripts/security-regression.py
+          .github/tests/InsertSafetyRegression.cs
+          ARCHITECTURE.md
+          CHANGELOG.md
+          ISSUES.md
+          KNOWN-LIMITATIONS.md
+          Mahou/Classes/KMHook.cs
+          Mahou/Classes/SelectionProbe.cs
+          Mahou/Classes/SmartCaps.cs
+          README-MIXANIZM.md
+          SECURITY.md
+          TEST-PLAN-WINDOWS11.md
+          TESTING.md
+          UNIVERSAL-CHAT-HANDOFF.md
+          EOF
+          sort -o /tmp/agz-mah-0003-expected-files.txt /tmp/agz-mah-0003-expected-files.txt
+          diff -u /tmp/agz-mah-0003-expected-files.txt /tmp/agz-mah-0003-actual-files.txt
+
+      - name: Apply reviewed files and preserve repository formats
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          names = [
+              '.github/scripts/security-regression.py',
+              '.github/tests/InsertSafetyRegression.cs',
+              'ARCHITECTURE.md',
+              'CHANGELOG.md',
+              'ISSUES.md',
+              'KNOWN-LIMITATIONS.md',
+              'Mahou/Classes/KMHook.cs',
+              'Mahou/Classes/SelectionProbe.cs',
+              'Mahou/Classes/SmartCaps.cs',
+              'README-MIXANIZM.md',
+              'SECURITY.md',
+              'TEST-PLAN-WINDOWS11.md',
+              'TESTING.md',
+              'UNIVERSAL-CHAT-HANDOFF.md',
+          ]
+          bom = b'\xef\xbb\xbf'
+          metadata = {}
+          for name in names:
+              path = Path(name)
+              raw = path.read_bytes()
+              has_bom = raw.startswith(bom)
+              body = raw[len(bom):] if has_bom else raw
+              metadata[name] = {
+                  'bom': has_bom,
+                  'crlf': b'\r\n' in body,
+              }
+          Path('/tmp/agz-mah-0003-formats.json').write_text(
+              json.dumps(metadata, sort_keys=True), encoding='utf-8'
+          )
+          PY
+          tar -xzf /tmp/agz-mah-0003.tar.gz
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          bom = b'\xef\xbb\xbf'
+          metadata = json.loads(Path('/tmp/agz-mah-0003-formats.json').read_text(encoding='utf-8'))
+          for name, info in metadata.items():
+              path = Path(name)
+              raw = path.read_bytes()
+              if raw.startswith(bom):
+                  raw = raw[len(bom):]
+              raw = raw.replace(b'\r\n', b'\n')
+              if info['crlf']:
+                  raw = raw.replace(b'\n', b'\r\n')
+              if info['bom']:
+                  raw = bom + raw
+              path.write_bytes(raw)
+          PY
+          rm -f .github/patches/agz-mah-0003.part00
+          rm -f .github/patches/agz-mah-0003.part01
+          rm -f .github/patches/agz-mah-0003.part02
+          rm -f .github/patches/agz-mah-0003.part03
+          rm -f .github/patches/agz-mah-0003.part04
+
+      - name: Verify safety and exact scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -c core.whitespace=cr-at-eol diff --check
+          python3 .github/scripts/security-regression.py
+          python3 .github/scripts/ui-resource-regression.py
+          python3 - <<'PY'
+          import subprocess
+
+          expected = {
+              '.github/patches/agz-mah-0003.part00',
+              '.github/patches/agz-mah-0003.part01',
+              '.github/patches/agz-mah-0003.part02',
+              '.github/patches/agz-mah-0003.part03',
+              '.github/patches/agz-mah-0003.part04',
+              '.github/scripts/security-regression.py',
+              '.github/tests/InsertSafetyRegression.cs',
+              'ARCHITECTURE.md',
+              'CHANGELOG.md',
+              'ISSUES.md',
+              'KNOWN-LIMITATIONS.md',
+              'Mahou/Classes/KMHook.cs',
+              'Mahou/Classes/SelectionProbe.cs',
+              'Mahou/Classes/SmartCaps.cs',
+              'README-MIXANIZM.md',
+              'SECURITY.md',
+              'TEST-PLAN-WINDOWS11.md',
+              'TESTING.md',
+              'UNIVERSAL-CHAT-HANDOFF.md',
+          }
+          actual = set(subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines())
+          if actual != expected:
+              raise SystemExit('Unexpected changed-file set: expected=%r actual=%r' % (sorted(expected), sorted(actual)))
+          print('Changed-file set verified:', len(actual))
+          PY
+
+      - name: Commit verified product update
+        shell: bash
+        run: |
+          set -euo pipefail
+          git checkout HEAD -- .github/workflows/apply-notepad-adapter-once.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'AGZ-MAH-0003: add verified direct Notepad adapter'
+          git push origin HEAD:agz-mah-0003-notepad-direct-adapter

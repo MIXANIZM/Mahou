@@ -1,0 +1,155 @@
+name: Collect Notepad CI artifacts
+
+on:
+  pull_request:
+    branches:
+      - mixanizm-modern-v2.9.0.1
+
+permissions:
+  contents: write
+  actions: read
+  pull-requests: read
+
+concurrency:
+  group: collect-notepad-ci-artifacts
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v4
+        with:
+          ref: agz-mah-0003-notepad-direct-adapter
+          fetch-depth: 0
+          show-progress: false
+
+      - name: Locate successful PR 4 runs and download artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          import os
+          import time
+          import urllib.request
+
+          owner = 'MIXANIZM'
+          repo = 'Mahou'
+          token = os.environ['GH_TOKEN']
+          headers = {
+              'Authorization': 'Bearer ' + token,
+              'Accept': 'application/vnd.github+json',
+              'X-GitHub-Api-Version': '2022-11-28',
+          }
+
+          def get_json(url):
+              request = urllib.request.Request(url, headers=headers)
+              with urllib.request.urlopen(request, timeout=60) as response:
+                  return json.load(response)
+
+          pr = get_json('https://api.github.com/repos/%s/%s/pulls/4' % (owner, repo))
+          if pr['head']['ref'] != 'agz-mah-0003-notepad-adapter-clean':
+              raise SystemExit('PR 4 head mismatch: ' + pr['head']['ref'])
+          head_sha = pr['head']['sha']
+
+          workflows = get_json('https://api.github.com/repos/%s/%s/actions/workflows?per_page=100' % (owner, repo))['workflows']
+          by_name = {item['name']: item for item in workflows}
+          required_names = ('Security regression', 'Modern Windows build')
+          for name in required_names:
+              if name not in by_name:
+                  raise SystemExit('Missing workflow: ' + name)
+
+          selected = {}
+          deadline = time.time() + 720
+          while time.time() < deadline:
+              for name in required_names:
+                  if name in selected:
+                      continue
+                  workflow_id = by_name[name]['id']
+                  url = ('https://api.github.com/repos/%s/%s/actions/workflows/%s/runs'
+                         '?branch=agz-mah-0003-notepad-adapter-clean&event=pull_request&per_page=30') % (owner, repo, workflow_id)
+                  for run in get_json(url)['workflow_runs']:
+                      if run.get('head_sha') != head_sha:
+                          continue
+                      if not any(item.get('number') == 4 for item in run.get('pull_requests', [])):
+                          continue
+                      if run.get('status') == 'completed' and run.get('conclusion') == 'success':
+                          selected[name] = run
+                          break
+              if len(selected) == len(required_names):
+                  break
+              time.sleep(20)
+
+          missing = [name for name in required_names if name not in selected]
+          if missing:
+              raise SystemExit('Successful CI runs not found before timeout: ' + ', '.join(missing))
+
+          out = Path('.github/collected/notepad-ci')
+          out.mkdir(parents=True, exist_ok=True)
+          build_run = selected['Modern Windows build']
+          artifacts = get_json(build_run['artifacts_url'])['artifacts']
+          wanted = {}
+          for artifact in artifacts:
+              name = artifact['name'].lower()
+              if artifact.get('expired'):
+                  continue
+              if 'x86' in name and 'log' not in name and 'source' not in name:
+                  wanted.setdefault('x86', artifact)
+              if 'x64' in name and 'log' not in name and 'source' not in name:
+                  wanted.setdefault('x64', artifact)
+              if 'source' in name:
+                  wanted.setdefault('source', artifact)
+          for architecture in ('x86', 'x64'):
+              if architecture not in wanted:
+                  raise SystemExit('Missing %s build artifact; available=%r' % (architecture, [a['name'] for a in artifacts]))
+
+          for key, artifact in wanted.items():
+              request = urllib.request.Request(artifact['archive_download_url'], headers=headers)
+              with urllib.request.urlopen(request, timeout=120) as response:
+                  (out / ('notepad-%s-artifact.zip' % key)).write_bytes(response.read())
+
+          metadata = {
+              'pr': 4,
+              'head_branch': pr['head']['ref'],
+              'head_sha': head_sha,
+              'base_branch': pr['base']['ref'],
+              'draft': pr['draft'],
+              'security_run': {
+                  'id': selected['Security regression']['id'],
+                  'html_url': selected['Security regression']['html_url'],
+                  'conclusion': selected['Security regression']['conclusion'],
+              },
+              'build_run': {
+                  'id': build_run['id'],
+                  'html_url': build_run['html_url'],
+                  'conclusion': build_run['conclusion'],
+              },
+              'artifacts': {
+                  key: {
+                      'id': artifact['id'],
+                      'name': artifact['name'],
+                      'size_in_bytes': artifact['size_in_bytes'],
+                  }
+                  for key, artifact in wanted.items()
+              },
+          }
+          (out / 'metadata.json').write_text(json.dumps(metadata, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+          print(json.dumps(metadata, indent=2, sort_keys=True))
+          PY
+
+      - name: Commit collected evidence to staging branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/collected/notepad-ci
+          git commit -m 'chore: collect AGZ-MAH-0003 CI evidence'
+          git push origin HEAD:agz-mah-0003-notepad-direct-adapter
