@@ -1,8 +1,15 @@
 # Active
 
-- No product implementation task is currently active under the supervisor/executor workflow.
+- [AGZ-MAH-0015] [AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT / CANDIDATE] 2026-07-29
+  Contains AutoSwitch before any mutation when the foreground executable is `notepad.exe` and the focused control class is `RichEditD2DPT`.
+  The task starts from exact base `363a83b227cfa14e798e442960640e7caed03913` on branch `agz-mah-0015-autoswitch-notepad-containment`. It adds source-context capture and revalidation before immediate and deferred Backspace, converted-key replay, layout, and trailing-space operations. Runtime version remains `2.9.0.1-dev`.
+  This is a safety containment only. It does not add modern Notepad support, does not use PR #3, and does not establish AutoSwitch as verified. Exact-head CI and focused user smoke are required before acceptance.
 
 # Awaiting supervisor decision
+
+- [AGZ-MAH-0014] [AUTOSWITCH_FAIL / MODERN_NOTEPAD_DESTRUCTIVE_MUTATION] 2026-07-29
+  Real-Windows testing of exact source `363a83b227cfa14e798e442960640e7caed03913`, Modern Windows build `30365352449`, x64 artifact `8690549591`, ZIP SHA-256 `4ea545ddbec793f870d69b128cc11758cb61c5d7c388cf2330270aa9f8934a54` found a destructive AutoSwitch failure in Microsoft Notepad `RichEditD2DPT`.
+  Typing `ghbdtn` produced `gпривет`; another attempt deleted the token completely. The first Undo showed no visible restoration and the second restored the source. Chrome and Microsoft Word passed the same focused test. Classification is final for that artifact; AutoSwitch is not verified.
 
 - [AGZ-MAH-0013] [RELEASE_READINESS_RECONCILED / DOCUMENTATION_COMPLETE / DRAFT] 2026-07-28
   Reconciled Draft PR #2 against exact development head `1a930137f7254111f8ef200da3e86c54e697ab5e`, accepted evidence, current automated runs, artifact provenance, and the actual fail-closed adapter boundary.

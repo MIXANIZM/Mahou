@@ -1,6 +1,6 @@
 # Project state — MIXANIZM Mahou
 
-Snapshot date: 2026-07-28
+Snapshot date: 2026-07-29
 
 ## Authoritative development line
 
@@ -11,6 +11,7 @@ Snapshot date: 2026-07-28
 - Current development head at the start of `AGZ-MAH-0011`: `779b50dcc27cbe58f69ddadd54d526a0394663df`
 - Current development head at the start of `AGZ-MAH-0012`: `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`
 - Current development head at the start of `AGZ-MAH-0013`: `1a930137f7254111f8ef200da3e86c54e697ab5e`
+- Current development head at the start of `AGZ-MAH-0015`: `363a83b227cfa14e798e442960640e7caed03913`
 - Runtime line: `2.9.0.1-dev`
 - Agatzub Development Ruleset: `v2.7.0`
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
@@ -23,6 +24,7 @@ Snapshot date: 2026-07-28
 - Input-surface evidence record: `AGZ-MAH-0010`, accepted and merged through PR #12 at `779b50dcc27cbe58f69ddadd54d526a0394663df`
 - Modern Notepad direct-path feasibility: `AGZ-MAH-0011: DIRECT-PATH-NOT-SAFE`, accepted and merged through PR #13 at merge commit `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`
 - Qt Windows editable-text feasibility: `AGZ-MAH-0012: DIRECT-PATH-NOT-SAFE`, accepted and merged through PR #14 at `1a930137f7254111f8ef200da3e86c54e697ab5e`
+- AutoSwitch real-Windows result: `AGZ-MAH-0014: AUTOSWITCH_FAIL / MODERN_NOTEPAD_DESTRUCTIVE_MUTATION`
 
 The old `master` branch is not the current working line for modernized Mahou. New bounded tasks normally branch from `mixanizm-modern-v2.9.0.1` unless a task handoff explicitly states otherwise.
 
@@ -56,6 +58,20 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - Added no runtime adapter or candidate artifact.
 
 ## Current bounded task result
+
+### AGZ-MAH-0015 — contain AutoSwitch in modern Notepad
+
+- Exact base: `363a83b227cfa14e798e442960640e7caed03913`.
+- Task branch: `agz-mah-0015-autoswitch-notepad-containment`.
+- Candidate result: `AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT`.
+- Exact blocked surface: foreground process executable `notepad.exe`, focused control class `RichEditD2DPT`.
+- AutoSwitch captures foreground, focused control, process, executable, and control class before routing. It rejects the blocked surface before dictionary matching can schedule deletion, layout switching, or replacement.
+- Every AutoSwitch-only immediate or deferred mutation revalidates the same source context. Unknown, stale, protected classic Edit, or changed focus/control state fails closed.
+- The containment does not add a Notepad adapter, does not change manual Insert, Smart Caps, snippets, selected-text conversion, clipboard behavior, Chrome or Word routing, and does not use PR #3.
+- Runtime version remains `2.9.0.1-dev`.
+- AutoSwitch remains unverified until exact-head CI passes and the focused physical Windows no-op smoke is accepted.
+
+## Previous bounded task result
 
 ### AGZ-MAH-0013 — main PR release-readiness reconciliation
 

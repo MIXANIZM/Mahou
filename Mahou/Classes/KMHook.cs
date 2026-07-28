@@ -667,35 +667,40 @@ namespace Mahou {
 						Debug.WriteLine("IGN:"+IGN+"EVT"+MSG);
 						if (!matched && as_wrongs != null && Key == Keys.Space && !IGN /*&& aseKeyDown == Keys.None*/) { 
 							if (NCRule.rule == "\0" || (NCRule.rule != "\0" && !NCRule.iauto)) {
-								var CW = c_word_backup;
-								var CLW = c_word_backup_last;
-								if (MahouUI.AddOneSpace) {
-									CW = MMain.c_word;
-									CLW = c_word_backup;
+								AutoSwitchSourceContext autoSwitchContext;
+								if (!AutoSwitchSafety.TryCaptureAllowedSource(out autoSwitchContext)) {
+									Logging.Log("[AS] > AutoSwitch candidate rejected before mutation scheduling.", 2);
+								} else {
+									var CW = c_word_backup;
+									var CLW = c_word_backup_last;
+									if (MahouUI.AddOneSpace) {
+										CW = MMain.c_word;
+										CLW = c_word_backup;
+									}
+									if (MahouUI.QWERTZ_fix) {
+										var ASsymDR = ASsymDiffReplace(snip);
+										Debug.WriteLine("[ASsymDiff] > ["+snip+"] => ["+ASsymDR+"].");
+										snip = ASsymDR;
+									}
+									asls = matched = CheckAutoSwitch(snip, CW, true, autoSwitchContext);
+									if (!matched) {
+										var snip2x = last_snip+" "+snip;
+										//Debug.WriteLine("SNIp2x! " + snip2x);
+										var SPace = new List<YuKey>(){ new YuKey() { key = Keys.Space, altnum = false, upper = false } };
+										var dash = new List<YuKey>(){ new YuKey() { key = Keys.OemMinus, altnum = false, upper = false } };
+										var last2words = CLW.Concat(dash).Concat(CW).ToList();
+										asls = matched = CheckAutoSwitch(snip2x, last2words, true, autoSwitchContext);
+										if (!matched) {
+											last2words = CLW.Concat(MahouUI.AddOneSpace ? new List<YuKey>() : SPace).Concat(CW).ToList();
+											asls = matched = CheckAutoSwitch(snip2x, last2words, true, autoSwitchContext);
+										}
+									}
+									if (!matched) {
+										var snl = WordGuessLayout(snip).Item2;
+										as_lword_layout = snl;
+										Logging.Log("[AS] > Last AS word layout: " +snl );
+									}
 								}
-								if (MahouUI.QWERTZ_fix) {
-									var ASsymDR = ASsymDiffReplace(snip);
-									Debug.WriteLine("[ASsymDiff] > ["+snip+"] => ["+ASsymDR+"].");
-									snip = ASsymDR;
-								}
-				            	asls = matched = CheckAutoSwitch(snip, CW);
-				            	if (!matched) {
-				            		var snip2x = last_snip+" "+snip;
-				            		//Debug.WriteLine("SNIp2x! " + snip2x);
-				            		var SPace = new List<YuKey>(){ new YuKey() { key = Keys.Space, altnum = false, upper = false } };
-				            		var dash = new List<YuKey>(){ new YuKey() { key = Keys.OemMinus, altnum = false, upper = false } };
-				            		var last2words = CLW.Concat(dash).Concat(CW).ToList();
-				            		asls = matched = CheckAutoSwitch(snip2x, last2words);
-				            		if (!matched) {
-					            		last2words = CLW.Concat(MahouUI.AddOneSpace ? new List<YuKey>() : SPace).Concat(CW).ToList();
-					            		asls = matched = CheckAutoSwitch(snip2x, last2words);
-				            		}
-				            	}
-				            	if (!matched) {
-			    					var snl = WordGuessLayout(snip).Item2;
-		    						as_lword_layout = snl;
-			    					Logging.Log("[AS] > Last AS word layout: " +snl );
-				            	}
 							} else {
 								Logging.Log("[NCR] > An AutoSwitch conversion was ignored by rule " + NCRule.rule + ".");
 							}
@@ -1002,8 +1007,10 @@ namespace Mahou {
 			}
 			return false;
 		}
-		static bool CheckAutoSwitch(string snip, List<YuKey> word, bool single = true) {
+		static bool CheckAutoSwitch(string snip, List<YuKey> word, bool single,
+		                            AutoSwitchSourceContext autoSwitchContext) {
 			var matched = false;
+			if (!AutoSwitchSafety.CanMutateNow(autoSwitchContext)) return false;
 			var corr = "";
 			var snil = snip.ToLowerInvariant();
 			foreach (var element in word) {
@@ -1057,35 +1064,56 @@ namespace Mahou {
 	        					var ofk = false;
 	        					if (!skipLS) {
 	        						if (MahouUI.UseJKL && MahouUI.SwitchBetweenLayouts && MahouUI.EmulateLS && !KMHook.JKLERR) {
+										if (!AutoSwitchSafety.CanMutateNow(autoSwitchContext)) break;
 										jklXHidServ.OnLayoutAction = asl;
 										var was = Locales.GetCurrentLocale();
 	        							jklXHidServ.ActionOnLayout = () => {
+											if (!AutoSwitchSafety.CanMutateNow(autoSwitchContext)) return;
 											if (!MahouUI.AddOneSpace)
-												DoSelf(() => KInputs.MakeInput(KInputs.AddPress(Keys.Back)), "jkl_autoswitch_back");
+												DoSelf(() => {
+													if (AutoSwitchSafety.CanMutateNow(autoSwitchContext))
+														KInputs.MakeInput(KInputs.AddPress(Keys.Back));
+												}, "jkl_autoswitch_back");
 											else if (!MahouUI.AutoSwitchSpaceAfter) {
-												DoSelf(() => KInputs.MakeInput(KInputs.AddPress(Keys.Back)), "jkl_autoswitch_back2");
+												DoSelf(() => {
+													if (AutoSwitchSafety.CanMutateNow(autoSwitchContext))
+														KInputs.MakeInput(KInputs.AddPress(Keys.Back));
+												}, "jkl_autoswitch_back2");
 												word.RemoveAt(word.Count-1);
 											}
 											word = QWERTZ_wordFIX(word);
-				        					StartConvertWord(word.ToArray(), was, true, true);
+											StartConvertWord(word.ToArray(), was, true, true, autoSwitchContext);
 											ExpandSnippet(snip, as_corrects[i], !MahouUI.AddOneSpace && MahouUI.AutoSwitchSpaceAfter,
-				        						MahouUI.AutoSwitchSwitchToGuessLayout, true, false, asl);
+												MahouUI.AutoSwitchSwitchToGuessLayout, true, false, asl, autoSwitchContext);
 										};
+										if (!AutoSwitchSafety.CanMutateNow(autoSwitchContext)) {
+											jklXHidServ.ActionOnLayout = null;
+											jklXHidServ.OnLayoutAction = 0;
+											break;
+										}
 	        						} else ofk = true;
+									if (!AutoSwitchSafety.CanMutateNow(autoSwitchContext)) break;
         							ChangeToLayout(Locales.ActiveWindow(), asl);
         							Debug.WriteLine("ASL"+asl);
 	        					} else ofk = true;
 	        					if (ofk) {
+									if (!AutoSwitchSafety.CanMutateNow(autoSwitchContext)) break;
 									if (!MahouUI.AddOneSpace)
-										DoSelf(() => KInputs.MakeInput(KInputs.AddPress(Keys.Back)), "autoswitch_back");
+										DoSelf(() => {
+											if (AutoSwitchSafety.CanMutateNow(autoSwitchContext))
+												KInputs.MakeInput(KInputs.AddPress(Keys.Back));
+										}, "autoswitch_back");
 									else if (!MahouUI.AutoSwitchSpaceAfter) {
-										DoSelf(() => KInputs.MakeInput(KInputs.AddPress(Keys.Back)), "autoswitch_back2");
+										DoSelf(() => {
+											if (AutoSwitchSafety.CanMutateNow(autoSwitchContext))
+												KInputs.MakeInput(KInputs.AddPress(Keys.Back));
+										}, "autoswitch_back2");
 										word.RemoveAt(word.Count-1);
 									}
 									word = QWERTZ_wordFIX(word);
-									 StartConvertWord(word.ToArray(), Locales.GetCurrentLocale(), true, true);
+									 StartConvertWord(word.ToArray(), Locales.GetCurrentLocale(), true, true, autoSwitchContext);
 									ExpandSnippet(snip, as_corrects[i], !MahouUI.AddOneSpace && MahouUI.AutoSwitchSpaceAfter,
-		        					              MahouUI.AutoSwitchSwitchToGuessLayout, true, false, asl);
+									              MahouUI.AutoSwitchSwitchToGuessLayout, true, false, asl, autoSwitchContext);
 	        					}
 								matched = true;
 								break;
@@ -1498,9 +1526,12 @@ namespace Mahou {
 			} else { return ""; }
 			return input;
 		}
-		static void ExpandSnippet(string snip, string expand, bool spaceAft, bool switchLayout, bool ignoreExpand = false, bool x2 = false, uint guessl = 0) {
+		static void ExpandSnippet(string snip, string expand, bool spaceAft, bool switchLayout,
+		                          bool ignoreExpand = false, bool x2 = false, uint guessl = 0,
+		                          AutoSwitchSourceContext autoSwitchContext = null) {
 			DoSelf(() => {
 				try {
+					if (autoSwitchContext != null && !AutoSwitchSafety.CanMutateNow(autoSwitchContext)) return;
 		       		Debug.WriteLine("Snippet: " +snip);
 		       		var exsni = expand;
 					if (!ignoreExpand) {
@@ -1517,6 +1548,7 @@ namespace Mahou {
 					}
 		       		Debug.WriteLine("EXSNI: " + exsni);
 					if (switchLayout) {
+						if (autoSwitchContext != null && !AutoSwitchSafety.CanMutateNow(autoSwitchContext)) return;
 		       			bool skp = false;
 		       			if (MahouUI.__setlayoutForce) 
 		       				if (expand.Contains("__setlayout")) {
@@ -1538,14 +1570,16 @@ namespace Mahou {
 		       				} else {
 			       				var gn = MMain.locales.ToList().Find(l => l.uId == guess).Lang;
 								Logging.Log("[SNI] > Changing to guessed layout [" + guess + "] after snippet expansion.");
-								ChangeToLayout(Locales.ActiveWindow(), guess);
+								if (autoSwitchContext == null || AutoSwitchSafety.CanMutateNow(autoSwitchContext))
+									ChangeToLayout(Locales.ActiveWindow(), guess);
 		       				}
 		       			} else {
 		       				Logging.Log("[SNI] > Switch layout skip due to __setlayout_FORCED");
 		       			}
 					}
 		       		if (spaceAft && !expand.Contains("__cursorhere"))
-						KInputs.MakeInput(KInputs.AddString(" "));
+						if (autoSwitchContext == null || AutoSwitchSafety.CanMutateNow(autoSwitchContext))
+							KInputs.MakeInput(KInputs.AddString(" "));
 					DoLater(() => MMain.mahou.Invoke((MethodInvoker)delegate {
 						MMain.mahou.UpdateLDs();
 					}), snip.Length*2);
@@ -1557,7 +1591,8 @@ namespace Mahou {
 					msg[1] = MMain.Lang[Languages.Element.Error];
 					var tsk = new System.Threading.Tasks.Task(() => MessageBox.Show(msg[0], msg[1], MessageBoxButtons.OK, MessageBoxIcon.Error));
 					tsk.Start();
-					KInputs.MakeInput(KInputs.AddString(snip));
+					if (autoSwitchContext == null || AutoSwitchSafety.CanMutateNow(autoSwitchContext))
+						KInputs.MakeInput(KInputs.AddString(snip));
 				}
               }, "expand_snippet");
 		}
@@ -3489,13 +3524,15 @@ namespace Mahou {
 				Debug.WriteLine(pt+ "end " + mn);
 			}
 		}
-		public static void StartConvertWord(YuKey[] YuKeys, uint wasLocale, bool skipsnip = false, bool last = false) {
+		public static void StartConvertWord(YuKey[] YuKeys, uint wasLocale, bool skipsnip = false,
+		                                    bool last = false, AutoSwitchSourceContext autoSwitchContext = null) {
 			if (YuKeys.Length == 0) {
 				Logging.Log("Convert Last failed: EMPTY WORD.");
 				return;
 			}
 			Logging.Log("Start Convert Word len: ["+YuKeys.Length+"], wl:"+wasLocale+", ss:"+skipsnip);
 			DoSelf(() => {
+				if (autoSwitchContext != null && !AutoSwitchSafety.CanMutateNow(autoSwitchContext)) return;
 				Debug.WriteLine(">> ST CLW");
 				var backs = YuKeys.Length;
 				// Fix for cmd exe pause hotkey leaving one char.
@@ -3518,9 +3555,11 @@ namespace Mahou {
 					c_snip.Clear();
 				}
 				Logging.Log("Deleting old word, with lenght of [" + YuKeys.Length + "].");
+				if (autoSwitchContext != null && !AutoSwitchSafety.CanMutateNow(autoSwitchContext)) return;
 				KInputs.MakeInput(KInputs.AddPress(Keys.Back, backs));
 				if (MahouUI.UseDelayAfterBackspaces)
 					Thread.Sleep(MMain.mahou.DelayAfterBackspaces);
+				if (autoSwitchContext != null && !AutoSwitchSafety.CanMutateNow(autoSwitchContext)) return;
 				var q = new List<WinAPI.INPUT>();
 				for (int i = 0; i < YuKeys.Length; i++) {
 					if (YuKeys[i].altnum) {
@@ -3557,6 +3596,7 @@ namespace Mahou {
 				if (!skipsnip) {
 					Logging.Log("[SNI] Snippet rewrite completed; source length=" + (rewr == null ? 0 : rewr.Length) + ", result length=" + c_snip.Count + ".");
 				}
+				if (autoSwitchContext != null && !AutoSwitchSafety.CanMutateNow(autoSwitchContext)) return;
 				KInputs.MakeInput(q.ToArray());
 				MahouUI.hk_result = true;
 				if (YuKeys.Length > 0 && last) {
