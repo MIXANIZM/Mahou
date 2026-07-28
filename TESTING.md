@@ -145,7 +145,19 @@ workflow or candidate artifact is created. The historical `TextPattern2`
 observation differs from the exact source mapping, but Text2 has no mutation
 method and cannot reopen the gate.
 
-## Recommended research order
+## AGZ-MAH-0013 checks
+
+This documentation-only release-readiness reconciliation requires:
+
+1. consistency across `docs/RELEASE-READINESS.md`, the PR #2 body proposal, project state, issues, handoff, testing, architecture and README;
+2. a stale-claim review against the actual runtime control flow and accepted evidence;
+3. changed-file and tree review proving the `Mahou/` runtime subtree, runtime version and `.github/workflows/` are unchanged from exact base `1a930137f7254111f8ef200da3e86c54e697ab5e`;
+4. all local fast gates above;
+5. GitHub Security regression, Input surface probe and Modern Windows build on the exact task head.
+
+The task creates no runtime candidate and does not authorize a merge or release.
+
+## Historical research order
 
 Future separately authorized tasks should investigate:
 
@@ -156,7 +168,7 @@ Future separately authorized tasks should investigate:
 5. Electron CodeMirror;
 6. WhatsApp Desktop bridge remains blocked.
 
-RichEdit is first because it may expose native range, caret and undo semantics that can be tested directly. UIA TextPattern/ValuePattern alone is already insufficient for Chromium and Qt.
+This order is retained as historical context. Additional input-surface feasibility work is paused during `AGZ-MAH-0013`; UIA TextPattern/ValuePattern alone is already insufficient for Chromium and Qt.
 
 ## Chrome editing-core workflow
 
@@ -184,7 +196,7 @@ The `Modern Windows build` workflow:
 - verifies the generated archive with the exact full commit and tree, rejects an intentionally wrong expected commit, and rejects a legacy-manifest fixture before upload;
 - creates a separate post-upload evidence JSON containing artifact ID/digest, run URL, source commit/tree, ZIP SHA-256, and executable SHA-256.
 
-`AGZ-MAH-0012` must leave the existing `Security regression`, `Input surface probe` and `Modern Windows build` green because it changes only documentation while leaving Mahou runtime sources and runtime version untouched.
+`AGZ-MAH-0013` must leave the existing `Security regression`, `Input surface probe` and `Modern Windows build` green because it changes only documentation while leaving Mahou runtime sources, workflows and runtime version untouched.
 
 ## Artifact handoff
 
@@ -201,6 +213,8 @@ Follow `TEST-PLAN-WINDOWS11.md`. For Mahou text mutation, use disposable documen
 For the input-surface probe, captures are read-only evidence collection. Focus the target field during the countdown, do not type/select/copy/paste/send, and retain the redacted JSON. A report is useful for capability mapping but cannot verify a write path.
 
 For `AGZ-MAH-0007`, no positive user Chrome mutation smoke is requested because no mutation API passed the acceptance gate and no active mutation code remains. The local diagnostic page can still be used to confirm the fail-closed prototype result and event logging if a supervisor requests that limited check.
+
+No positive mutation smoke is requested for modern Notepad/RichEdit or Telegram/Qt either: `AGZ-MAH-0011` and `AGZ-MAH-0012` rejected those direct paths before mutation. Their required result is strict no-op without a real user-created selection.
 
 ## Telegram Desktop direct-path investigation
 
