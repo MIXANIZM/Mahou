@@ -10,6 +10,7 @@
 - Agatzub Development Ruleset: `v2.7.0`
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
 - Current development head at the `AGZ-MAH-0011` start: `779b50dcc27cbe58f69ddadd54d526a0394663df`
+- Current development head at the `AGZ-MAH-0012` start: `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`
 - Last user-verified Insert safety checkpoint: `d4b37a3dac8b4b35d682c82a9ced7b87eaf9adda`
 - Verified Smart Caps source: `0b43bb688115e0051114f38a745fce9e830452fd`
 - Verified selected-text conversion source: `3418d09de20ea327302a26858a7b752862bd429e`
@@ -40,6 +41,30 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 - Draft PR #2 remains open, Draft, and unmerged.
 
 ## Current bounded task
+
+### AGZ-MAH-0012 — Qt Windows editable-text write feasibility
+
+Starting point:
+
+```text
+Base branch: mixanizm-modern-v2.9.0.1
+Exact base: d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1
+Task branch: agz-mah-0012-qt-edit-feasibility
+Decision: DIRECT-PATH-NOT-SAFE
+```
+
+Scope and result:
+
+- exact Qt 5.15.19 Windows accessibility-provider mapping, using official Telegram Desktop 7.0.5 as a reference;
+- Qt exposes external UIA Text/Text2 read/navigation/selection ranges and a whole-field Value provider, but no documented external exact-range writer;
+- Qt's internal `QAccessibleEditableTextInterface` delete/insert/replace methods are in-process C++ only and are not projected through UIA, MSAA or IAccessible2;
+- no mutation was authorized after the documented-contract gate failed;
+- no Mahou runtime source/version change, harness, adapter, candidate artifact, signing, merge, release or PR #3 work;
+- full evidence: `docs/QT-WINDOWS-EDIT-FEASIBILITY.md`.
+
+Telegram and other Qt/custom surfaces remain strict no-op without a real user-created selection. Version, signer, process name, Qt class, readable text, caret, `TextPattern`, `TextPattern2` or `ValuePattern` do not establish write support.
+
+## Previous bounded task
 
 ### AGZ-MAH-0011 — Modern Notepad RichEdit write feasibility
 
@@ -178,8 +203,8 @@ Open and unmerged against `mixanizm-modern-v2.9.0.1`. Its current diff is preser
 - Do not combine Obsidian title and CodeMirror body into one inferred editor contract.
 - Do not start mutation work from the WhatsApp Desktop bridge evidence; the internal editor was not reached.
 - Do not change PR #1 or PR #3 without a separate explicit task.
-- Do not merge or mark Ready PR #2 or the AGZ-MAH-0011 task PR, create a tag or Release, or publish a Mahou user build without explicit permission.
+- Do not merge or mark Ready PR #2, the AGZ-MAH-0011 task PR or the AGZ-MAH-0012 task PR, create a tag or Release, or publish a Mahou user build without explicit permission.
 
 ## Next management step
 
-The project supervisor should inspect the `AGZ-MAH-0011` Draft PR, confirm the `DIRECT-PATH-NOT-SAFE` decision and documentation-only diff, and review the Security regression and Modern Windows build results. A future task may reopen modern Notepad only if a documented supported external range-write contract becomes available.
+The project supervisor should inspect the `AGZ-MAH-0012` Draft PR, confirm the `DIRECT-PATH-NOT-SAFE` decision and documentation-only diff, and review the Security regression, Input surface probe and Modern Windows build results. A future task may reopen Qt only if a documented supported external range-write contract becomes available; otherwise the next architecture target in the recorded order is Chromium Edit.

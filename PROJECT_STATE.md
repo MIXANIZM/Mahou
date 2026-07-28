@@ -9,6 +9,7 @@ Snapshot date: 2026-07-28
 - Current development branch: `mixanizm-modern-v2.9.0.1`
 - Main development pull request: Draft PR #2, from `mixanizm-modern-v2.9.0.1` into `master`
 - Current development head at the start of `AGZ-MAH-0011`: `779b50dcc27cbe58f69ddadd54d526a0394663df`
+- Current development head at the start of `AGZ-MAH-0012`: `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`
 - Runtime line: `2.9.0.1-dev`
 - Agatzub Development Ruleset: `v2.7.0`
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
@@ -20,6 +21,7 @@ Snapshot date: 2026-07-28
 - Input-surface capability probe: `AGZ-MAH-0009: USER_PROBE_EVIDENCE_COMPLETE`
 - Input-surface evidence record: `AGZ-MAH-0010`, accepted and merged through PR #12 at `779b50dcc27cbe58f69ddadd54d526a0394663df`
 - Modern Notepad direct-path feasibility: `AGZ-MAH-0011: DIRECT-PATH-NOT-SAFE`
+- Qt Windows editable-text feasibility: `AGZ-MAH-0012: DIRECT-PATH-NOT-SAFE`
 
 The old `master` branch is not the current working line for modernized Mahou. New bounded tasks normally branch from `mixanizm-modern-v2.9.0.1` unless a task handoff explicitly states otherwise.
 
@@ -47,6 +49,21 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - It must not be used as a source branch, cleaned up, closed, rebased, or modified without a separate decision.
 
 ## Current bounded task result
+
+### AGZ-MAH-0012 — Qt Windows editable-text write feasibility
+
+- Exact base: `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`.
+- Task branch: `agz-mah-0012-qt-edit-feasibility`.
+- Scope: documented external Windows accessibility/COM write contracts for Qt 5.15.19 editable text, with Telegram Desktop 7.0.5 as the reference application.
+- Result: `DIRECT-PATH-NOT-SAFE`.
+- Mahou runtime source and runtime version `2.9.0.1-dev` remain unchanged.
+- No text mutation, executable harness, runtime adapter, candidate artifact, merge, release, signing, or PR #3 work is included.
+
+Qt's Windows UI Automation provider exposes text through read/navigation/selection `TextPattern`/`TextPattern2` ranges and the whole control through `ValuePattern`. It does not project UIA `TextEditPattern`, UIA `ObjectModelPattern`, IAccessible2 editable text, or another documented external exact-range writer.
+
+Qt's `QAccessibleEditableTextInterface::deleteText`, `insertText` and `replaceText` operations exist only as in-process C++ calls and are not marshalled by the Windows provider. The exact source/runtime mapping, official Telegram 7.0.5 identity, rejected paths, historical `TextPattern2` discrepancy and gate decision are recorded in `docs/QT-WINDOWS-EDIT-FEASIBILITY.md`.
+
+## Previous bounded task result
 
 ### AGZ-MAH-0011 — Modern Notepad RichEdit write feasibility
 
@@ -131,6 +148,7 @@ RichEdit is first because it may expose native range, caret and undo semantics. 
 - `AGZ-MAH-0009` is `USER_PROBE_EVIDENCE_COMPLETE`.
 - `AGZ-MAH-0010` was accepted and merged through PR #12 without changing Mahou runtime behavior.
 - `AGZ-MAH-0011` records `DIRECT-PATH-NOT-SAFE`; modern Notepad remains strict no-op and no adapter was added.
+- `AGZ-MAH-0012` records `DIRECT-PATH-NOT-SAFE`; Telegram and all other Qt/custom surfaces remain strict no-op and no adapter was added.
 - `AGZ-MAH-0008` remains accepted `BLOCKED` for Telegram mutation.
 - `AGZ-MAH-0007` is accepted with result `BROWSER-CONTEXT-MUTATION-NOT-SAFE` and merged through PR #9; it does not add Chrome support.
 - `AGZ-MAH-0003` is superseded by the negative `AGZ-MAH-0011` feasibility result. PR #3 is not an accepted implementation.

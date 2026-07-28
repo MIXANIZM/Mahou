@@ -125,6 +125,26 @@ This documentation-only Windows accessibility/RichEdit interoperability task req
 
 The documented RichEdit-specific external acquisition contract was not established, so the result is `DIRECT-PATH-NOT-SAFE`. No mutation smoke, executable harness or candidate artifact is created. A dedicated feasibility workflow is not added because there is no executable feasibility code to build or run.
 
+## AGZ-MAH-0012 checks
+
+This documentation-only Qt Windows editable-text feasibility task requires:
+
+1. exact source mapping from official Telegram Desktop 7.0.5 to Qt 5.15.19 and its Windows accessibility provider;
+2. primary Qt and Microsoft contract review for UIA Text/Text2, Value, TextEdit, ObjectModel, MSAA, IAccessible2 and Qt's internal editable-text interface;
+3. read-only identity checks for the official Telegram 7.0.5 x64 release and explicit recording that the formerly installed 7.0.5 runtime was no longer available for re-probe;
+4. no text mutation before a documented external exact-range write contract is established;
+5. changed-file review proving that only documentation changed and Mahou runtime source/version remain untouched;
+6. static rejection review for UIA selection, whole-value writes, keyboard/clipboard input, hooks, injection, process memory and private in-process Qt access;
+7. local security and input-surface-probe regression gates;
+8. GitHub Security regression, Input surface probe and Modern Windows build on the exact task head.
+
+The Qt Windows provider does not project the internal
+`QAccessibleEditableTextInterface` as an external range writer, so the result is
+`DIRECT-PATH-NOT-SAFE`. No mutation smoke, executable harness, feasibility
+workflow or candidate artifact is created. The historical `TextPattern2`
+observation differs from the exact source mapping, but Text2 has no mutation
+method and cannot reopen the gate.
+
 ## Recommended research order
 
 Future separately authorized tasks should investigate:
@@ -164,7 +184,7 @@ The `Modern Windows build` workflow:
 - verifies the generated archive with the exact full commit and tree, rejects an intentionally wrong expected commit, and rejects a legacy-manifest fixture before upload;
 - creates a separate post-upload evidence JSON containing artifact ID/digest, run URL, source commit/tree, ZIP SHA-256, and executable SHA-256.
 
-`AGZ-MAH-0011` must leave both the existing `Security regression` and `Modern Windows build` green because it changes only documentation while leaving Mahou runtime sources and runtime version untouched.
+`AGZ-MAH-0012` must leave the existing `Security regression`, `Input surface probe` and `Modern Windows build` green because it changes only documentation while leaving Mahou runtime sources and runtime version untouched.
 
 ## Artifact handoff
 
@@ -184,7 +204,11 @@ For `AGZ-MAH-0007`, no positive user Chrome mutation smoke is requested because 
 
 ## Telegram Desktop direct-path investigation
 
-`AGZ-MAH-0008` is accepted as `BLOCKED`. The later read-only snapshot supplies process/control/provider metadata but cannot satisfy any mutation acceptance gate.
+`AGZ-MAH-0008` is accepted as `BLOCKED`. `AGZ-MAH-0012` later completed the Qt
+5.15.19 documented-contract gate with `DIRECT-PATH-NOT-SAFE`: the Windows
+provider offers no documented external exact-range writer. The read-only
+snapshot supplies process/control/provider metadata but cannot satisfy any
+mutation acceptance gate.
 
 Before any future Telegram mutation, a separately authorized task must record and revalidate:
 
