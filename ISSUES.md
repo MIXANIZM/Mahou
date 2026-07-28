@@ -4,10 +4,10 @@
 
 # Awaiting supervisor decision
 
-- [AGZ-MAH-0011] [DIRECT-PATH-NOT-SAFE / DOCUMENTATION_COMPLETE / DRAFT] 2026-07-28
-  Investigated the documented Windows accessibility/RichEdit interoperability contract for an exact-range write in a disposable empty modern Notepad document from exact base `779b50dcc27cbe58f69ddadd54d526a0394663df`.
-  The installed `RichEditD2DPT` control exposed UIA `TextPattern` and `ValuePattern`; a read-only `OBJID_NATIVEOM` probe also returned an object supporting `ITextDocument`. However, Microsoft documents RichEdit TOM acquisition through the pointer-bearing `EM_GETOLEINTERFACE` path, not a RichEdit-specific external `OBJID_NATIVEOM` contract. The generic object-model mechanism and one observed build do not establish a supported version-gated mutation contract.
-  Exact independent `ITextRange` replacement is expressible after a valid TOM object is acquired, but cross-process acquisition support and a single ordinary Notepad Undo unit are not documented for this route. No text mutation, harness, adapter, runtime/version change, artifact, merge, release, or PR #3 work was performed. Modern Notepad remains strict no-op.
+- [AGZ-MAH-0012] [DIRECT-PATH-NOT-SAFE / DOCUMENTATION_COMPLETE / DRAFT] 2026-07-28
+  Investigated the documented external Windows write contracts for the Qt 5.15.19 editable-text family from exact base `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`, using Telegram Desktop 7.0.5 as the reference application.
+  Qt's Windows provider projects `TextPattern`/`TextPattern2` for read, navigation and selection and `ValuePattern` for a whole-control value. It does not project its internal `QAccessibleEditableTextInterface` through UIA `TextEdit`, UIA `ObjectModel`, IAccessible2 editable text or another documented external COM range writer.
+  No primitive passed the pre-mutation gate. No text mutation, harness, runtime adapter, runtime/version change, candidate artifact, merge, release, signing or PR #3 work was performed. Telegram and other Qt/custom surfaces remain strict no-op without a real user-created selection.
 
 - [AGZ-MAH-0007] [BROWSER-CONTEXT-MUTATION-NOT-SAFE] 2026-07-25
   Investigated the isolated Manifest V3 Chrome editing core from exact starting commit `faaf170d12e5bbcbd49c0b66edf4bac75c1e3049` without Native Messaging or Mahou runtime integration.
@@ -33,6 +33,11 @@
 - Chrome Smart Caps remains unsupported. `AGZ-MAH-0006` rejected the desktop-only path and `AGZ-MAH-0007` rejected the tested browser-context editing core under the strict range/caret/selection/undo/events gate. Native Messaging was not started.
 
 # Completed
+
+- [AGZ-MAH-0011] [DIRECT-PATH-NOT-SAFE / ACCEPTED / MERGED] 2026-07-28
+  Investigated the documented Windows accessibility/RichEdit interoperability contract for an exact-range write in a disposable empty modern Notepad document from exact base `779b50dcc27cbe58f69ddadd54d526a0394663df`.
+  The installed `RichEditD2DPT` control exposed UIA `TextPattern` and `ValuePattern`; a read-only `OBJID_NATIVEOM` probe also returned an object supporting `ITextDocument`. However, Microsoft documents RichEdit TOM acquisition through the pointer-bearing `EM_GETOLEINTERFACE` path, not a RichEdit-specific external `OBJID_NATIVEOM` contract. The generic object-model mechanism and one observed build do not establish a supported version-gated mutation contract.
+  Exact independent `ITextRange` replacement is expressible after a valid TOM object is acquired, but cross-process acquisition support and a single ordinary Notepad Undo unit are not documented for this route. The result was accepted and merged through PR #13 at merge commit `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`. No text mutation, harness, adapter, runtime/version change, artifact, release, or PR #3 work was performed. Modern Notepad remains strict no-op.
 
 - [AGZ-MAH-0010] [ACCEPTED / MERGED] 2026-07-27
   Recorded the completed real-Windows read-only input-surface evidence without changing Mahou runtime behavior. PR #12 was accepted and merged into `mixanizm-modern-v2.9.0.1` at merge commit `779b50dcc27cbe58f69ddadd54d526a0394663df`.
@@ -75,6 +80,8 @@
 - Draft PR #1 is open, based on `master`, and belongs to an earlier stabilization line. It is not the current working line and must not be changed without a separate decision.
 - Draft PR #2 is open and is the main modernization PR from `mixanizm-modern-v2.9.0.1` into `master`. Keep it Draft and unmerged.
 - Draft PR #3 is open against `mixanizm-modern-v2.9.0.1` and remains preserved transport history, not an accepted Notepad adapter.
+- Draft PR #14 is the `AGZ-MAH-0012` task PR. It must remain Draft and unmerged; it records a documentation-only Qt feasibility decision and adds no adapter.
 - PR #10 is closed and merged and records only the accepted `BLOCKED` Telegram investigation.
 - PR #11 is closed and merged and adds the read-only input-surface capability probe, not a runtime adapter.
 - PR #12 is closed and merged and records only the accepted sanitized input-surface evidence.
+- PR #13 is closed and merged and records the accepted `AGZ-MAH-0011` result `DIRECT-PATH-NOT-SAFE` at merge commit `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`.

@@ -116,17 +116,51 @@ Microsoft Word can independently correct two initial capitals before Mahou runs.
 
 Intentional mixed-case names cannot be distinguished perfectly from accidental interior capitals. Immediate physical Backspace reverses Mahou's change, and two explicit reversions learn a local personal exception. Personal exceptions are stored in the existing INI configuration under `SmartTyping`. No typed word content is sent over the network or written to plaintext diagnostics.
 
-## Telegram Desktop boundary
+## Qt Windows editable-text boundary
 
-`AGZ-MAH-0008` is accepted as `BLOCKED`: it did not establish a safe Telegram Desktop mutation primitive. The later real-Windows read-only capture identifies the tested Telegram Desktop 7.0.5 ordinary composer as Qt `Ui::InputField::Inner` with UIA `TextPattern` and `ValuePattern`, but that evidence remains insufficient.
+`AGZ-MAH-0012` completed the documented external-contract gate for Qt 5.15.19
+Windows editable text, with Telegram Desktop 7.0.5 as the reference
+application, and records:
 
-UI Automation Text/TextRange remains read-only for general text mutation; `.Select()` and whole-field `ValuePattern.SetValue()` are forbidden. IAccessible2 defines an addressable `IAccessibleEditableText::replaceText` operation, but it is not accepted unless the exact installed provider exposes it and a real private-chat test proves target-only mutation, exact caret, collapsed selection, unchanged neighbors, preserved formatting/draft state, unchanged active chat, one normal Telegram undo operation, no composition conflict, no send, and exact post-state verification.
+```text
+DIRECT-PATH-NOT-SAFE
+```
 
-Until that complete evidence exists:
+Qt's Windows provider maps its accessible text interface to UI Automation
+`TextPattern`/`TextPattern2`. The resulting `ITextRangeProvider` objects support
+read, navigation and selection but have no text setter. Qt also maps a
+`ValuePattern` provider whose write replaces the control value as a whole.
+Neither route provides an independent external exact-range replacement.
 
-- Telegram is not included in `SmartCaps.TryDirectReplace`;
-- process name, Qt class, UIA read access, caret access, capability-probe classification, `ValuePattern`, or interface presence alone are insufficient;
-- search, caption, edit-message, forward-comment, passcode, and every other Telegram field remain mandatory no-op;
-- other Qt applications remain mandatory no-op.
+Qt internally implements `QAccessibleEditableTextInterface::deleteText`,
+`insertText` and `replaceText` for `QTextEdit` with `QTextCursor`. Those are
+in-process C++ calls. The Windows provider does not project them through UIA
+`TextEditPattern`, UIA `ObjectModelPattern`, MSAA/IAccessible2 editable text or
+another documented COM interface. Reaching the internal object would require
+an injected, private or otherwise undocumented route.
 
-The detailed investigation record is `docs/TELEGRAM-SMART-CAPS-ARCHITECTURE.md`.
+The historical 7.0.5 capture observed UIA `TextPattern` and `ValuePattern` but
+not `TextPattern2`, while the exact Qt source maps Text2 with Text. The old
+installed binary is no longer available to resolve that discrepancy. It does
+not affect the decision because Text2 adds caret/annotation behavior, not
+mutation.
+
+Consequences:
+
+- Telegram and other Qt/custom controls are not included in
+  `SmartCaps.TryDirectReplace`;
+- UIA selection, whole-value writes, keyboard or clipboard input, hooks,
+  injection, process memory, private Qt pointers and modified application
+  builds remain forbidden;
+- process name, signature, Qt class, UIA read access, caret access,
+  `TextPattern`, `TextPattern2`, `ValuePattern`, or internal editable-interface
+  existence cannot establish a write contract;
+- generic `Ui::InputField::Inner` identity cannot distinguish an ordinary
+  composer from search, caption, edit-message, forward-comment, passcode or
+  another mode;
+- no mutation smoke or harness exists because no primitive passed the
+  pre-mutation gate.
+
+Full evidence and the rejected-path matrix are in
+`docs/QT-WINDOWS-EDIT-FEASIBILITY.md`. The earlier Telegram-specific
+investigation remains recorded in `docs/TELEGRAM-SMART-CAPS-ARCHITECTURE.md`.
