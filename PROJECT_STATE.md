@@ -20,7 +20,7 @@ Snapshot date: 2026-07-28
 - Telegram Desktop direct-path result: accepted `BLOCKED` under `AGZ-MAH-0008`
 - Input-surface capability probe: `AGZ-MAH-0009: USER_PROBE_EVIDENCE_COMPLETE`
 - Input-surface evidence record: `AGZ-MAH-0010`, accepted and merged through PR #12 at `779b50dcc27cbe58f69ddadd54d526a0394663df`
-- Modern Notepad direct-path feasibility: `AGZ-MAH-0011: DIRECT-PATH-NOT-SAFE`
+- Modern Notepad direct-path feasibility: `AGZ-MAH-0011: DIRECT-PATH-NOT-SAFE`, accepted and merged through PR #13 at merge commit `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`
 - Qt Windows editable-text feasibility: `AGZ-MAH-0012: DIRECT-PATH-NOT-SAFE`
 
 The old `master` branch is not the current working line for modernized Mahou. New bounded tasks normally branch from `mixanizm-modern-v2.9.0.1` unless a task handoff explicitly states otherwise.
@@ -78,6 +78,7 @@ Qt's `QAccessibleEditableTextInterface::deleteText`, `insertText` and `replaceTe
 - Task branch: `agz-mah-0011-notepad-richedit-feasibility`.
 - Scope: documented Windows accessibility/RichEdit interoperability feasibility and read-only installed-build evidence.
 - Result: `DIRECT-PATH-NOT-SAFE`.
+- Status: accepted and merged through PR #13 at merge commit `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`.
 - Mahou runtime source and runtime version `2.9.0.1-dev` remain unchanged.
 - No text mutation, executable harness, runtime adapter, candidate artifact, merge, release, or PR #3 work is included.
 
@@ -154,7 +155,7 @@ RichEdit is first because it may expose native range, caret and undo semantics. 
 
 - `AGZ-MAH-0009` is `USER_PROBE_EVIDENCE_COMPLETE`.
 - `AGZ-MAH-0010` was accepted and merged through PR #12 without changing Mahou runtime behavior.
-- `AGZ-MAH-0011` records `DIRECT-PATH-NOT-SAFE`; modern Notepad remains strict no-op and no adapter was added.
+- `AGZ-MAH-0011` is accepted and merged through PR #13 at merge commit `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1` with result `DIRECT-PATH-NOT-SAFE`; modern Notepad remains strict no-op and no adapter was added.
 - `AGZ-MAH-0012` records `DIRECT-PATH-NOT-SAFE`; Telegram and all other Qt/custom surfaces remain strict no-op and no adapter was added.
 - `AGZ-MAH-0008` remains accepted `BLOCKED` for Telegram mutation.
 - `AGZ-MAH-0007` is accepted with result `BROWSER-CONTEXT-MUTATION-NOT-SAFE` and merged through PR #9; it does not add Chrome support.

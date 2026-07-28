@@ -75,6 +75,8 @@ Base branch: mixanizm-modern-v2.9.0.1
 Exact base: 779b50dcc27cbe58f69ddadd54d526a0394663df
 Task branch: agz-mah-0011-notepad-richedit-feasibility
 Decision: DIRECT-PATH-NOT-SAFE
+Status: ACCEPTED / MERGED through PR #13
+Merge commit: d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1
 ```
 
 Scope and result:
@@ -85,6 +87,10 @@ Scope and result:
 - Microsoft documents RichEdit TOM acquisition through pointer-bearing `EM_GETOLEINTERFACE`, not a RichEdit-specific external `OBJID_NATIVEOM` contract;
 - the observed installed-build `OBJID_NATIVEOM`/`ITextDocument` success is evidence, not a supported version-gated write contract;
 - one ordinary Notepad Undo unit therefore remains unproven.
+
+The `DIRECT-PATH-NOT-SAFE` result was accepted and merged through PR #13 into
+`mixanizm-modern-v2.9.0.1` at merge commit
+`d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`.
 
 Recorded user evidence:
 
@@ -210,7 +216,7 @@ candidate artifact, and must remain Draft until supervisor review.
 - Do not combine Obsidian title and CodeMirror body into one inferred editor contract.
 - Do not start mutation work from the WhatsApp Desktop bridge evidence; the internal editor was not reached.
 - Do not change PR #1 or PR #3 without a separate explicit task.
-- Do not merge or mark Ready PR #2, the AGZ-MAH-0011 task PR or the AGZ-MAH-0012 task PR, create a tag or Release, or publish a Mahou user build without explicit permission.
+- Do not merge or mark Ready PR #2 or the AGZ-MAH-0012 task PR, create a tag or Release, or publish a Mahou user build without explicit permission.
 
 ## Next management step
 
