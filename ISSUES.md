@@ -80,7 +80,7 @@
 - Draft PR #1 is open, based on `master`, and belongs to an earlier stabilization line. It is not the current working line and must not be changed without a separate decision.
 - Draft PR #2 is open and is the main modernization PR from `mixanizm-modern-v2.9.0.1` into `master`. Keep it Draft and unmerged.
 - Draft PR #3 is open against `mixanizm-modern-v2.9.0.1` and remains preserved transport history, not an accepted Notepad adapter.
-- The `AGZ-MAH-0012` task PR must remain Draft and unmerged; it records a documentation-only Qt feasibility decision and adds no adapter.
+- Draft PR #14 is the `AGZ-MAH-0012` task PR. It must remain Draft and unmerged; it records a documentation-only Qt feasibility decision and adds no adapter.
 - PR #10 is closed and merged and records only the accepted `BLOCKED` Telegram investigation.
 - PR #11 is closed and merged and adds the read-only input-surface capability probe, not a runtime adapter.
 - PR #12 is closed and merged and records only the accepted sanitized input-surface evidence.

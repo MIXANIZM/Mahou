@@ -48,6 +48,13 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - Its current diff is transport and workflow history from the attempted Notepad-adapter task, not an accepted or integrated Notepad implementation.
 - It must not be used as a source branch, cleaned up, closed, rebased, or modified without a separate decision.
 
+### Draft PR #14
+
+- Open and unmerged against `mixanizm-modern-v2.9.0.1`.
+- Head branch: `agz-mah-0012-qt-edit-feasibility`.
+- Records the documentation-only Qt Windows editable-text feasibility result `DIRECT-PATH-NOT-SAFE`.
+- Adds no runtime adapter or candidate artifact and must remain Draft until supervisor review.
+
 ## Current bounded task result
 
 ### AGZ-MAH-0012 — Qt Windows editable-text write feasibility

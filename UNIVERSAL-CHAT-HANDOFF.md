@@ -194,6 +194,13 @@ Open and unmerged from `mixanizm-modern-v2.9.0.1` into `master`. Keep it Draft; 
 
 Open and unmerged against `mixanizm-modern-v2.9.0.1`. Its current diff is preserved transport/workflow history, not an accepted Notepad adapter. Do not use or modify it without a separate decision.
 
+### Draft PR #14
+
+Open and unmerged against `mixanizm-modern-v2.9.0.1` from
+`agz-mah-0012-qt-edit-feasibility`. It records the documentation-only Qt
+Windows editable-text result `DIRECT-PATH-NOT-SAFE`, adds no runtime adapter or
+candidate artifact, and must remain Draft until supervisor review.
+
 ## Important prohibitions
 
 - Do not restore UI Automation `.Select()`, keyboard selection, generated-selection fallback, Backspace/retype, clipboard mutation, or whole-field rewrite.
