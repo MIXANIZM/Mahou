@@ -68,9 +68,9 @@ The architecture consequences are mandatory:
 
 Sanitized reports are stored under `docs/evidence/input-surface-probe/`. Raw JSON for Word, modern Notepad and AnyDesk was not available; only user-confirmed normalized evidence is recorded for those three surfaces.
 
-## Adapter research order
+## Historical adapter research order
 
-The recommended order for separately authorized architecture tasks is:
+The recorded order for separately authorized architecture tasks was:
 
 1. modern RichEdit / Notepad;
 2. Telegram Qt input;
@@ -79,7 +79,11 @@ The recommended order for separately authorized architecture tasks is:
 5. Electron CodeMirror;
 6. WhatsApp Desktop bridge remains blocked.
 
-RichEdit is first because it may expose native range, caret and undo semantics that can be tested as a bounded direct adapter. UIA TextPattern/ValuePattern alone is already insufficient for Chromium and Qt, so their read metadata does not justify earlier mutation work.
+This order is retained as historical context. `AGZ-MAH-0011` and
+`AGZ-MAH-0012` have since rejected the documented external direct paths for
+modern Notepad/RichEdit and Qt respectively. Additional input-surface
+feasibility work is paused during `AGZ-MAH-0013`; UIA
+TextPattern/ValuePattern alone is already insufficient for Chromium and Qt.
 
 ## Modern Notepad RichEdit feasibility boundary
 
@@ -164,3 +168,12 @@ Consequences:
 Full evidence and the rejected-path matrix are in
 `docs/QT-WINDOWS-EDIT-FEASIBILITY.md`. The earlier Telegram-specific
 investigation remains recorded in `docs/TELEGRAM-SMART-CAPS-ARCHITECTURE.md`.
+
+## Release-readiness boundary
+
+`AGZ-MAH-0013` reconciles architecture claims, accepted evidence and release
+gates without changing runtime behavior. `docs/RELEASE-READINESS.md` is the
+current status matrix and separates PR #2 merge gates from additional public
+release gates. `docs/PR2-DESCRIPTION-PROPOSAL.md` is a metadata proposal only;
+it does not change PR #2 or authorize Ready, merge, signing, tag, Release or
+publication.

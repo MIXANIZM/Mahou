@@ -44,9 +44,18 @@ path until physical keyboard-hook performance testing is available.
 
 ## Current status
 
-This is still a draft test branch. It requires physical Windows 11 testing of keyboard
-hooks, Insert word/selection conversion, Smart Caps, AutoSwitch, snippets, modifier handling,
-translator behavior and the full settings UI before merge or public release. See
+This is still a draft test branch. Selected-text conversion and Smart Caps have
+accepted focused Windows evidence at their recorded immutable source commits;
+that evidence is not a blanket verification of every retained feature or of the
+current head. AutoSwitch, snippets, modifier handling, translator behavior,
+input history, startup/restart, settings migration, UI scaling and the full
+settings UI still require the applicable retained-feature Windows smoke before
+Draft PR #2 can leave Draft.
+
+The reconciled status matrix and separate merge/public-release gates are in
+`docs/RELEASE-READINESS.md`. A complete replacement body proposal for Draft PR
+#2 is in `docs/PR2-DESCRIPTION-PROPOSAL.md`; it is a proposal only and does not
+change PR metadata or authorize merge or release. See also
 `SECURITY-AUDIT-MODERN.md`.
 
 The current GitHub snapshot is maintained in `PROJECT_STATE.md`. Task status is kept in

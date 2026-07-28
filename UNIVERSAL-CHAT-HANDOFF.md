@@ -11,6 +11,7 @@
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
 - Current development head at the `AGZ-MAH-0011` start: `779b50dcc27cbe58f69ddadd54d526a0394663df`
 - Current development head at the `AGZ-MAH-0012` start: `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`
+- Current development head at the `AGZ-MAH-0013` start: `1a930137f7254111f8ef200da3e86c54e697ab5e`
 - Last user-verified Insert safety checkpoint: `d4b37a3dac8b4b35d682c82a9ced7b87eaf9adda`
 - Verified Smart Caps source: `0b43bb688115e0051114f38a745fce9e830452fd`
 - Verified selected-text conversion source: `3418d09de20ea327302a26858a7b752862bd429e`
@@ -42,6 +43,30 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 
 ## Current bounded task
 
+### AGZ-MAH-0013 — main PR release-readiness reconciliation
+
+Starting point:
+
+```text
+Base branch: mixanizm-modern-v2.9.0.1
+Exact base: 1a930137f7254111f8ef200da3e86c54e697ab5e
+Task branch: agz-mah-0013-main-pr-readiness
+Result: RELEASE_READINESS_RECONCILED
+```
+
+Scope and result:
+
+- reconciles Draft PR #2 against the exact development head, accepted evidence and current CI/provenance;
+- records verified, automated-only, user-smoke-required, not-applicable and blocked readiness states in `docs/RELEASE-READINESS.md`;
+- supplies a complete replacement body proposal in `docs/PR2-DESCRIPTION-PROPOSAL.md` without editing PR #2 metadata;
+- keeps the exact supported direct adapters limited to Microsoft Word document `Range` and exact classic Win32 `Edit`;
+- keeps modern Notepad/RichEdit, Chrome/Chromium, Telegram/Qt and other unsupported controls strict no-op without a real user-created selection;
+- changes no Mahou runtime source/version, workflow, PR #2 metadata, PR #3 state, tag, Release or publication state.
+
+Draft PR #2 remains Draft. Its merge gates and the additional public-release gates are separate and are authoritative in `docs/RELEASE-READINESS.md`.
+
+## Previous bounded task
+
 ### AGZ-MAH-0012 — Qt Windows editable-text write feasibility
 
 Starting point:
@@ -51,6 +76,8 @@ Base branch: mixanizm-modern-v2.9.0.1
 Exact base: d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1
 Task branch: agz-mah-0012-qt-edit-feasibility
 Decision: DIRECT-PATH-NOT-SAFE
+Status: ACCEPTED / MERGED through PR #14
+Merge commit: 1a930137f7254111f8ef200da3e86c54e697ab5e
 ```
 
 Scope and result:
@@ -58,39 +85,12 @@ Scope and result:
 - exact Qt 5.15.19 Windows accessibility-provider mapping, using official Telegram Desktop 7.0.5 as a reference;
 - Qt exposes external UIA Text/Text2 read/navigation/selection ranges and a whole-field Value provider, but no documented external exact-range writer;
 - Qt's internal `QAccessibleEditableTextInterface` delete/insert/replace methods are in-process C++ only and are not projected through UIA, MSAA or IAccessible2;
-- no mutation was authorized after the documented-contract gate failed;
-- no Mahou runtime source/version change, harness, adapter, candidate artifact, signing, merge, release or PR #3 work;
-- full evidence: `docs/QT-WINDOWS-EDIT-FEASIBILITY.md`.
-
-Telegram and other Qt/custom surfaces remain strict no-op without a real user-created selection. Version, signer, process name, Qt class, readable text, caret, `TextPattern`, `TextPattern2` or `ValuePattern` do not establish write support.
-
-## Previous bounded task
-
-### AGZ-MAH-0011 — Modern Notepad RichEdit write feasibility
-
-Starting point:
-
-```text
-Base branch: mixanizm-modern-v2.9.0.1
-Exact base: 779b50dcc27cbe58f69ddadd54d526a0394663df
-Task branch: agz-mah-0011-notepad-richedit-feasibility
-Decision: DIRECT-PATH-NOT-SAFE
-Status: ACCEPTED / MERGED through PR #13
-Merge commit: d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1
-```
-
-Scope and result:
-
-- documented Windows accessibility/RichEdit interoperability feasibility and read-only installed-build evidence;
 - no Mahou runtime source or runtime version change;
 - no text mutation, executable harness, adapter, candidate artifact, signing, merge, release, or PR #3 work;
-- Microsoft documents RichEdit TOM acquisition through pointer-bearing `EM_GETOLEINTERFACE`, not a RichEdit-specific external `OBJID_NATIVEOM` contract;
-- the observed installed-build `OBJID_NATIVEOM`/`ITextDocument` success is evidence, not a supported version-gated write contract;
-- one ordinary Notepad Undo unit therefore remains unproven.
 
-The `DIRECT-PATH-NOT-SAFE` result was accepted and merged through PR #13 into
-`mixanizm-modern-v2.9.0.1` at merge commit
-`d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`.
+The `DIRECT-PATH-NOT-SAFE` result was accepted and merged into
+`mixanizm-modern-v2.9.0.1` through PR #14 at merge commit
+`1a930137f7254111f8ef200da3e86c54e697ab5e`.
 
 Recorded user evidence:
 
@@ -119,7 +119,7 @@ Eight reviewed sanitized JSON reports are stored in `docs/evidence/input-surface
 - `AGZ-MAH-0011` found no documented RichEdit-specific external `OBJID_NATIVEOM` contract; observed COM availability on one Notepad build must not become a mutation allow-list.
 - The only verified direct write adapters remain Word document `Range` and exact classic Win32 `Edit`.
 
-## Recommended research order
+## Historical research order
 
 1. modern RichEdit / Notepad;
 2. Telegram Qt input;
@@ -128,7 +128,7 @@ Eight reviewed sanitized JSON reports are stored in `docs/evidence/input-surface
 5. Electron CodeMirror;
 6. WhatsApp Desktop bridge remains blocked.
 
-RichEdit is first because it may expose native range, caret and undo semantics suitable for a bounded application-specific adapter. Chromium and Qt already demonstrate that UIA TextPattern/ValuePattern alone is insufficient.
+This order is retained as historical context. Additional input-surface feasibility work is paused during `AGZ-MAH-0013`; Chromium and Qt already demonstrate that UIA TextPattern/ValuePattern alone is insufficient.
 
 ## Probe verification history
 
@@ -200,12 +200,12 @@ Open and unmerged from `mixanizm-modern-v2.9.0.1` into `master`. Keep it Draft; 
 
 Open and unmerged against `mixanizm-modern-v2.9.0.1`. Its current diff is preserved transport/workflow history, not an accepted Notepad adapter. Do not use or modify it without a separate decision.
 
-### Draft PR #14
+### PR #14
 
-Open and unmerged against `mixanizm-modern-v2.9.0.1` from
-`agz-mah-0012-qt-edit-feasibility`. It records the documentation-only Qt
-Windows editable-text result `DIRECT-PATH-NOT-SAFE`, adds no runtime adapter or
-candidate artifact, and must remain Draft until supervisor review.
+Closed and merged into `mixanizm-modern-v2.9.0.1` at
+`1a930137f7254111f8ef200da3e86c54e697ab5e`. It records the
+documentation-only Qt Windows editable-text result `DIRECT-PATH-NOT-SAFE` and
+adds no runtime adapter or candidate artifact.
 
 ## Important prohibitions
 
@@ -216,8 +216,8 @@ candidate artifact, and must remain Draft until supervisor review.
 - Do not combine Obsidian title and CodeMirror body into one inferred editor contract.
 - Do not start mutation work from the WhatsApp Desktop bridge evidence; the internal editor was not reached.
 - Do not change PR #1 or PR #3 without a separate explicit task.
-- Do not merge or mark Ready PR #2 or the AGZ-MAH-0012 task PR, create a tag or Release, or publish a Mahou user build without explicit permission.
+- Do not merge or mark Ready PR #2 or the AGZ-MAH-0013 task PR, create a tag or Release, or publish a Mahou user build without explicit permission.
 
 ## Next management step
 
-The project supervisor should inspect the `AGZ-MAH-0012` Draft PR, confirm the `DIRECT-PATH-NOT-SAFE` decision and documentation-only diff, and review the Security regression, Input surface probe and Modern Windows build results. A future task may reopen Qt only if a documented supported external range-write contract becomes available; otherwise the next architecture target in the recorded order is Chromium Edit.
+The project supervisor should inspect the `AGZ-MAH-0013` Draft PR, confirm the documentation-only diff and `RELEASE_READINESS_RECONCILED` result, and review Security regression, Input surface probe and Modern Windows build results. The proposed PR #2 body may be applied only through a separate explicit metadata change. Before PR #2 can leave Draft, complete the retained-feature Windows smoke and every merge gate in `docs/RELEASE-READINESS.md`; signing, final independent review, exact-candidate provenance and separate publication permission remain additional public-release gates.
