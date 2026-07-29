@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - agz-mah-0019-remove-snippets-decouple-autoswitch
+  pull_request:
+    branches:
+      - mixanizm-modern-v2.9.0.1
 
 permissions:
   contents: write
@@ -14,6 +17,7 @@ concurrency:
 
 jobs:
   fix:
+    if: github.event_name == 'push' || github.head_ref == 'agz-mah-0019-remove-snippets-decouple-autoswitch'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
