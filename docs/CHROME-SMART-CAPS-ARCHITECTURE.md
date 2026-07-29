@@ -199,7 +199,7 @@ A future implementation must independently prove, for both `input[type=text]` an
 
 ### Exact boundary of the next implementation task
 
-A later task may design and prototype only the extension/Native Messaging protocol and a local disposable test page. It must not silently modify Mahou’s current desktop mutation path, selected-text pipeline, Chrome collapsed-caret `Insert`, Telegram, Notepad, AutoSwitch, snippets, translator, runtime version, release state, or existing PRs.
+A later task may design and prototype only the extension/Native Messaging protocol and a local disposable test page. It must not silently modify Mahou’s current desktop mutation path, selected-text pipeline, Chrome collapsed-caret `Insert`, Telegram, Notepad, AutoSwitch, the then-existing snippets feature, translator, runtime version, release state, or existing PRs.
 
 ## Local diagnostic page use
 

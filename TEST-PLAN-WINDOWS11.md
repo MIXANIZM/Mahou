@@ -34,7 +34,7 @@ Use a fresh disposable document and record the full text, caret, selection, keyb
 - Fully exit Mahou and repeat `окоРОчка `. The word must no longer change. Word may still correct its own two-initial-capital pattern, but the Mahou-only counter is unavailable because Mahou is closed.
 - In modern Windows Notepad/RichEdit, Chrome, Telegram, Discord, password fields and excluded applications, Smart Caps must be a complete no-op until a dedicated verified direct adapter exists.
 - Type quickly across word boundaries, switch windows between key-down and deferred correction, click the mouse, and move the caret. Stale candidates must be discarded without text, selection, caret, layout or clipboard changes.
-- Run together with AutoSwitch and snippets. If another feature or Word changes the word first, Smart Caps must fail closed rather than apply to a different range or increment its counter.
+- Run together with AutoSwitch. If AutoSwitch or Word changes the word first, Smart Caps must fail closed rather than apply to a different range or increment its counter.
 
 ## Clipboard
 

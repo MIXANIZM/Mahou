@@ -4,11 +4,15 @@ Original reconciliation task: `AGZ-MAH-0013`
 
 Verification-record update: `AGZ-MAH-0016`
 
+Product-surface update: `AGZ-MAH-0019`
+
 Results:
 
 ```text
 RELEASE_READINESS_RECONCILED
 AUTOSWITCH_CONTAINMENT_VERIFICATION_RECORDED
+USER_SNIPPETS_REMOVED
+AUTOSWITCH_DECOUPLED
 ```
 
 ## Scope and evidence boundary
@@ -40,6 +44,9 @@ Modern Notepad AutoSwitch support was not added. The verified behavior for exact
 mutation is scheduled. Chrome and Microsoft Word retain their existing
 AutoSwitch conversion routes.
 
+
+`AGZ-MAH-0018` records `SNIPPETS_TRIGGER_REPLACEMENT_FAIL` for exact source `f02909611eb9a4502e9fe4d8fda9009922f352fd`. The product decision under Draft PR #18 is to remove user snippets rather than repair them. Legacy snippet files and keys are inactive data and are not deleted. AutoSwitch is independent and requires a new focused physical-Windows smoke before the new source can be accepted.
+
 Only the following readiness statuses are used:
 
 - `VERIFIED` — the applicable automated and real-Windows evidence exists;
@@ -69,13 +76,13 @@ Only the following readiness statuses are used:
 | Qt / Telegram strict no-op without a real selection | VERIFIED | Smart Caps evidence `0b43bb688115e0051114f38a745fce9e830452fd`; accepted Qt merge `1a930137f7254111f8ef200da3e86c54e697ab5e` | Telegram task head passed Security `30160130485` and Modern Windows build `30160130474` | Accepted Telegram no-op evidence in `AGZ-MAH-0001/0005`; read-only Telegram evidence in `AGZ-MAH-0010`; accepted `AGZ-MAH-0012: DIRECT-PATH-NOT-SAFE` | No positive Telegram mutation test; keep strict no-op | No | No |
 | Positive collapsed-caret support smoke in Chrome or Telegram | NOT_APPLICABLE | Architecture decisions `076ee95325809bd0581c9e0f24e9dbb1022c6603` and `1a930137f7254111f8ef200da3e86c54e697ab5e` | Negative architecture gates and source regressions | Strict no-op has already been observed; there is no accepted writer to smoke | Keep obsolete positive-support requirement removed | No | No |
 | Generic RichEdit-compatible direct adapter | NOT_APPLICABLE | `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1` | `AGZ-MAH-0011` exact-head runs | Installed-build evidence did not establish a supported external write contract | Do not claim or add a generic RichEdit adapter | No | No |
-| Snippets | USER_SMOKE_REQUIRED | Current development line | Current Security regression and Modern Windows build; bounded-source invariants are automated only | No accepted focused runtime record located | Run snippet expansion, cancellation, exclusions, delays and atomic-save scenarios | Yes | No |
+| User snippets removal | AUTOMATED_ONLY | AGZ-MAH-0019 Draft PR #18 from exact base `f02909611eb9a4502e9fe4d8fda9009922f352fd` | Security, independence, UI-absence, binary-token and deterministic build gates | Physical smoke must confirm absent UI, no clean-profile file generation, and untouched inactive legacy file | Complete focused AGZ-MAH-0019 candidate smoke; do not test removed snippets | Yes until accepted | No |
 | Translator and bounded network behavior | USER_SMOKE_REQUIRED | Current development line | Security regression checks the eight-second timeout, 5000-character limit, disposable clients and maximum three redirects | No accepted live-network Windows record located | Test opt-in translation success, timeout/failure messaging, redirects and absence of sensitive diagnostic output | Yes | No |
 | Input history | USER_SMOKE_REQUIRED | Current development line | Builds and source gates pass; high-frequency history writes are intentionally outside `AtomicFile` | No accepted focused runtime record located | Test opt-in recording, Backspace modes, date/hour files and long-session behavior | Yes | No |
 | Autorun | USER_SMOKE_REQUIRED | Current development line | Security regression enforces only `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` creation and legacy cleanup | No accepted focused runtime record located | Enable/disable, sign out/in, confirm exact executable command and legacy shortcut/task removal | Yes | No |
 | Restart | USER_SMOKE_REQUIRED | Current development line | Security regression forbids CMD/VBS/`taskkill` restart paths and requires the parent-wait path | No accepted focused runtime record located | Test UI/hotkey restart, single-instance handoff and failure message | Yes | No |
 | Settings and user-data migration | USER_SMOKE_REQUIRED | Current development line | Security regression checks normalized configuration and application-data path markers | No accepted migration matrix located | Test clean profile, supported old profile, incompatible legacy quarantine, bundled dictionary copy and custom `/C` path | Yes | No |
-| Atomic configuration writes and backups | USER_SMOKE_REQUIRED | Current development line | Security regression checks write-through temp files, flush, same-directory replace, `.bak` and cleanup | No accepted physical filesystem/failure-injection record located | Test config, snippets and dictionary replacement plus `.bak` recovery; record the intentional non-atomic input-history exception | Yes | No |
+| Atomic configuration writes and backups | USER_SMOKE_REQUIRED | Current development line | Security regression checks write-through temp files, flush, same-directory replace, `.bak` and cleanup | No accepted physical filesystem/failure-injection record located | Test config and AutoSwitch dictionary replacement plus `.bak` recovery; record the intentional non-atomic input-history exception | Yes | No |
 | UI scaling | USER_SMOKE_REQUIRED | Current development line | UI resource regression and Modern Windows build pass | No accepted multi-scale visual record located | Inspect primary and advanced settings at applicable Windows scale values | Yes | No |
 | Deterministic Release x86/x64 builds | AUTOMATED_ONLY | Task `99e712aa3d913d37e1268ccf65a0cf52aca65ab7`; merged source `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d` | Exact-head Modern Windows build `30403716677`; merge-head Modern Windows build `30408387854` | Not applicable to byte-comparison property | Rerun for any later runtime/build-input commit and for an exact release candidate | No | Yes |
 | Artifact provenance | AUTOMATED_ONLY | Task `99e712aa3d913d37e1268ccf65a0cf52aca65ab7` | Accepted x64 task-head artifact ID `8705704874`, ZIP and executable hashes above | User smoke was performed on this candidate, but it remains a task-head candidate rather than a public release | Build and independently verify an exact release candidate; never relabel the task-head ZIP as merge-head | No | Yes |
@@ -98,7 +105,7 @@ or positive AutoSwitch support for modern Notepad.
 The readiness boundary includes:
 
 - `Mahou/Classes/KMHook.cs`: real-selection priority, direct-only collapsed-caret
-  routing, clipboard backup/restore, AutoSwitch, snippets and input history;
+  routing, clipboard backup/restore, standalone AutoSwitch and input history;
 - `Mahou/Classes/AutoSwitchSafety.cs`: exact modern Notepad rejection and
   foreground/focus/process/control source-context revalidation;
 - `Mahou/Classes/SelectionProbe.cs`: exact `Edit` class restriction, native
@@ -157,9 +164,7 @@ because the accepted architecture has no writer for those surfaces.
 
 Before PR #2 can be considered for Ready/merge, the remaining merge gates are:
 
-1. complete and record the focused real-Windows smoke for snippets,
-   translator/network behavior, input history, autorun, restart, settings
-   migration, atomic save/backup behavior and UI scaling;
+1. complete and record the focused AGZ-MAH-0019 AutoSwitch/removal smoke plus the retained translator/network, input-history, autorun, restart, settings-migration, atomic-save/backup and UI-scaling checks;
 2. keep Security regression and Modern Windows build green at the final PR #2
    head;
 3. apply an accepted, accurate PR #2 description and complete supervisor review;

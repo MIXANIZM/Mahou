@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
 public class Languages
 {
@@ -9,7 +9,6 @@ public class Languages
 		tab_Appearence,
 		tab_Timings,
 		tab_Excluded,
-		tab_Snippets,
 		tab_AutoSwitch,
 		tab_Hotkeys,
 		tab_Updates,
@@ -119,21 +118,11 @@ public class Languages
 		Change1KeyLayoutInExcluded,
 		AllowConvertSWL,
 		#endregion
-		#region Snippets
-		SnippetsEnabled,
-		SnippetSpaceAfter,
-		SnippetSwitchToGuessLayout,
-		SnippetsCount,
-		SnippetsExpandKey,
-		SnippetsExpKeyOther,
-		SnippetsNCRules,
-		#endregion
 		#region AutoSwitch
 		AutoSwitchEnabled,
 		AutoSwitchSpaceAfter,
 		AutoSwitchSwitchToGuessLayout,
 		AutoSwitchUpdateDictionary,
-		AutoSwitchDependsOnSnippets,
 		AutoSwitchDictionaryWordsCount,
 		DownloadAutoSwitchDictionaryInZip,
 		AutoSwitchDictionaryTooBigToDisplay,
@@ -202,7 +191,6 @@ public class Languages
 		EnableSounds,
 		PlaySoundWhen,
 		SoundOnAutoSwitch,
-		SoundOnSnippets,
 		SoundOnConvertLast,
 		SoundOnLayoutSwitching,
 		UseCustomSound,
@@ -274,7 +262,6 @@ public class Languages
 		TT_ConvertSelectionSwitchPlus,
 		TT_LDForMouse,
 		TT_LDForCaret,
-		TT_Snippets,
 		TT_Logging,
 		TT_LDDifferentAppearence,
 		TT_TrayDisplayType,
@@ -291,12 +278,9 @@ public class Languages
 		TT_QWERTZ,
 		TT_Change1KeyLayoutInExcluded,
 		TT_AllowConvertSWL,
-		TT_SnippetsSwitchToGuessLayout,
-		TT_SnippetsCount,
 		TT_GuessKeyCodeFix,
 		TT_ConfigsInAppData,
 		TT_KeysType,
-		TT_SnippetExpandKey,
 		TT_LDUseWinMessages,
 		TT_RemapCapslockAsF18,
 		TT_UseDelayAfterBackspaces,
@@ -309,11 +293,9 @@ public class Languages
 		TT_CustomConversion,
 		TT_Transcription_1,
 		TT_Transcription_2,
-		TT_SnippetsEditHotkeys,
 		TT_LCTRLLALTTempLayout,
 		#endregion
 		#region Messages
-		MSG_SnippetsError
 		#endregion
 	}
 	public static Dictionary<Element, string> English = new Dictionary<Element, string>() { 
@@ -323,7 +305,6 @@ public class Languages
 		{ Element.tab_Appearence, "Appearance" }, 
 		{ Element.tab_Timings, "Timings" }, 
 		{ Element.tab_Excluded, "Excluded" }, 
-		{ Element.tab_Snippets, "Snippets" }, 
 		{ Element.tab_AutoSwitch, "Auto switch" },
 		{ Element.tab_Hotkeys, "Hotkeys" }, 
 		{ Element.tab_LangPanel, "Language panel" }, 
@@ -433,21 +414,11 @@ public class Languages
 		{ Element.Change1KeyLayoutInExcluded, "Change layout by 1 key even in excluded." }, 
 		{ Element.AllowConvertSWL, "Allow convert selection/word/line conversion." }, 
 		#endregion
-		#region Snippets
-		{ Element.SnippetsEnabled, "Enable snippets." }, 
-		{ Element.SnippetSpaceAfter, "Add 1 space after snippets." }, 
-		{ Element.SnippetSwitchToGuessLayout, "Switch to guess layout after snippet." }, 
-		{ Element.SnippetsCount, "Snippets: " }, 
-		{ Element.SnippetsExpandKey, "Snippet expand key: " }, 
-		{ Element.SnippetsExpKeyOther, "Other" }, 
-		{ Element.SnippetsNCRules, "Disable snippets/autoswitch rules (Regex)" }, 
-		#endregion
 		#region AutoSwitch
 		{ Element.AutoSwitchEnabled, "Enable auto-switch." }, 
 		{ Element.AutoSwitchSpaceAfter, "Add 1 space after auto-switch." }, 
 		{ Element.AutoSwitchSwitchToGuessLayout, "Switch to guess layout after auto-switch." }, 
 		{ Element.AutoSwitchUpdateDictionary, "Update auto-switch dictionary." }, 
-		{ Element.AutoSwitchDependsOnSnippets, "To use this feature enable Snippets feature!" },
 		{ Element.AutoSwitchDictionaryWordsCount, "Words: " }, 
 		{ Element.DownloadAutoSwitchDictionaryInZip, "Download auto-switch dictionary in zip." }, 
 		{ Element.AutoSwitchDictionaryTooBigToDisplay, "Too big dictionary, it will take a lot time to display, dictionary display disabled.\r\nDictionary WON'T be updated every time you press [Apply] button, it will be updated once only after restart or after disabling=>Apply=>enabling=>Apply AutoSwitch feature or through \"[Hidden] Toggle AutoSwitch Hotkey\" also only once." }, 
@@ -537,7 +508,6 @@ public class Languages
 		{ Element.EnableSounds, "Enable sounds." }, 
 		{ Element.PlaySoundWhen, "Play sound when:" }, 
 		{ Element.SoundOnAutoSwitch, "On Auto-Switch conversion." }, 
-		{ Element.SoundOnSnippets, "On Snippets expansion." }, 
 		{ Element.SoundOnConvertLast, "On Last Word conversion." }, 
 		{ Element.SoundOnLayoutSwitching, "Layout switching." }, 
 		{ Element.UseCustomSound, "Use custom sound:" }, 
@@ -603,7 +573,6 @@ public class Languages
 										"\n4.Convert unsupported symbols differently, if you change layout before conversion." }, 
 		{ Element.TT_LDForMouse, "If enabled, when hovering text form with, a language tooltip will be displayed around the mouse." }, 
 		{ Element.TT_LDForCaret, "If enabled, a language tooltip will be displayed around the caret." }, 
-		{ Element.TT_Snippets, "If enabled, pressing SPACE will expand small (which starts with \"->\") word, to big (which is between \"====>\" and \"<====\") word/text fragment." }, 
 		{ Element.TT_Logging, "Designed ONLY to search for errors, BIG PERFORMANCE IMPACT, logs are saved in Mahou's folder, in folder Logs." }, 
 		{ Element.TT_LDDifferentAppearence, "If enabled, you can select different appearance for main layouts(1&2), for others will be used from [around mouse] or [around caret]." }, 
 		{ Element.TT_TrayDisplayType, "Allows to choose what to display in tray icon.\nIf [Layout text] is selected, its appearance will be same as in Appearance tab's [Layout 1] and [Layout 2] appearance, and [around caret]/[around mouse] for any other layout.\nAlso it is possible to use flags for any other layout, just enable [Use flags] in [around caret]/[around mouse]." }, 
@@ -623,12 +592,9 @@ public class Languages
 		{ Element.TT_QWERTZ, "Makes right substitutes in QWERTZ keyboards for chars: ß, ä, ö, ü, Ä, Ö, Ü, Y, Z in Convert Selection\r\n(!! but convert selection layout switching(or +) not supported)." },
 		{ Element.TT_Change1KeyLayoutInExcluded, "Function is in Layouts tab -> [Change to specific layout by keys]." },
 		{ Element.TT_AllowConvertSWL, "Hotkeys affected: -> \r\n[Convert Selection]\r\n[Convert Last Word]\r\n[Convert Last Line]." },
-		{ Element.TT_SnippetsSwitchToGuessLayout, "Switches to *guessed* layout after snippet expanded.\r\nGuess works like in whole [One Layout for whole word in Convert Selection] function."},
-		{ Element.TT_SnippetsCount,	"If ORANGE snippets are OK.\r\nIf RED snippets has errors, maybe its unfinished etc.\r\nIn brackets are displayed count of commented lines(they are ignored by Mahou),\r\nvalid comment characters: # and // and only at start of line." },
-		{ Element.TT_GuessKeyCodeFix, "Enabling this will make snippets, convert selection, auto-switch to send real virtual key codes instead of unicode chars,\r\nbut that will cause that all characters will be in your current layout.\r\nUseful in programs virtual machines.(BlueStacks, VirtualBox etc.)" },
-		{ Element.TT_ConfigsInAppData, "If enabled Mahou will copy current configs to AppData, and will use them.\r\nAlso logs and snippets will be stored in %AppData%\\Mahou.\r\nAfter this checkbox state changed other checkboxes/datas configurations from user interface will not be saved, because they will be loaded from another configs(if switched, from Mahou's directory or from %AppData%\\Mahou).\r\nUseful if you need to run Mahou from Program Files directory by multiple users, and while some of them have no write access to it,\r\nalso it makes possible to have different configurations for each user." },		
+		{ Element.TT_GuessKeyCodeFix, "Enabling this will make selected-text conversion and AutoSwitch send real virtual key codes instead of Unicode characters,\r\nbut that will cause that all characters will be in your current layout.\r\nUseful in programs virtual machines.(BlueStacks, VirtualBox etc.)" },
+		{ Element.TT_ConfigsInAppData, "If enabled Mahou will copy current configs to AppData, and will use them.\r\nAlso logs and user data will be stored in %AppData%\\Mahou.\r\nAfter this checkbox state changed other checkboxes/datas configurations from user interface will not be saved, because they will be loaded from another configs(if switched, from Mahou's directory or from %AppData%\\Mahou).\r\nUseful if you need to run Mahou from Program Files directory by multiple users, and while some of them have no write access to it,\r\nalso it makes possible to have different configurations for each user." },		
 		{ Element.TT_KeysType, "Select which keys type to display in Mahou user interface, they are both working at same time,\r\nso try not to set same keys/hotkeys to avoid double layout switching."},
-		{ Element.TT_SnippetExpandKey, "Select custom snippet expand key,\r\nworks only for snippets, auto-switch will still expand only on space." },
 		{ Element.TT_LDUseWinMessages, "If enabled, timers will not be used to update language tooltips,\r\ninstead they will be updated on appropriate Windows Messages.\r\nLess CPU hungry than timers.\r\nMost CPU hungry is mouse tooltip with always enabled,\r\nconsumes CPU only on mouse move/clicks,\r\nto decrease its CPU usage, there will be 1 new config in Timings tab.\r\nSkip x Windows Messages(mouse movement) before updating tooltip." },
 		{ Element.TT_RemapCapslockAsF18, "Remaps Caps Lock as F18, after this CapsLock will be disabled.\r\nTo toggle its state use Ctrl/Alt/Shift/Win + Caps Lock key.\r\n! Mahou window excluded from remap!\r\nIn Mahou you should set hotkeys as Caps Lock key, in other programs they will be remapped as F18.\r\nAfter changing hotkey don't forget to press Apply or OK." },
 		{ Element.TT_UseJKL, "Allows Mahou to retrieve layout from jkl.exe.\r\nAllows always to get right keyboard layout.(Highly recommended)\r\n" },	
@@ -641,7 +607,6 @@ public class Languages
 		{ Element.TT_CustomConversion, "Converts selected text according to rules in CustomConversion.txt" },
 		{ Element.TT_Transcription_1, "Works only when [" },
 		{ Element.TT_Transcription_2, "] method is active. Not all languages have it." },
-		{ Element.TT_SnippetsEditHotkeys, "  Hotkeys:\r\n[Ctrl]+[K] or [Ctrl]+[/] = comment/uncomment line.\r\n     - If more than 1 line is selected, all selected lines will be commented/uncommented." },
 		{ Element.TT_LCTRLLALTTempLayout, @"Temporarily changes layout while you hold combination of keys containing: LCtrl+LAlt, until release of both.
 Fixes problem when instead of firing hotkeys containing Ctrl+Alt in apps Windows prints special character, which usually typed via AltGr(right Alt, in Windows AltGr = Ctrl+Alt).
 Relevant for extended and typographic layouts: US-International, UK-Extended, European languages layouts etc.
@@ -650,7 +615,6 @@ You can even specify layout which is not loaded in system, for example: English(
 Specify layout code 0 to disable this feature." },
 		#endregion
 		#region Messages
-		{ Element.MSG_SnippetsError, "Snippets contains error in syntax, check if there are errors, details on snippets syntax you can find on Wiki." }
 		#endregion
 	};
 	/// <summary>
@@ -663,7 +627,6 @@ Specify layout code 0 to disable this feature." },
 		{ Element.tab_Appearence, "Вид" }, 
 		{ Element.tab_Timings, "Тайминги" }, 
 		{ Element.tab_Excluded, "Исключения" }, 
-		{ Element.tab_Snippets, "Сниппеты" }, 
 		{ Element.tab_AutoSwitch, "Автозамена" }, 
 		{ Element.tab_Hotkeys, "Горячие клавиши" }, 
 		{ Element.tab_LangPanel, "Языковая панель" }, 
@@ -773,24 +736,14 @@ Specify layout code 0 to disable this feature." },
 		{ Element.Change1KeyLayoutInExcluded, "Менять раскладку одной клавишей даже в исключениях." }, 
 		{ Element.AllowConvertSWL, "Разрешить конвертацию выделения/слова/линии." }, 
 		#endregion
-		#region Snippets
-		{ Element.SnippetsEnabled, "Включить сниппеты." }, 
-		{ Element.SnippetSpaceAfter, "Добавлять 1 пробел после сниппетов." },
-		{ Element.SnippetSwitchToGuessLayout, "Переключать на предполагаемую раскладку сниппетов." }, 
-		{ Element.SnippetsCount, "Сниппетов: " }, 
-		{ Element.SnippetsExpandKey, "Клавиша развертывания:" }, 
-		{ Element.SnippetsExpKeyOther, "Другая" }, 
-		{ Element.SnippetsNCRules, "Правила отмены сниппетов/автозамены (Regex)" }, 
 		#region AutoSwitch
 		{ Element.AutoSwitchEnabled, "Включить автозамену." }, 
 		{ Element.AutoSwitchSpaceAfter, "Добавлять 1 пробел после автозамены." }, 
 		{ Element.AutoSwitchSwitchToGuessLayout, "Переключать на предполагаемую раскладку автозамены." }, 
 		{ Element.AutoSwitchUpdateDictionary, "Обновить словарь." }, 
-		{ Element.AutoSwitchDependsOnSnippets, "Чтобы использовать эту функцию, включите функцию Сниппетов!" },
 		{ Element.AutoSwitchDictionaryWordsCount, "Слов: " }, 
 		{ Element.DownloadAutoSwitchDictionaryInZip, "Скачивать словарь автозамены в zip-архиве." }, 
 		{ Element.AutoSwitchDictionaryTooBigToDisplay, "Словарь слишком большой, уйдет много времени на его отображение, поэтому оно отключено.\r\nСловарь НЕ будет обновляться каждый раз по нажатию кнопки «Применить», только один раз при запуске или при выключении функции Автозамены=>Применить=>включении=>Применить, или через горячую клавишу „[Hidden] Toggle AutoSwitch Hotkey“, тоже только один раз." }, 
-		#endregion
 		#endregion
 		#region Hotkeys
 		{ Element.ToggleMainWnd, "Переключить видимость главного окна" }, 
@@ -876,7 +829,6 @@ Specify layout code 0 to disable this feature." },
 		{ Element.EnableSounds, "Включить звуки." }, 
 		{ Element.PlaySoundWhen, "Воспроизводить при:" }, 
 		{ Element.SoundOnAutoSwitch, "конвертации автозамены." }, 
-		{ Element.SoundOnSnippets, "развертывании сниппетов." }, 
 		{ Element.SoundOnConvertLast, "конвертации последнего слова." }, 
 		{ Element.SoundOnLayoutSwitching, "смене раскладки." }, 
 		{ Element.UseCustomSound, "Свой звук:" }, 
@@ -941,7 +893,6 @@ Specify layout code 0 to disable this feature." },
 										"\n4.Конвертировать не поддерживаемые символы по-разному, если менять раскладку перед конвертацией." }, 
 		{ Element.TT_LDForMouse, "Если включена, то при наведении курсора мыши на текстовое поле будет отображаться подсказка языка." }, 
 		{ Element.TT_LDForCaret, "Если включена, то возле мигающего (текстового) указателя будет отображаться подсказка языка." }, 
-		{ Element.TT_Snippets, "Если включено, нажатие ПРОБЕЛА увеличит маленькое слово (которое имеет суффикс «->») в большой кусок текста (который между «====>» и «<====»)." }, 
 		{ Element.TT_Logging, "Предназначено ТОЛЬКО для поиска ошибок, оказывает БОЛЬШОЕ ВЛИЯНИЕ НА СКОРОСТЬ РАБОТЫ, журналы сохраняются в папке [Logs] рядом с Mahou.exe." }, 
 		{ Element.TT_LDDifferentAppearence, "Если включено, то вы сможете выбрать разный вид для двух раскладок (1&2), для других будут использоваться стандартные из „возле мыши“ или „возле каретки“." }, 
 		{ Element.TT_TrayDisplayType, "Позволяет выбирать, что отображать в значке трея (в области уведомлений).\nЕсли выбран «Текст раскладки», его вид будет разным для каждой из двух раскладок: „Раскладка 1“ и „Раскладка 2“ во вкладке Вид, для других раскладок будет использоваться вид из „возле каретки“ или „возле мыши“.\nТакже можно настроить использование *флагов* для остальных раскладок, если включить «Использовать флаги» во вкладке Вид -> „возле каретки“/„возле мыши“." },
@@ -961,12 +912,9 @@ Specify layout code 0 to disable this feature." },
 		{ Element.TT_QWERTZ, "Делает правильные замены на немецких (QWERTZ) клавиатурах для букв: ß, ä, ö, ü, Ä, Ö, Ü, Y, Z в Конвертации выделения\r\n(!! но не совместимо со «Сменой раскладки в Конвертации выделения/+»)." },
 		{ Element.TT_Change1KeyLayoutInExcluded, "Функция находится во вкладке Раскладки -> «Переключать раскладки по клавишам»." },
 		{ Element.TT_AllowConvertSWL, "Влияет на горячие клавиши: -> \r\n«Конвертация выделенного текста»\r\n«Конвертация последнего слова»\r\n«Конвертация последней линии»." },
-		{ Element.TT_SnippetsSwitchToGuessLayout, "Меняет раскладку на *угаданную* после того, как сниппет сконвертировался.\r\nУгадывание работает так же, как в функции «Одна раскладка для целого слова в Конвертации выделения»."},
-		{ Element.TT_SnippetsCount,	"Если цвет ОРАНЖЕВЫЙ, то со сниппетами всё ОК.\r\nЕсли КРАСНЫЙ, то в сниппетах есть ошибка, они могут не сработать и т.д.\r\nВ скобках отображается количество закомментированных линий (они игнорируются Mahou),\r\nдопустимые символы для комментирования линий: # или // – и только в начале строки." },
 		{ Element.TT_GuessKeyCodeFix, "Включив это, Сниппеты, Конвертация выделения, Автозамена будут отправлять реальные коды клавиш вместо символов Юникода,\r\nно это сделает так, что все символы будут в вашей текущей раскладке.\r\nПолезно в приложениях–виртуальных машинах (BlueStacks, VirtualBox и других)." },
 		{ Element.TT_ConfigsInAppData, "Если включено, Mahou скопирует текущую конфигурацию (Mahou.ini) в AppData, и будет использовать оттуда.\r\nТакже логи и сниппеты будут храниться в %AppData%\\Mahou.\r\nКогда состояние этой галочки изменено, все другие галочки/данные конфигурации, измененные в пользовательском интерфейсе, не будут сохранены,\r\nт.к. произойдет смена конфигурации и загрузка выбранной (из папки Mahou или из %AppData%\\Mahou).\r\nПолезно, если нужно запускать Mahou в папке Program Files, а прав на запись у всех пользователей - нет,\r\nи еще это даёт возможность иметь разные настройки для каждого пользователя." },		
 		{ Element.TT_KeysType, "Выберите, какой тип клавиш отображать в Mahou, ОБА типа работают ОДНОВРЕМЕННО,\r\nтак что лучше не назначайте одинаковые клавиши/гор. клавиши во избежание двойного переключения раскладки."},
-		{ Element.TT_SnippetExpandKey, "Выберите, какой клавишей развертывать (увеличивать/превращать) сниппеты,\r\nработает только для сниппетов, автозамена, как и раньше, будет работать только при Пробеле." },
 		{ Element.TT_LDUseWinMessages, "Если включено, подсказки будут обновляться не через таймеры,\r\nвместо этого они задействуют соответствующие Сообщения Windows.\r\nПотребляет меньше ресурсов ЦП.\r\nСамая требовательная к ЦП функция – подсказка возле мыши, включенная «Всегда»,\r\nнагружает ЦП только при движении/кликах мыши,\r\nдля снижения потребления ею ресурсов ЦП есть новая конфигурация во вкладке Тайминги.\r\nПропуск х Сообщений Windows (движения мыши) перед обновлением подсказки." },
 		{ Element.TT_RemapCapslockAsF18, "Переопределяет клавишу Caps Lock как F18, после чего функция клавиши Caps Lock будет отключена.\r\nЧтобы переключить состояние Caps Lock, нажмите её вместе с одной из клавиш-модификаторов: Ctrl/Alt/Shift/Win.\r\n! Окно Mahou исключено из переопределения!\r\nВ Mahou назначайте гор. клавиши на Caps Lock, в других программах она будет переопределена как F18.\r\nПосле смены гор. клавиш не забудьте нажать на «Применить» или «ОК»." },
 		{ Element.TT_UseJKL, "Получает раскладку для Mahou с помощью jkl.exe.\r\nПозволяет всегда отображать правильную раскладку (Настоятельно рекомендуется включить).\r\n" },
@@ -979,7 +927,6 @@ Specify layout code 0 to disable this feature." },
 		{ Element.TT_CustomConversion, "Меняет выделенный текст по заданным в CustomConversion.txt правилам" },
 		{ Element.TT_Transcription_1, "Работает только при [" },
 		{ Element.TT_Transcription_2, "] активном методе. Поддерживается не всеми языками." },
-		{ Element.TT_SnippetsEditHotkeys, "  Горячие клавиши:\r\n[Ctrl]+[K](Л) or [Ctrl]+[/](.) = закомментировать/раскомментировать линию.\r\n     - Если выделено больше одной линии, все выделенные линии будут закомментированы/раскомментированы." },
 		{ Element.TT_LCTRLLALTTempLayout, @"Подменяет раскладку в момент набора комбинации клавиш, начинающейся с LCtrl+LAlt, до момента отпуска обеих.
 Решает проблему, когда заместо комбинаций Ctrl+Alt в приложениях печатается спецсимвол, набираемый с AltGr(правый Alt, в Windows AltGr = Ctrl+Alt) и аналогичной клавишей.
 Актуально для расширенных и типографских раскладок: US-International, UK-Extended, раскладки европейских языков и пр.
@@ -988,7 +935,6 @@ Specify layout code 0 to disable this feature." },
 Укажите код раскладки 0, чтобы отключить эту функцию." },
 		#endregion
 		#region Messages
-		{ Element.MSG_SnippetsError, "Сниппеты содержат ошибки в синтаксисе, проверьте правильность написания, детали синтаксиса можете найти на Wiki." }
 		#endregion
 	};
 }

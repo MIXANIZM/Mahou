@@ -66,7 +66,7 @@ namespace Mahou {
             if (!UserDataPaths.RestoreBundledDictionary(AS_dictfile)) return false;
             AutoSwitchDictionaryRaw = File.ReadAllText(AS_dictfile, Encoding.UTF8);
             ChangeAutoSwitchDictionaryTextBox();
-            UpdateSnippetCountLabel(AutoSwitchDictionaryRaw, lbl_AutoSwitchWordsCount, false);
+            UpdateAutoSwitchCountLabel(AutoSwitchDictionaryRaw, lbl_AutoSwitchWordsCount);
             return true;
         }
     }

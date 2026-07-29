@@ -1,2 +1,2 @@
-Enabled flushed temp-and-replace writes for snippets, AutoSwitch and imported/default dictionaries.
-Security regression check passed: 41 source files inspected.
+Enabled flushed temp-and-replace writes for AutoSwitch and imported/default dictionaries.
+Security regression check passed: historical diagnostic record; user snippets are removed under AGZ-MAH-0019.

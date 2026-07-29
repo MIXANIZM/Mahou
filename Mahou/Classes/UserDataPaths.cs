@@ -15,7 +15,7 @@ namespace Mahou {
         internal static string DataRoot { get; private set; }
 
         static readonly string[] MigratedFiles = {
-            "Mahou.ini", "snippets.txt", "AS_dict.txt", "history.txt", "TSDict.txt",
+            "Mahou.ini", "AS_dict.txt", "history.txt", "TSDict.txt",
             "Mahou.mm", "CustomConversion.txt", "ASsymDiff.txt", "LayoutReplaces.txt"
         };
 

@@ -48,6 +48,35 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 
 ## Current bounded task
 
+## AGZ-MAH-0019 — remove user snippets and decouple AutoSwitch
+
+Repository: `MIXANIZM/Mahou`  
+Exact base: `f02909611eb9a4502e9fe4d8fda9009922f352fd`  
+Task branch: `agz-mah-0019-remove-snippets-decouple-autoswitch`  
+Draft PR: #18  
+Runtime: `2.9.0.1-dev`
+
+Accepted predecessor evidence:
+
+```text
+AGZ-MAH-0018: SNIPPETS_TRIGGER_REPLACEMENT_FAIL
+build: 30410253117
+x64 artifact: 8708105691
+```
+
+The simple snippet replacement was corrupted, multiline left `agz1`, and delayed replacement left `agz`. The product decision is not to repair snippets:
+
+```text
+USER_SNIPPETS_REMOVED
+AUTOSWITCH_DECOUPLED
+```
+
+The active product has no snippets tab, enable control, editor, trigger parser, expressions, snippet hotkeys, snippet-only exclusions, snippet sounds, persistence, reload, or `snippets.txt` runtime path. Existing `snippets.txt`, `snippets.txt.bak`, and old INI values remain untouched inactive legacy data for rollback compatibility.
+
+AutoSwitch is routed outside any legacy snippets condition. It uses its own source buffer, only `AS_dict.txt`, and a dedicated literal-input primitive. Values such as `__delay`, `__execute`, `__keyboard`, `__paste`, `__selection`, and `__setlayout` are plain text and have no command meaning. Source identity is revalidated before deletion, layout switching, literal insertion, trailing-space insertion, and deferred callbacks. Exact `notepad.exe` + `RichEditD2DPT` remains a strict no-op.
+
+The new source is not yet physically verified. Required focused smoke is limited to absent snippets UI/data generation, inactive preserved legacy file, Chrome/Word positive AutoSwitch, modern Notepad no-op, rapid-focus cancellation, restart persistence, and a brief unrelated-behavior sanity check. Do not ask the user to test removed snippets.
+
 ### AGZ-MAH-0016 — record verified AutoSwitch containment smoke
 
 Starting point:
@@ -64,7 +93,7 @@ Scope and result:
 - record the accepted exact-head CI, merge-head CI, candidate hashes, and focused physical-Windows smoke from `AGZ-MAH-0015`;
 - keep `AGZ-MAH-0014` as the immutable historical defect artifact for its exact source and candidate;
 - mark `AGZ-MAH-0015` as `VERIFIED / ACCEPTED / MERGED` through PR #16 at `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`;
-- remove AutoSwitch containment from the remaining Draft PR #2 smoke gates while leaving snippets and the other retained-feature tests pending;
+- remove AutoSwitch containment from the remaining Draft PR #2 smoke gates while leaving the other retained-feature tests pending;
 - update only applicable documentation and the PR #2 body proposal;
 - make no runtime, workflow, version, PR #1, PR #2 metadata, or PR #3 change.
 
@@ -108,7 +137,7 @@ Accepted physical-Windows smoke:
 - Chrome continued converting `ghbdtn` to `привет`;
 - Microsoft Word continued converting `ghbdtn` to `привет`.
 
-The result is containment, not support. It adds no Notepad adapter, does not change manual Insert, Smart Caps, snippets, selected-text conversion, clipboard behavior, Chrome or Word routing, and does not use PR #3. Runtime version remains `2.9.0.1-dev`.
+The result is containment, not support. It adds no Notepad adapter, did not change manual Insert, Smart Caps, the then-existing snippets feature, selected-text conversion, clipboard behavior, Chrome or Word routing, and does not use PR #3. Runtime version remains `2.9.0.1-dev`.
 
 ## Historical defect evidence
 
@@ -253,4 +282,4 @@ Closed and merged into `mixanizm-modern-v2.9.0.1` at `1a930137f7254111f8ef200da3
 
 ## Next management step
 
-The project supervisor should inspect the `AGZ-MAH-0016` Draft PR, confirm the documentation-only diff and `AUTOSWITCH_CONTAINMENT_VERIFICATION_RECORDED` result, and verify that Mahou runtime code, workflows, runtime version, PR #1, PR #2 metadata, and PR #3 remain unchanged. AutoSwitch containment is no longer a pending PR #2 smoke gate. Before PR #2 can leave Draft, complete snippets and the other remaining retained-feature Windows smoke plus every merge gate in `docs/RELEASE-READINESS.md`; signing, final independent review, exact-candidate provenance and separate publication permission remain additional public-release gates.
+The project supervisor should review Draft PR #18 and the exact AGZ-MAH-0019 candidate evidence. User snippets are removed, so no snippets smoke remains. Before PR #2 can leave Draft, accept the focused AutoSwitch/removal smoke, complete the other remaining retained-feature Windows smoke, and satisfy every merge gate in `docs/RELEASE-READINESS.md`; signing, final independent review, exact-candidate provenance and separate publication permission remain additional public-release gates.

@@ -7,12 +7,43 @@ python .github/scripts/security-regression.py
 python .github/scripts/ui-resource-regression.py
 python .github/scripts/artifact-provenance-regression.py
 python .github/scripts/autoswitch-containment-regression.py
+python .github/scripts/autoswitch-independence-regression.py
 python .github/scripts/chrome-extension-editing-core-regression.py
 node .github/tests/chrome-extension-editing-core.test.js
 python .github/scripts/input-surface-probe-regression.py
 ```
 
-The AutoSwitch containment gate locks the exact `notepad.exe` + `RichEditD2DPT` rejection, source-context capture, immediate/deferred revalidation call sites, workflow integration, and unchanged runtime version. The other source gates check Mahou safety invariants, common Russian/English Smart Caps localization markers, UI resource consistency, and artifact provenance. The Chrome editing-core gates separately check the test-only MV3 manifest, permission boundary, absence of active mutation/network/remote-code/Native Messaging paths, exact diagnostic marker, fixed candidates, fail-closed control and stale-state rules, adjacent-text preservation contracts, and post-mutation verification logic. The input-surface probe gate checks that the standalone executable source contains no mutation, selection, keyboard, clipboard, hook, injection, actual-text or window-title APIs and retains the required schema, embedded commit, redaction and password-suppression markers. None of these source tests replace runtime testing.
+The AutoSwitch independence gate proves that snippets UI/runtime/persistence is absent, legacy files are not accessed or deleted, AutoSwitch routing is outside legacy snippets state, and dictionary values are literal. The AutoSwitch containment gate locks the exact `notepad.exe` + `RichEditD2DPT` rejection, source-context capture, immediate/deferred revalidation call sites, workflow integration, and unchanged runtime version. The other source gates check Mahou safety invariants, common Russian/English Smart Caps localization markers, UI resource consistency, and artifact provenance. The Chrome editing-core gates separately check the test-only MV3 manifest, permission boundary, absence of active mutation/network/remote-code/Native Messaging paths, exact diagnostic marker, fixed candidates, fail-closed control and stale-state rules, adjacent-text preservation contracts, and post-mutation verification logic. The input-surface probe gate checks that the standalone executable source contains no mutation, selection, keyboard, clipboard, hook, injection, actual-text or window-title APIs and retains the required schema, embedded commit, redaction and password-suppression markers. None of these source tests replace runtime testing.
+
+## AGZ-MAH-0019 automated and physical checks
+
+The Modern Windows build compiles and runs both `AutoSwitchContainmentRegression.exe` and `AutoSwitchIndependenceRegression.exe` against each x86 and x64 `Mahou.exe`. The independence executable inspects the built binary, reflects the dedicated AutoSwitch methods, and sends a value containing `__delay(...)` and `__execute(...)` through the literal-input builder. The output must contain exactly the same characters with no parsing, process launch, delay or command expansion.
+
+Source and executable coverage proves:
+
+1. AutoSwitch routing is not nested under or dependent on `SnippetsEnabled`;
+2. no active snippets UI, trigger hook, parser, expression or persistence path remains;
+3. no runtime source reads, writes, creates or deletes `snippets.txt` or `snippets.txt.bak`;
+4. both obsolete legacy enable values are inert because no runtime binding remains;
+5. dictionary replacement text is literal;
+6. exact modern Notepad containment and source-context revalidation remain mandatory;
+7. runtime remains `2.9.0.1-dev`;
+8. Release x86 and x64 are each built twice with controlled byte-for-byte output comparison and warnings-as-errors.
+
+The focused physical-Windows smoke for the exact candidate is:
+
+1. Snippets tab and controls are absent;
+2. a clean profile generates no `snippets.txt`;
+3. an existing legacy `snippets.txt` remains byte-identical and inactive;
+4. AutoSwitch can be enabled with no snippets data;
+5. Chrome converts `ghbdtn + space` to `привет`;
+6. Microsoft Word converts `ghbdtn + space` to `привет`;
+7. modern Notepad leaves `ghbdtn + space` unchanged;
+8. rapid focus switching causes no deferred mutation;
+9. AutoSwitch still works after Mahou restart;
+10. manual Insert, Smart Caps and clipboard behavior show no intentional regression.
+
+Do not test removed snippets. Until this focused smoke is accepted, the new-source AutoSwitch status is candidate-only rather than verified.
 
 ## Completed AGZ-MAH-0015 verification
 
@@ -74,7 +105,7 @@ This documentation-only verification-record task requires:
 2. verification in GitHub of PR #16, task commit `99e712aa3d913d37e1268ccf65a0cf52aca65ab7`, merge commit `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`, and the recorded workflow run conclusions;
 3. changed-file review proving no Mahou runtime source, workflow, runtime-version, PR #1, PR #2 metadata, or PR #3 change;
 4. explicit distinction between historical defect evidence and current accepted containment behavior;
-5. removal of AutoSwitch containment from the remaining Draft PR #2 smoke gates while retaining snippets and every other uncompleted retained-feature test.
+5. removal of AutoSwitch containment from the remaining Draft PR #2 smoke gates while retaining every other uncompleted retained-feature test.
 
 `AGZ-MAH-0016` creates no runtime candidate and does not authorize Ready, merge, signing, tag, Release, or publication.
 
@@ -251,7 +282,7 @@ The `Modern Windows build` workflow:
 - builds Release x64 twice and compares controlled files byte-for-byte;
 - runs `InsertSafetyRegression` against the built executable;
 - runs `SmartCapsRegression`, including third-initial, interior-capital, hyphenated-word, all-caps, mixed-script, numeric, URL and email cases;
-- runs `AutoSwitchContainmentRegression` against x86 and x64 `Mahou.exe`;
+- runs `AutoSwitchContainmentRegression` and `AutoSwitchIndependenceRegression` against x86 and x64 `Mahou.exe`;
 - packages manifests, SHA-256 sums, security report, containment report, and test documentation;
 - names every build/log/evidence artifact with the runtime version, platform, short source commit, and workflow run ID;
 - verifies the generated archive with the exact full commit and tree, rejects an intentionally wrong expected commit, and rejects a legacy-manifest fixture before upload;

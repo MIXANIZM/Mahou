@@ -13,6 +13,7 @@ Snapshot date: 2026-07-29
 - Current development head at the start of `AGZ-MAH-0013`: `1a930137f7254111f8ef200da3e86c54e697ab5e`
 - Current development head at the start of `AGZ-MAH-0015`: `363a83b227cfa14e798e442960640e7caed03913`
 - Current development head at the start of `AGZ-MAH-0016`: `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`
+- Current development head at the start of `AGZ-MAH-0019`: `f02909611eb9a4502e9fe4d8fda9009922f352fd`
 - Runtime line: `2.9.0.1-dev`
 - Agatzub Development Ruleset: `v2.7.0`
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
@@ -27,6 +28,8 @@ Snapshot date: 2026-07-29
 - Qt Windows editable-text feasibility: `AGZ-MAH-0012: DIRECT-PATH-NOT-SAFE`, accepted and merged through PR #14 at `1a930137f7254111f8ef200da3e86c54e697ab5e`
 - AutoSwitch historical failure artifact: `AGZ-MAH-0014: AUTOSWITCH_FAIL / HISTORICAL DEFECT ARTIFACT`
 - AutoSwitch modern Notepad containment: `AGZ-MAH-0015: AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT / VERIFIED / ACCEPTED / MERGED`
+- User snippets runtime failure: `AGZ-MAH-0018: SNIPPETS_TRIGGER_REPLACEMENT_FAIL`
+- Active product decision: `USER_SNIPPETS_REMOVED` and `AUTOSWITCH_DECOUPLED` under `AGZ-MAH-0019`
 
 The old `master` branch is not the current working line for modernized Mahou. New bounded tasks normally branch from `mixanizm-modern-v2.9.0.1` unless a task handoff explicitly states otherwise.
 
@@ -53,6 +56,14 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - Its current diff is transport and workflow history from the attempted Notepad-adapter task, not an accepted or integrated Notepad implementation.
 - It must not be used as a source branch, cleaned up, closed, rebased, or modified without a separate decision.
 
+### Draft PR #18
+
+- Open, unmerged, and Draft.
+- Base: `mixanizm-modern-v2.9.0.1` at exact task base `f02909611eb9a4502e9fe4d8fda9009922f352fd`.
+- Head branch: `agz-mah-0019-remove-snippets-decouple-autoswitch`.
+- Scope is limited to removal of user snippets, independent literal AutoSwitch routing, regression coverage, documentation, and an exact-head smoke candidate.
+- Do not merge or mark Ready. Physical-Windows smoke is still required.
+
 ### PR #16
 
 - Closed and merged into `mixanizm-modern-v2.9.0.1` at `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`.
@@ -67,15 +78,19 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 
 ## Current bounded task result
 
-### AGZ-MAH-0016 — record verified AutoSwitch containment smoke
+### AGZ-MAH-0019 — remove user snippets and decouple AutoSwitch
 
-- Exact base: `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`.
-- Task branch: `docs/AGZ-MAH-0016-record-autoswitch-containment`.
-- Result: `AUTOSWITCH_CONTAINMENT_VERIFICATION_RECORDED`.
-- Scope: documentation-only recording of the accepted physical-Windows `AGZ-MAH-0015` result and removal of the completed AutoSwitch containment smoke from the remaining Draft PR #2 merge gates.
-- Updated records are limited to `ISSUES.md`, `PROJECT_STATE.md`, `UNIVERSAL-CHAT-HANDOFF.md`, `TESTING.md`, `docs/RELEASE-READINESS.md`, and the proposal file `docs/PR2-DESCRIPTION-PROPOSAL.md`.
-- Mahou runtime code, workflows, runtime version, PR #1, PR #2 metadata, and PR #3 remain unchanged.
-- This result does not authorize Ready, merge, signing, tag, Release, or publication.
+- Exact base: `f02909611eb9a4502e9fe4d8fda9009922f352fd`.
+- Task branch: `agz-mah-0019-remove-snippets-decouple-autoswitch`.
+- Draft PR: #18.
+- Runtime remains `2.9.0.1-dev`.
+- Accepted input evidence: `AGZ-MAH-0018: SNIPPETS_TRIGGER_REPLACEMENT_FAIL` from build `30410253117` and x64 artifact `8708105691`.
+- Product decisions: `USER_SNIPPETS_REMOVED` and `AUTOSWITCH_DECOUPLED`.
+- User snippets UI, trigger collection, parser, expressions, hotkeys, exclusions, sounds, persistence, reload and save paths are removed from the active product.
+- AutoSwitch uses a standalone source buffer and dictionary loader. Selected dictionary values are emitted literally by a dedicated AutoSwitch primitive; snippet expressions are unavailable.
+- Legacy `snippets.txt`, `snippets.txt.bak` and obsolete INI values are neither read nor deleted. They remain inactive rollback data.
+- Exact modern Notepad `notepad.exe` + `RichEditD2DPT` remains blocked before mutation, with source-context revalidation retained before each immediate and deferred mutation stage.
+- Status remains implementation/automated verification pending. Do not represent AutoSwitch at this new source as physically verified until the focused Windows smoke is accepted.
 
 ## Previous bounded task result
 
@@ -97,7 +112,7 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - Candidate `Mahou.exe` SHA-256: `908252105fb0566322d0c25a70364860fbfe904c847d96dbae1b33b288cd17b0`.
 - The accepted physical-Windows smoke confirmed repeated modern Notepad `ghbdtn + space` remained unchanged, with no `gпривет`, deletion, partial replacement, deferred mutation after rapid window switching, or hidden AutoSwitch Undo operation. Chrome and Microsoft Word continued converting `ghbdtn` to `привет`.
 - This is strict safe no-op containment, not positive modern Notepad AutoSwitch support.
-- The containment does not add a Notepad adapter, does not change manual Insert, Smart Caps, snippets, selected-text conversion, clipboard behavior, Chrome or Word routing, and does not use PR #3.
+- The containment does not add a Notepad adapter, did not change manual Insert, Smart Caps, the then-existing snippets feature, selected-text conversion, clipboard behavior, Chrome or Word routing, and does not use PR #3.
 - Runtime version remains `2.9.0.1-dev`.
 
 ### AGZ-MAH-0014 — historical AutoSwitch defect artifact
@@ -206,6 +221,8 @@ RichEdit was first because it might expose native range, caret and undo semantic
 ## Product task status
 
 - `AGZ-MAH-0014` remains recorded as `AUTOSWITCH_FAIL / HISTORICAL DEFECT ARTIFACT` for its immutable source and candidate.
+- `AGZ-MAH-0018` is recorded as `SNIPPETS_TRIGGER_REPLACEMENT_FAIL`; its remaining snippets smoke was stopped.
+- `AGZ-MAH-0019` is the active Draft PR #18 implementation of `USER_SNIPPETS_REMOVED` and `AUTOSWITCH_DECOUPLED`; exact-head CI and user smoke remain pending.
 - `AGZ-MAH-0015` is `AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT / VERIFIED / ACCEPTED / MERGED` through PR #16 at `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`; modern Notepad behavior is strict safe no-op, not support.
 - `AGZ-MAH-0009` is `USER_PROBE_EVIDENCE_COMPLETE`.
 - `AGZ-MAH-0010` was accepted and merged through PR #12 without changing Mahou runtime behavior.
@@ -229,5 +246,5 @@ RichEdit was first because it might expose native range, caret and undo semantic
 - The input-surface reports are evidence, not a Mahou runtime artifact or release.
 - `docs/RELEASE-READINESS.md` is the current gate matrix; `docs/PR2-DESCRIPTION-PROPOSAL.md` is a proposal only and does not alter PR #2.
 - AutoSwitch modern Notepad containment smoke is complete and is no longer a pending Draft PR #2 merge gate.
-- Remaining merge gates include snippets and the other retained-feature Windows smoke, green final-head CI, an accurate PR #2 description, supervisor review, and explicit Ready/merge permission.
+- User snippets are removed and no snippets smoke remains. Remaining merge gates include the focused AGZ-MAH-0019 AutoSwitch/removal smoke, the other retained-feature Windows smoke, green final-head CI, an accurate PR #2 description, supervisor review, and explicit Ready/merge permission.
 - Public-release gates additionally include exact-candidate provenance, signing, final independent review, release-specific Windows checks, and separate tag/Release/publication permission.

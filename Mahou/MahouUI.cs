@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -32,12 +32,12 @@ namespace Mahou {
 		public static int ACT_Match = 0, TrayHoverMahouMM = 0, explorer_pid, explorer_not_found_tries = 0;
 		public static bool LoggingEnabled, dummy, CapsLockDisablerTimer, LangPanelUpperArrow, mouseLTUpperArrow, caretLTUpperArrow,
 						   ShiftInHotkey, AltInHotkey, CtrlInHotkey, WinInHotkey, AutoStartAsAdmin, UseJKL, AutoSwitchEnabled, SmartCapsEnabled, ReadOnlyNA,
-						   SoundEnabled, UseCustomSound, SoundOnAutoSwitch, SoundOnConvLast, SoundOnSnippets, SoundOnLayoutSwitch,
-						   UseCustomSound2, SoundOnAutoSwitch2, SoundOnConvLast2, SoundOnSnippets2, SoundOnLayoutSwitch2, TrOnDoubleClick,
+						   SoundEnabled, UseCustomSound, SoundOnAutoSwitch, SoundOnConvLast, SoundOnLayoutSwitch,
+						   UseCustomSound2, SoundOnAutoSwitch2, SoundOnConvLast2, SoundOnLayoutSwitch2, TrOnDoubleClick,
 						   TrEnabled, TrBorderAero, OnceSpecific, WriteInputHistory, ExcludeCaretLD, UsePaste,
 						   WriteInputHistoryByDate, WriteInputHistoryHourly, MahouMM = false,
 						   hk_result, multi_continue = true, ZxZ = true, configs_loading;
-		public static bool ENABLED = true, reload_snip = false;
+		public static bool ENABLED = true;
 		#region Timers
 		static Timer overlay_excluder;
 		static Timer tmr = new Timer();
@@ -57,19 +57,18 @@ namespace Mahou {
 		public Timer resC = new Timer();
 		#endregion
 		#region [Hidden]
-		public static bool __setlayoutForce, __setlayoutOnlyWM, nomemoryflush, LibreCtrlAltShiftV, __selection, __selection_nomouse, CycleCaseReset,
+		public static bool nomemoryflush, LibreCtrlAltShiftV, CycleCaseReset,
 							OVEXDisabled, ClipBackOnlyText, MahouMMTrayHoverLostFocusClose, CycleCaseSaveBase, cmdbackfix;
-		public static string ReselectCustoms, AutoCopyTranslation = "", onlySnippetsExcluded = "", onlyAutoSwitchExcluded = "", CycleCaseBase;
+		public static string ReselectCustoms, AutoCopyTranslation = "", onlyAutoSwitchExcluded = "", CycleCaseBase;
 		static string CycleCaseOrder = "TULSR", OverlayExcluded, tas, ncs;
 		static int OverlayExcludedInerval, arm;
 		static Timer armt = new Timer();
 		#endregion
 		static uint lastTrayFlagLayout = 0;
 		public static Bitmap FLAG, ITEXT;
-		public string SnippetsExpandType = "", SnippetsExpKeyOther = "";
 		int titlebar = 12;
-		public static int AtUpdateShow, SpecKeySetCount, SnippetsCount, AutoSwitchCount, TrSetCount, InputHistoryBackSpaceWriteType;
-		public int DoubleHKInterval = 200, SelectedTextGetMoreTriesCount, DelayAfterBackspaces, NCRSetsCount;
+		public static int AtUpdateShow, SpecKeySetCount, AutoSwitchCount, TrSetCount, InputHistoryBackSpaceWriteType;
+		public int DoubleHKInterval = 200, SelectedTextGetMoreTriesCount, DelayAfterBackspaces;
 		#region Temporary variables
 		/// <summary> Translate Panel Colors</summary>
 		public static Color TrFore, TrBack, TrBorder;
@@ -78,11 +77,11 @@ namespace Mahou {
 		public static uint LayoutSModifierLayout;
 		/// <summary> In memory settings, for timers/hooks.</summary>
 		public static bool DiffAppearenceForLayouts, LDForCaretOnChange, LDForMouseOnChange, ScrollTip, AddOneSpace,
-					TrayFlags, TrayText, SymIgnEnabled, TrayIconVisible, SnippetsEnabled, ChangeLayouByKey, EmulateLS,
+					TrayFlags, TrayText, SymIgnEnabled, TrayIconVisible, ChangeLayouByKey, EmulateLS,
 					RePress, BlockHKWithCtrl, blueIcon, SwitchBetweenLayouts, SelectedTextGetMoreTries, ReSelect,
 					ConvertSelectionLS, ConvertSelectionLSPlus, MCDSSupport, OneLayoutWholeWord,
 					MouseTTAlways, OneLayout, MouseLangTooltipEnabled, CaretLangTooltipEnabled, QWERTZ_fix, 
-					ChangeLayoutInExcluded, SnippetSpaceAfter, SnippetsSwitchToGuessLayout,
+					ChangeLayoutInExcluded,
 					AutoSwitchSpaceAfter, AutoSwitchSwitchToGuessLayout, GuessKeyCodeFix, Dowload_ASD_InZip, 
 					LDForCaret, LDForMouse, LDUseWindowsMessages, RemapCapslockAsF18, Add1NL, PersistentLayoutOnWindowChange, PersistentLayoutOnlyOnce,
 					PersistentLayoutForLayout1, PersistentLayoutForLayout2, UseDelayAfterBackspaces,
@@ -182,7 +181,6 @@ namespace Mahou {
 		ColorDialog clrd = new ColorDialog();
 		FontDialog fntd = new FontDialog();
 		public static FontConverter fcv = new FontConverter();
-		public static string snipfile = Path.Combine(MahouUI.nPath, "snippets.txt");
 		public static string AS_dictfile = Path.Combine(MahouUI.nPath, "AS_dict.txt");
 		public static string mahou_folder_appd = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MIXANIZM Mahou");
 		public static string latest_save_dir = "";
@@ -211,10 +209,6 @@ namespace Mahou {
 			if (MMain.C_SWITCH) {
 				chk_AppDataConfigs.Enabled = false;
 			}
-			// Visual designer always wants to put that string into resources, blast it!
-			txt_Snippets.Text = "-><"+KMHook.__ANY__+">====><"+KMHook.__ANY__+">__cursorhere()</"+KMHook.__ANY__+"><====\r\n->mahou\r\n====>Mahou (魔法) - Magical layout switcher.<====\r\n->eml\r\n====>BladeMight@" +
-	"gmail.com<====\r\n->nowtime====>__date(HH:mm:ss)<====\r\n->nowdate====>__date(dd/MM/yyyy)<====\r\n->datepretty====>__date(dd, ddd MMM)<===="+
-	"\r\n->mahouver====>__version()<====\r\n->mahoutitle====>__title()<====\r\n->env_system====>__system()<====\r\n->date_esc====>\\__date(HH:mm:ss)<====";
 			// Switch to more secure connection.
 			ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
 			nud_LangTTPositionX.Minimum = nud_LangTTPositionY.Minimum = -100;
@@ -515,9 +509,9 @@ namespace Mahou {
 							AutoSwitchDictionaryRaw = File.ReadAllText(AS_dictfile);
 							AutoSwitchDictionaryTooBig = AutoSwitchDictionaryRaw.Length > 710000;
 							ChangeAutoSwitchDictionaryTextBox();
-							UpdateSnippetCountLabel(AutoSwitchDictionaryRaw, lbl_AutoSwitchWordsCount, false);
+							UpdateAutoSwitchCountLabel(AutoSwitchDictionaryRaw, lbl_AutoSwitchWordsCount);
 						}
-						KMHook.ReInitSnippets();
+						KMHook.ReloadAutoSwitchDictionary();
 						Debug.WriteLine("Reinit AutoSwitch Dictionary");
 					}
 					Debug.WriteLine("ToggleAutoSwitch..$" + AutoSwitchEnabled);
@@ -811,7 +805,7 @@ namespace Mahou {
 				PreExit(false, 2);
 				MMain.c_word.Clear();
 				MMain.c_words.Clear();
-				KMHook.c_snip.Clear();
+				KMHook.ClearAutoSwitchTracking();
 				InitLangDisplays(true);
 				Text = Text.Replace(" ["+MMain.Lang[Languages.Element.Disabled]+"]", "");
 				Text += " ["+MMain.Lang[Languages.Element.Disabled]+"]";
@@ -1139,12 +1133,11 @@ namespace Mahou {
 			Logging.Log("Saved from temps.");
 		}
 		/// <summary>
-		/// Update save paths for logs, snippets, autoswitch dictionary, configs.
+		/// Update save paths for logs, the AutoSwitch dictionary, and configs.
 		/// </summary>
 		void UpdateSaveLoadPaths(bool appdata = false) {
 			nPath = UserDataPaths.DataRoot + Path.DirectorySeparatorChar;
 			mahou_folder_appd = UserDataPaths.DataRoot;
-			snipfile = Path.Combine(UserDataPaths.DataRoot, "snippets.txt");
 			AS_dictfile = Path.Combine(UserDataPaths.DataRoot, "AS_dict.txt");
 			Configs.filePath = Path.Combine(UserDataPaths.DataRoot, "Mahou.ini");
 			Logging.SetDirectory(Path.Combine(UserDataPaths.LocalRoot, "Logs"));
@@ -1284,16 +1277,6 @@ namespace Mahou {
 				MMain.MyConfs.Write("Timings", "ConvertSWLinExcl", chk_ConvSWL.Checked.ToString());
 				#endregion
 				#endregion
-				#region Snippets
-				MMain.MyConfs.Write("Snippets", "SnippetsEnabled", chk_Snippets.Checked.ToString());
-				MMain.MyConfs.Write("Snippets", "SpaceAfter", chk_SnippetsSpaceAfter.Checked.ToString());
-				MMain.MyConfs.Write("Snippets", "SwitchToGuessLayout", chk_SnippetsSwitchToGuessLayout.Checked.ToString());
-				if (SnippetsEnabled)
-					AtomicFile.WriteAllText(snipfile, txt_Snippets.Text, Encoding.UTF8);
-				MMain.MyConfs.Write("Snippets", "SnippetExpandKey", cbb_SnippetExpandKeys.SelectedItem == null ? "null" : cbb_SnippetExpandKeys.SelectedItem.ToString());
-				MMain.MyConfs.Write("Snippets", "SnippetsExpKeyOther", SnippetsExpKeyOther);
-				SaveNCRSets();
-				#endregion
 				#region AutoSwitch
 				MMain.MyConfs.Write("AutoSwitch", "Enabled", chk_AutoSwitch.Checked.ToString());
 				MMain.MyConfs.Write("AutoSwitch", "SpaceAfter", chk_AutoSwitchSpaceAfter.Checked.ToString());
@@ -1332,8 +1315,8 @@ namespace Mahou {
 				SaveTrSets();
 				#endregion
 				#region Sync
-				MMain.MyConfs.Write("Sync", "BBools", string.Join("|", bin(chk_Mini.Checked), bin(chk_Stxt.Checked), bin(chk_Htxt.Checked), bin(chk_Ttxt.Checked), bin(chk_andPROXY.Checked), bin(chk_Mmm.Checked)));
-				MMain.MyConfs.Write("Sync", "RBools", string.Join("|", bin(chk_rMini.Checked), bin(chk_rStxt.Checked), bin(chk_rHtxt.Checked), bin(chk_rTtxt.Checked), bin(chk_andPROXY2.Checked), bin(chk_rMmm.Checked)));
+				MMain.MyConfs.Write("Sync", "BBools", string.Join("|", bin(chk_Mini.Checked), bin(chk_Htxt.Checked), bin(chk_Ttxt.Checked), bin(chk_andPROXY.Checked), bin(chk_Mmm.Checked)));
+				MMain.MyConfs.Write("Sync", "RBools", string.Join("|", bin(chk_rMini.Checked), bin(chk_rHtxt.Checked), bin(chk_rTtxt.Checked), bin(chk_andPROXY2.Checked), bin(chk_rMmm.Checked)));
 				MMain.MyConfs.Write("Sync", "BLast", txt_backupId.Text);
 				MMain.MyConfs.Write("Sync", "RLast", txt_restoreId.Text);
 				MMain.MyConfs.Write("Sync", "ZxZ", ZxZ.ToString());
@@ -1346,14 +1329,12 @@ namespace Mahou {
 				#region Sounds
 				MMain.MyConfs.Write("Sounds", "Enabled", chk_EnableSnd.Checked.ToString());
 				MMain.MyConfs.Write("Sounds", "OnAutoSwitch", chk_SndAutoSwitch.Checked.ToString());
-				MMain.MyConfs.Write("Sounds", "OnSnippets", chk_SndSnippets.Checked.ToString());
-				MMain.MyConfs.Write("Sounds", "OnConvertLast", chk_SndLast.Checked.ToString());
+					MMain.MyConfs.Write("Sounds", "OnConvertLast", chk_SndLast.Checked.ToString());
 				MMain.MyConfs.Write("Sounds", "OnLayoutSwitch", chk_SndLayoutSwitch.Checked.ToString());
 				MMain.MyConfs.Write("Sounds", "UseCustomSound", chk_UseCustomSnd.Checked.ToString());
 				MMain.MyConfs.Write("Sounds", "CustomSound", lbl_CustomSound.Text);
 				MMain.MyConfs.Write("Sounds", "OnAutoSwitch2", chk_SndAutoSwitch2.Checked.ToString());
-				MMain.MyConfs.Write("Sounds", "OnSnippets2", chk_SndSnippets2.Checked.ToString());
-				MMain.MyConfs.Write("Sounds", "OnConvertLast2", chk_SndLast2.Checked.ToString());
+					MMain.MyConfs.Write("Sounds", "OnConvertLast2", chk_SndLast2.Checked.ToString());
 				MMain.MyConfs.Write("Sounds", "OnLayoutSwitch2", chk_SndLayoutSwitch2.Checked.ToString());
 				MMain.MyConfs.Write("Sounds", "UseCustomSound2", chk_UseCustomSnd2.Checked.ToString());
 				MMain.MyConfs.Write("Sounds", "CustomSound2", lbl_CustomSound2.Text);
@@ -1363,50 +1344,6 @@ namespace Mahou {
 				Logging.Log("All configurations saved.");
 			}
 			LoadConfigs();
-		}
-		void SaveNCRSets() {
-			var sets = new StringBuilder();
-			for (int i = 1; i <= NCRSetsCount; i++) {
-				var _set = pan_NoConvertRules.Controls["set_"+i];
-				sets.Append("set_").Append(i).Append("\0")
-					.Append(_set.Controls["rule"+i].Text).Append("\0")
-					.Append((_set.Controls["isnip"+i] as CheckBox).Checked).Append("\0")
-					.Append((_set.Controls["iauto"+i] as CheckBox).Checked);
-                if (i != NCRSetsCount)
-                	sets.Append("\0");
-			}
-			if (String.IsNullOrEmpty(sets.ToString())) {
-				sets.Clear().Append("set_0");
-			}
-			MMain.MyConfs.Write("Snippets", "NCRSets", sets.ToString());
-		}
-		void LoadNCRSets() {
-			var sets_raw = MMain.MyConfs.Read("Snippets", "NCRSets");
-			if (sets_raw.Contains("set_0")) { return; }
-			var SETS = sets_raw.Split(new string[]{"\0set_"}, StringSplitOptions.None);
-			if (SETS.Length == 0) return;
-			var NOTR = NCRSetsCount == 0;
-			if (NOTR)
-				pan_NoConvertRules.Controls.Clear();
-			KMHook.NCRules = null;
-			KMHook.NCRules = new KMHook.NCR[SETS.Length];
-			for(int i = 1; i <= SETS.Length; i++) {
-				if (NOTR)
-					Btn_NCR_AddClick((object)1, new EventArgs());
-				var _set = pan_NoConvertRules.Controls["set_"+i];
-				var values = SETS[i-1].Split('\0');
-				_set.Controls["rule"+i].Text = values[1];
-				bool b1 = false, b2 = false;
-				bool.TryParse(values[2], out b1);
-				var c1 = (_set.Controls["isnip"+i] as CheckBox);
-				c1.Checked = b1;
-				c1.Text = MMain.Lang[Languages.Element.tab_Snippets];
-				bool.TryParse(values[3], out b2);
-				var c2 = (_set.Controls["iauto"+i] as CheckBox);
-				c2.Text = MMain.Lang[Languages.Element.tab_AutoSwitch];
-				c2.Checked = b2;
-				KMHook.NCRules[i-1] = new KMHook.NCR(){ rule = values[1], isnip = b1, iauto = b2};
-			}
 		}
 		void SaveTrSets() {
 			var sets = new StringBuilder();
@@ -1539,9 +1476,6 @@ namespace Mahou {
 			MMain.MyConfs.Write("Hidden", "LibreCtrlAltShiftV", Hchk_LibrePasteFixCASV.Checked.ToString());
 			MMain.MyConfs.Write("Hidden", "CycleCaseOrder", Htxt_CycleCaseOrder.Text);
 			MMain.MyConfs.Write("Hidden", "CycleCaseReset", Hchk_CycleCaseReset.Checked.ToString());
-			MMain.MyConfs.Write("Hidden", "__selection", Hchk___selection.Checked.ToString());
-			MMain.MyConfs.Write("Hidden", "__selection_nomouse", Hchk___selection_nomouse.Checked.ToString());
-			MMain.MyConfs.Write("Hidden", "onlySnippetsExcluded", Htxt_OSnippetsExcluded.Text);
 			MMain.MyConfs.Write("Hidden", "onlyAutoSwitchExcluded", Htxt_OAutoSwitchExcluded.Text);
 			MMain.MyConfs.Write("Hidden", "OverlayExcluded", Htxt_OverlayExcluded.Text);
 			MMain.MyConfs.Write("Hidden", "OverlayExcludedInterval", Hnud_OverlayExcludedInterval.Value.ToString());
@@ -1555,8 +1489,6 @@ namespace Mahou {
 			MMain.MyConfs.Write("Hidden", "NCS", Htxt_NCS.Text.ToUpper());
 			MMain.MyConfs.Write("Hidden", "ToggleAutoSwitchHK", Htxt_AutoSwitchHotkeyStr.Text);
 			MMain.MyConfs.Write("Hidden", "AutoRestartMins", Hnud_AutoRestartMins.Value.ToString());
-			MMain.MyConfs.Write("Hidden", "__setlayout_FORCED", Hchk___setlayoutForce.Checked.ToString());
-			MMain.MyConfs.Write("Hidden", "__setlayout_ONLYWM", Hchk___setlayoutOnlyWM.Checked.ToString());
 			MMain.MyConfs.Write("Hidden", "ReSelectCustoms", Htxt_ReselectCustoms.Text);
 			MMain.MyConfs.Write("Hidden", "ChangeLayoutOnTrayLMB+DoubleClick", Hchk_LMBTrayLayoutChangeDC.Checked.ToString());
 			MMain.MyConfs.Write("Hidden", "TrayHoverMahouMM", Hnud_TrayHoverMM.Value.ToString());
@@ -1609,9 +1541,6 @@ namespace Mahou {
 			Hchk_LibrePasteFixCASV.Checked = LibreCtrlAltShiftV = MMain.MyConfs.ReadBool("Hidden", "LibreCtrlAltShiftV");
 			Htxt_CycleCaseOrder.Text = CycleCaseOrder = MMain.MyConfs.Read("Hidden", "CycleCaseOrder");
 			Hchk_CycleCaseReset.Checked = CycleCaseReset = MMain.MyConfs.ReadBool("Hidden", "CycleCaseReset");
-			Hchk___selection.Checked = __selection = MMain.MyConfs.ReadBool("Hidden", "__selection");
-			Hchk___selection_nomouse.Checked = __selection_nomouse = MMain.MyConfs.ReadBool("Hidden", "__selection_nomouse");
-			Htxt_OSnippetsExcluded.Text = onlySnippetsExcluded = MMain.MyConfs.Read("Hidden", "onlySnippetsExcluded");
 			Htxt_OAutoSwitchExcluded.Text = onlyAutoSwitchExcluded = MMain.MyConfs.Read("Hidden", "onlyAutoSwitchExcluded");
 			Htxt_OverlayExcluded.Text = OverlayExcluded = MMain.MyConfs.Read("Hidden", "OverlayExcluded");
 			Hnud_OverlayExcludedInterval.Value = OverlayExcludedInerval = MMain.MyConfs.ReadInt("Hidden", "OverlayExcludedInterval");
@@ -1625,8 +1554,6 @@ namespace Mahou {
 			Htxt_NCS.Text = ncs = MMain.MyConfs.Read("Hidden", "NCS").ToUpper();
 			Htxt_AutoSwitchHotkeyStr.Text = tas = MMain.MyConfs.Read("Hidden", "ToggleAutoSwitchHK");
 			Hnud_AutoRestartMins.Value = arm = MMain.MyConfs.ReadInt("Hidden", "AutoRestartMins");
-			Hchk___setlayoutForce.Checked = __setlayoutForce = MMain.MyConfs.ReadBool("Hidden", "__setlayout_FORCED");
-			Hchk___setlayoutOnlyWM.Checked = __setlayoutOnlyWM = MMain.MyConfs.ReadBool("Hidden", "__setlayout_ONLYWM");
 			Htxt_ReselectCustoms.Text = ReselectCustoms = MMain.MyConfs.Read("Hidden", "ReSelectCustoms");
 			Hchk_LMBTrayLayoutChangeDC.Checked = MMain.MyConfs.ReadBool("Hidden", "ChangeLayoutOnTrayLMB+DoubleClick");
 			TrayHoverMahouMM = MMain.MyConfs.ReadInt("Hidden", "TrayHoverMahouMM");
@@ -1695,7 +1622,6 @@ namespace Mahou {
 			UpdateSaveLoadPaths(chk_AppDataConfigs.Checked);
 			InitializeTrayIcon();
 			InitLanguage();
-			SnippetsExpKeyOther = MMain.MyConfs.Read("Snippets", "SnippetsExpKeyOther");
 			RefreshLanguage();
 			#region Functions
 			MMain.MyConfs = new Configs();
@@ -1826,8 +1752,6 @@ namespace Mahou {
 			KMHook.NOT_EXCLUDED_HWNDs.Clear();
 			KMHook.AS_EXCLUDED_HWNDs.Clear();
 			KMHook.AS_NOT_EXCLUDED_HWNDs.Clear();
-			KMHook.SNI_EXCLUDED_HWNDs.Clear();
-			KMHook.SNI_NOT_EXCLUDED_HWNDs.Clear();
 			ChangeLayoutInExcluded = chk_Change1KeyL.Checked = MMain.MyConfs.ReadBool("Timings", "ChangeLayoutInExcluded");
 			ConvertSWLinExcl = chk_ConvSWL.Checked = MMain.MyConfs.ReadBool("Timings", "ConvertSWLinExcl");
 			#endregion
@@ -1868,40 +1792,20 @@ namespace Mahou {
 			TrText = btn_TrTextFont.Font = GetFont(MMain.MyConfs.Read("TranslatePanel", "TextFont")); 
 			TrTitle = btn_TrTitleFont.Font = GetFont(MMain.MyConfs.Read("TranslatePanel", "TitleFont")); 
 			#endregion
-			#region Snippets
-			SnippetsEnabled = chk_Snippets.Checked = MMain.MyConfs.ReadBool("Snippets", "SnippetsEnabled");
-			SnippetSpaceAfter = chk_SnippetsSpaceAfter.Checked = MMain.MyConfs.ReadBool("Snippets", "SpaceAfter");
-			SnippetsSwitchToGuessLayout = chk_SnippetsSwitchToGuessLayout.Checked = MMain.MyConfs.ReadBool("Snippets", "SwitchToGuessLayout");
-			SnippetsExpandType = MMain.MyConfs.Read("Snippets", "SnippetExpandKey");
-			cbb_SnippetExpandKeys.SelectedIndex = cbb_SnippetExpandKeys.Items.IndexOf(SnippetsExpandType);
-			LoadNCRSets();
-			#endregion
 			#region AutoSwitch
 			AutoSwitchEnabled = chk_AutoSwitch.Checked = MMain.MyConfs.ReadBool("AutoSwitch", "Enabled");
 			AutoSwitchSpaceAfter = chk_AutoSwitchSpaceAfter.Checked = MMain.MyConfs.ReadBool("AutoSwitch", "SpaceAfter");
 			AutoSwitchSwitchToGuessLayout = chk_AutoSwitchSwitchToGuessLayout.Checked = MMain.MyConfs.ReadBool("AutoSwitch", "SwitchToGuessLayout");
 			Dowload_ASD_InZip = chk_DownloadASD_InZip.Checked = MMain.MyConfs.ReadBool("AutoSwitch", "DownloadInZip");
-			if(AutoSwitchEnabled && SnippetsEnabled)
+			if (AutoSwitchEnabled)
 				if (File.Exists(AS_dictfile) && !AutoSwitchDictionaryTooBig) {
 					AutoSwitchDictionaryRaw = File.ReadAllText(AS_dictfile);
 					AutoSwitchDictionaryTooBig = AutoSwitchDictionaryRaw.Length > 710000;
 					ChangeAutoSwitchDictionaryTextBox();
-					UpdateSnippetCountLabel(AutoSwitchDictionaryRaw, lbl_AutoSwitchWordsCount, false);
+					UpdateAutoSwitchCountLabel(AutoSwitchDictionaryRaw, lbl_AutoSwitchWordsCount);
 				}
 			MahouUIActivated((object)1, new EventArgs());
-			if (SnippetsEnabled) {
-				if (!File.Exists(snipfile))
-					AtomicFile.WriteAllText(snipfile, txt_Snippets.Text, Encoding.UTF8);
-				if (File.Exists(snipfile)) {
-					txt_Snippets.Text = File.ReadAllText(snipfile);
-					UpdateSnippetCountLabel(txt_Snippets.Text, lbl_SnippetsCount);
-					KMHook.ReInitSnippets();
-					KMHook.DoLater( () => {
-					               	if (KMHook.snipps.Length != SnippetsCount || KMHook.as_corrects.Length != AutoSwitchCount)
-					               		KMHook.ReInitSnippets();
-					               }, 650);
-				}
-			}
+			KMHook.ReloadAutoSwitchDictionary();
 			#endregion
 			LoadTemps();
 			#region DICT reload
@@ -1927,13 +1831,11 @@ namespace Mahou {
 			#region Sounds
 			SoundEnabled = chk_EnableSnd.Checked = MMain.MyConfs.ReadBool("Sounds", "Enabled");
 			SoundOnAutoSwitch = chk_SndAutoSwitch.Checked = MMain.MyConfs.ReadBool("Sounds", "OnAutoSwitch");
-			SoundOnSnippets = chk_SndSnippets.Checked = MMain.MyConfs.ReadBool("Sounds", "OnSnippets");
 			SoundOnConvLast = chk_SndLast.Checked = MMain.MyConfs.ReadBool("Sounds", "OnConvertLast");
 			SoundOnLayoutSwitch = chk_SndLayoutSwitch.Checked = MMain.MyConfs.ReadBool("Sounds", "OnLayoutSwitch");
 			UseCustomSound = chk_UseCustomSnd.Checked = MMain.MyConfs.ReadBool("Sounds", "UseCustomSound");
 			CustomSound = lbl_CustomSound.Text = MMain.MyConfs.Read("Sounds", "CustomSound");
 			SoundOnAutoSwitch2 = chk_SndAutoSwitch2.Checked = MMain.MyConfs.ReadBool("Sounds", "OnAutoSwitch2");
-			SoundOnSnippets2 = chk_SndSnippets2.Checked = MMain.MyConfs.ReadBool("Sounds", "OnSnippets2");
 			SoundOnConvLast2 = chk_SndLast2.Checked = MMain.MyConfs.ReadBool("Sounds", "OnConvertLast2");
 			SoundOnLayoutSwitch2 = chk_SndLayoutSwitch2.Checked = MMain.MyConfs.ReadBool("Sounds", "OnLayoutSwitch2");
 			UseCustomSound2 = chk_UseCustomSnd2.Checked = MMain.MyConfs.ReadBool("Sounds", "UseCustomSound2");
@@ -1955,18 +1857,16 @@ namespace Mahou {
 			#endregion
 			#region Sync
 			var bbools = MMain.MyConfs.Read("Sync", "BBools");
-			bool m, s, h, t, p, mm;
-			SetBools(bbools, '|', out m, out s, out h, out t, out p, out mm);
+			bool m, h, t, p, mm;
+			SetBools(bbools, '|', out m, out h, out t, out p, out mm);
 			chk_Mini.Checked = m;
-			chk_Stxt.Checked = s;
 			chk_Htxt.Checked = h;
 			chk_Ttxt.Checked = t;
 			chk_andPROXY.Checked = p;
 			chk_Mmm.Checked = mm;
 			var rbools = MMain.MyConfs.Read("Sync", "RBools");
-			SetBools(rbools, '|', out m, out s, out h, out t, out p, out mm);
+			SetBools(rbools, '|', out m, out h, out t, out p, out mm);
 			chk_rMini.Checked = m;
-			chk_rStxt.Checked = s;
 			chk_rHtxt.Checked = h;
 			chk_rTtxt.Checked = t;
 			chk_andPROXY2.Checked = p;
@@ -1981,7 +1881,7 @@ namespace Mahou {
 				txt_restoreId.Text = rlast;
 			chk_ZxZ.Checked = ZxZ = MMain.MyConfs.ReadBool("Sync", "ZxZ");
 			#endregion
-			LLHook._ACTIVE = (RemapCapslockAsF18 || SnippetsExpandType != "Space" || MahouMM || LLHook.redefines.len > 0);
+			LLHook._ACTIVE = (RemapCapslockAsF18 || MahouMM || LLHook.redefines.len > 0);
 			if (LLHook._ACTIVE)
 				LLHook.Set();
 			else
@@ -2086,65 +1986,65 @@ namespace Mahou {
 				UpdateSetControls(i, key, values[2]);
 			}
 		}
-		Tuple<int, Color, int, string> GetSnippetsCount(string snippets) {
-			if (String.IsNullOrEmpty(snippets)) return new Tuple<int, Color, int, string>(0, Color.Black, 0, "");
-			Logging.Log("Starting counting snippets...");
+		Tuple<int, Color, int, string> GetAutoSwitchDictionaryCount(string dictionary) {
+			if (String.IsNullOrEmpty(dictionary)) return new Tuple<int, Color, int, string>(0, Color.Black, 0, "");
+			Logging.Log("Starting counting dictionary...");
 			Stopwatch watch = null;
 			if (MahouUI.LoggingEnabled) {
 				watch = new Stopwatch();
 				watch.Start();
 			}
 			// This regex is ~x8 slower than the way above. 
-//			var matches = Regex.Matches(snippets, "(->)|(====>)|(<====)", RegexOptions.Compiled);
+//			var matches = Regex.Matches(dictionary, "(->)|(====>)|(<====)", RegexOptions.Compiled);
 			var com = 0;
 			var ci = 0;
 			var cia = 0;
 			var cic = 0;
-			var cir = new bool[snippets.Length];
-			var ciar = new bool[snippets.Length];
-			var cicr = new bool[snippets.Length];
+			var cir = new bool[dictionary.Length];
+			var ciar = new bool[dictionary.Length];
+			var cicr = new bool[dictionary.Length];
 			bool in_exp = false, ci_st = false;
 			var cil = -1;
 			var l = 0;
-			for (int k = 0; k < snippets.Length-1; k++) {
-				// Do not try to store snippets[k] & snippets[k+n] to string variable, that will be significally slower.
+			for (int k = 0; k < dictionary.Length-1; k++) {
+				// Do not try to store dictionary[k] & dictionary[k+n] to string variable, that will be significally slower.
 				// with string.Concat() ~x15 slower, with string.Format() ~x45 slower.			
-				var cml = KMHook.SnippetsLineCommented(snippets, k);
+				var cml = KMHook.AutoSwitchDictionaryLineCommented(dictionary, k);
 				if(cml.Item1) { 
 					com++;
 					k+= cml.Item2;
 					continue;
 				}
-				if(!in_exp && !ci_st && cil == -1 && (snippets[k].Equals('-') && snippets[k+1].Equals('>'))) {
+				if(!in_exp && !ci_st && cil == -1 && (dictionary[k].Equals('-') && dictionary[k+1].Equals('>'))) {
 					ci_st = true;
 					ci++;
 					cil = l;
 					cir[cil] = true;
 				}
-				if (k+4 < snippets.Length) {
-					if(ci_st && !in_exp && snippets[k].Equals('=') && snippets[k+1].Equals('=') &&
-					   snippets[k+2].Equals('=') && snippets[k+3].Equals('=') &&
-					   snippets[k+4].Equals('>')) {
+				if (k+4 < dictionary.Length) {
+					if(ci_st && !in_exp && dictionary[k].Equals('=') && dictionary[k+1].Equals('=') &&
+					   dictionary[k+2].Equals('=') && dictionary[k+3].Equals('=') &&
+					   dictionary[k+4].Equals('>')) {
 						cia++;
 						ciar[cil] = true;
 						in_exp = true;
 						ci_st = false;
 					} 
-					if(in_exp && snippets[k].Equals('<') && snippets[k+1].Equals('=') &&
-					   snippets[k+2].Equals('=') && snippets[k+3].Equals('=') &&
-					   snippets[k+4].Equals('=')) {
+					if(in_exp && dictionary[k].Equals('<') && dictionary[k+1].Equals('=') &&
+					   dictionary[k+2].Equals('=') && dictionary[k+3].Equals('=') &&
+					   dictionary[k+4].Equals('=')) {
 						cic++;
 						cicr[cil] = true;
 						in_exp = false;
 						cil = -1;
 					}
 				}
-				if (snippets[k] == '\n') {
+				if (dictionary[k] == '\n') {
 					l++;
 				}
 			}
 			var err = new StringBuilder();
-			Logging.Log("Snippets word count details: " + cic + ", " + cia + ", " + ci + "<com> " + com);
+			Logging.Log("AutoSwitch dictionary count details: " + cic + ", " + cia + ", " + ci + "<com> " + com);
 			for(int k = 0; k != cir.Length; k++) {
 				if (cir[k] != ciar[k] || cir[k] != cicr[k] || ciar[k] != cicr[k]) {
 					err.Append((k+1)).Append(" ");
@@ -2154,7 +2054,7 @@ namespace Mahou {
 			var result = ci+cia+cic;
 			if (MahouUI.LoggingEnabled) {
 				watch.Stop();
-				Logging.Log("Snippets with length ["+snippets.Length+"], snippets count ["+result/3+"], errors ["+(result % 3 != 0)+"], elapsed ["+watch.Elapsed.TotalMilliseconds+"] ms.");
+				Logging.Log("AutoSwitch dictionary with length ["+dictionary.Length+"], dictionary count ["+result/3+"], errors ["+(result % 3 != 0)+"], elapsed ["+watch.Elapsed.TotalMilliseconds+"] ms.");
 			}
 			Memory.Flush();
 			if (result %3 == 0)
@@ -2303,8 +2203,6 @@ namespace Mahou {
 				chk_MouseTTAlways.Enabled = !chk_LangTTMouseOnChange.Checked;
 				chk_LangTTMouseOnChange.Enabled = !chk_MouseTTAlways.Checked;
 			}
-			// Snippets tab
-			lbl_NCR.Enabled = lbl_NCRCount.Enabled = pan_NoConvertRules.Enabled = btn_NCRAdd.Enabled = btn_NCR_Sub.Enabled = lbl_SnippetsCount.Enabled = lbl_SnippetExpandKey.Enabled = cbb_SnippetExpandKeys.Enabled = txt_Snippets.Enabled = chk_SnippetsSwitchToGuessLayout.Enabled = chk_SnippetsSpaceAfter.Enabled = lnk_SnipOpen.Enabled = chk_Snippets.Checked;
 			// Auto Switch tab
 			lbl_AutoSwitchWordsCount.Enabled = btn_UpdateAutoSwitchDictionary.Enabled = txt_AutoSwitchDictionary.Enabled = chk_AutoSwitchSwitchToGuessLayout.Enabled = chk_AutoSwitchSpaceAfter.Enabled = chk_DownloadASD_InZip.Enabled = chk_AutoSwitch.Checked;
 			// Persistent Layout tab
@@ -4182,27 +4080,20 @@ namespace Mahou {
 			MMain.mahou.btn_DownloadUpdate.Enabled = false;
 		}
 
-		void UpdateSnippetCountLabel(string snippets, Label target, bool isSnip = true) {
-			if (!isSnip && string.IsNullOrEmpty(snippets)) { return; }
-			var snipc = GetSnippetsCount(snippets);
-			target.Text = target.Text.Split(' ')[0] + " "  + snipc.Item1 + ((snipc.Item2 == Color.Red) ? "?" : "") + "(#" + snipc.Item3 +")";
-			var t = HelpMeUnderstand.GetToolTip(target);
-			if (t.StartsWith("ERR: ")) {
-				var fl = t.IndexOf('\n')+1;
-				var tn = t.Substring(fl,t.Length-fl);
-//				Debug.WriteLine("tn" + tn);
-				HelpMeUnderstand.SetToolTip(target, tn);
+		void UpdateAutoSwitchCountLabel(string dictionary, Label target) {
+			if (string.IsNullOrEmpty(dictionary)) return;
+			var count = GetAutoSwitchDictionaryCount(dictionary);
+			target.Text = target.Text.Split(' ')[0] + " " + count.Item1 + ((count.Item2 == Color.Red) ? "?" : "") + "(#" + count.Item3 + ")";
+			var tooltip = HelpMeUnderstand.GetToolTip(target);
+			if (tooltip.StartsWith("ERR: ")) {
+				var firstLine = tooltip.IndexOf('\n') + 1;
+				HelpMeUnderstand.SetToolTip(target, tooltip.Substring(firstLine));
 			}
-			if (snipc.Item4 != "") {
-				t = HelpMeUnderstand.GetToolTip(target);
-				HelpMeUnderstand.SetToolTip(target, "ERR: " + snipc.Item4 + Environment.NewLine + t);
-			}
-			target.ForeColor = snipc.Item2; 
-			if (isSnip)
-				SnippetsCount = snipc.Item1;
-			else
-				AutoSwitchCount = snipc.Item1;
+			if (count.Item4 != "") HelpMeUnderstand.SetToolTip(target, "ERR: " + count.Item4 + Environment.NewLine + HelpMeUnderstand.GetToolTip(target));
+			target.ForeColor = count.Item2;
+			AutoSwitchCount = count.Item1;
 		}
+
 		#endregion
 		/// <summary>
 		/// Refreshes language.
@@ -4214,7 +4105,6 @@ namespace Mahou {
 			tab_appearence.Text = MMain.Lang[Languages.Element.tab_Appearence];
 			tab_timings.Text = MMain.Lang[Languages.Element.tab_Timings];
 			tab_excluded.Text = MMain.Lang[Languages.Element.tab_Excluded];
-			tab_snippets.Text = MMain.Lang[Languages.Element.tab_Snippets];
 			tab_autoswitch.Text = MMain.Lang[Languages.Element.tab_AutoSwitch];
 			tab_hotkeys.Text = MMain.Lang[Languages.Element.tab_Hotkeys];
 			tab_updates.Text = MMain.Lang[Languages.Element.tab_Updates];
@@ -4256,7 +4146,7 @@ namespace Mahou {
 			chk_ReadOnlyNA.Text = MMain.Lang[Languages.Element.ReadOnlyNA];
 			chk_WriteInputHistory.Text = MMain.Lang[Languages.Element.WriteInputHistory];
 			lbl_BackSpaceType.Text = MMain.Lang[Languages.Element.BackSpaceType];
-			lnk_OpenLogs.Text = lnk_OpenConfig.Text = lnk_OpenHistory.Text = lnk_SnipOpen.Text = MMain.Lang[Languages.Element.Open];
+			lnk_OpenLogs.Text = lnk_OpenConfig.Text = lnk_OpenHistory.Text = MMain.Lang[Languages.Element.Open];
 			#endregion
 			#region Layouts
 			chk_SwitchBetweenLayouts.Text = MMain.Lang[Languages.Element.SwitchBetween]+":";
@@ -4326,26 +4216,11 @@ namespace Mahou {
 			chk_Change1KeyL.Text =  MMain.Lang[Languages.Element.Change1KeyLayoutInExcluded];
 			chk_ConvSWL.Text =  MMain.Lang[Languages.Element.AllowConvertSWL];
 			#endregion
-			#region Snippets
-			chk_Snippets.Text = MMain.Lang[Languages.Element.SnippetsEnabled];
-			chk_SnippetsSpaceAfter.Text = MMain.Lang[Languages.Element.SnippetSpaceAfter];
-			chk_SnippetsSwitchToGuessLayout.Text = MMain.Lang[Languages.Element.SnippetSwitchToGuessLayout];
-			lbl_SnippetsCount.Text = MMain.Lang[Languages.Element.SnippetsCount];
-			lbl_SnippetExpandKey.Text = MMain.Lang[Languages.Element.SnippetsExpandKey];
-			var sko = (SnippetsExpKeyOther == "" ? MMain.Lang[Languages.Element.SnippetsExpKeyOther] : "*["+SnippetsExpKeyOther+"]");
-			if (cbb_SnippetExpandKeys.Items.Count <3) {
-				cbb_SnippetExpandKeys.Items.Add(sko);
-			} else {
-				cbb_SnippetExpandKeys.Items[2] = sko;
-			}
-			lbl_NCR.Text = MMain.Lang[Languages.Element.SnippetsNCRules];
-			#endregion
 			#region AutoSwitch
 			chk_AutoSwitch.Text = MMain.Lang[Languages.Element.AutoSwitchEnabled];
 			chk_AutoSwitchSpaceAfter.Text = MMain.Lang[Languages.Element.AutoSwitchSpaceAfter];
 			chk_AutoSwitchSwitchToGuessLayout.Text = MMain.Lang[Languages.Element.AutoSwitchSwitchToGuessLayout];
 			btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.AutoSwitchUpdateDictionary];
-			lbl_AutoSwitchDependsOnSnippets.Text = MMain.Lang[Languages.Element.AutoSwitchDependsOnSnippets];
 			if (lbl_AutoSwitchWordsCount.Text.Contains(" ")) {
 				var t = lbl_AutoSwitchWordsCount.Text.Split(new[]{' '}, 2);
 				lbl_AutoSwitchWordsCount.Text = MMain.Lang[Languages.Element.AutoSwitchDictionaryWordsCount] + t[1];
@@ -4429,7 +4304,6 @@ namespace Mahou {
 			grb_Sound2.Text = MMain.Lang[Languages.Element.Sound] + " #2";
 			grb_SoundOn2.Text = grb_SoundOn.Text = MMain.Lang[Languages.Element.PlaySoundWhen];
 			chk_SndAutoSwitch2.Text = chk_SndAutoSwitch.Text = MMain.Lang[Languages.Element.SoundOnAutoSwitch];
-			chk_SndSnippets2.Text = chk_SndSnippets.Text = MMain.Lang[Languages.Element.SoundOnSnippets];
 			chk_SndLast2.Text = chk_SndLast.Text = MMain.Lang[Languages.Element.SoundOnConvertLast];
 			chk_SndLayoutSwitch2.Text = chk_SndLayoutSwitch.Text = MMain.Lang[Languages.Element.SoundOnLayoutSwitching];
 			chk_UseCustomSnd2.Text = chk_UseCustomSnd.Text = MMain.Lang[Languages.Element.UseCustomSound];
@@ -4636,7 +4510,6 @@ namespace Mahou {
 			HelpMeUnderstand.SetToolTip(chk_LangTTMouseOnChange, MMain.Lang[Languages.Element.TT_LDOnlyOnChange]);
 			HelpMeUnderstand.SetToolTip(txt_LangTTText, MMain.Lang[Languages.Element.TT_LDText]);
 			HelpMeUnderstand.SetToolTip(chk_LangTTDiffLayoutColors, MMain.Lang[Languages.Element.TT_LDDifferentAppearence]);
-			HelpMeUnderstand.SetToolTip(chk_Snippets, MMain.Lang[Languages.Element.TT_Snippets]);
 			HelpMeUnderstand.SetToolTip(lbl_ExcludedPrograms, MMain.Lang[Languages.Element.TT_ExcludedPrograms]);
 			HelpMeUnderstand.SetToolTip(txt_ExcludedPrograms, MMain.Lang[Languages.Element.TT_ExcludedPrograms]);
 			HelpMeUnderstand.SetToolTip(txt_PersistentLayout1Processes, MMain.Lang[Languages.Element.TT_PersistentLayout]);
@@ -4645,15 +4518,10 @@ namespace Mahou {
 			HelpMeUnderstand.SetToolTip(chk_qwertz, MMain.Lang[Languages.Element.TT_QWERTZ]);
 			HelpMeUnderstand.SetToolTip(chk_Change1KeyL, MMain.Lang[Languages.Element.TT_Change1KeyLayoutInExcluded]);
 			HelpMeUnderstand.SetToolTip(chk_ConvSWL, MMain.Lang[Languages.Element.TT_AllowConvertSWL]);
-			HelpMeUnderstand.SetToolTip(chk_SnippetsSwitchToGuessLayout, MMain.Lang[Languages.Element.TT_SnippetsSwitchToGuessLayout]);
-			HelpMeUnderstand.SetToolTip(lbl_SnippetsCount, MMain.Lang[Languages.Element.TT_SnippetsCount]);
-			HelpMeUnderstand.SetToolTip(lbl_AutoSwitchWordsCount, MMain.Lang[Languages.Element.TT_SnippetsCount]);
 			HelpMeUnderstand.SetToolTip(chk_GuessKeyCodeFix, MMain.Lang[Languages.Element.TT_GuessKeyCodeFix]);
 			HelpMeUnderstand.SetToolTip(chk_AppDataConfigs, MMain.Lang[Languages.Element.TT_ConfigsInAppData]);
 			HelpMeUnderstand.SetToolTip(lbl_KeysType, MMain.Lang[Languages.Element.TT_KeysType]);
 			HelpMeUnderstand.SetToolTip(cbb_SpecKeysType, MMain.Lang[Languages.Element.TT_KeysType]);
-			HelpMeUnderstand.SetToolTip(lbl_SnippetExpandKey, MMain.Lang[Languages.Element.TT_SnippetExpandKey]);
-			HelpMeUnderstand.SetToolTip(cbb_SnippetExpandKeys, MMain.Lang[Languages.Element.TT_SnippetExpandKey]);
 			HelpMeUnderstand.SetToolTip(chk_LDMessages, MMain.Lang[Languages.Element.TT_LDUseWinMessages]);
 			HelpMeUnderstand.SetToolTip(chk_RemapCapsLockAsF18, MMain.Lang[Languages.Element.TT_RemapCapslockAsF18]);
 			HelpMeUnderstand.SetToolTip(chk_OnlyOnWindowChange, MMain.Lang[Languages.Element.TT_SwitchOnlyOnWindowChange]);
@@ -4667,7 +4535,6 @@ namespace Mahou {
 			HelpMeUnderstand.SetToolTip(lnk_OpenConfig, MMain.Lang[Languages.Element.TT_LeftRightMB]+"\n"+Configs.filePath);
 			HelpMeUnderstand.SetToolTip(chk_TrTranscription, MMain.Lang[Languages.Element.TT_Transcription_1]+
 			                            MMain.Lang[Languages.Element.DirectV2]+MMain.Lang[Languages.Element.TT_Transcription_2]);
-			HelpMeUnderstand.SetToolTip(txt_Snippets, MMain.Lang[Languages.Element.TT_SnippetsEditHotkeys]);
 			HelpMeUnderstand.SetToolTip(lbl_LCTRLLALTTempLayout, MMain.Lang[Languages.Element.TT_LCTRLLALTTempLayout]);
 		}
 		void HelpMeUnderstandPopup(object sender, PopupEventArgs e) {
@@ -4730,10 +4597,6 @@ namespace Mahou {
 		}
 		void Lnk_pluginLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
 			__lopen("https://github.com/MIXANIZM/MahouCaretDisplayServer", "http", false, e.Button == MouseButtons.Right);
-		}
-		void Lnk_SnipOpenLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-			__lopen(snipfile, "txt");
-			reload_snip = true;
 		}
 		#endregion
 		#region Custom Context Menu
@@ -4885,25 +4748,6 @@ namespace Mahou {
 				} else {
 					KMHook.SendModsUp(15);
 					KMHook.PasteText(cl);
-				}
-			} else if (act == "snipex") {
-				var expr = "";
-				foreach(var snex in KMHook.expressions) {
-					if (arg.Contains(snex.ToLower())) {
-						expr = snex.ToLower();
-						break;
-					}
-				}
-				if (expr != "") {
-					if (arg.EndsWith(")", StringComparison.InvariantCulture) &&
-					    arg.StartsWith(expr+"(", StringComparison.InvariantCulture)) {
-						var argn = arg.Substring(expr.Length + 1, arg.Length - expr.Length - 2);
-						KMHook.ExecExpression(expr, argn);
-					} else {
-						Logging.Log("Expression: " + arg + " missing ( or )", 2);
-					}
-				} else {
-					Logging.Log("Unknown expression called: " + arg, 2);
 				}
 			} else if (act == "input") {
 				if (!String.IsNullOrEmpty(arg)) {
@@ -5295,9 +5139,6 @@ file_icons_cache["<DIRECTORY>"] = img;
 				.Append("<details><summary>Mahou.ini</summary>\r\n\r\n```ini\r\n")
 					.Append(MMain.MyConfs.GetRawWithoutGroup("[Proxy]")).Append("\r\n```")
 					.Append("\r\n</details>");
-				if (File.Exists(Path.Combine(nPath, "snippets.txt")))
-					debuginfo.Append("\r\n" + "<details><summary>Snippets</summary>\r\n\r\n```\r\n")
-						.Append(File.ReadAllText(Path.Combine(nPath, "snippets.txt"))).Append("\r\n```");
 				debuginfo.Append("\r\n</details>");
 				if (Directory.Exists(Path.Combine(nPath, "Flags"))) {
 					debuginfo.Append("\r\n").Append("<details><summary>Additional flags in Flags directory</summary>\r\n\r\n");
@@ -5441,10 +5282,6 @@ file_icons_cache["<DIRECTORY>"] = img;
 			RegisterHotkeys();
 		}
 		void MahouUIActivated(object sender, EventArgs e) {
-			if (reload_snip) {
-				txt_Snippets.Text = File.ReadAllText(snipfile);
-				reload_snip = false;
-			}
 			if (tabs.SelectedIndex == tabs.TabPages.IndexOf(tab_hotkeys)) {
 				UnregisterHotkeys(1);
 				ScrlCheck.Stop();
@@ -5453,18 +5290,7 @@ file_icons_cache["<DIRECTORY>"] = img;
 				RegisterHotkeys();
 				ToggleTimers();
 			}
-			if (tabs.SelectedIndex == tabs.TabPages.IndexOf(tab_autoswitch)) {
-				if (!SnippetsEnabled) {
-					chk_AutoSwitchSpaceAfter.Visible = chk_AutoSwitch.Visible = chk_AutoSwitchSwitchToGuessLayout.Enabled = 
-						btn_UpdateAutoSwitchDictionary.Enabled = txt_AutoSwitchDictionary.Enabled = chk_DownloadASD_InZip.Enabled = false;
-					lbl_AutoSwitchDependsOnSnippets.Visible = true;
-				} else {
-					chk_AutoSwitchSpaceAfter.Visible = chk_AutoSwitch.Visible = chk_AutoSwitchSwitchToGuessLayout.Enabled = 
-						btn_UpdateAutoSwitchDictionary.Enabled = txt_AutoSwitchDictionary.Enabled = chk_DownloadASD_InZip.Enabled = true;
-					lbl_AutoSwitchDependsOnSnippets.Visible = false;
-					ToggleDependentControlsEnabledState();
-				}
-			}
+			if (tabs.SelectedIndex == tabs.TabPages.IndexOf(tab_autoswitch)) ToggleDependentControlsEnabledState();
 		}
 		void Cbb_UpdatesChannelSelectedIndexChanged(object sender, EventArgs e) {
 			MMain.MyConfs.WriteSave("Updates", "Channel", (sender as ComboBox).SelectedItem.ToString());
@@ -5475,7 +5301,7 @@ file_icons_cache["<DIRECTORY>"] = img;
 			if(!as_checking) {
 				as_checking = true;
 				tmr.Tick += (_, __) => {
-					UpdateSnippetCountLabel(AutoSwitchDictionaryRaw, lbl_AutoSwitchWordsCount, false);
+					UpdateAutoSwitchCountLabel(AutoSwitchDictionaryRaw, lbl_AutoSwitchWordsCount);
 					as_checking = false;
 					tmr.Dispose(); tmr = new Timer();
 				};
@@ -5483,47 +5309,8 @@ file_icons_cache["<DIRECTORY>"] = img;
 				tmr.Start();
 			}
 		}
-		void Txt_SnippetsTextChanged(object sender, EventArgs e) {
-			if(!snip_checking) {
-				snip_checking = true;
-				tmr.Tick += (_, __) => {
-					UpdateSnippetCountLabel(txt_Snippets.Text, lbl_SnippetsCount);
-					snip_checking = false;
-					tmr.Dispose(); tmr = new Timer();
-				};
-				tmr.Interval = 1000;
-				tmr.Start();
-			}
-		}
 		void Chk_DownloadASD_InZipCheckedChanged(object sender, EventArgs e) {
 			Dowload_ASD_InZip = chk_DownloadASD_InZip.Checked;
-		}
-		void Btn_NCR_AddClick(object sender, EventArgs e) {
-			var _set = new Panel();
-			_set.Width = pan_NoConvertRules.Width*95/100-2;
-			NCRSetsCount++;
-			_set.Name = "set_"+NCRSetsCount;
-			var top = 1;
-			if (NCRSetsCount > 1)
-				top = pan_NoConvertRules.Controls["set_"+(NCRSetsCount-1)].Top+25;
-			_set.Height = 27;
-			_set.Top = top;
-			_set.Left = 1;
-			var _baseLeft = (int)(pan_NoConvertRules.Width*2/100);
-			var rule = new TextBoxCA(){ Left = _baseLeft, Name = "rule"+NCRSetsCount, Width = pan_NoConvertRules.Width/3, Text = "^[A-Z]+$", Top=2 };
-			var isnip = new CheckBox(){ Left = _baseLeft+rule.Width+5, Name = "isnip"+NCRSetsCount, Width = pan_NoConvertRules.Width/5, Text = MMain.Lang[Languages.Element.tab_Snippets], Top=2};
-			var iauto = new CheckBox(){ Left = _baseLeft+rule.Width+5+isnip.Width, Name = "iauto"+NCRSetsCount, Width = pan_NoConvertRules.Width/5, Text = MMain.Lang[Languages.Element.tab_AutoSwitch], Top=2};
-			_set.Controls.Add(rule);
-			_set.Controls.Add(isnip);
-			_set.Controls.Add(iauto);
-			pan_NoConvertRules.Controls.Add(_set);
-			lbl_NCRCount.Text = "#"+NCRSetsCount;
-		}
-		void Btn_NCR_SubClick(object sender, EventArgs e) {
-			if (NCRSetsCount<1) return;
-			pan_NoConvertRules.Controls["set_"+NCRSetsCount].Dispose();
-			NCRSetsCount--;
-			lbl_NCRCount.Text = "#"+NCRSetsCount;
 		}
 		void Btn_TrAddSetClick(object sender, EventArgs e) {
 			if (TrSetCount>98) return;
@@ -5778,19 +5565,6 @@ file_icons_cache["<DIRECTORY>"] = img;
 				base.WndProc(ref m);
 			}
 		}
-		void Cbb_SnippetExpandKeysSelectedIndexChanged(object sender, EventArgs e) {
-			if (configs_loading) return;
-			if (cbb_SnippetExpandKeys.SelectedIndex == 2) {
-				Debug.WriteLine("Other");
-				var hkf = new HotkeyForm();
-				hkf.ShowDialog();
-				SnippetsExpKeyOther = HotkeyForm_hotkey;
-				configs_loading = true;
-				cbb_SnippetExpandKeys.Items[2] = "*["+SnippetsExpKeyOther+"]";
-				configs_loading = false;
-				Debug.WriteLine("Snippets-other-hotkey" + SnippetsExpKeyOther);
-			}
-		}
 		void Htxt_RedefinesEnter(object sender, EventArgs e) {
 			var t = (TextBox)sender;
 			t.Multiline = true;
@@ -5850,11 +5624,11 @@ file_icons_cache["<DIRECTORY>"] = img;
 			}
 			return new []{r, stat};
 		}
-		string WriteRestoreFiles(string raw, bool mini, bool stxt, bool htxt, bool ttxt, bool proxyg = true, bool mm = false) {
+		string WriteRestoreFiles(string raw, bool mini, bool htxt, bool ttxt, bool proxyg = true, bool mm = false) {
 			var stat = "";
 			var t = raw.Replace("\r", "");
 			var ll = t.Split('\n');
-			var bb = new [] { mini, stxt, htxt, ttxt, mm };
+			var bb = new [] { mini, htxt, ttxt, mm };
 			var tn="dummy";
 			var st = false;
 			var d = new Dictionary<string, string>();
@@ -5949,23 +5723,16 @@ file_icons_cache["<DIRECTORY>"] = img;
 			txt_restoreStatus.Visible = true;
 		}
 
-		void SetBools(string bools, char sep, out bool mini, out bool stxt, out bool htxt, out bool ttxt, out bool ptxt, out bool mmm) {
-			var s = bools.Split(sep);
-			mini = boo(s[0]);
-			stxt = boo(s[1]);
-			htxt = boo(s[2]);
-			ttxt = boo(s[3]);
-			try {
-				ptxt = boo(s[4]);
-			} catch {
-				ptxt = false;
-			}
-			try {
-				mmm = boo(s[5]);
-			} catch {
-				mmm = false;
-			}
+		void SetBools(string values, char separator, out bool ini, out bool history, out bool dictionary, out bool proxy, out bool menu) {
+			var parts = (values ?? "").Split(separator);
+			var legacy = parts.Length >= 6;
+			ini = parts.Length > 0 && boo(parts[0]);
+			history = parts.Length > (legacy ? 2 : 1) && boo(parts[legacy ? 2 : 1]);
+			dictionary = parts.Length > (legacy ? 3 : 2) && boo(parts[legacy ? 3 : 2]);
+			proxy = parts.Length > (legacy ? 4 : 3) && boo(parts[legacy ? 4 : 3]);
+			menu = parts.Length > (legacy ? 5 : 4) && boo(parts[legacy ? 5 : 4]);
 		}
+
 		bool boo(string s) {
 			int i = 0;
 			bool b;
@@ -5979,40 +5746,6 @@ file_icons_cache["<DIRECTORY>"] = img;
 			if (b)
 				return 1;
 			return 0;
-		}
-		void Txt_SnippetsKeyDown(object sender, KeyEventArgs e) {
-			var t = (sender as TextBox);
-			Debug.WriteLine("C"+e.Control+" K"+e.KeyCode);
-			if (e.Control && (e.KeyCode == Keys.OemQuestion || e.KeyCode == Keys.K)) {
-				var cs = t.SelectionStart;
-				var l = t.GetLineFromCharIndex(t.SelectionStart);
-				var sl = t.SelectionLength;
-				var ll = l;
-				if (sl != 0) {
-					ll = t.GetLineFromCharIndex(t.SelectionStart+sl);
-				}
-				var tl = t.Lines;
-				Debug.WriteLine("U: Ss: " + cs + " Sl: " +sl);
-				for (int i = l; i<= ll; i++) {
-					var lv = tl.GetValue(i) as string;
-					Debug.WriteLine(i+": Cur: " +lv);
-					if (lv.StartsWith("#")) {
-						lv = lv.Substring(1, lv.Length-1);
-						if (sl > 0) sl--; else cs--;
-					} else {
-						lv = "#" + lv;
-						if (sl > 0) sl++; else cs++;
-					} 
-					tl.SetValue(lv, i);
-				}
-				t.Lines = tl;
-				if (cs < 0) {  cs = 0; }
-				Debug.WriteLine("Ss: " + cs + " Sl: " +sl);
-				t.SelectionStart = cs;
-				t.ScrollToCaret();
-				e.SuppressKeyPress = true;
-				t.Select(cs, sl);
-			}
 		}
 		#endregion
 	}

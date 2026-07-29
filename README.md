@@ -7,8 +7,8 @@ Privacy-hardened modernization of the latest preserved Mahou `2.9.0.1-dev` sourc
 > repeat audit and Authenticode signing.
 
 This branch is based on the latest preserved modern Mahou source lineage and keeps the
-full tabbed settings UI, AutoSwitch dictionary, snippets, selection conversion,
-translation panel, history and advanced layout controls.
+tabbed settings UI, an independent AutoSwitch dictionary, selection conversion,
+translation panel, history and advanced layout controls. User-defined snippets are removed.
 
 ## MIXANIZM defaults
 
@@ -28,13 +28,13 @@ button restores the copy packaged with the verified build and does not download 
 an extraction script.
 
 The translator remains an explicit opt-in feature. When enabled, selected text is sent
-to the configured online translation service. Snippet `__execute` is blocked by default
-and requires an explicit hidden setting to enable.
+to the configured online translation service. User-defined snippets and their expression
+commands are absent; legacy snippet files remain untouched inactive rollback data.
 
 ## Current status
 
 This is still a draft test branch. It requires physical Windows 11 testing of keyboard
-hooks, Insert word/selection conversion, AutoSwitch, snippets, modifier handling and the
+hooks, Insert word/selection conversion, independent AutoSwitch, modifier handling and the
 full settings UI before merge or public release. See `SECURITY-AUDIT-MODERN.md`.
 
 Original Mahou is GPL v2+ software. Original authorship remains credited in the source

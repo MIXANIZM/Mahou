@@ -1,4 +1,4 @@
-﻿
+
 namespace Mahou
 {
 	partial class MahouUI
@@ -14,7 +14,6 @@ namespace Mahou
 		private System.Windows.Forms.Button btn_Cancel;
 		private System.Windows.Forms.Button btn_Apply;
 		private System.Windows.Forms.TabPage tab_appearence;
-		private System.Windows.Forms.TabPage tab_snippets;
 		private System.Windows.Forms.TabPage tab_hotkeys;
 		private System.Windows.Forms.TabPage tab_updates;
 		private System.Windows.Forms.TabPage tab_about;
@@ -74,8 +73,6 @@ namespace Mahou
 		private System.Windows.Forms.CheckBox chk_LangTTDiffLayoutColors;
 		private System.Windows.Forms.CheckBox chk_LangTTCaretOnChange;
 		private System.Windows.Forms.CheckBox chk_LangTTMouseOnChange;
-		private Mahou.MahouUI.TextBoxCA txt_Snippets;
-		private System.Windows.Forms.CheckBox chk_Snippets;
 		private System.Windows.Forms.GroupBox grb_Hotkey;
 		private System.Windows.Forms.CheckBox chk_DoubleHotkey;
 		private System.Windows.Forms.CheckBox chk_HotKeyEnabled;
@@ -151,8 +148,6 @@ namespace Mahou
 		private System.Windows.Forms.CheckBox chk_Change1KeyL;
 		private System.Windows.Forms.Label lbl_UpdateChannel;
 		private System.Windows.Forms.ComboBox cbb_UpdatesChannel;
-		private System.Windows.Forms.CheckBox chk_SnippetsSpaceAfter;
-		private System.Windows.Forms.CheckBox chk_SnippetsSwitchToGuessLayout;
 		private System.Windows.Forms.Label lbl_AutoStartArrow;
 		private System.Windows.Forms.ComboBox cbb_AutostartType;
 		private System.Windows.Forms.Label lbl_TaskExist;
@@ -163,9 +158,7 @@ namespace Mahou
 		private System.Windows.Forms.CheckBox chk_AutoSwitchSpaceAfter;
 		private Mahou.MahouUI.TextBoxCA txt_AutoSwitchDictionary;
 		private System.Windows.Forms.CheckBox chk_AutoSwitch;
-		private System.Windows.Forms.Label lbl_AutoSwitchDependsOnSnippets;
 		private System.Windows.Forms.Label lbl_AutoSwitchWordsCount;
-		private System.Windows.Forms.Label lbl_SnippetsCount;
 		private System.Windows.Forms.CheckBox chk_GuessKeyCodeFix;
 		private System.Windows.Forms.CheckBox chk_AppDataConfigs;
 		private System.Windows.Forms.CheckBox chk_DownloadASD_InZip;
@@ -189,8 +182,6 @@ namespace Mahou
 		public System.Windows.Forms.ComboBox cbb_Key1;
 		private System.Windows.Forms.Label lbl_KeysType;
 		private System.Windows.Forms.ComboBox cbb_SpecKeysType;
-		private System.Windows.Forms.ComboBox cbb_SnippetExpandKeys;
-		private System.Windows.Forms.Label lbl_SnippetExpandKey;
 		private System.Windows.Forms.CheckBox chk_LDMessages;
 		private System.Windows.Forms.CheckBox chk_RemapCapsLockAsF18;
 		private System.Windows.Forms.CheckBox chk_Add1NL;
@@ -206,7 +197,6 @@ namespace Mahou
 		private System.Windows.Forms.GroupBox grb_SoundOn;
 		private System.Windows.Forms.CheckBox chk_EnableSnd;
 		private System.Windows.Forms.CheckBox chk_SndLast;
-		private System.Windows.Forms.CheckBox chk_SndSnippets;
 		private System.Windows.Forms.CheckBox chk_SndAutoSwitch;
 		private System.Windows.Forms.Label lbl_CustomSound;
 		private System.Windows.Forms.Button btn_SelectSnd;
@@ -219,7 +209,6 @@ namespace Mahou
 		private System.Windows.Forms.GroupBox grb_SoundOn2;
 		private System.Windows.Forms.CheckBox chk_SndLayoutSwitch2;
 		private System.Windows.Forms.CheckBox chk_SndLast2;
-		private System.Windows.Forms.CheckBox chk_SndSnippets2;
 		private System.Windows.Forms.CheckBox chk_SndAutoSwitch2;
 		private System.Windows.Forms.GroupBox grb_Sound1;
 		private System.Windows.Forms.TabPage tab_translator;
@@ -263,11 +252,9 @@ namespace Mahou
 		private System.Windows.Forms.Button btn_backup;
 		private System.Windows.Forms.CheckBox chk_Htxt;
 		private System.Windows.Forms.CheckBox chk_Ttxt;
-		private System.Windows.Forms.CheckBox chk_Stxt;
 		private System.Windows.Forms.CheckBox chk_Mini;
 		private System.Windows.Forms.CheckBox chk_rHtxt;
 		private System.Windows.Forms.CheckBox chk_rTtxt;
-		private System.Windows.Forms.CheckBox chk_rStxt;
 		private System.Windows.Forms.CheckBox chk_rMini;
 		private System.Windows.Forms.TextBox txt_restoreStatus;
 		private System.Windows.Forms.TextBox txt_backupStatus;
@@ -278,14 +265,11 @@ namespace Mahou
 		private System.Windows.Forms.ComboBox cbb_TrMethod;
 		private System.Windows.Forms.Label lbl_TrMethod;
 		private System.Windows.Forms.CheckBox chk_CSUsePaste;
-		private MahouUI.LinkLabelNew lnk_SnipOpen;
 		private System.Windows.Forms.CheckBox chk_ConvSWL;
 		private System.Windows.Forms.CheckBox chk_rMmm;
 		private System.Windows.Forms.CheckBox chk_Mmm;
 		private System.Windows.Forms.CheckBox chk_TrTranscription;
 		private System.Windows.Forms.TabPage tab_Hidden;
-		private System.Windows.Forms.CheckBox Hchk___selection;
-		private System.Windows.Forms.CheckBox Hchk___selection_nomouse;
 		private System.Windows.Forms.Label Hlbl_NCS;
 		private System.Windows.Forms.TextBox Htxt_NCS;
 		private System.Windows.Forms.Label Hlbl_OverlayExcluded;
@@ -306,15 +290,11 @@ namespace Mahou
 		private System.Windows.Forms.Label Hlbl_AutoSwitchHotkey;
 		private System.Windows.Forms.TextBox Htxt_OAutoSwitchExcluded;
 		private System.Windows.Forms.Label Hlbl_OnlyAutoSwitchExcluded;
-		private System.Windows.Forms.TextBox Htxt_OSnippetsExcluded;
-		private System.Windows.Forms.Label Hlbl_OnlySnippetsExcluded;
 		private System.Windows.Forms.TextBox Htxt_ReselectCustoms;
 		private System.Windows.Forms.Label Hlbl_ReselectCustoms;
 		private System.Windows.Forms.TextBox Htxt_CycleCaseOrder;
 		private System.Windows.Forms.Label Hlbl_CycleCaseOrder;
 		private System.Windows.Forms.CheckBox Hchk_CycleCaseReset;
-		private System.Windows.Forms.CheckBox Hchk___setlayoutForce;
-		private System.Windows.Forms.CheckBox Hchk___setlayoutOnlyWM;
 		private System.Windows.Forms.TextBox Htxt_AutoSwitchIngoreRules;
 		private System.Windows.Forms.Label Hlbl_AutoSwitchIngoreRules;
 		private System.Windows.Forms.CheckBox Hchk_ASIgnoreLS;
@@ -340,12 +320,6 @@ namespace Mahou
 		private System.Windows.Forms.TextBox Htxt_LayoutModifier_1;
 		private System.Windows.Forms.Label Hlbl_LayoutModifier_1;
 		private System.Windows.Forms.TextBox txt_LCtrlLAltBorder;
-		private System.Windows.Forms.Panel pan_NoConvertRules;
-		private System.Windows.Forms.Label lbl_ScrollPastContentSnippets;
-		private System.Windows.Forms.Button btn_NCRAdd;
-		private System.Windows.Forms.Button btn_NCR_Sub;
-		private System.Windows.Forms.Label lbl_NCRCount;
-		private System.Windows.Forms.Label lbl_NCR;
 		private System.Windows.Forms.CheckBox Hchk_DARK;
 		private System.Windows.Forms.CheckBox Hchk_cmdbackfix;
 		private System.Windows.Forms.TextBox Htxt_LayoutModifier_D;
@@ -507,21 +481,6 @@ namespace Mahou
 			this.lbl_ExcludedPrograms = new System.Windows.Forms.Label();
 			this.chk_Change1KeyL = new System.Windows.Forms.CheckBox();
 			this.chk_ConvSWL = new System.Windows.Forms.CheckBox();
-			this.tab_snippets = new System.Windows.Forms.TabPage();
-			this.lbl_NCRCount = new System.Windows.Forms.Label();
-			this.lbl_NCR = new System.Windows.Forms.Label();
-			this.btn_NCR_Sub = new System.Windows.Forms.Button();
-			this.btn_NCRAdd = new System.Windows.Forms.Button();
-			this.pan_NoConvertRules = new System.Windows.Forms.Panel();
-			this.lbl_ScrollPastContentSnippets = new System.Windows.Forms.Label();
-			this.lnk_SnipOpen = new MahouUI.LinkLabelNew();
-			this.cbb_SnippetExpandKeys = new System.Windows.Forms.ComboBox();
-			this.lbl_SnippetExpandKey = new System.Windows.Forms.Label();
-			this.txt_Snippets = new Mahou.MahouUI.TextBoxCA();
-			this.chk_Snippets = new System.Windows.Forms.CheckBox();
-			this.chk_SnippetsSpaceAfter = new System.Windows.Forms.CheckBox();
-			this.chk_SnippetsSwitchToGuessLayout = new System.Windows.Forms.CheckBox();
-			this.lbl_SnippetsCount = new System.Windows.Forms.Label();
 			this.tab_autoswitch = new System.Windows.Forms.TabPage();
 			this.chk_DownloadASD_InZip = new System.Windows.Forms.CheckBox();
 			this.lbl_AutoSwitchWordsCount = new System.Windows.Forms.Label();
@@ -530,7 +489,6 @@ namespace Mahou
 			this.chk_AutoSwitchSwitchToGuessLayout = new System.Windows.Forms.CheckBox();
 			this.txt_AutoSwitchDictionary = new Mahou.MahouUI.TextBoxCA();
 			this.chk_AutoSwitch = new System.Windows.Forms.CheckBox();
-			this.lbl_AutoSwitchDependsOnSnippets = new System.Windows.Forms.Label();
 			this.tab_hotkeys = new System.Windows.Forms.TabPage();
 			this.grb_Hotkey = new System.Windows.Forms.GroupBox();
 			this.lbl_HotkeyHelp = new System.Windows.Forms.Label();
@@ -547,7 +505,6 @@ namespace Mahou
 			this.grb_SoundOn2 = new System.Windows.Forms.GroupBox();
 			this.chk_SndLayoutSwitch2 = new System.Windows.Forms.CheckBox();
 			this.chk_SndLast2 = new System.Windows.Forms.CheckBox();
-			this.chk_SndSnippets2 = new System.Windows.Forms.CheckBox();
 			this.chk_SndAutoSwitch2 = new System.Windows.Forms.CheckBox();
 			this.grb_Sound1 = new System.Windows.Forms.GroupBox();
 			this.lbl_CustomSound = new System.Windows.Forms.Label();
@@ -556,7 +513,6 @@ namespace Mahou
 			this.grb_SoundOn = new System.Windows.Forms.GroupBox();
 			this.chk_SndLayoutSwitch = new System.Windows.Forms.CheckBox();
 			this.chk_SndLast = new System.Windows.Forms.CheckBox();
-			this.chk_SndSnippets = new System.Windows.Forms.CheckBox();
 			this.chk_SndAutoSwitch = new System.Windows.Forms.CheckBox();
 			this.chk_EnableSnd = new System.Windows.Forms.CheckBox();
 			this.tab_LangPanel = new System.Windows.Forms.TabPage();
@@ -609,7 +565,6 @@ namespace Mahou
 			this.txt_restoreStatus = new System.Windows.Forms.TextBox();
 			this.chk_rHtxt = new System.Windows.Forms.CheckBox();
 			this.chk_rTtxt = new System.Windows.Forms.CheckBox();
-			this.chk_rStxt = new System.Windows.Forms.CheckBox();
 			this.chk_rMini = new System.Windows.Forms.CheckBox();
 			this.btn_restore = new System.Windows.Forms.Button();
 			this.txt_restoreId = new System.Windows.Forms.TextBox();
@@ -624,7 +579,6 @@ namespace Mahou
 			this.btn_backup = new System.Windows.Forms.Button();
 			this.chk_Htxt = new System.Windows.Forms.CheckBox();
 			this.chk_Ttxt = new System.Windows.Forms.CheckBox();
-			this.chk_Stxt = new System.Windows.Forms.CheckBox();
 			this.chk_Mini = new System.Windows.Forms.CheckBox();
 			this.chk_ZxZ = new System.Windows.Forms.CheckBox();
 			this.tab_updates = new System.Windows.Forms.TabPage();
@@ -668,7 +622,6 @@ namespace Mahou
 			this.Htxt_ASEndSymbols = new System.Windows.Forms.TextBox();
 			this.Hlbl_ASEndSymbols = new System.Windows.Forms.Label();
 			this.Hchk_ClipBackOnlyText = new System.Windows.Forms.CheckBox();
-			this.Htxt_OSnippetsExcluded = new System.Windows.Forms.TextBox();
 			this.Htxt_OAutoSwitchExcluded = new System.Windows.Forms.TextBox();
 			this.Htxt_OverlayExcluded = new System.Windows.Forms.TextBox();
 			this.Hlbl_Redefines = new System.Windows.Forms.Label();
@@ -682,15 +635,12 @@ namespace Mahou
 			this.Hchk_ASIgnoreLS = new System.Windows.Forms.CheckBox();
 			this.Hchk_ASIgnoreDel = new System.Windows.Forms.CheckBox();
 			this.Hchk_ASIgnoreBack = new System.Windows.Forms.CheckBox();
-			this.Hchk___setlayoutOnlyWM = new System.Windows.Forms.CheckBox();
-			this.Hchk___setlayoutForce = new System.Windows.Forms.CheckBox();
 			this.Hchk_CycleCaseReset = new System.Windows.Forms.CheckBox();
 			this.Htxt_CycleCaseOrder = new System.Windows.Forms.TextBox();
 			this.Hlbl_CycleCaseOrder = new System.Windows.Forms.Label();
 			this.Htxt_ReselectCustoms = new System.Windows.Forms.TextBox();
 			this.Hlbl_ReselectCustoms = new System.Windows.Forms.Label();
 			this.Hlbl_OnlyAutoSwitchExcluded = new System.Windows.Forms.Label();
-			this.Hlbl_OnlySnippetsExcluded = new System.Windows.Forms.Label();
 			this.Htxt_AutoSwitchHotkeyStr = new System.Windows.Forms.TextBox();
 			this.Hlbl_AutoSwitchHotkey = new System.Windows.Forms.Label();
 			this.Htxt_SymbolClear = new System.Windows.Forms.TextBox();
@@ -708,8 +658,6 @@ namespace Mahou
 			this.Hchk_NCStray = new System.Windows.Forms.CheckBox();
 			this.Hlbl_NCS = new System.Windows.Forms.Label();
 			this.Htxt_NCS = new System.Windows.Forms.TextBox();
-			this.Hchk___selection_nomouse = new System.Windows.Forms.CheckBox();
-			this.Hchk___selection = new System.Windows.Forms.CheckBox();
 			this.Hlbl_scrollpastcontent = new System.Windows.Forms.Label();
 			this.btn_OK = new System.Windows.Forms.Button();
 			this.btn_Cancel = new System.Windows.Forms.Button();
@@ -742,7 +690,6 @@ namespace Mahou
 			((System.ComponentModel.ISupportInitialize)(this.nud_LangTTCaretRefreshRate)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nud_LangTTMouseRefreshRate)).BeginInit();
 			this.tab_excluded.SuspendLayout();
-			this.tab_snippets.SuspendLayout();
 			this.tab_autoswitch.SuspendLayout();
 			this.tab_hotkeys.SuspendLayout();
 			this.grb_Hotkey.SuspendLayout();
@@ -783,7 +730,6 @@ namespace Mahou
 			this.tabs.Controls.Add(this.tab_appearence);
 			this.tabs.Controls.Add(this.tab_timings);
 			this.tabs.Controls.Add(this.tab_excluded);
-			this.tabs.Controls.Add(this.tab_snippets);
 			this.tabs.Controls.Add(this.tab_autoswitch);
 			this.tabs.Controls.Add(this.tab_hotkeys);
 			this.tabs.Controls.Add(this.tab_sounds);
@@ -2456,171 +2402,6 @@ namespace Mahou
 			this.chk_ConvSWL.Text = "Allow convert selection/word/line conversion.";
 			this.chk_ConvSWL.UseVisualStyleBackColor = true;
 			// 
-			// tab_snippets
-			// 
-			this.tab_snippets.AutoScroll = true;
-			this.tab_snippets.Controls.Add(this.lbl_NCRCount);
-			this.tab_snippets.Controls.Add(this.lbl_NCR);
-			this.tab_snippets.Controls.Add(this.btn_NCR_Sub);
-			this.tab_snippets.Controls.Add(this.btn_NCRAdd);
-			this.tab_snippets.Controls.Add(this.pan_NoConvertRules);
-			this.tab_snippets.Controls.Add(this.lbl_ScrollPastContentSnippets);
-			this.tab_snippets.Controls.Add(this.lnk_SnipOpen);
-			this.tab_snippets.Controls.Add(this.cbb_SnippetExpandKeys);
-			this.tab_snippets.Controls.Add(this.lbl_SnippetExpandKey);
-			this.tab_snippets.Controls.Add(this.txt_Snippets);
-			this.tab_snippets.Controls.Add(this.chk_Snippets);
-			this.tab_snippets.Controls.Add(this.chk_SnippetsSpaceAfter);
-			this.tab_snippets.Controls.Add(this.chk_SnippetsSwitchToGuessLayout);
-			this.tab_snippets.Controls.Add(this.lbl_SnippetsCount);
-			this.tab_snippets.Location = new System.Drawing.Point(4, 44);
-			this.tab_snippets.Name = "tab_snippets";
-			this.tab_snippets.Padding = new System.Windows.Forms.Padding(3);
-			this.tab_snippets.Size = new System.Drawing.Size(559, 268);
-			this.tab_snippets.TabIndex = 3;
-			this.tab_snippets.Text = "Snippets";
-			this.tab_snippets.UseVisualStyleBackColor = true;
-			// 
-			// lbl_NCRCount
-			// 
-			this.lbl_NCRCount.Location = new System.Drawing.Point(493, 269);
-			this.lbl_NCRCount.Name = "lbl_NCRCount";
-			this.lbl_NCRCount.Size = new System.Drawing.Size(42, 15);
-			this.lbl_NCRCount.TabIndex = 46;
-			this.lbl_NCRCount.Text = "#0";
-			// 
-			// lbl_NCR
-			// 
-			this.lbl_NCR.AutoSize = true;
-			this.lbl_NCR.Location = new System.Drawing.Point(8, 269);
-			this.lbl_NCR.Name = "lbl_NCR";
-			this.lbl_NCR.Size = new System.Drawing.Size(99, 15);
-			this.lbl_NCR.TabIndex = 45;
-			this.lbl_NCR.Text = "No Convert Rules";
-			// 
-			// btn_NCR_Sub
-			// 
-			this.btn_NCR_Sub.Location = new System.Drawing.Point(465, 265);
-			this.btn_NCR_Sub.Name = "btn_NCR_Sub";
-			this.btn_NCR_Sub.Size = new System.Drawing.Size(22, 22);
-			this.btn_NCR_Sub.TabIndex = 44;
-			this.btn_NCR_Sub.Text = "-";
-			this.btn_NCR_Sub.UseVisualStyleBackColor = true;
-			this.btn_NCR_Sub.Click += new System.EventHandler(this.Btn_NCR_SubClick);
-			// 
-			// btn_NCRAdd
-			// 
-			this.btn_NCRAdd.Location = new System.Drawing.Point(439, 265);
-			this.btn_NCRAdd.Name = "btn_NCRAdd";
-			this.btn_NCRAdd.Size = new System.Drawing.Size(22, 22);
-			this.btn_NCRAdd.TabIndex = 43;
-			this.btn_NCRAdd.Text = "+";
-			this.btn_NCRAdd.UseVisualStyleBackColor = true;
-			this.btn_NCRAdd.Click += new System.EventHandler(this.Btn_NCR_AddClick);
-			// 
-			// pan_NoConvertRules
-			// 
-			this.pan_NoConvertRules.AutoScroll = true;
-			this.pan_NoConvertRules.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.pan_NoConvertRules.Location = new System.Drawing.Point(8, 290);
-			this.pan_NoConvertRules.Name = "pan_NoConvertRules";
-			this.pan_NoConvertRules.Size = new System.Drawing.Size(528, 178);
-			this.pan_NoConvertRules.TabIndex = 42;
-			// 
-			// lbl_ScrollPastContentSnippets
-			// 
-			this.lbl_ScrollPastContentSnippets.Location = new System.Drawing.Point(221, 456);
-			this.lbl_ScrollPastContentSnippets.Name = "lbl_ScrollPastContentSnippets";
-			this.lbl_ScrollPastContentSnippets.Size = new System.Drawing.Size(100, 23);
-			this.lbl_ScrollPastContentSnippets.TabIndex = 41;
-			// 
-			// lnk_SnipOpen
-			// 
-			this.lnk_SnipOpen.AutoSize = true;
-			this.lnk_SnipOpen.Location = new System.Drawing.Point(344, 35);
-			this.lnk_SnipOpen.Name = "lnk_SnipOpen";
-			this.lnk_SnipOpen.Size = new System.Drawing.Size(36, 15);
-			this.lnk_SnipOpen.TabIndex = 32;
-			this.lnk_SnipOpen.TabStop = true;
-			this.lnk_SnipOpen.Text = "Open";
-			this.lnk_SnipOpen.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.Lnk_SnipOpenLinkClicked);
-			// 
-			// cbb_SnippetExpandKeys
-			// 
-			this.cbb_SnippetExpandKeys.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.cbb_SnippetExpandKeys.FormattingEnabled = true;
-			this.cbb_SnippetExpandKeys.Items.AddRange(new object[] {
-			"Space",
-			"Tab"});
-			this.cbb_SnippetExpandKeys.Location = new System.Drawing.Point(417, 9);
-			this.cbb_SnippetExpandKeys.Name = "cbb_SnippetExpandKeys";
-			this.cbb_SnippetExpandKeys.Size = new System.Drawing.Size(121, 23);
-			this.cbb_SnippetExpandKeys.TabIndex = 7;
-			this.cbb_SnippetExpandKeys.SelectedIndexChanged += new System.EventHandler(this.Cbb_SnippetExpandKeysSelectedIndexChanged);
-			// 
-			// lbl_SnippetExpandKey
-			// 
-			this.lbl_SnippetExpandKey.Location = new System.Drawing.Point(251, 9);
-			this.lbl_SnippetExpandKey.Name = "lbl_SnippetExpandKey";
-			this.lbl_SnippetExpandKey.Size = new System.Drawing.Size(160, 23);
-			this.lbl_SnippetExpandKey.TabIndex = 6;
-			this.lbl_SnippetExpandKey.Text = "Expand key:";
-			this.lbl_SnippetExpandKey.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// txt_Snippets
-			// 
-			this.txt_Snippets.Location = new System.Drawing.Point(8, 59);
-			this.txt_Snippets.MaxLength = 0;
-			this.txt_Snippets.Multiline = true;
-			this.txt_Snippets.Name = "txt_Snippets";
-			this.txt_Snippets.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.txt_Snippets.Size = new System.Drawing.Size(531, 203);
-			this.txt_Snippets.TabIndex = 1;
-			this.txt_Snippets.WordWrap = false;
-			this.txt_Snippets.TextChanged += new System.EventHandler(this.Txt_SnippetsTextChanged);
-			this.txt_Snippets.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Txt_SnippetsKeyDown);
-			// 
-			// chk_Snippets
-			// 
-			this.chk_Snippets.AutoSize = true;
-			this.chk_Snippets.Location = new System.Drawing.Point(8, 3);
-			this.chk_Snippets.Name = "chk_Snippets";
-			this.chk_Snippets.Size = new System.Drawing.Size(111, 19);
-			this.chk_Snippets.TabIndex = 0;
-			this.chk_Snippets.Text = "Enable snippets.";
-			this.chk_Snippets.UseVisualStyleBackColor = true;
-			this.chk_Snippets.CheckedChanged += new System.EventHandler(this.Chk_CheckedChanged);
-			// 
-			// chk_SnippetsSpaceAfter
-			// 
-			this.chk_SnippetsSpaceAfter.AutoSize = true;
-			this.chk_SnippetsSpaceAfter.Location = new System.Drawing.Point(8, 21);
-			this.chk_SnippetsSpaceAfter.Name = "chk_SnippetsSpaceAfter";
-			this.chk_SnippetsSpaceAfter.Size = new System.Drawing.Size(167, 19);
-			this.chk_SnippetsSpaceAfter.TabIndex = 2;
-			this.chk_SnippetsSpaceAfter.Text = "Add 1 space after snippets.";
-			this.chk_SnippetsSpaceAfter.UseVisualStyleBackColor = true;
-			// 
-			// chk_SnippetsSwitchToGuessLayout
-			// 
-			this.chk_SnippetsSwitchToGuessLayout.AutoSize = true;
-			this.chk_SnippetsSwitchToGuessLayout.Location = new System.Drawing.Point(8, 39);
-			this.chk_SnippetsSwitchToGuessLayout.Name = "chk_SnippetsSwitchToGuessLayout";
-			this.chk_SnippetsSwitchToGuessLayout.Size = new System.Drawing.Size(216, 19);
-			this.chk_SnippetsSwitchToGuessLayout.TabIndex = 4;
-			this.chk_SnippetsSwitchToGuessLayout.Text = "Switch to guess layout after snippet.";
-			this.chk_SnippetsSwitchToGuessLayout.UseVisualStyleBackColor = true;
-			// 
-			// lbl_SnippetsCount
-			// 
-			this.lbl_SnippetsCount.AutoSize = true;
-			this.lbl_SnippetsCount.ForeColor = System.Drawing.Color.Orange;
-			this.lbl_SnippetsCount.Location = new System.Drawing.Point(417, 35);
-			this.lbl_SnippetsCount.Name = "lbl_SnippetsCount";
-			this.lbl_SnippetsCount.Size = new System.Drawing.Size(64, 15);
-			this.lbl_SnippetsCount.TabIndex = 5;
-			this.lbl_SnippetsCount.Text = "Snippets: 2";
-			// 
 			// tab_autoswitch
 			// 
 			this.tab_autoswitch.Controls.Add(this.chk_DownloadASD_InZip);
@@ -2630,7 +2411,6 @@ namespace Mahou
 			this.tab_autoswitch.Controls.Add(this.chk_AutoSwitchSwitchToGuessLayout);
 			this.tab_autoswitch.Controls.Add(this.txt_AutoSwitchDictionary);
 			this.tab_autoswitch.Controls.Add(this.chk_AutoSwitch);
-			this.tab_autoswitch.Controls.Add(this.lbl_AutoSwitchDependsOnSnippets);
 			this.tab_autoswitch.Location = new System.Drawing.Point(4, 44);
 			this.tab_autoswitch.Name = "tab_autoswitch";
 			this.tab_autoswitch.Size = new System.Drawing.Size(559, 268);
@@ -2712,17 +2492,7 @@ namespace Mahou
 			this.chk_AutoSwitch.UseVisualStyleBackColor = true;
 			this.chk_AutoSwitch.CheckedChanged += new System.EventHandler(this.Chk_CheckedChanged);
 			// 
-			// lbl_AutoSwitchDependsOnSnippets
 			// 
-			this.lbl_AutoSwitchDependsOnSnippets.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lbl_AutoSwitchDependsOnSnippets.ForeColor = System.Drawing.Color.OrangeRed;
-			this.lbl_AutoSwitchDependsOnSnippets.Location = new System.Drawing.Point(0, 0);
-			this.lbl_AutoSwitchDependsOnSnippets.Name = "lbl_AutoSwitchDependsOnSnippets";
-			this.lbl_AutoSwitchDependsOnSnippets.Size = new System.Drawing.Size(559, 24);
-			this.lbl_AutoSwitchDependsOnSnippets.TabIndex = 10;
-			this.lbl_AutoSwitchDependsOnSnippets.Text = "To use this feature enable snippets.";
-			this.lbl_AutoSwitchDependsOnSnippets.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.lbl_AutoSwitchDependsOnSnippets.Visible = false;
 			// 
 			// tab_hotkeys
 			// 
@@ -2884,7 +2654,6 @@ namespace Mahou
 			// 
 			this.grb_SoundOn2.Controls.Add(this.chk_SndLayoutSwitch2);
 			this.grb_SoundOn2.Controls.Add(this.chk_SndLast2);
-			this.grb_SoundOn2.Controls.Add(this.chk_SndSnippets2);
 			this.grb_SoundOn2.Controls.Add(this.chk_SndAutoSwitch2);
 			this.grb_SoundOn2.Location = new System.Drawing.Point(6, 15);
 			this.grb_SoundOn2.Name = "grb_SoundOn2";
@@ -2913,15 +2682,7 @@ namespace Mahou
 			this.chk_SndLast2.Text = "On Last Word conversion.";
 			this.chk_SndLast2.UseVisualStyleBackColor = true;
 			// 
-			// chk_SndSnippets2
 			// 
-			this.chk_SndSnippets2.AutoSize = true;
-			this.chk_SndSnippets2.Location = new System.Drawing.Point(6, 40);
-			this.chk_SndSnippets2.Name = "chk_SndSnippets2";
-			this.chk_SndSnippets2.Size = new System.Drawing.Size(150, 19);
-			this.chk_SndSnippets2.TabIndex = 3;
-			this.chk_SndSnippets2.Text = "On Snippets expansion.";
-			this.chk_SndSnippets2.UseVisualStyleBackColor = true;
 			// 
 			// chk_SndAutoSwitch2
 			// 
@@ -2979,7 +2740,6 @@ namespace Mahou
 			// 
 			this.grb_SoundOn.Controls.Add(this.chk_SndLayoutSwitch);
 			this.grb_SoundOn.Controls.Add(this.chk_SndLast);
-			this.grb_SoundOn.Controls.Add(this.chk_SndSnippets);
 			this.grb_SoundOn.Controls.Add(this.chk_SndAutoSwitch);
 			this.grb_SoundOn.Location = new System.Drawing.Point(6, 15);
 			this.grb_SoundOn.Name = "grb_SoundOn";
@@ -3008,15 +2768,7 @@ namespace Mahou
 			this.chk_SndLast.Text = "On Last Word conversion.";
 			this.chk_SndLast.UseVisualStyleBackColor = true;
 			// 
-			// chk_SndSnippets
 			// 
-			this.chk_SndSnippets.AutoSize = true;
-			this.chk_SndSnippets.Location = new System.Drawing.Point(6, 40);
-			this.chk_SndSnippets.Name = "chk_SndSnippets";
-			this.chk_SndSnippets.Size = new System.Drawing.Size(150, 19);
-			this.chk_SndSnippets.TabIndex = 3;
-			this.chk_SndSnippets.Text = "On Snippets expansion.";
-			this.chk_SndSnippets.UseVisualStyleBackColor = true;
 			// 
 			// chk_SndAutoSwitch
 			// 
@@ -3541,7 +3293,6 @@ namespace Mahou
 			this.grb_restore.Controls.Add(this.txt_restoreStatus);
 			this.grb_restore.Controls.Add(this.chk_rHtxt);
 			this.grb_restore.Controls.Add(this.chk_rTtxt);
-			this.grb_restore.Controls.Add(this.chk_rStxt);
 			this.grb_restore.Controls.Add(this.chk_rMini);
 			this.grb_restore.Controls.Add(this.btn_restore);
 			this.grb_restore.Controls.Add(this.txt_restoreId);
@@ -3622,17 +3373,7 @@ namespace Mahou
 			this.chk_rTtxt.Text = "TSDict.txt";
 			this.chk_rTtxt.UseVisualStyleBackColor = true;
 			// 
-			// chk_rStxt
 			// 
-			this.chk_rStxt.AutoSize = true;
-			this.chk_rStxt.Checked = true;
-			this.chk_rStxt.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chk_rStxt.Location = new System.Drawing.Point(176, 22);
-			this.chk_rStxt.Name = "chk_rStxt";
-			this.chk_rStxt.Size = new System.Drawing.Size(87, 19);
-			this.chk_rStxt.TabIndex = 10;
-			this.chk_rStxt.Text = "snippets.txt";
-			this.chk_rStxt.UseVisualStyleBackColor = true;
 			// 
 			// chk_rMini
 			// 
@@ -3684,7 +3425,6 @@ namespace Mahou
 			this.grb_backup.Controls.Add(this.btn_backup);
 			this.grb_backup.Controls.Add(this.chk_Htxt);
 			this.grb_backup.Controls.Add(this.chk_Ttxt);
-			this.grb_backup.Controls.Add(this.chk_Stxt);
 			this.grb_backup.Controls.Add(this.chk_Mini);
 			this.grb_backup.Controls.Add(this.chk_ZxZ);
 			this.grb_backup.Location = new System.Drawing.Point(8, 3);
@@ -3787,17 +3527,7 @@ namespace Mahou
 			this.chk_Ttxt.Text = "TSDict.txt";
 			this.chk_Ttxt.UseVisualStyleBackColor = true;
 			// 
-			// chk_Stxt
 			// 
-			this.chk_Stxt.AutoSize = true;
-			this.chk_Stxt.Checked = true;
-			this.chk_Stxt.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.chk_Stxt.Location = new System.Drawing.Point(176, 22);
-			this.chk_Stxt.Name = "chk_Stxt";
-			this.chk_Stxt.Size = new System.Drawing.Size(87, 19);
-			this.chk_Stxt.TabIndex = 1;
-			this.chk_Stxt.Text = "snippets.txt";
-			this.chk_Stxt.UseVisualStyleBackColor = true;
 			// 
 			// chk_Mini
 			// 
@@ -4099,7 +3829,6 @@ namespace Mahou
 			this.tab_Hidden.Controls.Add(this.Htxt_ASEndSymbols);
 			this.tab_Hidden.Controls.Add(this.Hlbl_ASEndSymbols);
 			this.tab_Hidden.Controls.Add(this.Hchk_ClipBackOnlyText);
-			this.tab_Hidden.Controls.Add(this.Htxt_OSnippetsExcluded);
 			this.tab_Hidden.Controls.Add(this.Htxt_OAutoSwitchExcluded);
 			this.tab_Hidden.Controls.Add(this.Htxt_OverlayExcluded);
 			this.tab_Hidden.Controls.Add(this.Hlbl_Redefines);
@@ -4113,15 +3842,12 @@ namespace Mahou
 			this.tab_Hidden.Controls.Add(this.Hchk_ASIgnoreLS);
 			this.tab_Hidden.Controls.Add(this.Hchk_ASIgnoreDel);
 			this.tab_Hidden.Controls.Add(this.Hchk_ASIgnoreBack);
-			this.tab_Hidden.Controls.Add(this.Hchk___setlayoutOnlyWM);
-			this.tab_Hidden.Controls.Add(this.Hchk___setlayoutForce);
 			this.tab_Hidden.Controls.Add(this.Hchk_CycleCaseReset);
 			this.tab_Hidden.Controls.Add(this.Htxt_CycleCaseOrder);
 			this.tab_Hidden.Controls.Add(this.Hlbl_CycleCaseOrder);
 			this.tab_Hidden.Controls.Add(this.Htxt_ReselectCustoms);
 			this.tab_Hidden.Controls.Add(this.Hlbl_ReselectCustoms);
 			this.tab_Hidden.Controls.Add(this.Hlbl_OnlyAutoSwitchExcluded);
-			this.tab_Hidden.Controls.Add(this.Hlbl_OnlySnippetsExcluded);
 			this.tab_Hidden.Controls.Add(this.Htxt_AutoSwitchHotkeyStr);
 			this.tab_Hidden.Controls.Add(this.Hlbl_AutoSwitchHotkey);
 			this.tab_Hidden.Controls.Add(this.Htxt_SymbolClear);
@@ -4139,8 +3865,6 @@ namespace Mahou
 			this.tab_Hidden.Controls.Add(this.Hchk_NCStray);
 			this.tab_Hidden.Controls.Add(this.Hlbl_NCS);
 			this.tab_Hidden.Controls.Add(this.Htxt_NCS);
-			this.tab_Hidden.Controls.Add(this.Hchk___selection_nomouse);
-			this.tab_Hidden.Controls.Add(this.Hchk___selection);
 			this.tab_Hidden.Controls.Add(this.Hlbl_scrollpastcontent);
 			this.tab_Hidden.ForeColor = System.Drawing.Color.PapayaWhip;
 			this.tab_Hidden.Location = new System.Drawing.Point(4, 44);
@@ -4310,18 +4034,7 @@ namespace Mahou
 			this.Hchk_ClipBackOnlyText.Text = "Disable full clipboard backup, backup only: [Text]";
 			this.Hchk_ClipBackOnlyText.UseVisualStyleBackColor = true;
 			// 
-			// Htxt_OSnippetsExcluded
 			// 
-			this.Htxt_OSnippetsExcluded.BackColor = System.Drawing.Color.Orange;
-			this.Htxt_OSnippetsExcluded.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.Htxt_OSnippetsExcluded.ForeColor = System.Drawing.Color.LightCyan;
-			this.Htxt_OSnippetsExcluded.Location = new System.Drawing.Point(270, 325);
-			this.Htxt_OSnippetsExcluded.Name = "Htxt_OSnippetsExcluded";
-			this.Htxt_OSnippetsExcluded.Size = new System.Drawing.Size(265, 23);
-			this.Htxt_OSnippetsExcluded.TabIndex = 23;
-			this.Htxt_OSnippetsExcluded.TextChanged += new System.EventHandler(this.Htxt_RedefinesTextChanged);
-			this.Htxt_OSnippetsExcluded.Enter += new System.EventHandler(this.Htxt_RedefinesEnter);
-			this.Htxt_OSnippetsExcluded.Leave += new System.EventHandler(this.Htxt_RedefinesLeave);
 			// 
 			// Htxt_OAutoSwitchExcluded
 			// 
@@ -4475,28 +4188,6 @@ namespace Mahou
 			this.Hchk_ASIgnoreBack.Text = "Auto Switch ignore: [Pressed BackSpace <Back>]";
 			this.Hchk_ASIgnoreBack.UseVisualStyleBackColor = true;
 			// 
-			// Hchk___setlayoutOnlyWM
-			// 
-			this.Hchk___setlayoutOnlyWM.AutoSize = true;
-			this.Hchk___setlayoutOnlyWM.Location = new System.Drawing.Point(8, 499);
-			this.Hchk___setlayoutOnlyWM.Name = "Hchk___setlayoutOnlyWM";
-			this.Hchk___setlayoutOnlyWM.Size = new System.Drawing.Size(501, 19);
-			this.Hchk___setlayoutOnlyWM.TabIndex = 32;
-			this.Hchk___setlayoutOnlyWM.Text = "Snippet __setlayout() will use only Window Messages ignoring \"emulate layout swit" +
-	"ching\".";
-			this.Hchk___setlayoutOnlyWM.UseVisualStyleBackColor = true;
-			// 
-			// Hchk___setlayoutForce
-			// 
-			this.Hchk___setlayoutForce.AutoSize = true;
-			this.Hchk___setlayoutForce.Location = new System.Drawing.Point(8, 478);
-			this.Hchk___setlayoutForce.Name = "Hchk___setlayoutForce";
-			this.Hchk___setlayoutForce.Size = new System.Drawing.Size(496, 19);
-			this.Hchk___setlayoutForce.TabIndex = 31;
-			this.Hchk___setlayoutForce.Text = "Snippet __setlayout() will force layout, ignoring the \"Switch to guess layout aft" +
-	"er snippet\".";
-			this.Hchk___setlayoutForce.UseVisualStyleBackColor = true;
-			// 
 			// Hchk_CycleCaseReset
 			// 
 			this.Hchk_CycleCaseReset.AutoSize = true;
@@ -4554,14 +4245,7 @@ namespace Mahou
 			this.Hlbl_OnlyAutoSwitchExcluded.TabIndex = 24;
 			this.Hlbl_OnlyAutoSwitchExcluded.Text = "Autoswitch excluded processes: ( | - separator)";
 			// 
-			// Hlbl_OnlySnippetsExcluded
 			// 
-			this.Hlbl_OnlySnippetsExcluded.AutoSize = true;
-			this.Hlbl_OnlySnippetsExcluded.Location = new System.Drawing.Point(9, 327);
-			this.Hlbl_OnlySnippetsExcluded.Name = "Hlbl_OnlySnippetsExcluded";
-			this.Hlbl_OnlySnippetsExcluded.Size = new System.Drawing.Size(237, 15);
-			this.Hlbl_OnlySnippetsExcluded.TabIndex = 22;
-			this.Hlbl_OnlySnippetsExcluded.Text = "Snippets excluded processes: ( | - separator)";
 			// 
 			// Htxt_AutoSwitchHotkeyStr
 			// 
@@ -4753,27 +4437,10 @@ namespace Mahou
 			this.Htxt_NCS.Size = new System.Drawing.Size(34, 23);
 			this.Htxt_NCS.TabIndex = 2;
 			// 
-			// Hchk___selection_nomouse
 			// 
-			this.Hchk___selection_nomouse.AutoSize = true;
-			this.Hchk___selection_nomouse.Location = new System.Drawing.Point(8, 20);
-			this.Hchk___selection_nomouse.Name = "Hchk___selection_nomouse";
-			this.Hchk___selection_nomouse.Size = new System.Drawing.Size(448, 19);
-			this.Hchk___selection_nomouse.TabIndex = 1;
-			this.Hchk___selection_nomouse.Text = "Disable __selection()\'s mouse triggers. (double click triggers Ctrl+Insert, to co" +
 	"py)";
-			this.Hchk___selection_nomouse.UseVisualStyleBackColor = true;
 			// 
-			// Hchk___selection
 			// 
-			this.Hchk___selection.AutoSize = true;
-			this.Hchk___selection.Location = new System.Drawing.Point(8, 3);
-			this.Hchk___selection.Name = "Hchk___selection";
-			this.Hchk___selection.Size = new System.Drawing.Size(485, 19);
-			this.Hchk___selection.TabIndex = 0;
-			this.Hchk___selection.Text = "Enable __selection(), allows you to write snippet over selection and use it insid" +
-	"e snippet.\r\n";
-			this.Hchk___selection.UseVisualStyleBackColor = true;
 			// 
 			// Hlbl_scrollpastcontent
 			// 
@@ -4872,8 +4539,6 @@ namespace Mahou
 			((System.ComponentModel.ISupportInitialize)(this.nud_LangTTMouseRefreshRate)).EndInit();
 			this.tab_excluded.ResumeLayout(false);
 			this.tab_excluded.PerformLayout();
-			this.tab_snippets.ResumeLayout(false);
-			this.tab_snippets.PerformLayout();
 			this.tab_autoswitch.ResumeLayout(false);
 			this.tab_autoswitch.PerformLayout();
 			this.tab_hotkeys.ResumeLayout(false);

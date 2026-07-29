@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -265,12 +265,7 @@ namespace Mahou {
         	CheckBool("Hidden", "LibreCtrlAltShiftV", "false");
 			CheckString("Hidden", "CycleCaseOrder", "TULSR");
 			CheckBool("Hidden", "CycleCaseReset", "false");
-			CheckBool("Hidden", "__selection", "false");
-			CheckBool("Hidden", "__selection_nomouse", "false");
-			CheckString("Hidden", "onlySnippetsExcluded", "");
 			CheckString("Hidden", "onlyAutoSwitchExcluded", "");
-			CheckBool("Hidden", "__setlayout_FORCED", "false");
-			CheckBool("Hidden", "__setlayout_ONLYWM", "false");
 			CheckBool("Hidden", "AS_IngoreBack", "false");
 			CheckBool("Hidden", "AS_IngoreDel", "false");
 			CheckBool("Hidden", "AS_IngoreLS", "false");
@@ -302,13 +297,11 @@ namespace Mahou {
             #region Sounds
             CheckBool("Sounds", "Enabled", "False");
             CheckBool("Sounds", "OnAutoSwitch", "True");
-            CheckBool("Sounds", "OnSnippets", "False");
             CheckBool("Sounds", "OnConvertLast", "True");
             CheckBool("Sounds", "OnLayoutSwitch", "False");
             CheckBool("Sounds", "UseCustomSound", "False");
             CheckString("Sounds", "CustomSound", "");
             CheckBool("Sounds", "OnAutoSwitch2", "False");
-            CheckBool("Sounds", "OnSnippets2", "True");
             CheckBool("Sounds", "OnConvertLast2", "False");
             CheckBool("Sounds", "OnLayoutSwitch2", "True");
             CheckBool("Sounds", "UseCustomSound2", "False");
@@ -442,14 +435,6 @@ namespace Mahou {
 			CheckBool("AutoSwitch", "SwitchToGuessLayout", "true");
 			CheckBool("AutoSwitch", "SpaceAfter", "true");
 			CheckBool("AutoSwitch", "Enabled", "false");
-			#endregion
-			#region Snippets section
-			CheckString("Snippets", "SnippetExpKeyOther", "");
-			CheckString("Snippets", "SnippetExpandKey", "Space");
-			CheckBool("Snippets", "SwitchToGuessLayout", "false");
-			CheckBool("Snippets", "SpaceAfter", "false");
-			CheckBool("Snippets", "SnippetsEnabled", "false");
-			CheckString("Snippets", "NCRSets", "set_0");
 			#endregion
 			#region Timings section
 			CheckInt("Timings", "LangTooltipForMouseSkipMessages", "5");

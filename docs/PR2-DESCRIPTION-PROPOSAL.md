@@ -13,7 +13,7 @@ development line rather than the obsolete `iamkarlson/Mahou` v1.4.3.0 source.
 - accepted development head: `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`;
 - assembly line: `2.9.0.1-dev`;
 - .NET Framework 4.8;
-- modern tabbed settings UI, bundled AutoSwitch dictionary, snippets, input
+- modern tabbed settings UI, bundled standalone AutoSwitch dictionary, input
   history, selected-text conversion, translation panel and advanced layout
   controls retained;
 - Release x86 and x64 are built independently twice and compared
@@ -92,6 +92,25 @@ record only corrections and reversions performed by Mahou.
 adapters, reversal and exception behavior, protected fields and strict no-op in
 modern Notepad, Chrome and Telegram.
 
+## User snippets removal and independent AutoSwitch
+
+`AGZ-MAH-0018` recorded:
+
+```text
+SNIPPETS_TRIGGER_REPLACEMENT_FAIL
+```
+
+At exact source `f02909611eb9a4502e9fe4d8fda9009922f352fd`, simple replacement was corrupted, multiline left `agz1`, and delayed replacement left `agz`. The remaining snippets smoke was stopped.
+
+Draft PR #18 implements:
+
+```text
+USER_SNIPPETS_REMOVED
+AUTOSWITCH_DECOUPLED
+```
+
+The snippets tab, controls, trigger engine, expressions, hotkeys, exclusions, sounds, persistence and runtime `snippets.txt` access are removed. Existing legacy files and obsolete keys are left untouched and inactive. AutoSwitch uses only its own settings and `AS_dict.txt`, with literal dictionary output and source-context revalidation. A focused exact-candidate physical-Windows smoke remains required before this new source is accepted.
+
 ## AutoSwitch containment in modern Notepad
 
 `AGZ-MAH-0014` remains the immutable historical result for exact source
@@ -124,7 +143,7 @@ The accepted physical-Windows smoke confirmed:
 
 This result does not add a Notepad adapter, a generic RichEdit writer, or
 positive modern Notepad AutoSwitch support. It does not change manual Insert,
-Smart Caps, snippets, selected-text conversion or clipboard behavior. PR #3 is
+Smart Caps, selected-text conversion or clipboard behavior. User snippets are removed separately under AGZ-MAH-0019. PR #3 is
 not used.
 
 ## Accepted input-surface decisions
@@ -166,21 +185,19 @@ superseded by `AGZ-MAH-0011: DIRECT-PATH-NOT-SAFE`; PR #3 remains untouched.
   `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`;
 - restart launches the same executable with a bounded parent-wait argument and
   does not create CMD/VBS files or invoke `taskkill`;
-- snippet `__execute` and its external-process path are removed;
+- user-defined snippets, their UI, parser, expression commands, hotkeys, persistence and execution paths are removed;
 - AutoSwitch, Smart Caps, translator and input history remain opt-in;
 - invalid INI values are normalized and reads use a synchronized in-memory
   index;
 - low-frequency configuration/user-data writes use flushed same-directory
   temporary files and backups where applicable;
-- snippet delays, keyboard-step delays, repetition counts, uppercase counts and
-  deferred timeouts are bounded;
+- AutoSwitch deferred timeouts remain bounded; removed snippet delay/keyboard/repetition paths no longer exist;
 - translator requests use disposable clients, an eight-second timeout, a
   5000-character input limit and at most three redirects;
 - Release builds are deterministic, no-PDB and warnings-as-errors, with an
   embedded `asInvoker`, `uiAccess=false` manifest;
 - source regression gates prevent removed unsafe behavior from returning;
-- AutoSwitch source-context and modern Notepad containment regressions run in
-  Security regression and Modern Windows build.
+- AutoSwitch independence, literal-replacement, source-context and modern Notepad containment regressions run in Security regression and Modern Windows build.
 
 ## Accepted runtime evidence
 
@@ -246,9 +263,7 @@ Notepad AutoSwitch containment are closed or not applicable.
 
 PR #2 still requires:
 
-1. focused real-Windows smoke for snippets, translator/network behavior, input
-   history, autorun, restart, settings migration, atomic save/backup behavior
-   and UI scaling;
+1. focused AGZ-MAH-0019 AutoSwitch/removal smoke, then retained translator/network, input-history, autorun, restart, settings-migration, atomic-save/backup and UI-scaling smoke;
 2. green Security regression and Modern Windows build at the final PR #2 head;
 3. supervisor review of the reconciled release-readiness record and PR
    description;
