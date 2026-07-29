@@ -14,7 +14,7 @@ python .github/scripts/input-surface-probe-regression.py
 
 The AutoSwitch containment gate locks the exact `notepad.exe` + `RichEditD2DPT` rejection, source-context capture, immediate/deferred revalidation call sites, workflow integration, and unchanged runtime version. The other source gates check Mahou safety invariants, common Russian/English Smart Caps localization markers, UI resource consistency, and artifact provenance. The Chrome editing-core gates separately check the test-only MV3 manifest, permission boundary, absence of active mutation/network/remote-code/Native Messaging paths, exact diagnostic marker, fixed candidates, fail-closed control and stale-state rules, adjacent-text preservation contracts, and post-mutation verification logic. The input-surface probe gate checks that the standalone executable source contains no mutation, selection, keyboard, clipboard, hook, injection, actual-text or window-title APIs and retains the required schema, embedded commit, redaction and password-suppression markers. None of these source tests replace runtime testing.
 
-## AGZ-MAH-0015 checks
+## Completed AGZ-MAH-0015 verification
 
 The Modern Windows build compiles and runs `AutoSwitchContainmentRegression.exe` for both x86 and x64 against the built `Mahou.exe`. Deterministic cases prove:
 
@@ -27,11 +27,60 @@ The Modern Windows build compiles and runs `AutoSwitchContainmentRegression.exe`
 7. the block remains limited to the exact modern Notepad surface;
 8. runtime version remains `2.9.0.1-dev`.
 
-The source regression runs in both Security regression and Modern Windows build. Required completion gates are all fast source regressions, executable x86/x64 containment tests, two deterministic Release builds per platform, exact changed-file/version review, and green exact-head CI. Physical Windows smoke must confirm strict no-op in modern Notepad and unchanged Chrome/Word behavior; it must not be reported as positive Notepad support or general AutoSwitch verification.
+Implementation evidence:
+
+```text
+Task: AGZ-MAH-0015
+Exact base: 363a83b227cfa14e798e442960640e7caed03913
+Task commit: 99e712aa3d913d37e1268ccf65a0cf52aca65ab7
+Implementation PR: #16
+Merge commit: a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d
+Result: AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT / VERIFIED / ACCEPTED / MERGED
+```
+
+Exact-head CI:
+
+- Security regression `30403716646` — success;
+- Input surface probe `30403716647` — success;
+- Modern Windows build `30403716677` — success.
+
+Merge-head CI:
+
+- Security regression `30408387819` — success;
+- Modern Windows build `30408387854` — success.
+
+Accepted x64 candidate:
+
+- artifact ID `8705704874`;
+- ZIP SHA-256 `85179e55a256dab80ddfb79496aa0e9e3fec202d7f828f9ba7714605ed0a5e9d`;
+- `Mahou.exe` SHA-256 `908252105fb0566322d0c25a70364860fbfe904c847d96dbae1b33b288cd17b0`.
+
+Accepted physical-Windows smoke:
+
+- repeated modern Notepad `ghbdtn + space` remained unchanged;
+- no `gпривет`, deletion, or partial replacement occurred;
+- rapid window switching produced no deferred mutation;
+- Undo contained no hidden AutoSwitch operation;
+- Chrome continued converting `ghbdtn` to `привет`;
+- Microsoft Word continued converting `ghbdtn` to `привет`.
+
+This verification is strict safe no-op containment for exact `notepad.exe` + `RichEditD2DPT`. It is not positive modern Notepad AutoSwitch support and does not establish a generic RichEdit writer. The historical failing source and artifact remain recorded as `AGZ-MAH-0014: AUTOSWITCH_FAIL / HISTORICAL DEFECT ARTIFACT`.
+
+## AGZ-MAH-0016 checks
+
+This documentation-only verification-record task requires:
+
+1. consistency across `ISSUES.md`, `PROJECT_STATE.md`, `UNIVERSAL-CHAT-HANDOFF.md`, `TESTING.md`, `docs/RELEASE-READINESS.md`, and `docs/PR2-DESCRIPTION-PROPOSAL.md`;
+2. verification in GitHub of PR #16, task commit `99e712aa3d913d37e1268ccf65a0cf52aca65ab7`, merge commit `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`, and the recorded workflow run conclusions;
+3. changed-file review proving no Mahou runtime source, workflow, runtime-version, PR #1, PR #2 metadata, or PR #3 change;
+4. explicit distinction between historical defect evidence and current accepted containment behavior;
+5. removal of AutoSwitch containment from the remaining Draft PR #2 smoke gates while retaining snippets and every other uncompleted retained-feature test.
+
+`AGZ-MAH-0016` creates no runtime candidate and does not authorize Ready, merge, signing, tag, Release, or publication.
 
 ## Input surface probe workflow
 
-The `Input surface probe` workflow runs on the task PR and can also be dispatched manually. It:
+The `Input surface probe` workflow runs on applicable task PRs and can also be dispatched manually. It:
 
 - runs the source regression;
 - stamps the exact workflow commit into the probe;
@@ -139,7 +188,7 @@ This documentation-only Windows accessibility/RichEdit interoperability task req
 5. static security and input-surface-probe regression gates;
 6. Security regression and Modern Windows build on the exact task head.
 
-The documented RichEdit-specific external acquisition contract was not established, so the result is `DIRECT-PATH-NOT-SAFE`. No mutation smoke, executable harness or candidate artifact is created. A dedicated feasibility workflow is not added because there is no executable feasibility code to build or run.
+The documented RichEdit-specific external acquisition contract was not established, so the result is `DIRECT-PATH-NOT-SAFE`. No mutation smoke, executable harness or candidate artifact was created.
 
 ## AGZ-MAH-0012 checks
 
@@ -154,12 +203,7 @@ This documentation-only Qt Windows editable-text feasibility task requires:
 7. local security and input-surface-probe regression gates;
 8. GitHub Security regression, Input surface probe and Modern Windows build on the exact task head.
 
-The Qt Windows provider does not project the internal
-`QAccessibleEditableTextInterface` as an external range writer, so the result is
-`DIRECT-PATH-NOT-SAFE`. No mutation smoke, executable harness, feasibility
-workflow or candidate artifact is created. The historical `TextPattern2`
-observation differs from the exact source mapping, but Text2 has no mutation
-method and cannot reopen the gate.
+The Qt Windows provider does not project the internal `QAccessibleEditableTextInterface` as an external range writer, so the result is `DIRECT-PATH-NOT-SAFE`. No mutation smoke, executable harness, feasibility workflow or candidate artifact was created.
 
 ## AGZ-MAH-0013 checks
 
@@ -175,7 +219,7 @@ The task creates no runtime candidate and does not authorize a merge or release.
 
 ## Historical research order
 
-Future separately authorized tasks should investigate:
+The recorded research order was:
 
 1. modern RichEdit / Notepad;
 2. Telegram Qt input;
@@ -184,7 +228,7 @@ Future separately authorized tasks should investigate:
 5. Electron CodeMirror;
 6. WhatsApp Desktop bridge remains blocked.
 
-This order is retained as historical context. Additional input-surface feasibility work is paused during `AGZ-MAH-0013`; UIA TextPattern/ValuePattern alone is already insufficient for Chromium and Qt.
+This order is retained as historical context. `AGZ-MAH-0011` and `AGZ-MAH-0012` rejected the documented external direct paths for modern Notepad and Qt. UIA TextPattern/ValuePattern alone is insufficient for Chromium and Qt.
 
 ## Chrome editing-core workflow
 
@@ -207,12 +251,13 @@ The `Modern Windows build` workflow:
 - builds Release x64 twice and compares controlled files byte-for-byte;
 - runs `InsertSafetyRegression` against the built executable;
 - runs `SmartCapsRegression`, including third-initial, interior-capital, hyphenated-word, all-caps, mixed-script, numeric, URL and email cases;
-- packages manifests, SHA-256 sums, security report, and test documentation;
+- runs `AutoSwitchContainmentRegression` against x86 and x64 `Mahou.exe`;
+- packages manifests, SHA-256 sums, security report, containment report, and test documentation;
 - names every build/log/evidence artifact with the runtime version, platform, short source commit, and workflow run ID;
 - verifies the generated archive with the exact full commit and tree, rejects an intentionally wrong expected commit, and rejects a legacy-manifest fixture before upload;
 - creates a separate post-upload evidence JSON containing artifact ID/digest, run URL, source commit/tree, ZIP SHA-256, and executable SHA-256.
 
-`AGZ-MAH-0013` must leave the existing `Security regression`, `Input surface probe` and `Modern Windows build` green because it changes only documentation while leaving Mahou runtime sources, workflows and runtime version untouched.
+Documentation-only `AGZ-MAH-0016` must leave the existing runtime source, workflows and runtime version untouched. Any workflow runs caused by its PR are documentation-head health evidence only and do not replace the accepted `AGZ-MAH-0015` candidate and physical-Windows smoke.
 
 ## Artifact handoff
 
@@ -220,7 +265,7 @@ Follow `ARTIFACT-PROVENANCE.md` for Mahou runtime builds. Before giving a Mahou 
 
 The probe is a separate non-runtime artifact. Its own ZIP must match the exact name, source commit/tree, embedded probe commit, `probe-manifest.json`, `SHA256SUMS.txt`, external `.zip.sha256`, and workflow evidence produced by `input-surface-probe.yml`.
 
-After merge, never represent a PR-head artifact as a merge-head artifact. Run a new workflow only when a new artifact is actually required and verify it against the exact source commit.
+After merge, never represent a PR-head artifact as a merge-head artifact. The accepted `AGZ-MAH-0015` x64 candidate remains a task-head artifact from `99e712aa3d913d37e1268ccf65a0cf52aca65ab7`; merge-head CI establishes merged-source health but does not relabel that ZIP.
 
 ## Manual Windows checks
 
@@ -230,15 +275,13 @@ For the input-surface probe, captures are read-only evidence collection. Focus t
 
 For `AGZ-MAH-0007`, no positive user Chrome mutation smoke is requested because no mutation API passed the acceptance gate and no active mutation code remains. The local diagnostic page can still be used to confirm the fail-closed prototype result and event logging if a supervisor requests that limited check.
 
-No positive mutation smoke is requested for modern Notepad/RichEdit or Telegram/Qt either: `AGZ-MAH-0011` and `AGZ-MAH-0012` rejected those direct paths before mutation. Their required result is strict no-op without a real user-created selection.
+No positive direct-adapter mutation smoke is requested for modern Notepad/RichEdit or Telegram/Qt: `AGZ-MAH-0011` and `AGZ-MAH-0012` rejected those direct paths before mutation. Their required collapsed-caret direct-path result is strict no-op without a user-created selection.
+
+The separate AutoSwitch keyboard-replay path did require focused containment smoke after `AGZ-MAH-0014`. That smoke is now accepted under `AGZ-MAH-0015`: modern Notepad remains unchanged, rapid focus changes do not produce deferred mutation, Undo contains no hidden operation, and Chrome/Word continue converting. This closes only the AutoSwitch containment gate; it does not add modern Notepad support or close unrelated retained-feature tests.
 
 ## Telegram Desktop direct-path investigation
 
-`AGZ-MAH-0008` is accepted as `BLOCKED`. `AGZ-MAH-0012` later completed the Qt
-5.15.19 documented-contract gate with `DIRECT-PATH-NOT-SAFE`: the Windows
-provider offers no documented external exact-range writer. The read-only
-snapshot supplies process/control/provider metadata but cannot satisfy any
-mutation acceptance gate.
+`AGZ-MAH-0008` is accepted as `BLOCKED`. `AGZ-MAH-0012` later completed the Qt 5.15.19 documented-contract gate with `DIRECT-PATH-NOT-SAFE`: the Windows provider offers no documented external exact-range writer. The read-only snapshot supplies process/control/provider metadata but cannot satisfy any mutation acceptance gate.
 
 Before any future Telegram mutation, a separately authorized task must record and revalidate:
 

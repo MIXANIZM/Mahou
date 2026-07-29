@@ -12,6 +12,7 @@ Snapshot date: 2026-07-29
 - Current development head at the start of `AGZ-MAH-0012`: `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`
 - Current development head at the start of `AGZ-MAH-0013`: `1a930137f7254111f8ef200da3e86c54e697ab5e`
 - Current development head at the start of `AGZ-MAH-0015`: `363a83b227cfa14e798e442960640e7caed03913`
+- Current development head at the start of `AGZ-MAH-0016`: `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`
 - Runtime line: `2.9.0.1-dev`
 - Agatzub Development Ruleset: `v2.7.0`
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
@@ -24,7 +25,8 @@ Snapshot date: 2026-07-29
 - Input-surface evidence record: `AGZ-MAH-0010`, accepted and merged through PR #12 at `779b50dcc27cbe58f69ddadd54d526a0394663df`
 - Modern Notepad direct-path feasibility: `AGZ-MAH-0011: DIRECT-PATH-NOT-SAFE`, accepted and merged through PR #13 at merge commit `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1`
 - Qt Windows editable-text feasibility: `AGZ-MAH-0012: DIRECT-PATH-NOT-SAFE`, accepted and merged through PR #14 at `1a930137f7254111f8ef200da3e86c54e697ab5e`
-- AutoSwitch real-Windows result: `AGZ-MAH-0014: AUTOSWITCH_FAIL / MODERN_NOTEPAD_DESTRUCTIVE_MUTATION`
+- AutoSwitch historical failure artifact: `AGZ-MAH-0014: AUTOSWITCH_FAIL / HISTORICAL DEFECT ARTIFACT`
+- AutoSwitch modern Notepad containment: `AGZ-MAH-0015: AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT / VERIFIED / ACCEPTED / MERGED`
 
 The old `master` branch is not the current working line for modernized Mahou. New bounded tasks normally branch from `mixanizm-modern-v2.9.0.1` unless a task handoff explicitly states otherwise.
 
@@ -51,6 +53,12 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - Its current diff is transport and workflow history from the attempted Notepad-adapter task, not an accepted or integrated Notepad implementation.
 - It must not be used as a source branch, cleaned up, closed, rebased, or modified without a separate decision.
 
+### PR #16
+
+- Closed and merged into `mixanizm-modern-v2.9.0.1` at `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`.
+- Contains the accepted `AGZ-MAH-0015` AutoSwitch containment implementation.
+- Adds no modern Notepad AutoSwitch support; exact `notepad.exe` + `RichEditD2DPT` is a strict safe no-op.
+
 ### PR #14
 
 - Closed and merged into `mixanizm-modern-v2.9.0.1` at `1a930137f7254111f8ef200da3e86c54e697ab5e`.
@@ -59,17 +67,48 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 
 ## Current bounded task result
 
+### AGZ-MAH-0016 — record verified AutoSwitch containment smoke
+
+- Exact base: `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`.
+- Task branch: `docs/AGZ-MAH-0016-record-autoswitch-containment`.
+- Result: `AUTOSWITCH_CONTAINMENT_VERIFICATION_RECORDED`.
+- Scope: documentation-only recording of the accepted physical-Windows `AGZ-MAH-0015` result and removal of the completed AutoSwitch containment smoke from the remaining Draft PR #2 merge gates.
+- Updated records are limited to `ISSUES.md`, `PROJECT_STATE.md`, `UNIVERSAL-CHAT-HANDOFF.md`, `TESTING.md`, `docs/RELEASE-READINESS.md`, and the proposal file `docs/PR2-DESCRIPTION-PROPOSAL.md`.
+- Mahou runtime code, workflows, runtime version, PR #1, PR #2 metadata, and PR #3 remain unchanged.
+- This result does not authorize Ready, merge, signing, tag, Release, or publication.
+
+## Previous bounded task result
+
 ### AGZ-MAH-0015 — contain AutoSwitch in modern Notepad
 
 - Exact base: `363a83b227cfa14e798e442960640e7caed03913`.
 - Task branch: `agz-mah-0015-autoswitch-notepad-containment`.
-- Candidate result: `AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT`.
+- Task commit: `99e712aa3d913d37e1268ccf65a0cf52aca65ab7`.
+- Implementation PR: #16.
+- Merge commit: `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`.
+- Result: `AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT / VERIFIED / ACCEPTED / MERGED`.
 - Exact blocked surface: foreground process executable `notepad.exe`, focused control class `RichEditD2DPT`.
 - AutoSwitch captures foreground, focused control, process, executable, and control class before routing. It rejects the blocked surface before dictionary matching can schedule deletion, layout switching, or replacement.
 - Every AutoSwitch-only immediate or deferred mutation revalidates the same source context. Unknown, stale, protected classic Edit, or changed focus/control state fails closed.
+- Exact-head CI succeeded: Security regression `30403716646`, Input surface probe `30403716647`, and Modern Windows build `30403716677`.
+- Merge-head CI succeeded: Security regression `30408387819` and Modern Windows build `30408387854`.
+- Accepted x64 artifact ID: `8705704874`.
+- Candidate ZIP SHA-256: `85179e55a256dab80ddfb79496aa0e9e3fec202d7f828f9ba7714605ed0a5e9d`.
+- Candidate `Mahou.exe` SHA-256: `908252105fb0566322d0c25a70364860fbfe904c847d96dbae1b33b288cd17b0`.
+- The accepted physical-Windows smoke confirmed repeated modern Notepad `ghbdtn + space` remained unchanged, with no `gпривет`, deletion, partial replacement, deferred mutation after rapid window switching, or hidden AutoSwitch Undo operation. Chrome and Microsoft Word continued converting `ghbdtn` to `привет`.
+- This is strict safe no-op containment, not positive modern Notepad AutoSwitch support.
 - The containment does not add a Notepad adapter, does not change manual Insert, Smart Caps, snippets, selected-text conversion, clipboard behavior, Chrome or Word routing, and does not use PR #3.
 - Runtime version remains `2.9.0.1-dev`.
-- AutoSwitch remains unverified until exact-head CI passes and the focused physical Windows no-op smoke is accepted.
+
+### AGZ-MAH-0014 — historical AutoSwitch defect artifact
+
+- Result: `AUTOSWITCH_FAIL / HISTORICAL DEFECT ARTIFACT`.
+- Exact source: `363a83b227cfa14e798e442960640e7caed03913`.
+- Modern Windows build: `30365352449`.
+- x64 artifact ID: `8690549591`.
+- ZIP SHA-256: `4ea545ddbec793f870d69b128cc11758cb61c5d7c388cf2330270aa9f8934a54`.
+- The accepted historical smoke produced `gпривет`, complete deletion in another attempt, and split Undo in modern Notepad while Chrome and Word passed.
+- This immutable artifact classification remains historical evidence and is not the current accepted containment behavior.
 
 ## Previous bounded task result
 
@@ -80,10 +119,10 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - Result: `RELEASE_READINESS_RECONCILED`.
 - Scope: reconcile the actual development head, Draft PR #2 claims, accepted evidence, CI/provenance anchors, and separate merge/release gates.
 - Records: `docs/RELEASE-READINESS.md` and `docs/PR2-DESCRIPTION-PROPOSAL.md`.
-- Mahou runtime subtree and runtime version `2.9.0.1-dev` remain unchanged.
+- Mahou runtime subtree and runtime version `2.9.0.1-dev` remain unchanged by that task.
 - No workflow, runtime behavior, PR #2 metadata, PR #3, merge, signing, tag, Release, or publication change is included.
 
-The reconciliation distinguishes verified, automated-only, user-smoke-required, not-applicable and blocked items. Existing accepted evidence remains anchored to its immutable source commits; current exact-base CI establishes automated health only. Draft PR #2 must remain Draft until the merge gates in `docs/RELEASE-READINESS.md` are explicitly satisfied.
+The reconciliation distinguishes verified, automated-only, user-smoke-required, not-applicable and blocked items. Existing accepted evidence remains anchored to its immutable source commits. Draft PR #2 must remain Draft until the merge gates in `docs/RELEASE-READINESS.md` are explicitly satisfied.
 
 ## Previous bounded task result
 
@@ -115,9 +154,9 @@ USER_PROBE_EVIDENCE_COMPLETE
 - Real-Windows evidence now confirms that readable UIA patterns vary both across applications and between distinct surfaces in the same application.
 - Read support does not establish a safe exact-range write primitive.
 - The only existing verified direct collapsed-caret adapters remain exact classic Win32 `Edit` and Microsoft Word document `Range`.
-- Modern Notepad/RichEdit, Chrome, Telegram Qt, WhatsApp, Electron, WPF, WinUI and unknown controls remain strict no-op without a user-created selection.
+- Modern Notepad/RichEdit, Chrome, Telegram Qt, WhatsApp, Electron, WPF, WinUI and unknown controls remain strict no-op without a user-created selection for the collapsed-caret direct path.
 
-Historical research order (paused by the `AGZ-MAH-0013` release-readiness task):
+Historical research order:
 
 1. modern RichEdit / Notepad;
 2. Telegram Qt input;
@@ -126,11 +165,11 @@ Historical research order (paused by the `AGZ-MAH-0013` release-readiness task):
 5. Electron CodeMirror;
 6. WhatsApp Desktop bridge remains blocked.
 
-RichEdit is first because it may expose native range, caret and undo semantics. UIA `TextPattern`/`ValuePattern` alone is already insufficient for Chromium and Qt.
+RichEdit was first because it might expose native range, caret and undo semantics. `AGZ-MAH-0011` and `AGZ-MAH-0012` rejected the documented external direct paths for modern Notepad and Qt.
 
 ## Other task results
 
-### AGZ-MAH-0007 — Chrome Manifest V3 editing-core prototype
+### AGZ-MAH-0007 — Chrome browser-context editing core
 
 - Result: accepted `BROWSER-CONTEXT-MUTATION-NOT-SAFE`.
 - Accepted and merged through PR #9 into `mixanizm-modern-v2.9.0.1` at merge commit `076ee95325809bd0581c9e0f24e9dbb1022c6603`.
@@ -143,7 +182,7 @@ RichEdit is first because it may expose native range, caret and undo semantics. 
 
 - Result: accepted `BLOCKED`.
 - No safe installed-build mutation contract was established.
-- The real-Windows read-only probe now identifies the tested Telegram 7.0.5 composer as Qt `Ui::InputField::Inner` with UIA Text/Value patterns, but that evidence does not satisfy any write gate.
+- The real-Windows read-only probe identifies the tested Telegram 7.0.5 composer as Qt `Ui::InputField::Inner` with UIA Text/Value patterns, but that evidence does not satisfy any write gate.
 - Telegram remains strict no-op without a user-created selection.
 
 ## Completed verified checkpoints
@@ -166,9 +205,11 @@ RichEdit is first because it may expose native range, caret and undo semantics. 
 
 ## Product task status
 
+- `AGZ-MAH-0014` remains recorded as `AUTOSWITCH_FAIL / HISTORICAL DEFECT ARTIFACT` for its immutable source and candidate.
+- `AGZ-MAH-0015` is `AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT / VERIFIED / ACCEPTED / MERGED` through PR #16 at `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`; modern Notepad behavior is strict safe no-op, not support.
 - `AGZ-MAH-0009` is `USER_PROBE_EVIDENCE_COMPLETE`.
 - `AGZ-MAH-0010` was accepted and merged through PR #12 without changing Mahou runtime behavior.
-- `AGZ-MAH-0011` is accepted and merged through PR #13 at merge commit `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1` with result `DIRECT-PATH-NOT-SAFE`; modern Notepad remains strict no-op and no adapter was added.
+- `AGZ-MAH-0011` is accepted and merged through PR #13 at merge commit `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1` with result `DIRECT-PATH-NOT-SAFE`; modern Notepad has no direct adapter.
 - `AGZ-MAH-0012` is accepted and merged through PR #14 at merge commit `1a930137f7254111f8ef200da3e86c54e697ab5e` with result `DIRECT-PATH-NOT-SAFE`; Telegram and all other Qt/custom surfaces remain strict no-op and no adapter was added.
 - `AGZ-MAH-0013` records `RELEASE_READINESS_RECONCILED`; it changes documentation only and does not authorize merge or release.
 - `AGZ-MAH-0008` remains accepted `BLOCKED` for Telegram mutation.
@@ -187,5 +228,6 @@ RichEdit is first because it may expose native range, caret and undo semantics. 
 - No tag or GitHub Release is authorized by this state document.
 - The input-surface reports are evidence, not a Mahou runtime artifact or release.
 - `docs/RELEASE-READINESS.md` is the current gate matrix; `docs/PR2-DESCRIPTION-PROPOSAL.md` is a proposal only and does not alter PR #2.
-- Merge gates include retained-feature Windows smoke, green final-head CI, an accurate PR #2 description, supervisor review, and explicit Ready/merge permission.
+- AutoSwitch modern Notepad containment smoke is complete and is no longer a pending Draft PR #2 merge gate.
+- Remaining merge gates include snippets and the other retained-feature Windows smoke, green final-head CI, an accurate PR #2 description, supervisor review, and explicit Ready/merge permission.
 - Public-release gates additionally include exact-candidate provenance, signing, final independent review, release-specific Windows checks, and separate tag/Release/publication permission.
