@@ -52,14 +52,13 @@ jobs:
           echo '7e00ff8eb6ca1f20a6f0f2cb57bb41fb8f5dd92bb9d6f7117e81b541769a4314  /tmp/agz-mah-0019.patch' | sha256sum -c -
           git apply --check /tmp/agz-mah-0019.patch
 
-      - name: Apply implementation and remove transfer tooling
+      - name: Apply implementation outside workflows
         shell: bash
         run: |
           set -euo pipefail
           git apply /tmp/agz-mah-0019.patch
+          git checkout HEAD -- .github/workflows
           rm -rf .github/patches
-          rm -f .github/workflows/agz-mah-0019-apply.yml
-          test ! -e .github/workflows/agz-mah-0019-source-export.yml
           test ! -e .github/patches
 
       - name: Run source regressions
@@ -72,7 +71,7 @@ jobs:
           python3 .github/scripts/autoswitch-containment-regression.py
           python3 .github/scripts/autoswitch-independence-regression.py
 
-      - name: Commit exact implementation
+      - name: Commit exact implementation outside workflows
         shell: bash
         run: |
           set -euo pipefail
