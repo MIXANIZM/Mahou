@@ -1,0 +1,60 @@
+name: AGZ-MAH-0019 designer residue fix
+
+on:
+  push:
+    branches:
+      - agz-mah-0019-remove-snippets-decouple-autoswitch
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agz-mah-0019-designer-fix
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout task branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: agz-mah-0019-remove-snippets-decouple-autoswitch
+          fetch-depth: 0
+
+      - name: Remove exact generated-code residue
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('Mahou/MahouUI.Designer.cs')
+          data = path.read_bytes()
+          candidates = (b'\t"py)";\r\n', b'\t"py)";\n')
+          matches = sum(data.count(candidate) for candidate in candidates)
+          if matches == 0:
+              raise SystemExit(0)
+          if matches != 1:
+              raise SystemExit(f'unexpected residue count: {matches}')
+          for candidate in candidates:
+              if candidate in data:
+                  data = data.replace(candidate, b'', 1)
+                  break
+          path.write_bytes(data)
+          PY
+          git diff -- Mahou/MahouUI.Designer.cs
+
+      - name: Commit focused repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- Mahou/MahouUI.Designer.cs; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Mahou/MahouUI.Designer.cs
+          git commit -m 'fix(AGZ-MAH-0019): remove designer residue after snippets UI deletion'
+          git push origin HEAD:agz-mah-0019-remove-snippets-decouple-autoswitch
