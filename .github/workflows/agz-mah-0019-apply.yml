@@ -60,6 +60,8 @@ jobs:
           git checkout HEAD -- .github/workflows
           rm -rf .github/patches
           test ! -e .github/patches
+          mv .github/workflows/agz-mah-0019-apply.yml /tmp/agz-mah-0019-apply.yml
+          mv .github/workflows/agz-mah-0019-source-export.yml /tmp/agz-mah-0019-source-export.yml
 
       - name: Run source regressions
         shell: bash
@@ -75,6 +77,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mv /tmp/agz-mah-0019-apply.yml .github/workflows/agz-mah-0019-apply.yml
+          mv /tmp/agz-mah-0019-source-export.yml .github/workflows/agz-mah-0019-source-export.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
