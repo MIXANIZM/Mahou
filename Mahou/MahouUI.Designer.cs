@@ -4438,7 +4438,6 @@ namespace Mahou
 			this.Htxt_NCS.TabIndex = 2;
 			// 
 			// 
-	"py)";
 			// 
 			// 
 			// 
