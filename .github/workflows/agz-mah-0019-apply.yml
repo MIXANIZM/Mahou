@@ -1,0 +1,79 @@
+name: AGZ-MAH-0019 exact patch apply
+
+on:
+  push:
+    branches:
+      - agz-mah-0019-remove-snippets-decouple-autoswitch
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agz-mah-0019-exact-apply
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout task branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+
+      - name: Verify exact transfer boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=f02909611eb9a4502e9fe4d8fda9009922f352fd
+          git merge-base --is-ancestor "$base" HEAD
+          unexpected="$(git diff --name-only "$base"...HEAD | grep -Ev '^\.github/patches/|^\.github/workflows/agz-mah-0019-(source-export|apply)\.yml$' || true)"
+          if [[ -n "$unexpected" ]]; then
+            echo "Unexpected pre-apply paths:" >&2
+            printf '%s\n' "$unexpected" >&2
+            exit 1
+          fi
+
+      - name: Reconstruct and verify exact patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t parts < <(find .github/patches -maxdepth 1 -type f -name 'agz-mah-0019-xz.*' -print | LC_ALL=C sort)
+          test "${#parts[@]}" -eq 22
+          cat "${parts[@]}" > /tmp/agz-mah-0019.patch.xz.b64
+          test "$(wc -c < /tmp/agz-mah-0019.patch.xz.b64)" -eq 74896
+          base64 -d /tmp/agz-mah-0019.patch.xz.b64 | xz -d > /tmp/agz-mah-0019.patch
+          echo '7e00ff8eb6ca1f20a6f0f2cb57bb41fb8f5dd92bb9d6f7117e81b541769a4314  /tmp/agz-mah-0019.patch' | sha256sum -c -
+          git apply --check /tmp/agz-mah-0019.patch
+
+      - name: Apply implementation and remove transfer tooling
+        shell: bash
+        run: |
+          set -euo pipefail
+          git apply /tmp/agz-mah-0019.patch
+          rm -rf .github/patches
+          rm -f .github/workflows/agz-mah-0019-apply.yml
+          test ! -e .github/workflows/agz-mah-0019-source-export.yml
+          test ! -e .github/patches
+          git diff --check
+
+      - name: Run source regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/security-regression.py
+          python3 .github/scripts/ui-resource-regression.py
+          python3 .github/scripts/artifact-provenance-regression.py
+          python3 .github/scripts/autoswitch-containment-regression.py
+          python3 .github/scripts/autoswitch-independence-regression.py
+
+      - name: Commit exact implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m '[AGZ-MAH-0019] Remove user snippets and decouple AutoSwitch'
+          git push origin HEAD:agz-mah-0019-remove-snippets-decouple-autoswitch
