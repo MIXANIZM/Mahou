@@ -1,0 +1,35 @@
+name: Security regression
+
+on:
+  pull_request:
+    branches:
+      - master
+      - mixanizm-modern-v2.9.0.1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-regression-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout requested source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Verify security and provenance invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/security-regression.py
+          python3 .github/scripts/ui-resource-regression.py
+          python3 .github/scripts/artifact-provenance-regression.py
+          python3 .github/scripts/autoswitch-containment-regression.py

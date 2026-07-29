@@ -1,0 +1,2 @@
+Bounded snippet delays, key repetitions, uppercase counts and deferred timeouts.
+Security regression check passed: 40 source files inspected.

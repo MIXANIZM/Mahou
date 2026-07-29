@@ -1,0 +1,2 @@
+Cleaned obsolete local/ClickOnce/bootstrapper project metadata and enabled explicit Release quality gates.
+Security regression check passed: 40 source files inspected.

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en" data-mahou-diagnostic-marker="AGZ-MAH-0007-DIAGNOSTIC-V1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="mahou-chrome-smart-caps-diagnostic" content="AGZ-MAH-0007-DIAGNOSTIC-V1">
+  <title>Mahou Chrome editing-core diagnostic</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; color-scheme: light dark; }
+    body { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+    label { display: block; margin: 18px 0 6px; font-weight: 600; }
+    input, textarea, [contenteditable] { box-sizing: border-box; width: 100%; padding: 10px; font: 16px/1.4 monospace; }
+    textarea { min-height: 110px; }
+    [contenteditable] { min-height: 70px; border: 1px solid CanvasText; }
+    #log, #extension-result { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 480px; overflow: auto; border: 1px solid CanvasText; padding: 10px; font: 13px/1.35 monospace; }
+    #extension-result:empty::before { content: 'No extension result yet.'; opacity: 0.7; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    .status { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 12px 0; }
+    button { padding: 8px 12px; }
+    .visually-hidden-control { position: fixed; left: -10000px; top: -10000px; width: 1px; height: 1px; }
+  </style>
+</head>
+<body>
+  <h1>Mahou Chrome editing-core diagnostic</h1>
+  <p>This autonomous local page sends no data and loads no external resources. It records disposable DOM editing, composition, focus, selection, undo, and redo evidence.</p>
+
+  <div class="status">
+    <strong>Marker</strong><span id="marker-status">AGZ-MAH-0007-DIAGNOSTIC-V1</span>
+    <strong>Composition</strong><span id="composition-status">inactive</span>
+    <strong>Last active control</strong><span id="active-status">none</span>
+  </div>
+
+  <label for="single">Ordinary input[type=text]</label>
+  <input id="single" type="text" autocomplete="off" spellcheck="false" value="LEFT ПРИвет RIGHT">
+
+  <label for="multi">Textarea</label>
+  <textarea id="multi" autocomplete="off" spellcheck="false">LEFT окоРОчка RIGHT</textarea>
+
+  <label for="readonly">Readonly — must remain no-op</label>
+  <input id="readonly" type="text" readonly value="LEFT КуРиные RIGHT">
+
+  <label for="disabled">Disabled — must remain no-op</label>
+  <input id="disabled" type="text" disabled value="LEFT ПРИвет RIGHT">
+
+  <label for="editable">Contenteditable — intentionally unsupported</label>
+  <div id="editable" contenteditable="true" spellcheck="false">LEFT ПРИвет RIGHT</div>
+
+  <label for="password">Password — must remain protected/no-op</label>
+  <input id="password" type="password" autocomplete="off" value="NeverReadOrMutateThis">
+
+  <input id="hidden-control" class="visually-hidden-control" type="text" value="LEFT ПРИвет RIGHT" aria-hidden="true" tabindex="-1">
+
+  <div class="actions">
+    <button id="reset" type="button">Reset disposable cases</button>
+    <button id="snapshot" type="button">Record snapshot</button>
+    <button id="clear" type="button">Clear log</button>
+  </div>
+
+  <h2>Extension result</h2>
+  <pre id="extension-result" aria-live="polite"></pre>
+
+  <h2>Event log</h2>
+  <div id="log" role="log" aria-live="polite"></div>
+
+  <script>
+    'use strict';
+
+    const marker = 'AGZ-MAH-0007-DIAGNOSTIC-V1';
+    const logNode = document.getElementById('log');
+    const compositionStatus = document.getElementById('composition-status');
+    const activeStatus = document.getElementById('active-status');
+    const controls = [
+      document.getElementById('single'),
+      document.getElementById('multi'),
+      document.getElementById('readonly'),
+      document.getElementById('disabled'),
+      document.getElementById('editable'),
+      document.getElementById('password'),
+      document.getElementById('hidden-control')
+    ];
+    let sequence = 0;
+    let compositionDepth = 0;
+
+    function safeValue(element) {
+      if (!element) return '<none>';
+      if (element instanceof HTMLInputElement && element.type === 'password') return '<protected>';
+      if (element.isContentEditable) return element.textContent;
+      if ('value' in element) return element.value;
+      return '<unsupported>';
+    }
+
+    function selectionState(element) {
+      if (!element) return { kind: 'none' };
+      if (element.isContentEditable) {
+        const selection = window.getSelection();
+        if (!selection || selection.rangeCount === 0) return { kind: 'dom', rangeCount: 0 };
+        const range = selection.getRangeAt(0);
+        return {
+          kind: 'dom',
+          rangeCount: selection.rangeCount,
+          collapsed: selection.isCollapsed,
+          anchorOffset: selection.anchorOffset,
+          focusOffset: selection.focusOffset,
+          startOffset: range.startOffset,
+          endOffset: range.endOffset
+        };
+      }
+      if ('selectionStart' in element) {
+        return {
+          kind: 'text-control',
+          start: element.selectionStart,
+          end: element.selectionEnd,
+          direction: element.selectionDirection
+        };
+      }
+      return { kind: 'unsupported' };
+    }
+
+    function describeTarget(target) {
+      if (!(target instanceof Element)) return '<non-element>';
+      return target.id || target.tagName.toLowerCase();
+    }
+
+    function record(type, target, extra = {}) {
+      const entry = {
+        n: ++sequence,
+        at: performance.now().toFixed(3),
+        type,
+        isTrusted: Boolean(extra.isTrusted),
+        target: describeTarget(target),
+        active: describeTarget(document.activeElement),
+        documentFocused: document.hasFocus(),
+        visibility: document.visibilityState,
+        compositionActive: compositionDepth > 0,
+        value: safeValue(target),
+        selection: selectionState(target),
+        ...extra
+      };
+      logNode.textContent += JSON.stringify(entry) + '\n';
+      logNode.scrollTop = logNode.scrollHeight;
+      activeStatus.textContent = entry.active;
+    }
+
+    const eventNames = [
+      'focus', 'blur', 'select',
+      'keydown', 'keyup',
+      'beforeinput', 'input', 'change',
+      'compositionstart', 'compositionupdate', 'compositionend'
+    ];
+
+    for (const control of controls) {
+      for (const eventName of eventNames) {
+        control.addEventListener(eventName, event => {
+          if (event.type === 'compositionstart') compositionDepth += 1;
+          if (event.type === 'compositionend') compositionDepth = Math.max(0, compositionDepth - 1);
+          compositionStatus.textContent = compositionDepth > 0 ? 'active' : 'inactive';
+
+          const extra = { isTrusted: event.isTrusted };
+          if ('key' in event) {
+            extra.key = event.key;
+            extra.code = event.code;
+            extra.isComposing = event.isComposing;
+          }
+          if ('inputType' in event) {
+            extra.inputType = event.inputType;
+            extra.data = event.data;
+            extra.isComposing = event.isComposing;
+          }
+          if (event.type.startsWith('composition')) extra.data = event.data;
+          record(event.type, control, extra);
+        }, true);
+      }
+    }
+
+    document.addEventListener('selectionchange', event => {
+      const active = document.activeElement;
+      if (controls.includes(active)) record('selectionchange', active, { isTrusted: event.isTrusted });
+    });
+
+    document.getElementById('clear').addEventListener('click', () => {
+      logNode.textContent = '';
+      sequence = 0;
+    });
+
+    document.getElementById('snapshot').addEventListener('click', event => {
+      for (const control of controls) record('snapshot', control, { isTrusted: event.isTrusted });
+    });
+
+    document.getElementById('reset').addEventListener('click', event => {
+      document.getElementById('single').value = 'LEFT ПРИвет RIGHT';
+      document.getElementById('multi').value = 'LEFT окоРОчка RIGHT';
+      document.getElementById('readonly').value = 'LEFT КуРиные RIGHT';
+      document.getElementById('disabled').value = 'LEFT ПРИвет RIGHT';
+      document.getElementById('editable').textContent = 'LEFT ПРИвет RIGHT';
+      document.getElementById('extension-result').textContent = '';
+      record('reset', event.currentTarget, { isTrusted: event.isTrusted });
+    });
+
+    window.addEventListener('pageshow', event => record('pageshow', document.body, { isTrusted: event.isTrusted, persisted: event.persisted }));
+    window.addEventListener('pagehide', event => record('pagehide', document.body, { isTrusted: event.isTrusted, persisted: event.persisted }));
+    document.addEventListener('visibilitychange', event => record('visibilitychange', document.body, { isTrusted: event.isTrusted }));
+
+    document.getElementById('marker-status').textContent = marker;
+    for (const control of controls) record('initial', control, { isTrusted: false });
+  </script>
+</body>
+</html>

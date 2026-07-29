@@ -1,0 +1,2 @@
+Disposed the AppData force-marker stream immediately and removed the unused copy probe.
+Security regression check passed: 40 source files inspected.

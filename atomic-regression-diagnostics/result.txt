@@ -1,0 +1,2 @@
+Added permanent regression guards for atomic low-frequency user data writes.
+Security regression check passed: 41 source files inspected.

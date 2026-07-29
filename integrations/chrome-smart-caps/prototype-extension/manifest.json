@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Mahou Chrome editing-core diagnostic",
+  "version": "0.0.1",
+  "description": "Test-only, fail-closed diagnostic for AGZ-MAH-0007. It never mutates page text.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_title": "Run Mahou editing-core diagnostic"
+  }
+}

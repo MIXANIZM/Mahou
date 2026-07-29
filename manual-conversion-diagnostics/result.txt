@@ -1,0 +1,10 @@
+Manual conversion stability hardening applied.
+
+- repeated Insert conversions are serialized;
+- too-fast repeats are ignored during a short bounded cooldown;
+- Microsoft Word receives a longer 300 ms cooldown;
+- the tracked word is copied before layout conversion;
+- low-level hook, global hotkeys and raw input are restored through finally;
+- cleanup failures are isolated and logged without suppressing the original error.
+
+Security regression passed before this verification commit.

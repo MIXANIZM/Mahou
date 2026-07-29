@@ -1,0 +1,2 @@
+Second GDI pass applied to lock-state tray icons, translator border and file icon extraction.
+Security regression check passed: 40 source files inspected.

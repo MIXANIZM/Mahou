@@ -1,234 +1,763 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
-namespace Mahou
-{
-    class Configs
-    {
-        //Path where Mahou is now + Mahou.ini
-        public static readonly string filePath = Path.Combine(Update.nPath, "Mahou.ini");
-        public Configs()//Initializes settings, if some of elements or settinhs file, not exists it creates them with default value
-        {
-            if (!File.Exists(filePath)) //Create an UTF-16 configuration file
-            {
-                File.WriteAllText(filePath, "!Unicode(✔), Mahou settings file", Encoding.Unicode);
+namespace Mahou {
+	/// <summary>Ini settings writer/reader in memory, not from disk.</summary>
+	class INI {
+		#region Variables
+		/// <summary>Raw INI configs file</summary>
+		public string Raw;
+		/// <summary>Split into lines INI configs file</summary>
+		public string[] lines;
+		public bool DEBUG;
+		readonly object syncRoot = new object();
+		readonly Dictionary<string, string> valueIndex = new Dictionary<string, string>(StringComparer.Ordinal);
+		#endregion
+		
+		public INI(string ini, bool dbg = false) {
+			this.Raw = ini ?? String.Empty;
+			this.lines = Raw.Replace("\r", "").Split('\n');
+			this.DEBUG = dbg;
+			RebuildIndexUnlocked();
+		}
+		string IndexKey(string section, string valueName) {
+			return section + "\u001f" + valueName;
+		}
+		void RebuildIndexUnlocked() {
+			valueIndex.Clear();
+			var seenSections = new HashSet<string>(StringComparer.Ordinal);
+			string currentSection = null;
+			foreach (var sourceLine in lines) {
+				var line = sourceLine ?? String.Empty;
+				if (line.Length <= 1) { currentSection = null; continue; }
+				if (line[0] == '!' || line[0] == ';') continue;
+				if (line[0] == '[' && line[line.Length - 1] == ']') {
+					var candidate = line.Substring(1, line.Length - 2);
+					currentSection = seenSections.Add(candidate) ? candidate : null;
+					continue;
+				}
+				if (currentSection == null) continue;
+				var equals = line.IndexOf('=');
+				if (equals <= 0) continue;
+				var key = IndexKey(currentSection, line.Substring(0, equals));
+				if (!valueIndex.ContainsKey(key)) valueIndex.Add(key, line.Substring(equals + 1));
+			}
+		}
+		public string GetRawSnapshot() {
+			lock (syncRoot) return Raw;
+		}
+		public void ReplaceRaw(string raw) {
+			lock (syncRoot) {
+				Raw = raw ?? String.Empty;
+				lines = Raw.Replace("\r", "").Split('\n');
+				RebuildIndexUnlocked();
+			}
+		}
+		#region Debug
+		public void log(string str) {
+			if (!DEBUG) return;
+			Logging.Log(str);
+		}
+		#endregion
+		#region Has/Is
+		public bool IsCommented(string line) {
+			if (String.IsNullOrEmpty(line)) return false;
+			if (line[0] == '!' || line[0] == ';') {
+				log("Commented line: " + line);
+				return true;
+			}
+			return false;
+		}
+		public int HasSection(string Section) {
+			for (int a = 0; a != lines.Length; a++) {
+				log("Line => " + lines[a]);
+				if (IsCommented(lines[a]))
+					continue;
+				if (lines[a] == "["+Section+"]") {
+					return a;
+				}
+			}
+			return -1;
+		}
+		public int HasValue(int sect, string ValueName) {
+			if (sect == -1) return -1;
+			else {
+				log("SECT LINE: " + sect);
+				for (int i = sect+1; i != lines.Length; i++) {
+					var line = lines[i];
+					if (IsCommented(line))
+						continue;
+					if (line.Length <= 1) {
+						log("--EMPTY LINE!");
+						return -1;
+					}
+					if (line[0] == '[' && line[line.Length-1] == ']') {
+						log("--NEXT SECT!");
+						return -1;
+					}
+					var valeq = line.Split('=')[0];
+					log(">>Value Line => " + line + " I: " + i);
+					// log("ValEq: " + valeq);
+					if (valeq == ValueName) {
+						log("===Has value: " + ValueName);
+						return i;
+					}
+				}
+			}
+			return -1;
+		}
+		#endregion
+		#region Writing
+		string[] AddLine(string NewLine, int pos, string[] source) {
+			var _source = new string[source.Length+1];
+			if (pos == -1) {
+				_source[0] = NewLine;
+				Array.Copy(source, pos+1, _source, pos+2, source.Length-1);
+			} else { 
+				if (pos != 0)
+					Array.Copy(source, 0, _source, 0, pos);
+				else 
+					_source[0] = source[0];
+				_source[pos] = source[pos];
+				_source[pos+1] = NewLine;
+				Array.Copy(source, pos+1, _source, pos+2, source.Length-1-pos);
+			}
+			return _source;
+		}
+		public void SetValue(string Section, string ValueName, string Value) {
+			lock (syncRoot) {
+				var sect = HasSection(Section);
+				var val_line = HasValue(sect, ValueName);
+				if (sect == -1) {
+					log("  NO SUCH SECT! " + Section);
+					lines = AddLine("["+Section+"]", sect, lines);
+					sect = 0;
+					val_line = -1;
+				}
+				if (val_line > -1) {
+					lines[val_line] = ValueName + "=" + Value;
+				}
+				if (val_line == -1) {
+					log("   NO SUCH VALUE! " + ValueName);
+					lines = AddLine(ValueName + "=" + Value, sect, lines);
+				}
+				Raw = string.Join(Environment.NewLine, lines);
+				lines = Raw.Replace("\r", "").Split('\n');
+				RebuildIndexUnlocked();
+			}
+		}
+		#endregion
+		#region Reading
+		public string GetValue(string Section, string ValueName) {
+			lock (syncRoot) {
+				string value;
+				return valueIndex.TryGetValue(IndexKey(Section, ValueName), out value) ? value : String.Empty;
+			}
+		}
+		#endregion
+	}
+    class Configs {
+    	public static bool forceAppData;
+    	public static bool fine = false;
+        /// <summary> Mahou.ini file path. </summary>
+        public static string filePath = Path.Combine(MahouUI.nPath, "Mahou.ini");
+        
+        public INI _INI;
+        /// <summary> Creates if it is not exist and test that configs file Mahou.ini its readable, on startup can create dialog about forced AppData configs if configs file failed to be created/readen. </summary>
+        public static void CreateConfigsFile() {
+            try {
+                var directory = Path.GetDirectoryName(filePath);
+                if (!String.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
+                if (!File.Exists(filePath))
+                    File.WriteAllText(filePath, "!Unicode(✔), MIXANIZM Mahou settings file", Encoding.UTF8);
+                else
+                    using (var sr = new StreamReader(filePath, true)) sr.Read();
+                fine = true;
+            } catch (Exception e) {
+                fine = false;
+                Logging.Log("Configs read/write error: " + e.Message + "\n" + e.StackTrace, 1);
+                MessageBox.Show("MIXANIZM Mahou cannot create or read its settings file:\r\n" + filePath + "\r\n\r\n" + e.Message,
+                    "MIXANIZM Mahou", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
             }
-            int it = 0;      //int temp
-            uint uit = 0;    //uint temp
+        }
+        public static bool SwitchToAppData(bool create, Exception e) {
+        	if (MMain.C_SWITCH) { return false; }
+        	Logging.Log("Configs read/write error, details: " + e.Message +"\n"+e.StackTrace);
+         	if (MessageBox.Show(MMain.Lang[Languages.Element.ConfigsCannot]+(create ? MMain.Lang[Languages.Element.Created] : MMain.Lang[Languages.Element.Readen])+", "+ MMain.Lang[Languages.Element.Error].ToLower() + ":\r\n" + e.Message + "\r\n" + MMain.Lang[Languages.Element.RetryInAppData],
+        		                    MMain.Lang[Languages.Element.Error], MessageBoxButtons.YesNo, MessageBoxIcon.Error) == DialogResult.Yes) {
+    			if (!Directory.Exists(MahouUI.mahou_folder_appd))
+    				Directory.CreateDirectory(MahouUI.mahou_folder_appd);
+			filePath = Path.Combine(MahouUI.mahou_folder_appd, "Mahou.ini");
+			var forceMarker = Path.Combine(MahouUI.mahou_folder_appd, ".force");
+			using (File.Create(forceMarker)) { }
+    			MMain.MyConfs = new Configs();
+    			return true;
+    		}
+        	return false;
+        }
+        public string GetRawWithoutGroup(string gr, string OutINI="") {
+        	var glr = new StringBuilder();
+			var inini = _INI.GetRawSnapshot();
+        	if (!string.IsNullOrEmpty(OutINI)) {
+        		inini = OutINI;
+        	}
+        	var lines = inini.Split('\n');
+        	int g = 0;
+        	for (int i=0; i!= lines.Length; i++) {
+        		var l = lines[i];
+        		if (l.StartsWith("[")) {
+        			if (l.StartsWith(gr)) {
+        				g = 1;
+        			} else g = 0;
+        		}
+        		if (g == 0) {
+        			var nl = (i == lines.Length) ? "" : Environment.NewLine;
+        			glr.Append(l.Replace("\r", "")).Append(nl);
+        		}
+        	}
+        	return glr.ToString();
+        }
+        /// <summary> Check if configs file readable. </summary>
+        /// <returns>Read access.</returns>
+	        public static bool Readable() {
+        	try {
+		    	using (var sr = new StreamReader(filePath)) {
+    				sr.Read();
+        		}
+        	} catch(Exception e) { Logging.Log("Configs file ["+filePath+"] cannot be readen, error:\r\n" + e.Message); return false; }
+        	return true;
+        }
+        /// <summary> Initializes settings, if some of values or settings file, not exists it creates them with default value. </summary>
+        public Configs() {
+        	CreateConfigsFile();
+        	ReadFromDisk();
+        	#region Hidden
+			CheckBool("Hidden", "cmdbackfix", "true");
+			CheckBool("Hidden", "DARKTHEME", "false");
+			CheckString("Hidden", "Layout_S_Modifier_Layout", "0");
+			CheckInt("Hidden", "Layout_S_Modifier_Key", "0");
+			CheckInt("Hidden", "Layout_D_Modifier_Key", "0");
+			CheckInt("Hidden", "Layout_2_Modifier_Key", "0");
+			CheckInt("Hidden", "Layout_1_Modifier_Key", "0");
+        	CheckBool("Hidden", "CycleCaseSaveBase", "false");
+        	CheckBool("Hidden", "MahouMMTrayHoverLostFocusClose", "true");
+        	CheckString("Hidden", "AutoSwitchEndingSymbols", "");
+        	CheckBool("Hidden", "ClipBackOnlyText", "false");
+        	CheckString("Hidden", "Redefines", "");
+        	CheckInt("Hidden", "TrayHoverMahouMM", "0");
+        	CheckString("Hidden", "SymbolClear", "");
+        	CheckInt("Hidden", "OverlayExcludedInterval", "2500");
+        	CheckString("Hidden", "OverlayExcluded", "");
+        	CheckString("Hidden", "NCS", "NCS");
+        	CheckBool("Hidden", "NCS_tray", "false");
+        	CheckInt("Hidden", "AutoRestartMins", "0");
+        	CheckString("Hidden", "ToggleAutoSwitchHK", "");
+        	CheckBool("Hidden", "DisableMemoryFlush", "false");
+        	CheckBool("Hidden", "ChangeLayoutOnTrayLMB+DoubleClick", "false");
+        	CheckBool("Hidden", "ChangeLayoutOnTrayLMB", "false");
+        	CheckString("Hidden", "AutoCopyTranslation", "");
+        	CheckString("Hidden", "ReSelectCustoms", "tTRSULCN");
+        	CheckBool("Hidden", "LibreCtrlAltShiftV", "false");
+			CheckString("Hidden", "CycleCaseOrder", "TULSR");
+			CheckBool("Hidden", "CycleCaseReset", "false");
+			CheckBool("Hidden", "__selection", "false");
+			CheckBool("Hidden", "__selection_nomouse", "false");
+			CheckString("Hidden", "onlySnippetsExcluded", "");
+			CheckString("Hidden", "onlyAutoSwitchExcluded", "");
+			CheckBool("Hidden", "__setlayout_FORCED", "false");
+			CheckBool("Hidden", "__setlayout_ONLYWM", "false");
+			CheckBool("Hidden", "AS_IngoreBack", "false");
+			CheckBool("Hidden", "AS_IngoreDel", "false");
+			CheckBool("Hidden", "AS_IngoreLS", "false");
+			CheckString("Hidden", "AS_IngoreRules", "SWMCLT");
+			CheckInt("Hidden", "AS_IngoreLSTimeout", "5000");
+			#endregion
+        	#region Sync
+			CheckString("Sync", "BBools", "0|1|0|0|0");
+			CheckString("Sync", "RBools", "1|1|1|1|0");
+			CheckString("Sync", "RLast", "");
+			CheckString("Sync", "BLast", "");
+			CheckBool("Sync", "ZxZ", "false");
+			#endregion
+        	#region TranslatePanel
+			CheckString("TranslatePanel", "TextFont", "Microsoft Sans Serif; 8.25pt");
+			CheckString("TranslatePanel", "TitleFont", "Segoe UI; 12pt");
+			CheckBool("TranslatePanel", "Enabled", "False");
+			CheckBool("TranslatePanel", "UseGS", "False");
+			CheckBool("TranslatePanel", "UseNA", "True");
+			CheckBool("TranslatePanel", "OnDoubleClick", "False");
+			CheckBool("TranslatePanel", "BorderAero", "False");
+			CheckInt("TranslatePanel", "Transparency", "90");
+			CheckString("TranslatePanel", "FG", "#8B5FFF");
+			CheckString("TranslatePanel", "BorderC", "#F1F100");
+			CheckString("TranslatePanel", "BG", "#FFFFFF");
+			CheckString("TranslatePanel", "LanguageSets", "set_1/auto/ru|set_2/auto/en");
+			CheckBool("TranslatePanel", "Transcription", "false");
+        	#endregion
+            #region Sounds
+            CheckBool("Sounds", "Enabled", "False");
+            CheckBool("Sounds", "OnAutoSwitch", "True");
+            CheckBool("Sounds", "OnSnippets", "False");
+            CheckBool("Sounds", "OnConvertLast", "True");
+            CheckBool("Sounds", "OnLayoutSwitch", "False");
+            CheckBool("Sounds", "UseCustomSound", "False");
+            CheckString("Sounds", "CustomSound", "");
+            CheckBool("Sounds", "OnAutoSwitch2", "False");
+            CheckBool("Sounds", "OnSnippets2", "True");
+            CheckBool("Sounds", "OnConvertLast2", "False");
+            CheckBool("Sounds", "OnLayoutSwitch2", "True");
+            CheckBool("Sounds", "UseCustomSound2", "False");
+            CheckString("Sounds", "CustomSound2", "");
+            #endregion
+            #region Proxy section
+            CheckString("Proxy", "Password", "");
+            CheckString("Proxy", "UserName", "");
+            CheckString("Proxy", "ServerPort", "");
+            #endregion
+			#region Updates
+			CheckString("Updates", "LatestCommit", "");
+			CheckString("Updates", "Channel", "Stable");
+			CheckString("Updates", "Delay", "5");
+			#endregion
+			#region Language Panel
+			CheckBool("LangPanel", "UpperArrow", "true");
+			CheckBool("LangPanel", "BorderAeroColor", "true");
+			CheckString("LangPanel", "BorderColor", "#8B5FFF");
+			CheckString("LangPanel", "Font", "Microsoft Sans Serif; 8.25pt");
+			CheckString("LangPanel", "BackColor", "#FFFFFF");
+			CheckString("LangPanel", "ForeColor", "#000000");
+			CheckString("LangPanel", "Position", "X0 Y0");
+			CheckInt("LangPanel", "RefreshRate", "25");
+			CheckInt("LangPanel", "Transparency", "90");
+			CheckBool("LangPanel", "Display", "false");
+			#endregion
+			#region Hotkeys section
+			CheckInt("Hotkeys", "ShowCMenuUnderMouse_Key", "0");
+			CheckString("Hotkeys", "ShowCMenuUnderMouse_Modifiers", "");
+			CheckBool("Hotkeys", "ShowCMenuUnderMouse_Double", "false");
+			CheckBool("Hotkeys", "ShowCMenuUnderMouse_Enabled", "false");
+			// Cycle Case
+			CheckInt("Hotkeys", "CycleCase_Key", "114");
+			CheckString("Hotkeys", "CycleCase_Modifiers", "Shift");
+			CheckBool("Hotkeys", "CycleCase_Double", "false");
+			CheckBool("Hotkeys", "CycleCase_Enabled", "false");
+			// Cycle Case
+			CheckInt("Hotkeys", "ToggleMahou_Key", "112");
+			CheckString("Hotkeys", "ToggleMahou_Modifiers", "Win Shift");
+			CheckBool("Hotkeys", "ToggleMahou_Double", "false");
+			CheckBool("Hotkeys", "ToggleMahou_Enabled", "true");
+			// Toggle Mahou
+			CheckInt("Hotkeys", "ShowSelectionTranslate_Key", "0");
+			CheckString("Hotkeys", "ShowSelectionTranslate_Modifiers", "Alt");
+			CheckBool("Hotkeys", "ShowSelectionTranslate_Double", "true");
+			CheckBool("Hotkeys", "ShowSelectionTranslate_Enabled", "false");
+			// Show Selection Translation
+			CheckInt("Hotkeys", "ToggleLangPanel_Key", "120");
+			CheckString("Hotkeys", "ToggleLangPanel_Modifiers", "Shift");
+			CheckBool("Hotkeys", "ToggleLangPanel_Double", "false");
+			CheckBool("Hotkeys", "ToggleLangPanel_Enabled", "true");
+			// Toggle Language Panel hotkey
+			CheckInt("Hotkeys", "RestartMahou_Key", "33");
+			CheckString("Hotkeys", "RestartMahou_Modifiers", "Win + Shift + Alt");
+			CheckBool("Hotkeys", "RestartMahou_Enabled", "true");
+			// Restart Mahou hotkey
+			CheckInt("Hotkeys", "ExitMahou_Key", "123");
+			CheckString("Hotkeys", "ExitMahou_Modifiers", "Win + Control + Shift + Alt");
+			CheckBool("Hotkeys", "ExitMahou_Double", "false");
+			CheckBool("Hotkeys", "ExitMahou_Enabled", "true");
+			// Exit Mahou hotkey
+			CheckInt("Hotkeys", "SelectedToLower_Key", "88");
+			CheckString("Hotkeys", "SelectedToLower_Modifiers", "Win");
+			CheckBool("Hotkeys", "SelectedToLower_Double", "false");
+			CheckBool("Hotkeys", "SelectedToLower_Enabled", "false");
+			// Selected text To Lower hotkey
+			CheckInt("Hotkeys", "SelectedToUpper_Key", "90");
+			CheckString("Hotkeys", "SelectedToUpper_Modifiers", "Win");
+			CheckBool("Hotkeys", "SelectedToUpper_Double", "false");
+			CheckBool("Hotkeys", "SelectedToUpper_Enabled", "false");
+			// Selected text To Upper hotkey
+			CheckInt("Hotkeys", "SelectedTextTransliteration_Key", "191");
+			CheckString("Hotkeys", "SelectedTextTransliteration_Modifiers", "Win");
+			CheckBool("Hotkeys", "SelectedTextTransliteration_Double", "false");
+			CheckBool("Hotkeys", "SelectedTextTransliteration_Enabled", "false");
+			// Selected text Transliteration hotkey
+			CheckInt("Hotkeys", "SelectedTextToSwapCase_Key", "190");
+			CheckString("Hotkeys", "SelectedTextToSwapCase_Modifiers", "Win");
+			CheckBool("Hotkeys", "SelectedTextToSwapCase_Double", "false");
+			CheckBool("Hotkeys", "SelectedTextToSwapCase_Enabled", "false");
+			// Selected text to swap case hotkey
+			CheckInt("Hotkeys", "SelectedTextToRandomCase_Key", "0");
+			CheckString("Hotkeys", "SelectedTextToRandomCase_Modifiers", "Alt");
+			CheckBool("Hotkeys", "SelectedTextToRandomCase_Double", "true");
+			CheckBool("Hotkeys", "SelectedTextToRandomCase_Enabled", "false");
+			// Selected text To random case hotkey
+			CheckInt("Hotkeys", "SelectedTextToTitleCase_Key", "0");
+			CheckString("Hotkeys", "SelectedTextToTitleCase_Modifiers", "Shift");
+			CheckBool("Hotkeys", "SelectedTextToTitleCase_Double", "true");
+			CheckBool("Hotkeys", "SelectedTextToTitleCase_Enabled", "false");
+			// Selected text To custom converison
+			CheckInt("Hotkeys", "SelectedTextToCustomConv_Key", "0");
+			CheckString("Hotkeys", "SelectedTextToCustomConv_Modifiers", "");
+			CheckBool("Hotkeys", "SelectedTextToCustomConv_Double", "false");
+			CheckBool("Hotkeys", "SelectedTextToCustomConv_Enabled", "false");
+			// Selected text to title case hotkey
+			CheckInt("Hotkeys", "ToggleSymbolIgnoreMode_Key", "122");
+			CheckString("Hotkeys", "ToggleSymbolIgnoreMode_Modifiers", "Shift + Control");
+			CheckBool("Hotkeys", "ToggleSymbolIgnoreMode_Double", "false");
+			CheckBool("Hotkeys", "ToggleSymbolIgnoreMode_Enabled", "true");
+			// Toggle symbol ignore mode hotkey
+			CheckInt("Hotkeys", "ConvertLastWords_Key", "122");
+			CheckString("Hotkeys", "ConvertLastWords_Modifiers", "Shift");
+			CheckBool("Hotkeys", "ConvertLastWords_Double", "false");
+			CheckBool("Hotkeys", "ConvertLastWords_Enabled", "true");
+			// Convert last words hotkey
+			CheckInt("Hotkeys", "ConvertLastLine_Key", "19");
+			CheckString("Hotkeys", "ConvertLastLine_Modifiers", "Shift");
+			CheckBool("Hotkeys", "ConvertLastLine_Double", "false");
+			CheckBool("Hotkeys", "ConvertLastLine_Enabled", "true");
+			// Convert last line hotkey
+			CheckInt("Hotkeys", "ConvertSelectedText_Key", "45");
+			CheckString("Hotkeys", "ConvertSelectedText_Modifiers", "");
+			CheckBool("Hotkeys", "ConvertSelectedText_Double", "false");
+			CheckBool("Hotkeys", "ConvertSelectedText_Enabled", "true");
+			// Convert selected text hotkey
+			CheckInt("Hotkeys", "ConvertLastWord_Key", "45");
+			CheckString("Hotkeys", "ConvertLastWord_Modifiers", "");
+			CheckBool("Hotkeys", "ConvertLastWord_Double", "false");
+			CheckBool("Hotkeys", "ConvertLastWord_Enabled", "true");
+			// Convert last word hotkey
+			CheckInt("Hotkeys", "ToggleMainWindow_Key", "45");
+			CheckString("Hotkeys", "ToggleMainWindow_Modifiers", "Win + Control + Shift + Alt");
+			CheckBool("Hotkeys", "ToggleMainWindow_Double", "false");
+			CheckBool("Hotkeys", "ToggleMainWindow_Enabled", "true");
+			// Toggle main window hotkey
+			#endregion
+			#region AutoSwitch section
+			CheckBool("AutoSwitch", "DownloadInZip", "false");
+			CheckBool("AutoSwitch", "SwitchToGuessLayout", "true");
+			CheckBool("AutoSwitch", "SpaceAfter", "true");
+			CheckBool("AutoSwitch", "Enabled", "false");
+			#endregion
+			#region Snippets section
+			CheckString("Snippets", "SnippetExpKeyOther", "");
+			CheckString("Snippets", "SnippetExpandKey", "Space");
+			CheckBool("Snippets", "SwitchToGuessLayout", "false");
+			CheckBool("Snippets", "SpaceAfter", "false");
+			CheckBool("Snippets", "SnippetsEnabled", "false");
+			CheckString("Snippets", "NCRSets", "set_0");
+			#endregion
+			#region Timings section
+			CheckInt("Timings", "LangTooltipForMouseSkipMessages", "5");
+			#region Excluded
+            CheckBool("Timings", "ConvertSWLinExcl", "false");
+            CheckBool("Timings", "ChangeLayoutInExcluded", "true");
+            CheckBool("Timings", "ExcludeCaretLD", "false");
+            CheckBool("Timings", "UsePasteInCS", "false");
+			CheckString("Timings", "ExcludedPrograms", "");
+			#endregion
+			CheckInt("Timings", "SelectedTextGetMoreTriesCount", "5");
+			CheckBool("Timings", "SelectedTextGetMoreTries", "false");
+			CheckInt("Timings", "CapsLockDisableRefreshRate", "100");
+			CheckInt("Timings", "ScrollLockStateRefreshRate", "100");
+			CheckInt("Timings", "FlagsInTrayRefreshRate", "100");
+			CheckInt("Timings", "DoubleHotkey2ndPressWait", "350");
+			CheckInt("Timings", "LangTooltipForCaretRefreshRate", "25");
+			CheckInt("Timings", "LangTooltipForMouseRefreshRate", "25");
+			CheckBool("Timings", "UseDelayAfterBackspaces", "false");
+			CheckInt("Timings", "DelayAfterBackspaces", "100");
+			
+			#endregion
+			#region Appearence section
+			CheckBool("Appearence", "WindowsMessages", "true");
+			// Windows Messages instead of timers
+			CheckBool("Appearence", "CaretLTUpperArrow", "false");
+			CheckBool("Appearence", "MouseLTUpperArrow", "false");
+			// Upper arrows for lang displays
+			CheckString("Appearence", "Layout2LTText", "");
+			CheckString("Appearence", "Layout1LTText", "");
+			// Different text for layouts
+            CheckBool("Appearence", "CaretLTUseFlags", "false");
+            CheckBool("Appearence", "MouseLTUseFlags", "false");
+			// Language tooltips use flags
+			CheckInt("Appearence", "MCDS_Bottom", "45");
+			CheckInt("Appearence", "MCDS_Top", "60");
+			CheckInt("Appearence", "MCDS_Pos_Y", "13");
+			CheckInt("Appearence", "MCDS_Pos_X", "58");
+			// Language tooltip positions for Mahou Cared Display Server
+			CheckInt("Appearence", "CaretLTPositionY", "12");
+			CheckInt("Appearence", "CaretLTPositionX", "8");
+			CheckInt("Appearence", "CaretLTWidth", "26");
+			CheckInt("Appearence", "CaretLTHeight", "14");
+			CheckString("Appearence", "CaretLTFont", "Georgia; 8pt");
+            CheckBool("Appearence", "CaretLTTransparentBackColor", "false");
+            CheckBool("Appearence", "MouseLTTransparentBackColor", "false");
+			CheckString("Appearence", "CaretLTBackColor", "#FFFFFF");
+			CheckString("Appearence", "CaretLTForeColor", "#000000");
+			// Language tooltip appearence for Caret Language Tooltip
+			CheckInt("Appearence", "MouseLTPositionY", "0");
+			CheckInt("Appearence", "MouseLTPositionX", "8");
+			CheckInt("Appearence", "MouseLTWidth", "26");
+			CheckInt("Appearence", "MouseLTHeight", "14");
+			CheckString("Appearence", "MouseLTFont", "Georgia; 8pt");
+            CheckBool("Appearence", "MouseLTTransparentBackColor", "false");
+			CheckString("Appearence", "MouseLTBackColor", "#FFFFFF");
+			CheckString("Appearence", "MouseLTForeColor", "#000000");
+			// Language tooltip appearence for Mouse Language Tooltip
+			CheckInt("Appearence", "Layout2PositionY", "0");
+			CheckInt("Appearence", "Layout2PositionX", "8");
+			CheckInt("Appearence", "Layout2Width", "26");
+			CheckInt("Appearence", "Layout2Height", "14");
+			CheckString("Appearence", "Layout2Font", "Georgia; 8pt");
+            CheckBool("Appearence", "Layout2TransparentBackColor", "false");
+			CheckString("Appearence", "Layout2BackColor", "#FFFFFF");
+			CheckString("Appearence", "Layout2ForeColor", "#000000");
+			// Language tooltip appearence for Layout 2
+			CheckInt("Appearence", "Layout1PositionY", "0");
+			CheckInt("Appearence", "Layout1PositionX", "8");
+			CheckInt("Appearence", "Layout1Width", "26");
+			CheckInt("Appearence", "Layout1Height", "14");
+			CheckString("Appearence", "Layout1Font", "Georgia; 8pt");
+            CheckBool("Appearence", "Layout1TransparentBackColor", "false");
+			CheckString("Appearence", "Layout1BackColor", "#FFFFFF");
+			CheckString("Appearence", "Layout1ForeColor", "#000000");
+			// Language tooltip appearence for Layout 1
+			CheckString("Appearence", "Language", "English");
+            CheckBool("Appearence", "MouseLTAlways", "false");
+            CheckBool("Appearence", "DifferentColorsForLayouts", "false");
+            CheckBool("Appearence", "DisplayLangTooltipForCaretOnChange", "false");
+            CheckBool("Appearence", "DisplayLangTooltipForCaret", "false");
+            CheckBool("Appearence", "DisplayLangTooltipForMouseOnChange", "false");
+            CheckBool("Appearence", "DisplayLangTooltipForMouse", "false");
+			#endregion
+			#region Persistent Layout
+			CheckString("PersistentLayout", "Layout2Processes", "notepad++.exe winword.exe");
+			CheckString("PersistentLayout", "Layout1Processes", "devenv.exe wdexpress.exe");
+			CheckInt("PersistentLayout", "Layout2CheckInterval", "50");
+			CheckInt("PersistentLayout", "Layout1CheckInterval", "50");
+			CheckBool("PersistentLayout", "ActivateForLayout2", "false");
+			CheckBool("PersistentLayout", "ActivateForLayout1", "false");
+			CheckBool("PersistentLayout", "ChangeOnlyOnce", "false");
+			CheckBool("PersistentLayout", "OnlyOnWindowChange", "false");
+			#endregion
+			#region Layouts section
+			CheckString("Layouts", "CTRL_ALT_TemporaryChangeLayout", "0");
+			CheckBool("Layouts", "QWERTZfix", "false");
+			CheckString("Layouts", "SpecificKeySets", "set_0");
+			CheckInt("Layouts", "SpecificKeysType", "0");
+			CheckString("Layouts", "SpecificLayout4", "");
+			CheckString("Layouts", "SpecificLayout3", "");
+			CheckString("Layouts", "SpecificLayout2", "");
+			CheckString("Layouts", "SpecificLayout1", Languages.English[Languages.Element.SwitchBetween]);
+			CheckInt("Layouts", "SpecificKey4", "0");
+			CheckInt("Layouts", "SpecificKey3", "0");
+			CheckInt("Layouts", "SpecificKey2", "0");
+			CheckInt("Layouts", "SpecificKey1", "1");
+			CheckString("Layouts", "MainLayout2", "");
+			CheckString("Layouts", "MainLayout1", "");
+			CheckBool("Layouts", "ChangeToSpecificLayoutByKey", "false");
+            CheckString("Layouts", "EmulateLayoutSwitchType", "Alt+Shift");
+			CheckBool("Layouts", "EmulateLayoutSwitch", "false");
+			CheckBool("Layouts", "OneLayout", "false");
+			CheckBool("Layouts", "SwitchBetweenLayouts", "true");
+			#endregion
+            #region Functions section
+            CheckBool("Functions", "TrayText", "false");
+            CheckInt("Functions", "WriteInputHistoryBackSpaceType", "0");
+            CheckBool("Functions", "WriteInputHistory", "false");
+            CheckBool("Functions", "WriteInputHistoryByDate", "false");
+            CheckBool("Functions", "WriteInputHistoryHourly", "false");
+            CheckBool("Functions", "ReadOnlyNA", "false");
+            CheckBool("Functions", "UseJKL", "false");
+            CheckBool("Functions", "RemapCapslockAsF18", "false");
+            CheckBool("Functions", "AppDataConfigs", "true");
+            CheckBool("Functions", "GuessKeyCodeFix", "false");
+            CheckBool("Functions", "OneLayoutWholeWord", "true");
+            CheckBool("Functions", "MCDServerSupport", "false");
+            CheckBool("Functions", "SymbolIgnoreModeEnabled", "false");
+            CheckBool("Functions", "BlockMahouHotkeysWithCtrl", "false");
+            CheckBool("Functions", "TrayFlags", "true");
+            CheckBool("Functions", "CapsLockTimer", "false");
+            CheckBool("Functions", "Logging", "false");
+            CheckBool("Functions", "SilentUpdate", "false");
+            CheckBool("Functions", "StartupUpdatesCheck", "false");
+            CheckBool("Functions", "ScrollTip", "false");
+            CheckBool("Functions", "ConvertSelectionLayoutSwitchingPlus", "false");
+            CheckBool("Functions", "AddOneEnterToLastWord", "false");
+            CheckBool("Functions", "AddOneSpaceToLastWord", "true");
+            CheckBool("Functions", "RePress", "false");
+            CheckBool("Functions", "ReSelect", "true");
+            CheckBool("Functions", "ConvertSelectionLayoutSwitching", "false");
+            CheckBool("Functions", "TrayIconVisible", "true");
+            CheckBool("Functions", "AutoStartAsAdmin", "false");
+            #endregion
+            #region SmartTyping section
+            CheckBool("SmartTyping", "SmartCapsEnabled", "false");
+            CheckString("SmartTyping", "SmartCapsExceptions", "");
+            #endregion
+        	#region FirstStart section
+            CheckBool("FirstStart", "First", "true");
+        	#endregion
+            #region Migrations section
+            CheckBool("Migrations", "MixanizmDefaultsV1", "false");
+            #endregion
+            NormalizeCriticalRanges();
+            ApplyMixanizmDefaults();
+            fine = true;
+        }
+        void NormalizeCriticalRanges() {
+            // Hidden timing controls: keep values inside the actual UI ranges.
+            NormalizeInt("Hidden", "TrayHoverMahouMM", 0, 350000, 0);
+            NormalizeInt("Hidden", "AS_IngoreLSTimeout", 0, 350000, 5000);
+            NormalizeInt("Hidden", "OverlayExcludedInterval", 250, 10000, 2500);
+            NormalizeInt("Hidden", "AutoRestartMins", 0, 500, 0);
+
+            // ComboBox indices must be valid before the settings form loads.
+            NormalizeInt("Layouts", "SpecificKeysType", 0, 1, 0);
+            NormalizeInt("Functions", "WriteInputHistoryBackSpaceType", 0, 1, 0);
+
+            // NumericUpDown and Timer values are normalized to their designer limits.
+            NormalizeInt("TranslatePanel", "Transparency", 1, 100, 90);
+            NormalizeInt("LangPanel", "Transparency", 1, 100, 90);
+            NormalizeInt("LangPanel", "RefreshRate", 1, 2000, 25);
+            NormalizeInt("Timings", "LangTooltipForMouseSkipMessages", 0, 1000, 5);
+            NormalizeInt("Timings", "SelectedTextGetMoreTriesCount", 3, 20, 5);
+            NormalizeInt("Timings", "DelayAfterBackspaces", 1, 900, 100);
+            NormalizeInt("Timings", "CapsLockDisableRefreshRate", 1, 2000, 100);
+            NormalizeInt("Timings", "ScrollLockStateRefreshRate", 1, 2000, 100);
+            NormalizeInt("Timings", "FlagsInTrayRefreshRate", 1, 2000, 100);
+            NormalizeInt("Timings", "DoubleHotkey2ndPressWait", 1, 2000, 350);
+            NormalizeInt("Timings", "LangTooltipForCaretRefreshRate", 1, 2000, 25);
+            NormalizeInt("Timings", "LangTooltipForMouseRefreshRate", 1, 2000, 25);
+            NormalizeInt("PersistentLayout", "Layout1CheckInterval", 1, 99999, 50);
+            NormalizeInt("PersistentLayout", "Layout2CheckInterval", 1, 99999, 50);
+
+            // Display geometry remains flexible but cannot allocate absurd surfaces.
+            NormalizeInt("Appearence", "CaretLTWidth", 1, 1000, 26);
+            NormalizeInt("Appearence", "CaretLTHeight", 1, 1000, 14);
+            NormalizeInt("Appearence", "MouseLTWidth", 1, 1000, 26);
+            NormalizeInt("Appearence", "MouseLTHeight", 1, 1000, 14);
+            NormalizeInt("Appearence", "Layout1Width", 1, 1000, 26);
+            NormalizeInt("Appearence", "Layout1Height", 1, 1000, 14);
+            NormalizeInt("Appearence", "Layout2Width", 1, 1000, 26);
+            NormalizeInt("Appearence", "Layout2Height", 1, 1000, 14);
+            NormalizeInt("Appearence", "CaretLTPositionX", -10000, 10000, 8);
+            NormalizeInt("Appearence", "CaretLTPositionY", -10000, 10000, 12);
+            NormalizeInt("Appearence", "MouseLTPositionX", -10000, 10000, 8);
+            NormalizeInt("Appearence", "MouseLTPositionY", -10000, 10000, 0);
+            NormalizeInt("Appearence", "Layout1PositionX", -10000, 10000, 8);
+            NormalizeInt("Appearence", "Layout1PositionY", -10000, 10000, 0);
+            NormalizeInt("Appearence", "Layout2PositionX", -10000, 10000, 8);
+            NormalizeInt("Appearence", "Layout2PositionY", -10000, 10000, 0);
+
+            NormalizeInt("Updates", "Delay", 1, 300, 5);
+        }
+        void NormalizeInt(string section, string key, int min, int max, int fallback) {
+            int value;
+            if (!Int32.TryParse(_INI.GetValue(section, key), out value) || value < min || value > max)
+                _INI.SetValue(section, key, fallback.ToString());
+        }
+        void ApplyMixanizmDefaults() {
+            if (ReadBool("Migrations", "MixanizmDefaultsV1")) return;
+            // Migrate untouched upstream Pause/Scroll defaults to the requested
+            // single Insert action without overwriting an existing custom hotkey.
+            var oldLast = _INI.GetValue("Hotkeys", "ConvertLastWord_Key") == "19" &&
+                          String.IsNullOrWhiteSpace(_INI.GetValue("Hotkeys", "ConvertLastWord_Modifiers"));
+            var oldSelection = _INI.GetValue("Hotkeys", "ConvertSelectedText_Key") == "145" &&
+                               String.IsNullOrWhiteSpace(_INI.GetValue("Hotkeys", "ConvertSelectedText_Modifiers"));
+            if (oldLast && oldSelection) {
+                _INI.SetValue("Hotkeys", "ConvertLastWord_Key", "45");
+                _INI.SetValue("Hotkeys", "ConvertSelectedText_Key", "45");
+                _INI.SetValue("Hotkeys", "ConvertLastWord_Double", "false");
+                _INI.SetValue("Hotkeys", "ConvertSelectedText_Double", "false");
+                _INI.SetValue("Hotkeys", "ConvertLastWord_Enabled", "true");
+                _INI.SetValue("Hotkeys", "ConvertSelectedText_Enabled", "true");
+            }
+            _INI.SetValue("Migrations", "MixanizmDefaultsV1", "true");
+        }
+        void CheckBool(string section, string key, string default_value) {
             bool bt = false; //bool temp
-            //Hotkeys section
-            if (!Int32.TryParse(this.Read("Hotkeys", "HKCLKey"), out it))
-                this.Write("Hotkeys", "HKCLKey", "19"); //Hotkey convert last word
-
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKCLMods")))
-                this.Write("Hotkeys", "HKCLMods", "None"); //Hotkey convert last word modifiers
-
-            if (!Int32.TryParse(this.Read("Hotkeys", "HKCSKey"), out it))
-                this.Write("Hotkeys", "HKCSKey", "145"); //Hotkey convert selection
-
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKCSMods")))
-                this.Write("Hotkeys", "HKCSMods", "None"); //Hotkey convert selection modifiers
-
-            if (!Int32.TryParse(this.Read("Hotkeys", "HKCLineKey"), out it))
-                this.Write("Hotkeys", "HKCLineKey", "19"); //Hotkey convert line
-
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKCLineMods"))) //Hotkey convert line modifiers
-                this.Write("Hotkeys", "HKCLineMods", "Shift");
-
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "OnlyKeyLayoutSwicth")))
-                this.Write("Hotkeys", "OnlyKeyLayoutSwicth", "CapsLock"); //One key to switch layout
-
-            if (!Int32.TryParse(this.Read("Hotkeys", "HKSymIgnKey"), out it))
-                this.Write("Hotkeys", "HKSymIgnKey", "122"); //Hotkey Symbol ignore mode
-
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKSymIgnMods"))) //Hotkey Symbol ignore mode modifiers
-                this.Write("Hotkeys", "HKSymIgnMods", "Shift + Control + Alt");
-
-            if (!Int32.TryParse(this.Read("Hotkeys", "HKConvertMore"), out it))
-                this.Write("Hotkeys", "HKConvertMore", "122"); //Hotkey Convert more words
-
-            if (String.IsNullOrEmpty(this.Read("Hotkeys", "HKConvertMoreMods"))) //Hotkey Convert more words modifiers
-                this.Write("Hotkeys", "HKConvertMoreMods", "Shift + Control");
-
-            //Locales section
-            if (!UInt32.TryParse(this.Read("Locales", "locale1uId"), out uit))
-                this.Write("Locales", "locale1uId", ""); //Locale 1 id
-
-            if (String.IsNullOrEmpty(this.Read("Locales", "locale1Lang")))
-                this.Write("Locales", "locale1Lang", ""); //Locale 1 name
-
-            if (!UInt32.TryParse(this.Read("Locales", "locale2uId"), out uit))
-                this.Write("Locales", "locale2uId", ""); //Locale 2 id
-
-            if (String.IsNullOrEmpty(this.Read("Locales", "locale2Lang")))
-                this.Write("Locales", "locale2Lang", ""); //Locale 2 name
-
-            if (String.IsNullOrEmpty(this.Read("Locales", "LANGUAGE")))
-                this.Write("Locales", "LANGUAGE", "EN"); //Language of user interface, messages etc.
-
-            //Functions section
-            if (!Boolean.TryParse(this.Read("Functions", "IconVisibility"), out bt))
-                this.Write("Functions", "IconVisibility", "true"); //Tray icon visibility
-
-            if (!Boolean.TryParse(this.Read("Functions", "CycleMode"), out bt))
-                this.Write("Functions", "CycleMode", "false");
-
-            if (!Boolean.TryParse(this.Read("Functions", "EmulateLayoutSwitch"), out bt))
-                this.Write("Functions", "EmulateLayoutSwitch", "false");
-
-            if (!Int32.TryParse(this.Read("Functions", "ELSType"), out it))
-                this.Write("Functions", "ELSType", "0");
-
-            if (!Boolean.TryParse(this.Read("Functions", "CSSwitch"), out bt))
-                this.Write("Functions", "CSSwitch", "true");
-
-            if (!Boolean.TryParse(this.Read("Functions", "BlockCTRL"), out bt))
-                this.Write("Functions", "BlockCTRL", "false");
-
-            if (!Boolean.TryParse(this.Read("Functions", "RePress"), out bt))
-                this.Write("Functions", "RePress", "true");
-
-            if (!Boolean.TryParse(this.Read("Functions", "EatOneSpace"), out bt))
-                this.Write("Functions", "EatOneSpace", "false");
-            
-            if (!Boolean.TryParse(this.Read("Functions", "ReSelect"), out bt))
-                this.Write("Functions", "ReSelect", "true");
-
-            if (!Boolean.TryParse(this.Read("Functions", "SymIgnModeEnabled"), out bt))
-                this.Write("Functions", "SymIgnModeEnabled", "false");
-
-            if (!Boolean.TryParse(this.Read("Functions", "MoreTries"), out bt))
-                this.Write("Functions", "MoreTries", "true");
-
-            if (!Int32.TryParse(this.Read("Functions", "TriesCount"), out it))
-                this.Write("Functions", "TriesCount", "5");
-
-            if (!Boolean.TryParse(this.Read("Functions", "DisplayLang"), out bt))
-                this.Write("Functions", "DisplayLang", "false");
-
-            if (!Int32.TryParse(this.Read("Functions", "DLRefreshRate"), out it))
-                this.Write("Functions", "DLRefreshRate", "50");
-            
-            if (String.IsNullOrEmpty(this.Read("Functions", "DLForeColor")))
-                this.Write("Functions", "DLForeColor", "#FFFFFF");
-
-            if (String.IsNullOrEmpty(this.Read("Functions", "DLBackColor")))
-                this.Write("Functions", "DLBackColor", "#000000");
-
-            if (!Boolean.TryParse(this.Read("Functions", "ExperimentalCSSwitch"), out bt))
-                this.Write("Functions", "ExperimentalCSSwitch", "false");
-            
-            if (!Boolean.TryParse(this.Read("Functions", "Snippets"), out bt))
-                this.Write("Functions", "Snippets", "false");
-            
-            if (!Boolean.TryParse(this.Read("Functions", "DTTOnChange"), out bt))
-                this.Write("Functions", "DTTOnChange", "false");
-            
-            if (!Boolean.TryParse(this.Read("Functions", "ScrollTip"), out bt))
-                this.Write("Functions", "ScrollTip", "false");
-            
-            if (!Boolean.TryParse(this.Read("Functions", "UpdatesEnabled"), out bt))
-                this.Write("Functions", "UpdatesEnabled", "true");
-
-            //EnabledHotkeys section
-            if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLEnabled"), out bt))
-                this.Write("EnabledHotkeys", "HKCLEnabled", "true"); //Hotkey convert last word enabled
-
-            if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCSEnabled"), out bt))
-                this.Write("EnabledHotkeys", "HKCSEnabled", "true"); //Hotkey convert selection enabled
-
-            if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKCLineEnabled"), out bt))
-                this.Write("EnabledHotkeys", "HKCLineEnabled", "true"); //Hotkey convert line enabled
-
-            if (!Boolean.TryParse(this.Read("EnabledHotkeys", "HKSymIgnEnabled"), out bt))
-                this.Write("EnabledHotkeys", "HKSymIgnEnabled", "true"); //Hotkey symbol ignore enabled
-
-            //ExtCtrls section
-            if (!Boolean.TryParse(this.Read("ExtCtrls", "UseExtCtrls"), out bt))
-                this.Write("ExtCtrls", "UseExtCtrls", "false"); //Use extended CTRLs feature
-
-            if (!Int32.TryParse(this.Read("ExtCtrls", "LCLocale"), out it))
-                this.Write("ExtCtrls", "LCLocale", ""); //Left CTRL switch to locale
-
-            if (String.IsNullOrEmpty(this.Read("ExtCtrls", "LCLocaleName")))
-                this.Write("ExtCtrls", "LCLocaleName", "");
-
-            if (!Int32.TryParse(this.Read("ExtCtrls", "RCLocale"), out it))
-                this.Write("ExtCtrls", "RCLocale", ""); //Right CTRL switch to locale
-
-            if (String.IsNullOrEmpty(this.Read("ExtCtrls", "RCLocaleName")))
-                this.Write("ExtCtrls", "RCLocaleName", "");
-            
-            //Proxy section
-            if (String.IsNullOrEmpty(this.Read("Proxy", "ServerPort")))
-                this.Write("Proxy", "ServerPort", "");
-            
-            if (String.IsNullOrEmpty(this.Read("Proxy", "UserName")))
-                this.Write("Proxy", "UserName", "");
-            
-            if (String.IsNullOrEmpty(this.Read("Proxy", "Password")))
-                this.Write("Proxy", "Password", "");
-            
-            //Tooltip UI sections
-            if (!Int32.TryParse(this.Read("TTipUI", "Height"), out it))
-                this.Write("TTipUI", "Height", "14"); //Lang Tooltip height
-            
-            if (!Int32.TryParse(this.Read("TTipUI", "Width"), out it))
-                this.Write("TTipUI", "Width", "16"); //Lang Tooltip width
-            
-            if (String.IsNullOrEmpty(this.Read("TTipUI", "Font")))
-                this.Write("TTipUI", "Font", "Georgia; 8pt"); //Lang Tooltip font & it size
-            
-            if (!Int32.TryParse(this.Read("TTipUI", "xpos"), out it))
-                this.Write("TTipUI", "xpos", "8"); //Lang Tooltip x pos
-            
-            if (!Int32.TryParse(this.Read("TTipUI", "ypos"), out it))
-                this.Write("TTipUI", "ypos", "0"); //Lang Tooltip y pos
-            
-            if (!Boolean.TryParse(this.Read("TTipUI", "TransparentBack"), out bt))
-                this.Write("TTipUI", "TransparentBack", "false"); //Transparent Background in tooltip
-            
-            //DoubleKey section
-            if (String.IsNullOrEmpty(this.Read("DoubleKey", "Use")))
-                this.Write("DoubleKey", "Use", "false");
-            
-            if (!Int32.TryParse(this.Read("DoubleKey", "Delay"), out it))
-                this.Write("DoubleKey", "Delay", "350");
+            if (!Boolean.TryParse(Read(section, key), out bt))
+                Write(section, key, default_value);
         }
-        public void Write(string section, string key, string value) //Writes "value" to "key" in "section"
-        {
-            WritePrivateProfileString(section, key, value, filePath);
+        void CheckInt(string section, string key, string default_value) {
+            int it = 0; //int temp
+            if (!Int32.TryParse(Read(section, key), out it))
+                Write(section, key, default_value);
         }
-        public string Read(string section, string key) //Returns "key" value in "section" as string
-        {
-            var SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
-            return SB.ToString();
+        void CheckString(string section, string key, string default_value) {
+            if (String.IsNullOrEmpty(Read(section, key)))
+                Write(section, key, default_value);
         }
-        public int ReadInt(string section, string key) //Returns "key" value in "section" as int
-        {
-            var SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
-            return Int32.Parse(SB.ToString());
+        /// <summary> Writes "value" to "key" in "section" in INI configuration. </summary>
+        public void Write(string section, string key, string value) {
+            if (IsProtectedSecret(section, key)) value = SecretProtector.Protect(value);
+            _INI.SetValue(section, key, value);
         }
-        public bool ReadBool(string section, string key) //Returns "key" value in "section" as bool
-        {
-            var SB = new StringBuilder(255);
-            int i = GetPrivateProfileString(section, key, "", SB, 255, filePath);
-            return Boolean.Parse(SB.ToString().ToLower());
+        public void WriteSave(string section, string key, string value) {
+            Write(section, key, value);
+            WriteToDisk();
         }
-        #region Dll imports
-        [DllImport("kernel32", CharSet = CharSet.Unicode)]
-        static extern long WritePrivateProfileString(string section,
-        string key, string val, string filePath);
-
-        [DllImport("kernel32", CharSet = CharSet.Unicode)]
-        static extern int GetPrivateProfileString(string section,
-        string key, string def, StringBuilder retVal, int size, string filePath);
-        #endregion
+        public string Read(string section, string key) {
+            var value = _INI.GetValue(section, key);
+            if (!IsProtectedSecret(section, key)) return value;
+            string plain;
+            if (SecretProtector.TryUnprotect(value, out plain)) return plain;
+            if (SecretProtector.TryDecodeLegacyBase64(value, out plain)) {
+                _INI.SetValue(section, key, SecretProtector.Protect(plain));
+                return plain;
+            }
+            if (!String.IsNullOrEmpty(value)) {
+                plain = value;
+                _INI.SetValue(section, key, SecretProtector.Protect(plain));
+                return plain;
+            }
+            return String.Empty;
+        }
+        static bool IsProtectedSecret(string section, string key) {
+            return String.Equals(section, "Proxy", StringComparison.OrdinalIgnoreCase) &&
+                   String.Equals(key, "Password", StringComparison.OrdinalIgnoreCase);
+        }
+        public int ReadInt(string section, string key) {
+            int value;
+            return Int32.TryParse(Read(section, key), out value) ? value : 0;
+        }
+        public bool ReadBool(string section, string key) {
+            bool value;
+            return Boolean.TryParse(Read(section, key), out value) && value;
+        }
+        public void ReadFromDisk() {
+        	_INI = new INI(File.ReadAllText(filePath));
+        }
+        public void WriteToDisk() {
+            var temp = filePath + ".tmp";
+            var backup = filePath + ".bak";
+            try {
+                var directory = Path.GetDirectoryName(filePath);
+                if (!String.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
+                File.WriteAllText(temp, _INI.GetRawSnapshot(), Encoding.UTF8);
+                if (File.Exists(filePath)) {
+                    try {
+                        File.Replace(temp, filePath, backup, true);
+                    } catch (PlatformNotSupportedException) {
+                        File.Copy(temp, filePath, true);
+                        File.Delete(temp);
+                    } catch (IOException) {
+                        File.Copy(temp, filePath, true);
+                        File.Delete(temp);
+                    }
+                } else {
+                    File.Move(temp, filePath);
+                }
+            } catch (Exception e) {
+                Logging.Log("Can't write configs file by path: [" + filePath + "]: " + e.Message, 1);
+                try { if (File.Exists(temp)) File.Delete(temp); } catch { }
+                throw;
+            }
+        }
     }
 }

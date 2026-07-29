@@ -1,0 +1,2 @@
+Added a thread-safe indexed INI read path while preserving raw file layout and first-key semantics.
+Security regression check passed: 40 source files inspected.

@@ -1,0 +1,260 @@
+name: Modern Windows build
+
+on:
+  pull_request:
+    branches:
+      - master
+      - mixanizm-modern-v2.9.0.1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: modern-windows-build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  RUNTIME_VERSION: 2.9.0.1-dev
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [x86, x64]
+
+    steps:
+      - name: Checkout requested source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Resolve immutable build identity
+        id: metadata
+        shell: pwsh
+        run: |
+          $platform = '${{ matrix.platform }}'
+          $runtimeVersion = $env:RUNTIME_VERSION
+          $commit = (git rev-parse HEAD).Trim().ToLowerInvariant()
+          $tree = (git show -s --format=%T HEAD).Trim().ToLowerInvariant()
+          $shortSha = (git rev-parse --short=7 HEAD).Trim().ToLowerInvariant()
+          $sourceRef = if ($env:GITHUB_HEAD_REF) { $env:GITHUB_HEAD_REF } else { $env:GITHUB_REF_NAME }
+          $artifactName = "Mahou-$runtimeVersion-win-$platform-$shortSha-run$env:GITHUB_RUN_ID"
+          $timestamp = [DateTime]::UtcNow.ToString('o')
+
+          "commit=$commit" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "tree=$tree" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "short_sha=$shortSha" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "source_ref=$sourceRef" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "artifact_name=$artifactName" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+          "build_timestamp_utc=$timestamp" | Add-Content -Path $env:GITHUB_OUTPUT -Encoding utf8
+
+      - name: Verify security and provenance invariants
+        shell: pwsh
+        run: |
+          python .github/scripts/security-regression.py | Tee-Object -FilePath security-regression.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python .github/scripts/ui-resource-regression.py | Tee-Object -FilePath ui-resource-regression.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python .github/scripts/artifact-provenance-regression.py | Tee-Object -FilePath artifact-provenance-regression.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python .github/scripts/autoswitch-containment-regression.py | Tee-Object -FilePath autoswitch-containment-regression.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Stamp source commit
+        shell: pwsh
+        run: |
+          $commit = '${{ steps.metadata.outputs.commit }}'
+          $source = 'static class ____ { public static string commit="' + $commit + '"; }'
+          [System.IO.File]::WriteAllText(
+            (Join-Path $env:GITHUB_WORKSPACE 'Mahou/____commit.cs'),
+            $source + "`n",
+            (New-Object System.Text.UTF8Encoding($false)))
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2
+
+      - name: Build isolated Release ${{ matrix.platform }} twice
+        shell: pwsh
+        run: |
+          $platform = '${{ matrix.platform }}'
+          $root = $env:GITHUB_WORKSPACE
+          $build1 = Join-Path $root "artifacts/$platform/build1/"
+          $build2 = Join-Path $root "artifacts/$platform/build2/"
+          $obj1 = Join-Path $root "artifacts/$platform/obj1/"
+          $obj2 = Join-Path $root "artifacts/$platform/obj2/"
+          New-Item -ItemType Directory -Force -Path $build1,$build2,$obj1,$obj2 | Out-Null
+
+          & msbuild Mahou/Mahou.sln /m /t:Rebuild /p:Configuration=Release /p:Platform=$platform /p:Deterministic=true "/p:OutputPath=$build1" "/p:IntermediateOutputPath=$obj1" /v:minimal /fl "/flp:logfile=msbuild-$platform-build1.log;verbosity=normal"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          & msbuild Mahou/Mahou.sln /m /t:Rebuild /p:Configuration=Release /p:Platform=$platform /p:Deterministic=true "/p:OutputPath=$build2" "/p:IntermediateOutputPath=$obj2" /v:minimal /fl "/flp:logfile=msbuild-$platform-build2.log;verbosity=normal"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $testExe = Join-Path $root "artifacts/$platform/InsertSafetyRegression.exe"
+          $msbuildExe = (Get-Command msbuild -ErrorAction Stop).Source
+          $cscCandidates = @(
+            (Join-Path (Split-Path $msbuildExe -Parent) 'Roslyn\csc.exe'),
+            (Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'),
+            (Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe')
+          )
+          $csc = $cscCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $csc) {
+            throw "C# compiler not found. Checked: $($cscCandidates -join ', ')"
+          }
+          Write-Host "Using C# compiler: $csc"
+          & $csc /nologo "/platform:$platform" "/out:$testExe" .github/tests/InsertSafetyRegression.cs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $testExe (Join-Path $build1 'Mahou.exe')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $smartCapsTestExe = Join-Path $root "artifacts/$platform/SmartCapsRegression.exe"
+          & $csc /nologo "/platform:$platform" "/out:$smartCapsTestExe" .github/tests/SmartCapsRegression.cs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $smartCapsTestExe (Join-Path $build1 'Mahou.exe')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $autoSwitchTestExe = Join-Path $root "artifacts/$platform/AutoSwitchContainmentRegression.exe"
+          & $csc /nologo "/platform:$platform" "/out:$autoSwitchTestExe" .github/tests/AutoSwitchContainmentRegression.cs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $autoSwitchTestExe (Join-Path $build1 'Mahou.exe')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $files = @('Mahou.exe','Mahou.exe.config','AS_dict.txt')
+          $lines = @()
+          foreach ($file in $files) {
+            $first = (Get-FileHash (Join-Path $build1 $file) -Algorithm SHA256).Hash.ToLowerInvariant()
+            $second = (Get-FileHash (Join-Path $build2 $file) -Algorithm SHA256).Hash.ToLowerInvariant()
+            $match = $first -eq $second
+            $lines += "$file first=$first second=$second match=$match"
+            if (-not $match) { throw "Non-deterministic output: $file" }
+          }
+          $lines | Set-Content "deterministic-build-$platform.txt" -Encoding utf8
+
+      - name: Create immutable release provenance
+        shell: pwsh
+        run: |
+          $platform = '${{ matrix.platform }}'
+          $source = Join-Path $env:GITHUB_WORKSPACE "artifacts/$platform/build1"
+          $dest = Join-Path $env:GITHUB_WORKSPACE "release/$platform"
+          $deterministicName = "deterministic-build-$platform.txt"
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          Copy-Item (Join-Path $source 'Mahou.exe') $dest -Force
+          Copy-Item (Join-Path $source 'Mahou.exe.config') $dest -Force
+          Copy-Item (Join-Path $source 'AS_dict.txt') $dest -Force
+          Copy-Item $deterministicName $dest -Force
+          Copy-Item 'security-regression.txt' $dest -Force
+          Copy-Item 'autoswitch-containment-regression.txt' $dest -Force
+          Copy-Item 'ui-resource-regression.txt' $dest -Force
+          Copy-Item 'artifact-provenance-regression.txt' $dest -Force
+          Copy-Item 'README-MIXANIZM.md' $dest -Force
+          Copy-Item 'SECURITY-AUDIT-MODERN.md' $dest -Force
+          Copy-Item 'KNOWN-LIMITATIONS.md' $dest -Force
+          Copy-Item 'TEST-PLAN-WINDOWS11.md' $dest -Force
+          Copy-Item 'ARTIFACT-PROVENANCE.md' $dest -Force
+
+          & .github/scripts/new-build-provenance.ps1 `
+            -ArtifactDirectory $dest `
+            -Platform $platform `
+            -SourceRepository '${{ github.repository }}' `
+            -SourceCommit '${{ steps.metadata.outputs.commit }}' `
+            -SourceTree '${{ steps.metadata.outputs.tree }}' `
+            -SourceRef '${{ steps.metadata.outputs.source_ref }}' `
+            -WorkflowName '${{ github.workflow }}' `
+            -WorkflowRunId '${{ github.run_id }}' `
+            -WorkflowRunAttempt '${{ github.run_attempt }}' `
+            -BuildTimestampUtc '${{ steps.metadata.outputs.build_timestamp_utc }}' `
+            -RuntimeVersion $env:RUNTIME_VERSION `
+            -Configuration Release `
+            -DeterministicBuild `
+            -SecurityRegressionPassed
+
+      - name: Validate positive and negative handoff cases
+        shell: pwsh
+        run: |
+          $platform = '${{ matrix.platform }}'
+          $artifactName = '${{ steps.metadata.outputs.artifact_name }}'
+          $release = Join-Path $env:GITHUB_WORKSPACE "release/$platform"
+          $testRoot = Join-Path $env:GITHUB_WORKSPACE "provenance-test/$platform"
+          $legacyRoot = Join-Path $testRoot 'legacy'
+          New-Item -ItemType Directory -Force -Path $testRoot,$legacyRoot | Out-Null
+
+          $currentZip = Join-Path $testRoot "$artifactName.zip"
+          Compress-Archive -Path (Join-Path $release '*') -DestinationPath $currentZip -CompressionLevel Optimal
+
+          Copy-Item (Join-Path $release 'Mahou.exe') $legacyRoot -Force
+          Copy-Item (Join-Path $release 'Mahou.exe.config') $legacyRoot -Force
+          Copy-Item (Join-Path $release 'AS_dict.txt') $legacyRoot -Force
+          Copy-Item '.github/tests/fixtures/legacy-build-manifest-v1.json' (Join-Path $legacyRoot 'build-manifest.json') -Force
+          $legacyZip = Join-Path $testRoot 'Mahou-x86-full.zip'
+          Compress-Archive -Path (Join-Path $legacyRoot '*') -DestinationPath $legacyZip -CompressionLevel Optimal
+
+          & .github/scripts/test-artifact-provenance.ps1 `
+            -ExpectedCommit '${{ steps.metadata.outputs.commit }}' `
+            -ExpectedTree '${{ steps.metadata.outputs.tree }}' `
+            -ExpectedPlatform $platform `
+            -ExpectedRepository '${{ github.repository }}' `
+            -ExpectedRuntimeVersion $env:RUNTIME_VERSION `
+            -ZipPath $currentZip `
+            -LegacyZipPath $legacyZip
+
+      - name: Upload verified Windows build
+        id: upload_build
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ${{ steps.metadata.outputs.artifact_name }}
+          path: release/${{ matrix.platform }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Create post-upload evidence
+        shell: pwsh
+        run: |
+          $platform = '${{ matrix.platform }}'
+          $artifactName = '${{ steps.metadata.outputs.artifact_name }}'
+          $artifactDigest = '${{ steps.upload_build.outputs.artifact-digest }}'
+          $zipSha256 = $artifactDigest -replace '^sha256:', ''
+          $exePath = Join-Path $env:GITHUB_WORKSPACE "release/$platform/Mahou.exe"
+          $evidence = [ordered]@{
+            schema_version = 1
+            artifact_name = $artifactName
+            artifact_id = '${{ steps.upload_build.outputs.artifact-id }}'
+            artifact_digest = $artifactDigest
+            workflow_run_url = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+            artifact_url = '${{ steps.upload_build.outputs.artifact-url }}'
+            source_commit = '${{ steps.metadata.outputs.commit }}'
+            source_tree = '${{ steps.metadata.outputs.tree }}'
+            zip_sha256 = $zipSha256.ToLowerInvariant()
+            mahou_exe_sha256 = (Get-FileHash $exePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          }
+          $evidencePath = Join-Path $env:GITHUB_WORKSPACE "artifact-evidence-$platform.json"
+          [System.IO.File]::WriteAllText(
+            $evidencePath,
+            (($evidence | ConvertTo-Json -Depth 6) + "`n"),
+            (New-Object System.Text.UTF8Encoding($false)))
+
+      - name: Upload post-upload evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ${{ steps.metadata.outputs.artifact_name }}-evidence
+          path: artifact-evidence-${{ matrix.platform }}.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload verified build logs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ${{ steps.metadata.outputs.artifact_name }}-logs
+          path: |
+            msbuild-${{ matrix.platform }}-build1.log
+            msbuild-${{ matrix.platform }}-build2.log
+            deterministic-build-${{ matrix.platform }}.txt
+            security-regression.txt
+            ui-resource-regression.txt
+            artifact-provenance-regression.txt
+          if-no-files-found: error
+          retention-days: 7

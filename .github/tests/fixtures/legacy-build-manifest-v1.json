@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "product": "MIXANIZM Mahou",
+  "version": "2.9.0.1-mixanizm",
+  "source_commit": "0f9b75c37413af986aa92170f44b2fd5b397d5a5",
+  "platform": "x86",
+  "target_framework": ".NET Framework 4.8",
+  "deterministic_rebuild_verified": true,
+  "legacy_self_update": "disabled",
+  "public_sync": "disabled",
+  "security_regression": "passed",
+  "runtime_test_status": "required before release",
+  "files": [
+    {
+      "path": "Mahou.exe",
+      "sha256": "3be10ed6c998f422a78e57c2581de332b3a7a6af03406a282a86efc34dfc8ac9"
+    },
+    {
+      "path": "Mahou.exe.config",
+      "sha256": "8521251796a389b65155be30d92aa71a157942ac1c8a5a59f205b553d8d58724"
+    },
+    {
+      "path": "AS_dict.txt",
+      "sha256": "b28a734935f2bbb2acf882858df05631a44a53701667c797a0492a76b23f87f2"
+    },
+    {
+      "path": "deterministic-build-x86.txt",
+      "sha256": "9a75d5aeeb588c50cd8f559078c06ec5a305b0e141fdd458b2ed98f01ddc6f79"
+    },
+    {
+      "path": "security-regression.txt",
+      "sha256": "310a240b27d9e75e2d53b07d958280a8ae2872b4939065aa3ce3d21ab1179e1d"
+    },
+    {
+      "path": "README-MIXANIZM.md",
+      "sha256": "667b6a619b2cc83ca65d8df5e766e26066b398a95f71e1f720ea1c507bed3b1b"
+    },
+    {
+      "path": "SECURITY-AUDIT-MODERN.md",
+      "sha256": "071606cb527c83d2fb6ac6f93fe791ede2a418122b94601c46b527335c535edb"
+    },
+    {
+      "path": "KNOWN-LIMITATIONS.md",
+      "sha256": "fadfea749a859ee1707710c706e8d10677853607af79b3fe921d7c70c1adc742"
+    },
+    {
+      "path": "TEST-PLAN-WINDOWS11.md",
+      "sha256": "9cd8471afcf45cc71d08e32cceec4f730cba7208f35dcc1857ab1bbdbc4257db"
+    }
+  ]
+}

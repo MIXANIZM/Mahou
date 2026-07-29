@@ -1,143 +1,146 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
+using System.Threading;
 
-namespace Mahou
-{
-    public static class NativeClipboard
-    {
-        #region DLL Imports/Constants
-        [DllImport("user32.dll")]
-        static extern IntPtr GetClipboardData(uint uFormat);
-        [DllImport("user32.dll")]
-        static extern IntPtr SetClipboardData(uint uFormat, IntPtr hMem);
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool EmptyClipboard();
-        [DllImport("user32.dll")]
-        static extern bool OpenClipboard(IntPtr hWndNewOwner);
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern bool CloseClipboard();
-        [DllImport("user32.dll")]
-        public static extern bool IsClipboardFormatAvailable(uint format);
-        [DllImport("kernel32.dll")]
-        static extern IntPtr GlobalLock(IntPtr hMem);
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr GlobalUnlock(IntPtr hMem);
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr GlobalAlloc(uint uFlags, UIntPtr dwBytes);
-        [DllImport("kernel32.dll")]
-        public static extern UIntPtr GlobalSize(IntPtr hMem);
-        [DllImport("kernel32.dll")]
-        static extern uint EnumClipboardFormats(uint format);
-        public const uint GMEM_DDESHARE = 0x2000;
-        public const uint GMEM_MOVEABLE = 0x2;
-        public enum uFormat
-        {
-            CF_TEXT = 1,
-            CF_BITMAP = 2,
-            CF_SYLK = 4,
-            CF_DIF = 5,
-            CF_TIFF = 6,
-            CF_OEMTEXT = 7,
-            CF_DIB = 8,
-            CF_PALETTE = 9,
-            CF_PENDATA = 10,
-            CF_RIFF = 11,
-            CF_WAVE = 12,
-            CF_UNICODETEXT = 13
-        }
-        #endregion
-        public static void Clear() // Clears Clipboard
-        {
-            OpenClipboard(IntPtr.Zero);
-            EmptyClipboard();
-            CloseClipboard();
-        }
-        public static string GetText() // Gets text data from clipboard
-        {
-            if (!IsClipboardFormatAvailable((uint)uFormat.CF_UNICODETEXT))
-                return null;
-            int Tries = 0;
-            var opened = false;
-            string data = null;
-            while (true)
-            {
-                ++Tries;
-                opened = OpenClipboard(IntPtr.Zero);
-                var hGlobal = GetClipboardData((uint)uFormat.CF_UNICODETEXT);
-                var lpwcstr = GlobalLock(hGlobal);
-                data = Marshal.PtrToStringUni(lpwcstr);
-                if (opened)
-                {
-                    GlobalUnlock(hGlobal);
-                    break;
-                }
-                System.Threading.Thread.Sleep(1);
+namespace Mahou {
+    /// <summary>
+    /// Bounded native clipboard operations and a non-materializing OLE snapshot.
+    /// The snapshot holds the original IDataObject instead of enumerating and
+    /// re-serializing formats such as HTML, RTF, Excel, images and file drops.
+    /// </summary>
+    public static class NativeClipboard {
+        const int OpenAttempts = 25;
+        const int RetryDelayMs = 4;
+        const uint GMEM_MOVEABLE = 0x0002;
+        const uint GMEM_ZEROINIT = 0x0040;
+
+        [DllImport("ole32.dll")]
+        static extern int OleGetClipboard([MarshalAs(UnmanagedType.Interface)] out IDataObject dataObject);
+
+        [DllImport("ole32.dll")]
+        static extern int OleSetClipboard([MarshalAs(UnmanagedType.Interface)] IDataObject dataObject);
+
+        static bool OpenWithRetry() {
+            for (var i = 0; i < OpenAttempts; i++) {
+                if (WinAPI.OpenClipboard(IntPtr.Zero)) return true;
+                Thread.Sleep(RetryDelayMs);
             }
-            CloseClipboard();
-            return data;
+            return false;
         }
-        public static ClipboardData GetClipboardDatas() // Gets all clipboard datas, but only text-based datas supported...
-        {
-            var cd = new ClipboardData()
-            {
-                data = new List<byte[]>(),
-                format = new List<uint>()
-            };
-            OpenClipboard(IntPtr.Zero);
-            foreach (var fmt in (uint[])Enum.GetValues(typeof(uFormat)))
-            {
-                IntPtr pos = GetClipboardData(fmt);
-                if (pos == IntPtr.Zero)
-                    continue;
-                UIntPtr lenght = GlobalSize(pos);
-                IntPtr gLock = GlobalLock(pos);
-                //Console.WriteLine(fmt + " is awaible in clipboard!!");
-                byte[] data;
-                if ((uint)lenght > 0)
-                {
-                    //Init a buffer which will contain the clipboard data
-                    data = new byte[(uint)lenght];
-                    //Console.WriteLine(lenght);
-                    int l = Convert.ToInt32(lenght.ToString());
-                    //Copy data from clipboard to our byte[] buffer
-                    Marshal.Copy(gLock, data, 0, l);
-                }
-                else
-                {
-                    data = new byte[0];
-                }
-                cd.data.Add(data);
-                cd.format.Add(fmt);
+
+        public static bool Clear() {
+            if (!OpenWithRetry()) return false;
+            try { return WinAPI.EmptyClipboard(); }
+            finally { WinAPI.CloseClipboard(); }
+        }
+
+        public static bool IsEmpty() {
+            if (!OpenWithRetry()) return false;
+            try {
+                return WinAPI.EnumClipboardFormats(0) == 0;
+            } finally {
+                WinAPI.CloseClipboard();
             }
-            CloseClipboard();
-            return cd;
         }
-        public static void RestoreData(ClipboardData datas) // Places all datas to clipboard, but only text-based datas supported...
-        {
-            OpenClipboard(IntPtr.Zero);
-            EmptyClipboard();
-            for (int i = 0; i != datas.data.Count; i++)
-            {
-                var data = datas.data[i];
-                //foreach (var d in data)
-                //{
-                //    Console.WriteLine("|"+d);
-                //}
-                //Console.WriteLine(data.GetLength(0));
-                IntPtr alloc = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, new UIntPtr(Convert.ToUInt32(data.GetLength(0))));
-                var glock = GlobalLock(alloc);
-                var fmt = datas.format[i];
-                Marshal.Copy(data, 0, glock, data.GetLength(0));
-                GlobalUnlock(alloc);
-                SetClipboardData(fmt, alloc);
+
+        public static string GetText(uint format = WinAPI.CF_UNICODETEXT, bool wide = true) {
+            if (!WinAPI.IsClipboardFormatAvailable(format) || !OpenWithRetry()) return null;
+            try {
+                var handle = WinAPI.GetClipboardData(format);
+                if (handle == IntPtr.Zero) return null;
+                var pointer = WinAPI.GlobalLock(handle);
+                if (pointer == IntPtr.Zero) return null;
+                try { return wide ? Marshal.PtrToStringUni(pointer) : Marshal.PtrToStringAnsi(pointer); }
+                finally { WinAPI.GlobalUnlock(handle); }
+            } finally {
+                WinAPI.CloseClipboard();
             }
-            CloseClipboard();
         }
-        public struct ClipboardData // Struct of List of byte[](data) and uint(data format)
-        {
-            public List<byte[]> data;
-            public List<uint> format;
+
+        public static bool SetText(string text) {
+            text = text ?? String.Empty;
+            if (!OpenWithRetry()) return false;
+            IntPtr memory = IntPtr.Zero;
+            try {
+                if (!WinAPI.EmptyClipboard()) return false;
+                var bytes = checked((text.Length + 1) * 2);
+                memory = WinAPI.GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, new UIntPtr((uint)bytes));
+                if (memory == IntPtr.Zero) return false;
+                var pointer = WinAPI.GlobalLock(memory);
+                if (pointer == IntPtr.Zero) return false;
+                try {
+                    Marshal.Copy(text.ToCharArray(), 0, pointer, text.Length);
+                    Marshal.WriteInt16(pointer, text.Length * 2, 0);
+                } finally {
+                    WinAPI.GlobalUnlock(memory);
+                }
+                if (WinAPI.SetClipboardData(WinAPI.CF_UNICODETEXT, memory) == IntPtr.Zero) return false;
+                memory = IntPtr.Zero;
+                return true;
+            } finally {
+                if (memory != IntPtr.Zero) WinAPI.GlobalFree(memory);
+                WinAPI.CloseClipboard();
+            }
+        }
+
+        public sealed class OleSnapshot : IDisposable {
+            IDataObject dataObject;
+            readonly bool wasEmpty;
+            bool restored;
+
+            internal OleSnapshot(IDataObject dataObject, bool wasEmpty) {
+                this.dataObject = dataObject;
+                this.wasEmpty = wasEmpty;
+            }
+
+            public bool Restore() {
+                if (restored) return true;
+                try {
+                    if (wasEmpty) {
+                        restored = Clear();
+                        return restored;
+                    }
+                    if (dataObject == null) return false;
+                    for (var attempt = 0; attempt < OpenAttempts; attempt++) {
+                        if (OleSetClipboard(dataObject) >= 0) {
+                            restored = true;
+                            return true;
+                        }
+                        Thread.Sleep(RetryDelayMs);
+                    }
+                    Logging.Log("OLE clipboard restore remained unavailable after bounded retries.", 2);
+                    return false;
+                } catch (Exception ex) {
+                    Logging.Log("OLE clipboard restore failed: " + ex.Message, 2);
+                    return false;
+                }
+            }
+
+            public void Dispose() {
+                if (dataObject != null && Marshal.IsComObject(dataObject)) {
+                    try { Marshal.ReleaseComObject(dataObject); } catch { }
+                }
+                dataObject = null;
+            }
+        }
+
+        public static OleSnapshot CaptureOleSnapshot() {
+            Exception lastError = null;
+            for (var attempt = 0; attempt < OpenAttempts; attempt++) {
+                try {
+                    IDataObject dataObject;
+                    var result = OleGetClipboard(out dataObject);
+                    if (result >= 0 && dataObject != null) return new OleSnapshot(dataObject, false);
+                    if (IsEmpty()) return new OleSnapshot(null, true);
+                } catch (Exception ex) {
+                    lastError = ex;
+                }
+                Thread.Sleep(RetryDelayMs);
+            }
+            Logging.Log("OLE clipboard snapshot unavailable after bounded retries" +
+                        (lastError == null ? "." : ": " + lastError.Message), 2);
+            return null;
         }
     }
 }
