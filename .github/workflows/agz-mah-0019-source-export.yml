@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - agz-mah-0019-remove-snippets-decouple-autoswitch
+  pull_request:
+    branches:
+      - mixanizm-modern-v2.9.0.1
 
 permissions:
   contents: read
@@ -16,6 +19,7 @@ jobs:
       - name: Checkout exact branch head
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - name: Pack source tree
         shell: bash
