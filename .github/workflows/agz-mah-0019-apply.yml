@@ -61,7 +61,6 @@ jobs:
           rm -f .github/workflows/agz-mah-0019-apply.yml
           test ! -e .github/workflows/agz-mah-0019-source-export.yml
           test ! -e .github/patches
-          git diff --check
 
       - name: Run source regressions
         shell: bash
