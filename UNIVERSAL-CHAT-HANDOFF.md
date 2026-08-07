@@ -71,7 +71,7 @@ Do not ask the user to run that candidate again. It hung during startup with sus
 
 The bundled dictionary has exactly 5,188,519 characters, 151,429 complete rules/aliases and 18 comment lines. AGZ-MAH-0020 replaces the suffix-copy parser with a monotonic bounded-index parser, publishes no partial data on malformed input, derives the UI count from the same parse, suppresses programmatic `TextChanged` parsing during configuration load, and clears active data without touching `AS_dict.txt` when disabled.
 
-`AutoSwitchDictionaryStartupRegression` covers the real dictionary, exact first/middle/final mappings, aliases, comments, duplicates/order, LF/CRLF, malformed trailing input, literal snippet-like values, repeated parses, disabled clearing, a 150,000-rule multi-megabyte dictionary, 12-second x86/x64 bounds, and exactly one parser invocation through the configuration reload path. Local x86 and x64 executable regressions pass below 100 ms for both large inputs. Exact-head deterministic zero-warning CI and a replacement physical-Windows two-stage smoke remain pending. No physical verification is claimed.
+`AutoSwitchDictionaryStartupRegression` covers the real dictionary, exact first/middle/final mappings, aliases, comments, duplicates/order, LF/CRLF, malformed trailing input, literal snippet-like values, repeated parses, disabled clearing, a 150,000-rule multi-megabyte dictionary, 12-second x86/x64 bounds, and exactly one parser invocation through the configuration reload path. Local and exact-head CI x86/x64 executable regressions pass below 100 ms for both large inputs. Exact-head deterministic zero-warning builds, security gates and x64 provenance pass; a replacement physical-Windows two-stage smoke remains pending. No physical verification is claimed.
 
 The remediation does not restore snippets, alter AutoSwitch mutation semantics, weaken source-context revalidation, expand modern Notepad support, change Chrome/Word routing, modify legacy snippet files, or change the runtime version.
 
@@ -102,7 +102,7 @@ The active product has no snippets tab, enable control, editor, trigger parser, 
 
 AutoSwitch is routed outside any legacy snippets condition. It uses its own source buffer, only `AS_dict.txt`, and a dedicated literal-input primitive. Values such as `__delay`, `__execute`, `__keyboard`, `__paste`, `__selection`, and `__setlayout` are plain text and have no command meaning. Source identity is revalidated before deletion, layout switching, literal insertion, trailing-space insertion, and deferred callbacks. Exact `notepad.exe` + `RichEditD2DPT` remains a strict no-op.
 
-The first candidate failed startup and is rejected. After AGZ-MAH-0020 exact-head CI succeeds, replacement smoke must run in two stages: startup/usability/CPU/exit first, and only after that passes, absent snippets UI/data generation, inactive preserved legacy file, Chrome/Word positive AutoSwitch, modern Notepad no-op, rapid-focus cancellation and restart persistence. Do not ask the user to test removed snippets.
+The first candidate failed startup and is rejected. AGZ-MAH-0020 exact-head CI passes; replacement smoke must run in two stages: startup/usability/CPU/exit first, and only after that passes, absent snippets UI/data generation, inactive preserved legacy file, Chrome/Word positive AutoSwitch, modern Notepad no-op, rapid-focus cancellation and restart persistence. Do not ask the user to test removed snippets.
 
 ### AGZ-MAH-0016 — record verified AutoSwitch containment smoke
 

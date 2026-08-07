@@ -37,7 +37,7 @@ The candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295` is permanently rejec
 
 The source regression additionally proves that `LoadConfigs` contains one parser/reload call, supplies the displayed count from that result, and suppresses programmatic dictionary `TextChanged` parsing while configurations load. The rejected suffix-copy implementation cannot complete the large-dictionary executable case within the bound.
 
-Local Release x86 and x64 builds passed Insert safety, Smart Caps, AutoSwitch containment, AutoSwitch independence and the new startup executable. Bundled and synthetic parsing completed below 100 ms locally. The local machine lacks the .NET Framework 4.8 reference pack, so its otherwise successful builds emit `MSB3644`; required zero-warning double-build evidence must come from exact-head `windows-2022` CI before a candidate is handed off.
+Local Release x86 and x64 builds passed Insert safety, Smart Caps, AutoSwitch containment, AutoSwitch independence and the new startup executable. Bundled and synthetic parsing completed below 100 ms locally. The local machine lacks the .NET Framework 4.8 reference pack, so its otherwise successful builds emit `MSB3644`. Exact-head `windows-2022` CI supplies the required x86/x64 zero-warning deterministic double-build evidence, runs the startup executable against the bundled and synthetic dictionaries on both platforms, and verifies x64 artifact provenance before handoff.
 
 ## AGZ-MAH-0019 automated and physical checks
 

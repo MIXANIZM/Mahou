@@ -54,8 +54,9 @@ Draft PR #2 can leave Draft.
 
 The first independent-AutoSwitch candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295`
 is rejected as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`. `AGZ-MAH-0020`
-replaces its quadratic startup parser and has local executable coverage, but
-replacement exact-head CI and physical-Windows startup smoke are still required.
+replaces its quadratic startup parser and passes local plus exact-head x86/x64
+executable, deterministic-build, security and provenance checks. The replacement
+physical-Windows startup smoke is still required and no physical verification is claimed.
 
 The reconciled status matrix and separate merge/public-release gates are in
 `docs/RELEASE-READINESS.md`. A complete replacement body proposal for Draft PR

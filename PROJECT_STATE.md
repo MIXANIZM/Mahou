@@ -90,7 +90,7 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - Exact bundled dictionary: 5,188,519 characters, 151,429 complete rules/aliases, 18 comment lines.
 - The parser advances monotonically with bounded indexes, creates strings only for complete aliases/replacements, preserves order/duplicates/first-match behavior and LF/CRLF input, and publishes active arrays only after a complete successful parse.
 - Configuration loading reads and parses the dictionary once, derives the displayed count from that result, suppresses programmatic `TextChanged` parsing, and clears active data when AutoSwitch is disabled without touching `AS_dict.txt`.
-- Local x86 and x64 builds and executable regressions pass, including the actual bundled dictionary and a 150,000-rule synthetic dictionary. Local parser timings were under 100 ms; exact-head deterministic zero-warning CI remains pending because the local machine lacks the .NET Framework 4.8 reference pack.
+- Local x86 and x64 builds and executable regressions pass, including the actual bundled dictionary and a 150,000-rule synthetic dictionary. Exact-head Windows CI also passes both platforms, the same executable regression, deterministic double builds, zero warnings/errors, security gates and x64 provenance. Exact candidate identifiers and hashes are recorded in Draft PR #18; the local machine still lacks the .NET Framework 4.8 reference pack.
 - Runtime remains `2.9.0.1-dev`. No physical verification is claimed for the remediation.
 
 ### AGZ-MAH-0019 — remove user snippets and decouple AutoSwitch
@@ -105,7 +105,7 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - AutoSwitch uses a standalone source buffer and dictionary loader. Selected dictionary values are emitted literally by a dedicated AutoSwitch primitive; snippet expressions are unavailable.
 - Legacy `snippets.txt`, `snippets.txt.bak` and obsolete INI values are neither read nor deleted. They remain inactive rollback data.
 - Exact modern Notepad `notepad.exe` + `RichEditD2DPT` remains blocked before mutation, with source-context revalidation retained before each immediate and deferred mutation stage.
-- The exact candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295` failed physical Windows startup and is rejected as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`. AGZ-MAH-0020 supplies the replacement startup remediation; do not represent it as physically verified until replacement exact-head CI and the two-stage Windows smoke are accepted.
+- The exact candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295` failed physical Windows startup and is rejected as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`. AGZ-MAH-0020 supplies an exact-head-CI-verified replacement startup remediation; do not represent it as physically verified until the two-stage Windows smoke is accepted.
 
 ## Previous bounded task result
 
@@ -237,7 +237,7 @@ RichEdit was first because it might expose native range, caret and undo semantic
 
 - `AGZ-MAH-0014` remains recorded as `AUTOSWITCH_FAIL / HISTORICAL DEFECT ARTIFACT` for its immutable source and candidate.
 - `AGZ-MAH-0018` is recorded as `SNIPPETS_TRIGGER_REPLACEMENT_FAIL`; its remaining snippets smoke was stopped.
-- `AGZ-MAH-0019` is the active Draft PR #18 implementation of `USER_SNIPPETS_REMOVED` and `AUTOSWITCH_DECOUPLED`; exact-head CI and user smoke remain pending.
+- `AGZ-MAH-0019` is the active Draft PR #18 implementation of `USER_SNIPPETS_REMOVED` and `AUTOSWITCH_DECOUPLED`; remediated exact-head CI passes and user smoke remains pending.
 - `AGZ-MAH-0015` is `AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT / VERIFIED / ACCEPTED / MERGED` through PR #16 at `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`; modern Notepad behavior is strict safe no-op, not support.
 - `AGZ-MAH-0009` is `USER_PROBE_EVIDENCE_COMPLETE`.
 - `AGZ-MAH-0010` was accepted and merged through PR #12 without changing Mahou runtime behavior.
