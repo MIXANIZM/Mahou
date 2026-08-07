@@ -6,6 +6,8 @@ Verification-record update: `AGZ-MAH-0016`
 
 Product-surface update: `AGZ-MAH-0019`
 
+Startup remediation: `AGZ-MAH-0020`
+
 Results:
 
 ```text
@@ -47,6 +49,8 @@ AutoSwitch conversion routes.
 
 `AGZ-MAH-0018` records `SNIPPETS_TRIGGER_REPLACEMENT_FAIL` for exact source `f02909611eb9a4502e9fe4d8fda9009922f352fd`. The product decision under Draft PR #18 is to remove user snippets rather than repair them. Legacy snippet files and keys are inactive data and are not deleted. AutoSwitch is independent and requires a new focused physical-Windows smoke before the new source can be accepted.
 
+The first PR #18 candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295` is rejected as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`; it must not be retried. `AGZ-MAH-0020` replaces the unbounded dictionary startup path. Replacement exact-head CI, provenance and two-stage physical-Windows smoke remain required; no physical verification is claimed.
+
 Only the following readiness statuses are used:
 
 - `VERIFIED` — the applicable automated and real-Windows evidence exists;
@@ -76,7 +80,7 @@ Only the following readiness statuses are used:
 | Qt / Telegram strict no-op without a real selection | VERIFIED | Smart Caps evidence `0b43bb688115e0051114f38a745fce9e830452fd`; accepted Qt merge `1a930137f7254111f8ef200da3e86c54e697ab5e` | Telegram task head passed Security `30160130485` and Modern Windows build `30160130474` | Accepted Telegram no-op evidence in `AGZ-MAH-0001/0005`; read-only Telegram evidence in `AGZ-MAH-0010`; accepted `AGZ-MAH-0012: DIRECT-PATH-NOT-SAFE` | No positive Telegram mutation test; keep strict no-op | No | No |
 | Positive collapsed-caret support smoke in Chrome or Telegram | NOT_APPLICABLE | Architecture decisions `076ee95325809bd0581c9e0f24e9dbb1022c6603` and `1a930137f7254111f8ef200da3e86c54e697ab5e` | Negative architecture gates and source regressions | Strict no-op has already been observed; there is no accepted writer to smoke | Keep obsolete positive-support requirement removed | No | No |
 | Generic RichEdit-compatible direct adapter | NOT_APPLICABLE | `d07682a0cdf5ce5ed87ee1ecd5a2ae82b73f2fd1` | `AGZ-MAH-0011` exact-head runs | Installed-build evidence did not establish a supported external write contract | Do not claim or add a generic RichEdit adapter | No | No |
-| User snippets removal | AUTOMATED_ONLY | AGZ-MAH-0019 Draft PR #18 from exact base `f02909611eb9a4502e9fe4d8fda9009922f352fd` | Security, independence, UI-absence, binary-token and deterministic build gates | Physical smoke must confirm absent UI, no clean-profile file generation, and untouched inactive legacy file | Complete focused AGZ-MAH-0019 candidate smoke; do not test removed snippets | Yes until accepted | No |
+| User snippets removal and AutoSwitch startup | AUTOMATED_ONLY | AGZ-MAH-0019 Draft PR #18 plus AGZ-MAH-0020 from exact remediation base `5527f662cb844ba90d264f5b93cb27f8334bf295` | Security, independence, UI-absence, binary-token, startup parser and deterministic build gates; replacement exact-head CI pending | Candidate `5527f662...` failed startup and is rejected; replacement physical evidence is absent | Complete Stage A startup smoke, then Stage B removal/AutoSwitch smoke; do not test removed snippets | Yes until accepted | No |
 | Translator and bounded network behavior | USER_SMOKE_REQUIRED | Current development line | Security regression checks the eight-second timeout, 5000-character limit, disposable clients and maximum three redirects | No accepted live-network Windows record located | Test opt-in translation success, timeout/failure messaging, redirects and absence of sensitive diagnostic output | Yes | No |
 | Input history | USER_SMOKE_REQUIRED | Current development line | Builds and source gates pass; high-frequency history writes are intentionally outside `AtomicFile` | No accepted focused runtime record located | Test opt-in recording, Backspace modes, date/hour files and long-session behavior | Yes | No |
 | Autorun | USER_SMOKE_REQUIRED | Current development line | Security regression enforces only `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` creation and legacy cleanup | No accepted focused runtime record located | Enable/disable, sign out/in, confirm exact executable command and legacy shortcut/task removal | Yes | No |

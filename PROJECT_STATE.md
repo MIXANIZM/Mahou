@@ -1,6 +1,6 @@
 # Project state — MIXANIZM Mahou
 
-Snapshot date: 2026-07-29
+Snapshot date: 2026-08-07
 
 ## Authoritative development line
 
@@ -14,6 +14,7 @@ Snapshot date: 2026-07-29
 - Current development head at the start of `AGZ-MAH-0015`: `363a83b227cfa14e798e442960640e7caed03913`
 - Current development head at the start of `AGZ-MAH-0016`: `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`
 - Current development head at the start of `AGZ-MAH-0019`: `f02909611eb9a4502e9fe4d8fda9009922f352fd`
+- Draft PR #18 head at the start of `AGZ-MAH-0020`: `5527f662cb844ba90d264f5b93cb27f8334bf295`
 - Runtime line: `2.9.0.1-dev`
 - Agatzub Development Ruleset: `v2.7.0`
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
@@ -30,6 +31,7 @@ Snapshot date: 2026-07-29
 - AutoSwitch modern Notepad containment: `AGZ-MAH-0015: AUTOSWITCH_MODERN_NOTEPAD_CONTAINMENT / VERIFIED / ACCEPTED / MERGED`
 - User snippets runtime failure: `AGZ-MAH-0018: SNIPPETS_TRIGGER_REPLACEMENT_FAIL`
 - Active product decision: `USER_SNIPPETS_REMOVED` and `AUTOSWITCH_DECOUPLED` under `AGZ-MAH-0019`
+- Active startup remediation: `AGZ-MAH-0020: AUTOSWITCH_DICTIONARY_STARTUP_REMEDIATION`
 
 The old `master` branch is not the current working line for modernized Mahou. New bounded tasks normally branch from `mixanizm-modern-v2.9.0.1` unless a task handoff explicitly states otherwise.
 
@@ -62,6 +64,7 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - Base: `mixanizm-modern-v2.9.0.1` at exact task base `f02909611eb9a4502e9fe4d8fda9009922f352fd`.
 - Head branch: `agz-mah-0019-remove-snippets-decouple-autoswitch`.
 - Scope is limited to removal of user snippets, independent literal AutoSwitch routing, regression coverage, documentation, and an exact-head smoke candidate.
+- The candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295` is rejected as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`; AGZ-MAH-0020 remediates startup on the same branch and PR.
 - Do not merge or mark Ready. Physical-Windows smoke is still required.
 
 ### PR #16
@@ -78,6 +81,18 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 
 ## Current bounded task result
 
+### AGZ-MAH-0020 — AutoSwitch dictionary startup remediation
+
+- Exact starting head: `5527f662cb844ba90d264f5b93cb27f8334bf295`.
+- Existing task branch and Draft PR remain `agz-mah-0019-remove-snippets-decouple-autoswitch` and #18.
+- The rejected AGZ-MAH-0019 artifact remains immutable: build `30469006963`, x64 artifact `8730807263`, ZIP SHA-256 `4627c32bffe76ed3df71b8f35cfaa922783c31ee65770ea034207b78b2695214`, `Mahou.exe` SHA-256 `87d86a215f0ee57fa95567a2a74550b4e1190b495bb4d8127601fb24a1407abb`.
+- Accepted failure: `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`. The user must not be asked to run that candidate again.
+- Exact bundled dictionary: 5,188,519 characters, 151,429 complete rules/aliases, 18 comment lines.
+- The parser advances monotonically with bounded indexes, creates strings only for complete aliases/replacements, preserves order/duplicates/first-match behavior and LF/CRLF input, and publishes active arrays only after a complete successful parse.
+- Configuration loading reads and parses the dictionary once, derives the displayed count from that result, suppresses programmatic `TextChanged` parsing, and clears active data when AutoSwitch is disabled without touching `AS_dict.txt`.
+- Local x86 and x64 builds and executable regressions pass, including the actual bundled dictionary and a 150,000-rule synthetic dictionary. Local parser timings were under 100 ms; exact-head deterministic zero-warning CI remains pending because the local machine lacks the .NET Framework 4.8 reference pack.
+- Runtime remains `2.9.0.1-dev`. No physical verification is claimed for the remediation.
+
 ### AGZ-MAH-0019 — remove user snippets and decouple AutoSwitch
 
 - Exact base: `f02909611eb9a4502e9fe4d8fda9009922f352fd`.
@@ -90,7 +105,7 @@ The old `master` branch is not the current working line for modernized Mahou. Ne
 - AutoSwitch uses a standalone source buffer and dictionary loader. Selected dictionary values are emitted literally by a dedicated AutoSwitch primitive; snippet expressions are unavailable.
 - Legacy `snippets.txt`, `snippets.txt.bak` and obsolete INI values are neither read nor deleted. They remain inactive rollback data.
 - Exact modern Notepad `notepad.exe` + `RichEditD2DPT` remains blocked before mutation, with source-context revalidation retained before each immediate and deferred mutation stage.
-- Status remains implementation/automated verification pending. Do not represent AutoSwitch at this new source as physically verified until the focused Windows smoke is accepted.
+- The exact candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295` failed physical Windows startup and is rejected as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`. AGZ-MAH-0020 supplies the replacement startup remediation; do not represent it as physically verified until replacement exact-head CI and the two-stage Windows smoke are accepted.
 
 ## Previous bounded task result
 

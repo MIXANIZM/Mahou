@@ -56,7 +56,7 @@ for required in (
     "static void PerformAutoSwitchLiteralReplacement(",
     "static WinAPI.INPUT[] BuildAutoSwitchLiteralInputs(string replacementText)",
     "KInputs.MakeInput(BuildAutoSwitchLiteralInputs(replacementText))",
-    "public static void ReloadAutoSwitchDictionary()",
+    "internal static AutoSwitchDictionaryParseResult ReloadAutoSwitchDictionary()",
     "LoadAutoSwitchDictionary(MahouUI.AutoSwitchDictionaryRaw)",
 ):
     if required not in hook:
@@ -72,7 +72,7 @@ for forbidden in ("Regex", "Process", "Clipboard", "DoLater", "Thread.Sleep", "_
 # The runtime loads only AS_dict.txt and never creates or modifies legacy snippet files.
 if '"AS_dict.txt"' not in ui or 'AS_dictfile' not in ui:
     errors.append("AutoSwitch dictionary path is missing")
-if "KMHook.ReloadAutoSwitchDictionary();" not in ui:
+if "KMHook.ReloadAutoSwitchDictionary()" not in ui:
     errors.append("AutoSwitch dictionary is not reloaded independently")
 for source_name, source in (("ui", ui), ("paths", paths), ("hook", hook), ("configs", configs)):
     for forbidden in ("snippets.txt", "snippets.txt.bak"):

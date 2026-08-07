@@ -16,6 +16,7 @@ translation panel, history and advanced layout controls.
 - AutoSwitch is opt-in and uses the dictionary shipped with the build.
 - User-defined snippets are removed. A clean profile does not generate `snippets.txt`; existing `snippets.txt` or `.bak` files remain untouched inactive rollback data.
 - AutoSwitch is independent of all obsolete snippet settings and treats dictionary values as literal text only.
+- The bundled AutoSwitch dictionary is parsed once per configuration load by a forward-only parser; malformed or incomplete dictionaries fail closed without publishing partial rules.
 - Smart Caps is opt-in, local-only and corrects accidental uppercase letters inside freshly typed words only through verified direct text adapters. All-caps words are skipped; intentional mixed-case names can be kept through personal exceptions.
 - The Smart Caps tab uses Mahou's common Russian/English localization and shows a session counter for corrections performed by Mahou itself.
 - JKL is disabled by default until its native helpers receive a separate audit and are
@@ -50,6 +51,11 @@ current head. The independent AutoSwitch candidate, modifier handling, translato
 input history, startup/restart, settings migration, UI scaling and the full
 settings UI still require the applicable retained-feature Windows smoke before
 Draft PR #2 can leave Draft.
+
+The first independent-AutoSwitch candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295`
+is rejected as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`. `AGZ-MAH-0020`
+replaces its quadratic startup parser and has local executable coverage, but
+replacement exact-head CI and physical-Windows startup smoke are still required.
 
 The reconciled status matrix and separate merge/public-release gates are in
 `docs/RELEASE-READINESS.md`. A complete replacement body proposal for Draft PR

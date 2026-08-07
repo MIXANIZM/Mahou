@@ -34,3 +34,4 @@ jobs:
           python3 .github/scripts/artifact-provenance-regression.py
           python3 .github/scripts/autoswitch-containment-regression.py
           python3 .github/scripts/autoswitch-independence-regression.py
+          python3 .github/scripts/autoswitch-dictionary-startup-regression.py

@@ -22,6 +22,14 @@ AutoSwitch is a separate subsystem:
 
 This refactor does not establish positive modern Notepad support. Chrome and Microsoft Word remain the positive focused-smoke targets for the existing AutoSwitch conversion behavior.
 
+### AutoSwitch dictionary startup boundary
+
+The exact AGZ-MAH-0019 candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295` is rejected as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`. Its loader copied the complete remaining dictionary suffix for every rule, searched each suffix again, separately reparsed the dictionary for the UI count, and allocated three character-sized Boolean arrays. The real 5,188,519-character dictionary contains exactly 151,429 complete rules/aliases and 18 comments, so that startup path became effectively quadratic on the UI thread.
+
+`AGZ-MAH-0020` replaces that path with `AutoSwitchDictionaryParser`. The parser owns one monotonic cursor, uses bounded ordinal searches from explicit indexes, allocates completed aliases and replacements only, preserves rule/alias order and duplicate first-match behavior, normalizes CRLF replacements to the legacy LF representation, and accepts the embedded BOM between bundled dictionary sections. A malformed or incomplete rule returns an empty failed result; `KMHook` publishes no partial arrays.
+
+`LoadConfigs` reads and parses `AS_dict.txt` once when AutoSwitch is enabled and derives the UI count from the same result. Programmatic dictionary textbox updates are suppressed while configuration is loading. Disabling AutoSwitch clears the active arrays without parsing, modifying, or deleting the dictionary file.
+
 ## Text-mutation safety boundary
 
 Text controls are treated by capability, not by a permissive class-name guess.

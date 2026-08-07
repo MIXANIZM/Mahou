@@ -8,12 +8,36 @@ python .github/scripts/ui-resource-regression.py
 python .github/scripts/artifact-provenance-regression.py
 python .github/scripts/autoswitch-containment-regression.py
 python .github/scripts/autoswitch-independence-regression.py
+python .github/scripts/autoswitch-dictionary-startup-regression.py
 python .github/scripts/chrome-extension-editing-core-regression.py
 node .github/tests/chrome-extension-editing-core.test.js
 python .github/scripts/input-surface-probe-regression.py
 ```
 
-The AutoSwitch independence gate proves that snippets UI/runtime/persistence is absent, legacy files are not accessed or deleted, AutoSwitch routing is outside legacy snippets state, and dictionary values are literal. The AutoSwitch containment gate locks the exact `notepad.exe` + `RichEditD2DPT` rejection, source-context capture, immediate/deferred revalidation call sites, workflow integration, and unchanged runtime version. The other source gates check Mahou safety invariants, common Russian/English Smart Caps localization markers, UI resource consistency, and artifact provenance. The Chrome editing-core gates separately check the test-only MV3 manifest, permission boundary, absence of active mutation/network/remote-code/Native Messaging paths, exact diagnostic marker, fixed candidates, fail-closed control and stale-state rules, adjacent-text preservation contracts, and post-mutation verification logic. The input-surface probe gate checks that the standalone executable source contains no mutation, selection, keyboard, clipboard, hook, injection, actual-text or window-title APIs and retains the required schema, embedded commit, redaction and password-suppression markers. None of these source tests replace runtime testing.
+The AutoSwitch independence gate proves that snippets UI/runtime/persistence is absent, legacy files are not accessed or deleted, AutoSwitch routing is outside legacy snippets state, and dictionary values are literal. The AutoSwitch containment gate locks the exact `notepad.exe` + `RichEditD2DPT` rejection, source-context capture, immediate/deferred revalidation call sites, workflow integration, and unchanged runtime version. The AutoSwitch dictionary startup gate rejects suffix-copy parsing, duplicate configuration-load parsing, character-sized count arrays and unsuppressed programmatic `TextChanged` work. The other source gates check Mahou safety invariants, common Russian/English Smart Caps localization markers, UI resource consistency, and artifact provenance. The Chrome editing-core gates separately check the test-only MV3 manifest, permission boundary, absence of active mutation/network/remote-code/Native Messaging paths, exact diagnostic marker, fixed candidates, fail-closed control and stale-state rules, adjacent-text preservation contracts, and post-mutation verification logic. The input-surface probe gate checks that the standalone executable source contains no mutation, selection, keyboard, clipboard, hook, injection, actual-text or window-title APIs and retains the required schema, embedded commit, redaction and password-suppression markers. None of these source tests replace runtime testing.
+
+## AGZ-MAH-0020 AutoSwitch dictionary startup regression
+
+The candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295` is permanently rejected as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`. Do not ask the user to run it again.
+
+`AutoSwitchDictionaryStartupRegression.exe` runs against each Release x86 and x64 `Mahou.exe` and covers:
+
+1. the actual bundled 5,188,519-character `AS_dict.txt`;
+2. exact equality of 151,429 parsed sources and replacements plus 18 comments;
+3. the first, midpoint and final bundled mappings;
+4. aliases, comments, duplicates, ordering and first-match array order;
+5. LF and CRLF input;
+6. a malformed trailing rule that clears active data instead of publishing a partial parse;
+7. literal snippet-like replacement text;
+8. repeated identical parsing;
+9. disabled AutoSwitch clearing active arrays without parsing, changing or deleting `AS_dict.txt`;
+10. a generated multi-megabyte dictionary containing 150,000 rules;
+11. a 12-second completion bound for both the bundled and synthetic dictionaries on x86 and x64;
+12. the actual configuration reload method incrementing the parser invocation count exactly once.
+
+The source regression additionally proves that `LoadConfigs` contains one parser/reload call, supplies the displayed count from that result, and suppresses programmatic dictionary `TextChanged` parsing while configurations load. The rejected suffix-copy implementation cannot complete the large-dictionary executable case within the bound.
+
+Local Release x86 and x64 builds passed Insert safety, Smart Caps, AutoSwitch containment, AutoSwitch independence and the new startup executable. Bundled and synthetic parsing completed below 100 ms locally. The local machine lacks the .NET Framework 4.8 reference pack, so its otherwise successful builds emit `MSB3644`; required zero-warning double-build evidence must come from exact-head `windows-2022` CI before a candidate is handed off.
 
 ## AGZ-MAH-0019 automated and physical checks
 
@@ -282,7 +306,7 @@ The `Modern Windows build` workflow:
 - builds Release x64 twice and compares controlled files byte-for-byte;
 - runs `InsertSafetyRegression` against the built executable;
 - runs `SmartCapsRegression`, including third-initial, interior-capital, hyphenated-word, all-caps, mixed-script, numeric, URL and email cases;
-- runs `AutoSwitchContainmentRegression` and `AutoSwitchIndependenceRegression` against x86 and x64 `Mahou.exe`;
+- runs `AutoSwitchContainmentRegression`, `AutoSwitchIndependenceRegression` and `AutoSwitchDictionaryStartupRegression` against x86 and x64 `Mahou.exe`;
 - packages manifests, SHA-256 sums, security report, containment report, and test documentation;
 - names every build/log/evidence artifact with the runtime version, platform, short source commit, and workflow run ID;
 - verifies the generated archive with the exact full commit and tree, rejects an intentionally wrong expected commit, and rejects a legacy-manifest fixture before upload;

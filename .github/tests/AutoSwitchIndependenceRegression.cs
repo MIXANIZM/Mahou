@@ -41,7 +41,7 @@ static class AutoSwitchIndependenceRegression {
         var replacement = hook.GetMethod("PerformAutoSwitchLiteralReplacement",
             BindingFlags.Static | BindingFlags.NonPublic);
         var reload = hook.GetMethod("ReloadAutoSwitchDictionary",
-            BindingFlags.Static | BindingFlags.Public);
+            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
         Check(builder != null, "literal AutoSwitch input builder missing");
         Check(replacement != null, "dedicated AutoSwitch replacement primitive missing");
         Check(reload != null, "independent AutoSwitch dictionary reload missing");

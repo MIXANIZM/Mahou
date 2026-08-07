@@ -1,9 +1,14 @@
 # Active
 
+- [AGZ-MAH-0020] [IMPLEMENTED / LOCAL_EXECUTABLE_TESTS_PASSED / EXACT-HEAD_CI_PENDING] 2026-08-07
+  Remediate the AutoSwitch dictionary startup hang on existing branch `agz-mah-0019-remove-snippets-decouple-autoswitch` and Draft PR #18 from exact starting head `5527f662cb844ba90d264f5b93cb27f8334bf295`.
+  The rejected AGZ-MAH-0019 candidate remains immutable as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`: build `30469006963`, x64 artifact `8730807263`, ZIP SHA-256 `4627c32bffe76ed3df71b8f35cfaa922783c31ee65770ea034207b78b2695214`, and `Mahou.exe` SHA-256 `87d86a215f0ee57fa95567a2a74550b4e1190b495bb4d8127601fb24a1407abb`.
+  The bundled dictionary contains exactly 5,188,519 characters, 151,429 complete rules/aliases, and 18 comment lines. A monotonic parser now uses forward bounded indexes, publishes only complete successful results, supplies the displayed count, and eliminates the old suffix copies, separate character-array count, and configuration-load `TextChanged` recount. `AutoSwitchDictionaryStartupRegression` passes locally for x86 and x64 against the bundled dictionary and a 150,000-rule synthetic dictionary; exact-head CI and replacement physical-Windows startup smoke remain pending.
+
 - [AGZ-MAH-0019] [IMPLEMENTATION_IN_PROGRESS / DRAFT] 2026-07-29
   Remove user-defined snippets and decouple AutoSwitch from every snippet enablement, parser, persistence, expression, UI and hotkey path. Exact base: `f02909611eb9a4502e9fe4d8fda9009922f352fd`; task branch: `agz-mah-0019-remove-snippets-decouple-autoswitch`; Draft PR #18.
   Product decisions: `USER_SNIPPETS_REMOVED` and `AUTOSWITCH_DECOUPLED`. Existing `snippets.txt` and `snippets.txt.bak` are inactive legacy rollback data: the runtime must not read, parse, create, modify, execute or delete them.
-  AutoSwitch now has its own source buffer, dictionary loader and literal replacement primitive outside `SnippetsEnabled`. Exact modern Notepad `notepad.exe` + `RichEditD2DPT` remains fail-closed. General AutoSwitch behavior at the new source is not accepted until exact-head CI and focused physical-Windows smoke complete.
+  AutoSwitch now has its own source buffer, dictionary loader and literal replacement primitive outside `SnippetsEnabled`. Exact modern Notepad `notepad.exe` + `RichEditD2DPT` remains fail-closed. Its first candidate failed startup with high CPU and is rejected; `AGZ-MAH-0020` is the bounded remediation. General AutoSwitch behavior at the remediated source is not accepted until replacement exact-head CI and focused physical-Windows smoke complete.
 
 # Awaiting supervisor decision
 

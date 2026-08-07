@@ -24,6 +24,13 @@
 - The same context is revalidated before every Backspace/delete, layout change, literal insertion, trailing-space insertion and deferred callback.
 - Exact `notepad.exe` + `RichEditD2DPT`, protected classic Edit, unknown context and changed context fail closed.
 
+## AutoSwitch dictionary parsing boundary
+
+- Dictionary parsing advances only forward and never copies the complete remaining suffix.
+- Active source/replacement arrays are replaced only after a complete successful parse; malformed or incomplete input publishes no partial rules.
+- The displayed rule count comes from the same parse result used by runtime matching, not from a second scan or character-sized tracking arrays.
+- Disabling AutoSwitch clears active parsed data without modifying or deleting `AS_dict.txt`.
+
 ## Secrets and local data
 
 - Proxy credentials use Windows DPAPI for the current user and are masked in the UI.
