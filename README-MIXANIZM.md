@@ -5,7 +5,7 @@
 - Rules content commit: `ba60623aec67c57d46bda7ce2b291a823de2d4ea`
 
 This branch is based on the latest preserved modern Mahou source lineage and keeps the
-full tabbed settings UI, AutoSwitch dictionary, snippets, selection conversion,
+tabbed settings UI, a standalone AutoSwitch dictionary, selection conversion,
 translation panel, history and advanced layout controls.
 
 ## MIXANIZM defaults
@@ -14,6 +14,9 @@ translation panel, history and advanced layout controls.
 - Windows remains responsible for ordinary layout switching.
 - Insert is the shared default action for the last word or selected text.
 - AutoSwitch is opt-in and uses the dictionary shipped with the build.
+- User-defined snippets are removed. A clean profile does not generate `snippets.txt`; existing `snippets.txt` or `.bak` files remain untouched inactive rollback data.
+- AutoSwitch is independent of all obsolete snippet settings and treats dictionary values as literal text only.
+- The bundled AutoSwitch dictionary is parsed once per configuration load by a forward-only parser; malformed or incomplete dictionaries fail closed without publishing partial rules.
 - Smart Caps is opt-in, local-only and corrects accidental uppercase letters inside freshly typed words only through verified direct text adapters. All-caps words are skipped; intentional mixed-case names can be kept through personal exceptions.
 - The Smart Caps tab uses Mahou's common Russian/English localization and shows a session counter for corrections performed by Mahou itself.
 - JKL is disabled by default until its native helpers receive a separate audit and are
@@ -25,8 +28,7 @@ translation panel, history and advanced layout controls.
 
 The legacy self-updater and public sync/backup services are disabled. The dictionary
 button restores the copy packaged with the verified build and does not download or run
-an extraction script. Snippet `__execute` and its external-process launch path are
-physically removed.
+an extraction script. The user-defined snippets feature, including all expression and external-process paths, is physically removed. Existing legacy snippet files are left untouched but are never read or executed.
 
 The translator remains an explicit opt-in feature. When enabled, selected text is sent
 to the configured online translation service. Translation and speech requests use a
@@ -36,9 +38,7 @@ diagnostic output.
 
 ## User data reliability
 
-Configuration is written through its existing temporary-file replacement path. Snippets,
-the AutoSwitch dictionary, imported user files and generated default dictionaries are
-also flushed to a same-directory temporary file and replaced with a `.bak` recovery copy.
+Configuration is written through its existing temporary-file replacement path. The AutoSwitch dictionary, imported user files and generated default dictionaries are also flushed to a same-directory temporary file and replaced with a `.bak` recovery copy.
 High-frequency input-history updates intentionally keep their existing lightweight write
 path until physical keyboard-hook performance testing is available.
 
@@ -47,10 +47,16 @@ path until physical keyboard-hook performance testing is available.
 This is still a draft test branch. Selected-text conversion and Smart Caps have
 accepted focused Windows evidence at their recorded immutable source commits;
 that evidence is not a blanket verification of every retained feature or of the
-current head. AutoSwitch, snippets, modifier handling, translator behavior,
+current head. The independent AutoSwitch candidate, modifier handling, translator behavior,
 input history, startup/restart, settings migration, UI scaling and the full
 settings UI still require the applicable retained-feature Windows smoke before
 Draft PR #2 can leave Draft.
+
+The first independent-AutoSwitch candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295`
+is rejected as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`. `AGZ-MAH-0020`
+replaces its quadratic startup parser and passes local plus exact-head x86/x64
+executable, deterministic-build, security and provenance checks. The replacement
+physical-Windows startup smoke is still required and no physical verification is claimed.
 
 The reconciled status matrix and separate merge/public-release gates are in
 `docs/RELEASE-READINESS.md`. A complete replacement body proposal for Draft PR

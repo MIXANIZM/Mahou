@@ -48,7 +48,7 @@ This document records the first-pass static audit and the hardening applied on t
   re-serializing HTML, RTF, Excel, image and file-drop formats. If preservation cannot
   be guaranteed, selected-text conversion fails open without clearing the clipboard.
 - Clipboard waits are bounded.
-- Snippet `__execute` is blocked by default and requires an explicit hidden opt-in.
+- User-defined snippets, including `__execute` and every expression command path, are removed from the active product. Legacy snippet files are left untouched and inactive.
 - Caps Lock remapping and one-key layout switching default to off.
 - Untouched upstream word/selection hotkeys migrate to a shared `Insert` action.
 

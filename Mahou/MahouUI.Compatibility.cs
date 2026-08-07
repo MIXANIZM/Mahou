@@ -10,12 +10,12 @@ namespace Mahou {
     public partial class MahouUI {
         public static List<int> HKBlockAlt = new List<int>();
         public static bool BlockAltUpNOW = false;
-        static bool isold = true, snip_checking, as_checking;
+        static bool isold = true, as_checking;
         public static Dictionary<string, string> TrSetsValues = new Dictionary<string, string>();
         static string latestSwitch = "null";
 
         const string SYNC_SEP = "#------>";
-        readonly string[] SYNC_NAMES = { "Mahou.ini", "snippets.txt", "history.txt", "TSDict.txt", "Mahou.mm" };
-        readonly string[] SYNC_TYPES = { "ini", "sni", "his", "tdi", "mm" };
+        readonly string[] SYNC_NAMES = { "Mahou.ini", "history.txt", "TSDict.txt", "Mahou.mm" };
+        readonly string[] SYNC_TYPES = { "ini", "his", "tdi", "mm" };
     }
 }

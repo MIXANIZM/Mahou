@@ -17,7 +17,7 @@ The task isolated only the Chrome browser-context editing core for ordinary
 It did not implement or change:
 
 - Mahou runtime code, Smart Caps counters, Backspace reversal, personal exceptions,
-  collapsed-caret Insert, AutoSwitch, snippets, or translator behavior;
+  collapsed-caret Insert, AutoSwitch, the then-existing snippets feature, or translator behavior;
 - Native Messaging or a native host;
 - Telegram, modern Notepad, Edge, external websites, Chrome Web Store publication,
   a local HTTP/WebSocket server, CDP, remote debugging, DLL injection, clipboard access,

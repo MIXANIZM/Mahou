@@ -2,7 +2,33 @@
 
 ## Runtime shape
 
-Mahou is a .NET Framework 4.8 Windows Forms application with low-level keyboard and raw-input processing, local configuration, optional translation, snippets, AutoSwitch, and manual layout conversion.
+Mahou is a .NET Framework 4.8 Windows Forms application with low-level keyboard and raw-input processing, local configuration, optional translation, standalone AutoSwitch, and manual layout conversion.
+
+## User snippets removal and AutoSwitch independence
+
+`AGZ-MAH-0018` established `SNIPPETS_TRIGGER_REPLACEMENT_FAIL` on physical Windows. The product does not retain or repair user-defined snippets. `AGZ-MAH-0019` removes the snippets tab, configuration surface, trigger collection, parser, regex/multiline expansion, expression commands, clipboard/process/keyboard/delay capabilities, hotkeys, sounds, exclusions, reload and persistence paths.
+
+Legacy `snippets.txt`, `snippets.txt.bak` and old INI values are inactive rollback data. The runtime neither reads nor writes nor deletes them. A clean profile does not generate a snippets file.
+
+AutoSwitch is a separate subsystem:
+
+- it is enabled only by its own settings and uses only `AS_dict.txt`;
+- keyboard routing and source buffering are outside every legacy snippets condition;
+- dictionary values are passed to a dedicated literal Unicode input builder and are never parsed as commands or expressions;
+- old `SnippetsEnabled=true` and `SnippetsEnabled=false` values have no runtime effect;
+- foreground HWND, focused-control HWND, PID, executable, class and protected state are captured before routing and revalidated before every mutation stage;
+- unknown, stale, protected or changed context fails closed;
+- exact `notepad.exe` + `RichEditD2DPT` remains rejected before any mutation is scheduled.
+
+This refactor does not establish positive modern Notepad support. Chrome and Microsoft Word remain the positive focused-smoke targets for the existing AutoSwitch conversion behavior.
+
+### AutoSwitch dictionary startup boundary
+
+The exact AGZ-MAH-0019 candidate at `5527f662cb844ba90d264f5b93cb27f8334bf295` is rejected as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`. Its loader copied the complete remaining dictionary suffix for every rule, searched each suffix again, separately reparsed the dictionary for the UI count, and allocated three character-sized Boolean arrays. The real 5,188,519-character dictionary contains exactly 151,429 complete rules/aliases and 18 comments, so that startup path became effectively quadratic on the UI thread.
+
+`AGZ-MAH-0020` replaces that path with `AutoSwitchDictionaryParser`. The parser owns one monotonic cursor, uses bounded ordinal searches from explicit indexes, allocates completed aliases and replacements only, preserves rule/alias order and duplicate first-match behavior, normalizes CRLF replacements to the legacy LF representation, and accepts the embedded BOM between bundled dictionary sections. A malformed or incomplete rule returns an empty failed result; `KMHook` publishes no partial arrays.
+
+`LoadConfigs` reads and parses `AS_dict.txt` once when AutoSwitch is enabled and derives the UI count from the same result. Programmatic dictionary textbox updates are suppressed while configuration is loading. Disabling AutoSwitch clears the active arrays without parsing, modifying, or deleting the dictionary file.
 
 ## Text-mutation safety boundary
 
@@ -107,7 +133,7 @@ That path assumed the same caret, focus, control, and committed text state throu
 
 `AGZ-MAH-0015` is containment, not support. AutoSwitch captures the foreground HWND, focused-control HWND, process ID, executable name, and control class before matching. Exact `notepad.exe` + `RichEditD2DPT`, protected classic Edit, incomplete identity, and stale identity fail closed. The same snapshot is checked before immediate Backspace, layout change, word deletion, converted-key replay, trailing-space insertion, error restoration, and inside delayed JKL or configured-delay execution. A focus/control change makes the pending action a no-op.
 
-This guard does not create an exact-range writer and does not change manual Insert, Smart Caps, selected-text conversion, snippets, or clipboard architecture. Chrome and Microsoft Word continue through their existing AutoSwitch routes. PR #3 remains outside the accepted implementation.
+This guard does not create an exact-range writer. `AGZ-MAH-0019` later removes user snippets and makes AutoSwitch independent without changing the manual Insert, Smart Caps, selected-text, or clipboard architecture. Chrome and Microsoft Word remain on their existing positive AutoSwitch routes. PR #3 remains outside the accepted implementation.
 
 Each future adapter must independently prove:
 

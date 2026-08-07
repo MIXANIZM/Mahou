@@ -106,6 +106,7 @@
   <ItemGroup>
     <Compile Include="Classes\AtomicFile.cs" />
     <Compile Include="Classes\AutoSwitchSafety.cs" />
+    <Compile Include="Classes\AutoSwitchDictionaryParser.cs" />
     <Compile Include="Classes\Auray.cs" />
     <Compile Include="Classes\Auri.cs" />
     <Compile Include="Classes\CaretPos.cs" />

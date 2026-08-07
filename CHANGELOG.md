@@ -15,6 +15,7 @@
 ### Changed
 
 - Smart Caps now corrects accidental uppercase letters anywhere after the first letter of each word segment, including a third initial capital and capitals in the middle; all-caps words remain unchanged.
+- AutoSwitch dictionary startup now parses once with forward-only bounded indexes and derives the displayed count from that same result.
 
 ### Security
 
@@ -31,3 +32,4 @@
 - The long Smart Caps description is laid out dynamically instead of being clipped.
 - Collapsed-caret `Insert` no longer uses generated blue selection.
 - Modern Windows Notepad/RichEdit is contained as a safe no-op until a dedicated direct adapter exists.
+- Fixed the high-CPU startup hang caused by repeatedly copying and rescanning the remaining multi-megabyte AutoSwitch dictionary.

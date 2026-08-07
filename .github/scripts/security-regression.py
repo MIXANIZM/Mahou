@@ -31,6 +31,8 @@ def method_body(source, signature):
 files = {
     "ui": text("Mahou/MahouUI.cs"),
     "security_ui": text("Mahou/MahouUI.Security.cs"),
+    "designer": text("Mahou/MahouUI.Designer.cs"),
+    "llhook": text("Mahou/Classes/LLHook.cs"),
     "configs": text("Mahou/Classes/Configs.cs"),
     "atomic": text("Mahou/Classes/AtomicFile.cs"),
     "clipboard": text("Mahou/Classes/NativeClipboard.cs"),
@@ -153,15 +155,7 @@ required = {
     "hook": ["CaptureClipboardBackup", "EnsureClipboardBackup", "EnsureClipboardRestored",
              "Temporary clipboard replacement refused because no full backup exists",
              "ConvertSelectionOrLastWord", "SelectionProbe.GetState",
-             "selected text length=", "input length=", "Current snippet length:",
-             "Snippet rewrite completed; source length=", "const int MaxSnippetDelayMs = 5000;",
-             "const int MaxKeyboardStepDelayMs = 1000;", "const int MaxSnippetKeyRepeat = 1000;",
-             "const int MaxUppercaseCharacters = 10000;",
-             "d = Math.Max(0, Math.Min(d, MaxSnippetDelayMs));",
-             "times = Math.Max(0, Math.Min(times, MaxSnippetKeyRepeat));",
-             "delay = Math.Max(0, Math.Min(parsedDelay, MaxKeyboardStepDelayMs));",
              "timeout = Math.Max(0, Math.Min(timeout, 600000));",
-             "for (int x = 0; x < times; x++)",
              "AtomicFile.WriteAllText(PATH, DictToRaw(def));",
              "static int manualConversionInProgress;",
              "Interlocked.CompareExchange(ref manualConversionInProgress, 1, 0)",
@@ -177,7 +171,11 @@ required = {
              "SelectionProbe.TryReplaceActiveWordRange",
              "SmartCaps.HandlePrintable", "SmartCaps.HandleBoundaryKeyDown",
              "SmartCaps.HandleBackspaceKeyDown", "SmartCaps.HandleKeyUp",
-             "MaxCaretWordCharacters = 256"],
+             "MaxCaretWordCharacters = 256",
+             "static readonly List<char> autoSwitchText",
+             "PerformAutoSwitchLiteralReplacement",
+             "BuildAutoSwitchLiteralInputs",
+             "KInputs.MakeInput(BuildAutoSwitchLiteralInputs(replacementText))"],
     "smart_caps": ["TryBuildCorrection", "TryDirectReplace", "TryGetStandardEditWordAroundCaret",
                    "TryReplaceStandardEditWord", "TryReplaceActiveWordRange",
                    "TryGetStandardEditFreshTextBeforeCaret", "TryReplaceActiveFreshTextBeforeCaret",
@@ -243,7 +241,6 @@ required = {
            "var selectedIcon = large != IntPtr.Zero ? large : small;",
            "if (large != IntPtr.Zero) WinAPI.DestroyIcon(large);",
            "if (small != IntPtr.Zero && small != large) WinAPI.DestroyIcon(small);",
-           "AtomicFile.WriteAllText(snipfile, txt_Snippets.Text, Encoding.UTF8);",
            "AtomicFile.WriteAllText(AS_dictfile, AutoSwitchDictionaryRaw, Encoding.UTF8);",
            "AtomicFile.WriteAllText(f, d[ty]);"],
     "project": ["<TargetFrameworkVersion>v4.8</TargetFrameworkVersion>",
@@ -264,6 +261,18 @@ for key, needles in required.items():
     for needle in needles:
         if needle not in source:
             errors.append("required hardening marker missing in %s: %s" % (key, needle))
+
+active_runtime_keys = ("ui", "security_ui", "designer", "configs", "hook", "llhook", "paths", "languages")
+active_snippet_tokens = (
+    "snippetsenabled", "snippets.txt", "expandsnippet", "checksnippet", "txt_snippets",
+    "tab_snippets", "allowSnippetExecute".lower(), "__execute", "__delay", "__keyboard",
+    "__paste", "__selection", "__setlayout", "__setsnip", "__setlsnip",
+)
+for key in active_runtime_keys:
+    lowered = files[key].lower()
+    for token in active_snippet_tokens:
+        if token in lowered:
+            errors.append("removed user snippets capability remains in %s: %s" % (key, token))
 
 privacy_forbidden = [
     'Starting conversion of [" + ClipStr', 'Conversion of string [" + ClipStr',

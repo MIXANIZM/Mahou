@@ -14,6 +14,7 @@
 - Current development head at the `AGZ-MAH-0013` start: `1a930137f7254111f8ef200da3e86c54e697ab5e`
 - Current development head at the `AGZ-MAH-0015` start: `363a83b227cfa14e798e442960640e7caed03913`
 - Current development head at the `AGZ-MAH-0016` start: `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`
+- Draft PR #18 head at the `AGZ-MAH-0020` start: `5527f662cb844ba90d264f5b93cb27f8334bf295`
 - Last user-verified Insert safety checkpoint: `d4b37a3dac8b4b35d682c82a9ced7b87eaf9adda`
 - Verified Smart Caps source: `0b43bb688115e0051114f38a745fce9e830452fd`
 - Verified selected-text conversion source: `3418d09de20ea327302a26858a7b752862bd429e`
@@ -48,6 +49,61 @@ Modernize and harden Mahou while preserving useful layout-switching behavior and
 
 ## Current bounded task
 
+## AGZ-MAH-0020 — AutoSwitch dictionary startup remediation
+
+Repository: `MIXANIZM/Mahou`
+Existing branch: `agz-mah-0019-remove-snippets-decouple-autoswitch`
+Existing Draft PR: #18
+Exact starting head: `5527f662cb844ba90d264f5b93cb27f8334bf295`
+Runtime: `2.9.0.1-dev`
+
+The exact AGZ-MAH-0019 candidate is rejected and immutable:
+
+```text
+AGZ-MAH-0019: USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU
+build: 30469006963
+x64 artifact: 8730807263
+ZIP SHA-256: 4627c32bffe76ed3df71b8f35cfaa922783c31ee65770ea034207b78b2695214
+Mahou.exe SHA-256: 87d86a215f0ee57fa95567a2a74550b4e1190b495bb4d8127601fb24a1407abb
+```
+
+Do not ask the user to run that candidate again. It hung during startup with sustained CPU before the UI/tray became usable.
+
+The bundled dictionary has exactly 5,188,519 characters, 151,429 complete rules/aliases and 18 comment lines. AGZ-MAH-0020 replaces the suffix-copy parser with a monotonic bounded-index parser, publishes no partial data on malformed input, derives the UI count from the same parse, suppresses programmatic `TextChanged` parsing during configuration load, and clears active data without touching `AS_dict.txt` when disabled.
+
+`AutoSwitchDictionaryStartupRegression` covers the real dictionary, exact first/middle/final mappings, aliases, comments, duplicates/order, LF/CRLF, malformed trailing input, literal snippet-like values, repeated parses, disabled clearing, a 150,000-rule multi-megabyte dictionary, 12-second x86/x64 bounds, and exactly one parser invocation through the configuration reload path. Local and exact-head CI x86/x64 executable regressions pass below 100 ms for both large inputs. Exact-head deterministic zero-warning builds, security gates and x64 provenance pass; a replacement physical-Windows two-stage smoke remains pending. No physical verification is claimed.
+
+The remediation does not restore snippets, alter AutoSwitch mutation semantics, weaken source-context revalidation, expand modern Notepad support, change Chrome/Word routing, modify legacy snippet files, or change the runtime version.
+
+## Parent task: AGZ-MAH-0019 — remove user snippets and decouple AutoSwitch
+
+Repository: `MIXANIZM/Mahou`  
+Exact base: `f02909611eb9a4502e9fe4d8fda9009922f352fd`  
+Task branch: `agz-mah-0019-remove-snippets-decouple-autoswitch`  
+Draft PR: #18  
+Runtime: `2.9.0.1-dev`
+
+Accepted predecessor evidence:
+
+```text
+AGZ-MAH-0018: SNIPPETS_TRIGGER_REPLACEMENT_FAIL
+build: 30410253117
+x64 artifact: 8708105691
+```
+
+The simple snippet replacement was corrupted, multiline left `agz1`, and delayed replacement left `agz`. The product decision is not to repair snippets:
+
+```text
+USER_SNIPPETS_REMOVED
+AUTOSWITCH_DECOUPLED
+```
+
+The active product has no snippets tab, enable control, editor, trigger parser, expressions, snippet hotkeys, snippet-only exclusions, snippet sounds, persistence, reload, or `snippets.txt` runtime path. Existing `snippets.txt`, `snippets.txt.bak`, and old INI values remain untouched inactive legacy data for rollback compatibility.
+
+AutoSwitch is routed outside any legacy snippets condition. It uses its own source buffer, only `AS_dict.txt`, and a dedicated literal-input primitive. Values such as `__delay`, `__execute`, `__keyboard`, `__paste`, `__selection`, and `__setlayout` are plain text and have no command meaning. Source identity is revalidated before deletion, layout switching, literal insertion, trailing-space insertion, and deferred callbacks. Exact `notepad.exe` + `RichEditD2DPT` remains a strict no-op.
+
+The first candidate failed startup and is rejected. AGZ-MAH-0020 exact-head CI passes; replacement smoke must run in two stages: startup/usability/CPU/exit first, and only after that passes, absent snippets UI/data generation, inactive preserved legacy file, Chrome/Word positive AutoSwitch, modern Notepad no-op, rapid-focus cancellation and restart persistence. Do not ask the user to test removed snippets.
+
 ### AGZ-MAH-0016 — record verified AutoSwitch containment smoke
 
 Starting point:
@@ -64,7 +120,7 @@ Scope and result:
 - record the accepted exact-head CI, merge-head CI, candidate hashes, and focused physical-Windows smoke from `AGZ-MAH-0015`;
 - keep `AGZ-MAH-0014` as the immutable historical defect artifact for its exact source and candidate;
 - mark `AGZ-MAH-0015` as `VERIFIED / ACCEPTED / MERGED` through PR #16 at `a10cb8fe4fb6e203fe24c47b53ed97f1df7a556d`;
-- remove AutoSwitch containment from the remaining Draft PR #2 smoke gates while leaving snippets and the other retained-feature tests pending;
+- remove AutoSwitch containment from the remaining Draft PR #2 smoke gates while leaving the other retained-feature tests pending;
 - update only applicable documentation and the PR #2 body proposal;
 - make no runtime, workflow, version, PR #1, PR #2 metadata, or PR #3 change.
 
@@ -108,7 +164,7 @@ Accepted physical-Windows smoke:
 - Chrome continued converting `ghbdtn` to `привет`;
 - Microsoft Word continued converting `ghbdtn` to `привет`.
 
-The result is containment, not support. It adds no Notepad adapter, does not change manual Insert, Smart Caps, snippets, selected-text conversion, clipboard behavior, Chrome or Word routing, and does not use PR #3. Runtime version remains `2.9.0.1-dev`.
+The result is containment, not support. It adds no Notepad adapter, did not change manual Insert, Smart Caps, the then-existing snippets feature, selected-text conversion, clipboard behavior, Chrome or Word routing, and does not use PR #3. Runtime version remains `2.9.0.1-dev`.
 
 ## Historical defect evidence
 
@@ -253,4 +309,4 @@ Closed and merged into `mixanizm-modern-v2.9.0.1` at `1a930137f7254111f8ef200da3
 
 ## Next management step
 
-The project supervisor should inspect the `AGZ-MAH-0016` Draft PR, confirm the documentation-only diff and `AUTOSWITCH_CONTAINMENT_VERIFICATION_RECORDED` result, and verify that Mahou runtime code, workflows, runtime version, PR #1, PR #2 metadata, and PR #3 remain unchanged. AutoSwitch containment is no longer a pending PR #2 smoke gate. Before PR #2 can leave Draft, complete snippets and the other remaining retained-feature Windows smoke plus every merge gate in `docs/RELEASE-READINESS.md`; signing, final independent review, exact-candidate provenance and separate publication permission remain additional public-release gates.
+The project supervisor should review Draft PR #18 and the exact AGZ-MAH-0020 replacement candidate evidence after CI. Stage A must establish startup usability, settled CPU and normal exit before any functional testing. Only after Stage A passes may Stage B check snippets removal, Chrome/Word AutoSwitch, modern Notepad strict no-op, rapid-focus cancellation and restart persistence. Before PR #2 can leave Draft, accept that smoke, complete the other remaining retained-feature Windows smoke, and satisfy every merge gate in `docs/RELEASE-READINESS.md`; signing, final independent review, exact-candidate provenance and separate publication permission remain additional public-release gates.
