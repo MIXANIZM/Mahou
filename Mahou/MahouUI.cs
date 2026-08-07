@@ -269,4 +269,5421 @@ namespace Mahou {
 							Logging.Log("Silent UPDATE!");
 						}
 						else {
-							tabs.SelectedIndex = ïİ{öÚ$z{-®éÜj×vVB“°Ğ —Fõö6&"å6VÆV7FVD–æFW„6†ævVB³ÒæWrWfVçD†æFÆW"„6&%ôg%Fõ6VÆV7FVD–æFW„6†ævVB“°Ğ¢òğ–6&"ä—FV×2äFB„ÔÖ–âäÆæu´ÆæwVvW2äVÆVÖVçBå7v—F6„&WGvVVåÒ“°Ğ –g%ö6&"ä—FV×2äFE&ævR…G&ç6ÆFUæVÂäuDÆæw2“°Ğ —Fõö6&"ä—FV×2äFE&ævR…G&ç6ÆFUæVÂäuDÆæw2“°Ğ –g%ö6&"å6VÆV7FVD–æFW‚ÒFõö6&"å6VÆV7FVD–æFW‚Ò°Ğ •÷6WBä6öçG&öÇ2äFB†g%öÆ&Â“°Ğ •÷6WBä6öçG&öÇ2äFB†g%ö6&"“°Ğ •÷6WBä6öçG&öÇ2äFB†æWrÆ&VÂ‚—´ÆVgBÒö&6TÆVgB¶Æ&Å÷v–GF‚¶Æ&Åög'Fõ÷v–GF‚³#¶6&%÷v–GF‚ÂæÖSÒ&Æ&Åö'""µG%6WD6÷VçBÂv–GFƒÖÆ&Å÷v–GF‚ÂFW‡CÒ"Óâ"ÂF÷Ó'Ò“°Ğ •÷6WBä6öçG&öÇ2äFB‡FõöÆ&Â“°Ğ •÷6WBä6öçG&öÇ2äFB‡Fõö6&"“°Ğ¢òğ•7V4¶W•6WG5fÇVW5²&6&%ög""µG%6WD6÷VçB²%ö¶W’%ÒÒ7V4¶W•6WG5fÇVW5²'G‡Eö¶W’"µG%6WD6÷VçB²%öÖöG2%ÒÒ7V4¶W•6WG5fÇVW5²&6&%÷G—"µG%6WD6÷VçEÒÒ"#°Ğ —åõG%6WG2ä6öçG&öÇ2äFB…÷6WB“°Ğ –Æ&ÅõG%6WG46÷VçBäf÷&T6öÆ÷"Ò6öÆ÷"ä&Æ6³°Ğ –Æ&ÅõG%6WG46÷VçBåFW‡BÒ"2"µG%6WD6÷VçC°Ğ ––b…G%6WD6÷VçCã“‚’Æ&ÅõG%6WG46÷VçBäf÷&T6öÆ÷"Ò6öÆ÷"å&VC°Ğ —ĞĞ —fö–B'FåõG%7V%6WD6Æ–6²†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ ––b…G%6WD6÷VçBÂ’&WGW&ã°Ğ —åõG%6WG2ä6öçG&öÇ5²'6WEò"µG%6WD6÷VçEÒäF—7÷6R‚“°Ğ •G%6WD6÷VçBÒÓ°Ğ –Æ&ÅõG%6WG46÷VçBäf÷&T6öÆ÷"Ò6öÆ÷"ä&Æ6³°Ğ –Æ&ÅõG%6WG46÷VçBåFW‡BÒ"2"µG%6WD6÷VçC°Ğ ––b…G%6WD6÷VçBÂĞ –Æ&ÅõG%6WG46÷VçBäf÷&T6öÆ÷"Ò6öÆ÷"äÆ–v‡Dw&“°Ğ Ğ —ĞĞ —fö–B'FåôFE6WD6Æ–6²†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ ––b…7V4¶W•6WD6÷VçCã“‚’&WGW&ã°Ğ —f"÷6WBÒæWræVÂ‚“°Ğ •÷6WBåv–GF‚Ò‡åô¶W•6WG2åv–GF‚£“‚ó’Ó#°Ğ •7V4¶W•6WD6÷VçB²³°Ğ •÷6WBäæÖRÒ'6WEò"µ7V4¶W•6WD6÷VçC°Ğ —f"F÷Ò°Ğ ––b…7V4¶W•6WD6÷VçCãĞ —F÷Òåô¶W•6WG2ä6öçG&öÇ5²'6WEò"²…7V4¶W•6WD6÷VçBÓ•ÒåF÷³#S°Ğ •÷6WBä†V–v‡BÒ#3°Ğ •÷6WBåF÷ÒF÷°Ğ •÷6WBäÆVgBÒ°Ğ —f"ö&6TÆVgBÒ†–çB’‡åô¶W•6WG2åv–GF‚£"ó“°Ğ —f"G‡E÷v–GF‚Ò“°Ğ —f"6†µ÷v–GF‚ÒCS°Ğ —f"Æ&Å÷v–GF‚Ò#S°Ğ —f"6&%÷v–GF‚Ò“°Ğ •÷6WBä6öçG&öÇ2äFB†æWrÆ&VÂ‚—´ÆVgBÒö&6TÆVgBÂæÖSÒ&Æ&ÅöçVÒ"µ7V4¶W•6WD6÷VçBÂv–GFƒÖÆ&Å÷v–GF‚ÂFW‡CÕ7V4¶W•6WD6÷VçB²#¢"ÂF÷Ó'Ò“°Ğ —f"G‡BÒæWrFW‡D&÷‚‚—´ÆVgBÒö&6TÆVgB¶Æ&Å÷v–GF‚ÂæÖSÒ'G‡Eö¶W’"µ7V4¶W•6WD6÷VçBÂv–GFƒ×G‡E÷v–GF‚Â&6´6öÆ÷#Õ7—7FVÔ6öÆ÷'2åv–æF÷rÂ&VDöæÇ“×G'VWÓ°Ğ —G‡Bä¶W”F÷vâ³ÒæWr¶W”WfVçD†æFÆW"…G‡Eõ7V4†÷F¶W”F÷vâ“°Ğ —f"6†²ÒæWr6†V6´&÷‚‚—´ÆVgBÒö&6TÆVgB¶Æ&Å÷v–GF‚·G‡E÷v–GF‚³2ÂæÖSÒ&6†µ÷v–â"µ7V4¶W•6WD6÷VçBÂv–GFƒÖ6†µ÷v–GF‚ÂFW‡CÒ%v–â'Ó°Ğ –6†²ä6†V6¶VD6†ævVB³ÒæWrWfVçD†æFÆW"„6†µõ7V5v–ä6†V6¶VD6†ævVB“°Ğ —f"6&"ÒæWr6öÖ&ô&÷‚‚—´G&÷F÷vå7G–ÆRÒ6öÖ&ô&÷…7G–ÆRäG&÷F÷väÆ—7BÂÆVgBÒö&6TÆVgB¶Æ&Å÷v–GF‚·G‡E÷v–GF‚¶6†µ÷v–GF‚¶Æ&Å÷v–GF‚³’ÂæÖSÒ&6&%÷G—"µ7V4¶W•6WD6÷VçBÂv–GFƒÖ6&%÷v–GF‡Ó°Ğ –6&"å6VÆV7FVD–æFW„6†ævVB³ÒæWrWfVçD†æFÆW"„6&%õ7V5G—U6VÆV7FVD–æFW„6†ævVB“°Ğ –6&"ä—FV×2äFB„ÔÖ–âäÆæu´ÆæwVvW2äVÆVÖVçBå7v—F6„&WGvVVåÒ“°Ğ –6&"ä—FV×2äFE&ævR„ÔÖ–âæÆ6æÖ–BåFô'&’‚’“°Ğ •÷6WBä6öçG&öÇ2äFB‡G‡B“°Ğ •÷6WBä6öçG&öÇ2äFB†6†²“°Ğ •÷6WBä6öçG&öÇ2äFB†æWrÆ&VÂ‚—´ÆVgBÒö&6TÆVgB¶Æ&Å÷v–GF‚·G‡E÷v–GF‚¶6†µ÷v–GF‚³bÂæÖSÒ&Æ&Åö'""µ7V4¶W•6WD6÷VçBÂv–GFƒÖÆ&Å÷v–GF‚ÂFW‡CÒ"Óâ"ÂF÷Ó'Ò“°Ğ •÷6WBä6öçG&öÇ2äFB†6&"“°Ğ •7V4¶W•6WG5fÇVW5²'G‡Eö¶W’"µ7V4¶W•6WD6÷VçB²%ö¶W’%ÒÒ7V4¶W•6WG5fÇVW5²'G‡Eö¶W’"µ7V4¶W•6WD6÷VçB²%öÖöG2%ÒÒ7V4¶W•6WG5fÇVW5²&6&%÷G—"µ7V4¶W•6WD6÷VçEÒÒ"#°Ğ —åô¶W•6WG2ä6öçG&öÇ2äFB…÷6WB“°Ğ –Æ&Åõ6WG46÷VçBäf÷&T6öÆ÷"Ò6öÆ÷"ä&Æ6³°Ğ –Æ&Åõ6WG46÷VçBåFW‡BÒ"2"µ7V4¶W•6WD6÷VçC°Ğ ––b…7V4¶W•6WD6÷VçCã“‚’Æ&Åõ6WG46÷VçBäf÷&T6öÆ÷"Ò6öÆ÷"å&VC°Ğ —ĞĞ —fö–B'Fåõ7V%6WD6Æ–6²†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ ––b…7V4¶W•6WD6÷VçBÂ’&WGW&ã°Ğ —åô¶W•6WG2ä6öçG&öÇ5²'6WEò"µ7V4¶W•6WD6÷VçEÒäF—7÷6R‚“°Ğ •7V4¶W•6WD6÷VçBÒÓ°Ğ –Æ&Åõ6WG46÷VçBäf÷&T6öÆ÷"Ò6öÆ÷"ä&Æ6³°Ğ –Æ&Åõ6WG46÷VçBåFW‡BÒ"2"µ7V4¶W•6WD6÷VçC°Ğ ––b…7V4¶W•6WD6÷VçBÂĞ –Æ&Åõ6WG46÷VçBäf÷&T6öÆ÷"Ò6öÆ÷"äÆ–v‡Dw&“°Ğ Ğ —ĞĞ —fö–BG‡Eõ7V4†÷F¶W”F÷vâ†ö&¦V7B6VæFW"Â¶W”WfVçD&w2R’°Ğ —f"BÒ6VæFW"2FW‡D&÷ƒ°Ğ ––b†Rä¶W”6öFRÓÒ¶W—2ä&6²bbRäÖöF–f–W'2ÓÒ¶W—2äæöæR’°Ğ •7V4¶W•6WG5fÇVW5·BäæÖR²%ö¶W’%ÒÒ7V4¶W•6WG5fÇVW5·BäæÖR²%öÖöG2%ÒÒBåFW‡BÒ"#°Ğ —&WGW&ã°Ğ —ĞĞ ”FV'Vråw&—FTÆ–æR†Rä¶W”6öFR²"R"“°Ğ —BåFW‡BÒöVÕ&VF&ÆR‚†RäÖöF–f–W'2åFõ7G&–ær‚’å&WÆ6R‚"Â"Â"²"’²"²"°Ğ ’&VÖ¶R†Rä¶W”6öFR’’å&WÆ6R‚$æöæR²"Â""’“°Ğ •7V4¶W•6WG5fÇVW5·BäæÖR²%ö¶W’%ÒÒ‚†–çB–Rä¶W”6öFR’åFõ7G&–ær‚“°Ğ •7V4¶W•6WG5fÇVW5·BäæÖR²%öÖöG2%ÒÒRäÖöF–f–W'2åFõ7G&–ær‚’å&WÆ6R‚"Â"Â"²"“°Ğ —ĞĞ —fö–B6†µõ7V5v–ä6†V6¶VD6†ævVB†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ —f"2Ò6VæFW"26†V6´&÷ƒ°Ğ —f"¶W’Ò7V4¶W•6WG5fÇVW5²'G‡Eö¶W’"¶2äæÖRå&WÆ6R‚&6†µ÷v–â"Â""’²%öÖöG2%Ó°Ğ —f"†5v–âÒ¶W’ä6öçF–ç2‚%v–â"“°Ğ ––b††5v–âbb2ä6†V6¶VBĞ •7V4¶W•6WG5fÇVW5²'G‡Eö¶W’"¶2äæÖRå&WÆ6R‚&6†µ÷v–â"Â""’²%öÖöG2%ÒÒ¶W’å&WÆ6R‚%v–â"Â""“°Ğ ––b‚†5v–âbb2ä6†V6¶VBĞ •7V4¶W•6WG5fÇVW5²'G‡Eö¶W’"¶2äæÖRå&WÆ6R‚&6†µ÷v–â"Â""’²%öÖöG2%ÒÒ¶W’²"²v–â#°Ğ —ĞĞ —fö–B6&%õ7V5G—U6VÆV7FVD–æFW„6†ævVB†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ —f"6"Ò6VæFW"26öÖ&ô&÷ƒ°Ğ •7V4¶W•6WG5fÇVW5¶6"äæÖUÒÒ6"å6VÆV7FVD—FVÒåFõ7G&–ær‚“°Ğ —ĞĞ —fö–B6&%õG$ÖWF†öE6VÆV7FVD–æFW„6†ævVB†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ •G&ç6ÆFUæVÂçW6Tu2Ò†6&%õG$ÖWF†öBå6VÆV7FVD–æFW‚ÓÒ’òG'VR¢fÇ6S°Ğ •G&ç6ÆFUæVÂçW6TäÒ†6&%õG$ÖWF†öBå6VÆV7FVD–æFW‚ÓÒ"’òG'VR¢fÇ6S°Ğ —ĞĞ —fö–B6&%ôg%Fõ6VÆV7FVD–æFW„6†ævVB†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ —f"6"Ò6VæFW"26öÖ&ô&÷ƒ°Ğ •G%6WG5fÇVW5¶6"äæÖUÒÒG&ç6ÆFUæVÂäuDÆæw56…¶6"å6VÆV7FVD–æFW…Ó°Ğ¢òğ”FV'Vråw&—FTÆ–æR…G%6WG5fÇVW5¶6"äæÖUÒ“°Ğ —ĞĞ —fö–B6&%õ7V4¶W—5G—U6VÆV7FVD–æFW„6†ævVB†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ —f"öÆBÒ6&%õ7V4¶W—5G—Rå6VÆV7FVD–æFW‚ÓÒ°Ğ –Æ&Åô'&÷såf—6–&ÆRÒÆ&Åô'&÷s"åf—6–&ÆRÒÆ&Åô'&÷s2åf—6–&ÆRÒÆ&Åô'&÷sBåf—6–&ÆRÒw&%ôÆ–÷WG2åf—6–&ÆRÒw&%ô¶W—2åf—6–&ÆRÒöÆC°Ğ –Æ&Åõ6WG46÷VçBåf—6–&ÆRÒåô¶W•6WG2åf—6–&ÆRÒ'Fåõ7V%6WBåf—6–&ÆRÒ'FåôFE6WBåf—6–&ÆRÒöÆC°Ğ —ĞĞ —fö–B'Fåõ6VÆV7E6æD6Æ–6²†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ –Æ&Åô7W7FöÕ6÷VæBåFW‡BÒ6VÆV7DvWEvdf–ÆR‚“°Ğ ”†VÇÖUVæFW'7FæBå6WEFööÅF—†Æ&Åô7W7FöÕ6÷VæBÂÆ&Åô7W7FöÕ6÷VæBåFW‡B“°Ğ —ĞĞ —fö–B'Fåõ6VÆV7E6æC$6Æ–6²†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ –Æ&Åô7W7FöÕ6÷VæC"åFW‡BÒ6VÆV7DvWEvdf–ÆR‚“°Ğ ”†VÇÖUVæFW'7FæBå6WEFööÅF—†Æ&Åô7W7FöÕ6÷VæC"ÂÆ&Åô7W7FöÕ6÷VæC"åFW‡B“°Ğ —ĞĞ —fö–B'Fåö&6·W6Æ–6²†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ •7–æ4&6·W‚“°Ğ —ĞĞ —fö–B'Få÷&W7F÷&T6Æ–6²†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ •7–æ5&W7F÷&R‚“°Ğ —ĞĞ –&ööÂ7G&W2Â7F&·°Ğ —fö–B7D&·6÷”6Æ–6²†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ ––b‚7F&·’°Ğ —7F&·ÒG'VS°Ğ —f"BÒæWrF–ÖW"‚“°Ğ —BåF–6²³Ò…òÂõõò’Óâ°Ğ —7D&·6÷’ä&6¶w&÷VæD–ÖvRÒ&÷W'F–W2å&W6÷W&6W2æ6Æ—°Ğ —7F&·ÒfÇ6S°Ğ —Bå7F÷‚“°Ğ —BäF—7÷6R‚“°Ğ —Ó°Ğ —Bä–çFW'fÂÒƒ°Ğ ––b‚7G&–ærä—4çVÆÄ÷$V×G’‡G‡Eö&6·W–BåFW‡B’’°Ğ ”æF—fT6Æ—&ö&Bå6WEFW‡B‡G‡Eö&6·W–BåFW‡B“°Ğ —7D&·6÷’ä&6¶w&÷VæD–ÖvRÒ&÷W'F–W2å&W6÷W&6W2æ6Æ—ö³°Ğ —Bå7F'B‚“°Ğ —ÒVÇ6R°Ğ —7D&·6÷’ä&6¶w&÷VæD–ÖvRÒ&÷W'F–W2å&W6÷W&6W2æ6Æ—W'#°Ğ —Bå7F'B‚“°Ğ —ĞĞ —ĞĞ —ĞĞ —fö–B7E&W57FT6Æ–6²†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ ––b‚7G&W2’°Ğ —7G&W2ÒG'VS°Ğ —f"BÒæWrF–ÖW"‚“°Ğ —BåF–6²³Ò…òÂõõò’Óâ°Ğ —7E&W57FRä&6¶w&÷VæD–ÖvRÒ&÷W'F–W2å&W6÷W&6W2æ6Æ—°Ğ —7G&W2ÒfÇ6S°Ğ —Bå7F÷‚“°Ğ —BäF—7÷6R‚“°Ğ —Ó°Ğ —Bä–çFW'fÂÒƒ°Ğ —f"7G&’Ò´Ô†öö²ävWD6Æ—&ö&Bƒ2“°Ğ ––b‚7G&–ærä—4çVÆÄ÷$V×G’‡7G&’’’°Ğ —G‡E÷&W7F÷&T–BåFW‡BÒ7G&“°Ğ —7E&W57FRä&6¶w&÷VæD–ÖvRÒ&÷W'F–W2å&W6÷W&6W2æ6Æ—ö³°Ğ —Bå7F'B‚“°Ğ —ÒVÇ6R°Ğ —7E&W57FRä&6¶w&÷VæD–ÖvRÒ&÷W'F–W2å&W6÷W&6W2æ6Æ—W'#°Ğ —Bå7F'B‚“°Ğ —ĞĞ —ĞĞ —ĞĞ —fö–B6†µõ§…¤6†V6¶VD6†ævVB†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ •§…¢Ò‡6VæFW"26†V6´&÷‚’ä6†V6¶VC°Ğ —ĞĞ —7FF–27G&–ær†÷F¶W”f÷&Õö†÷F¶W’Ò"#°Ğ –6Æ72†÷F¶W”f÷&Ò¢f÷&Ò°Ğ ”Æ&VÂ†³°Ğ —V&Æ–2†÷F¶W”f÷&Ò‚’°Ğ —F†—2äf÷&Ô&÷&FW%7G–ÆRÒf÷&Ô&÷&FW%7G–ÆRäæöæS°Ğ —F†—2å6†÷t–åF6¶&"ÒfÇ6S°Ğ —F†—2ä&6´6öÆ÷"Ò6öÆ÷"äf÷&W7Dw&VVã°Ğ —F†—2æ†²ÒæWrÆ&VÂ‚“°Ğ —F†—2æ†²äWFõ6—¦RÒfÇ6S°Ğ —F†—2æ†²åv–GF‚Ò#3ƒ°Ğ —F†—2æ†²äföçBÒæWrföçB‡F†—2æ†²äföçBäföçDfÖ–Ç’ÂB“°Ğ —F†—2æ†²ä†V–v‡BÒ#c°Ğ —F†—2æ†²ä&6´6öÆ÷"Ò6öÆ÷"åv†—FS°Ğ —F†—2æ†²äf÷&T6öÆ÷"Ò6öÆ÷"ä÷&ævS°Ğ —F†—2æ†²äÆö6F–öâÒæWrö–çBƒÃ“°Ğ —F†—2ä6öçG&öÇ2äFB††²“°Ğ —F†—2äÖ–æ–×VÕ6—¦RÒæWr6—¦RƒSÃ“°Ğ —F†—2åv–GF‚Ò#C°Ğ —F†—2ä†V–v‡BÒ#ƒ°Ğ —F†—2ä6VçFW%Fõ67&VVâ‚“°Ğ —F†—2åF÷Ö÷7BÒG'VS°Ğ —ĞĞ –&ööÂö³²–çBÆ×6rÒ°Ğ —&÷FV7FVB÷fW'&–FRfö–BvæE&ö2‡&VbÖW76vRÒ’°Ğ ––b†Òä×6rÓÒ†–çB•v–ä’åtÕô´U•UÇÀĞ –Òä×6rÓÒ†–çB•v–ä’åtÕõ5•4´U•UÇÀĞ –Òä×6rÓÒ†–çB•v–ä’åtÕõ5•4´U”DõtâÇÀĞ –Òä×6rÓÒ†–çB•v–ä’åtÕô´U”Dõtâ’°Ğ —f"ÖöG2Ò´Ô†öö²ävWDÖöG57G"„´Ô†öö²æ7G&ÂÄ´Ô†öö²æ7G&Å÷"Â´Ô†öö²ç6†–gBÄ´Ô†öö²ç6†–gE÷"Ä´Ô†öö²æÇBÄ´Ô†öö²æÇE÷"Ä´Ô†öö²çv–âÄ´Ô†öö²çv–å÷"“°Ğ —f"²Ò„¶W—2–Òåu&ÒåFô–çC3"‚“°Ğ —f"ö²ÒfÇ6S°Ğ ––b†²Ò¶W—2äÄ6öçG&öÄ¶W’b`Ğ ’²Ò¶W—2å$6öçG&öÄ¶W’b`Ğ ’²Ò¶W—2äÅ6†–gD¶W’b`Ğ ’²Ò¶W—2å%6†–gD¶W’b`Ğ ’²Ò¶W—2äÄÖVçRb`Ğ ’²Ò¶W—2å$ÖVçRb`Ğ ’²Ò¶W—2å6†–gD¶W’b`Ğ ’²Ò¶W—2äÖVçRb`Ğ ’²Ò¶W—2ä6öçG&öÄ¶W’b`Ğ ’²Ò¶W—2äÅv–âb`Ğ ’²Ò¶W—2å%v–â’°Ğ –ÖöG2³Ö³°Ğ –ö²ÒG'VS°Ğ —ĞĞ —F†—2æ†²åFW‡BÒÖöG3°Ğ ––b†Æ×6rÓÒ’²Æ×6rÒÒä×6s²ĞĞ ––b†ö²’°Ğ –ö²ÒG'VS°Ğ ”†÷F¶W”f÷&Õö†÷F¶W’ÒF†—2æ†²åFW‡C°Ğ —ĞĞ ––b†ö²bbÆ×6rÒÒä×6r’°Ğ —F†—2ä6Æ÷6R‚“°Ğ —ĞĞ –Æ×6rÒÒä×6s°Ğ —ĞĞ –&6RåvæE&ö2‡&VbÒ“°Ğ —ĞĞ —ĞĞ —fö–B‡G‡Eõ&VFVf–æW4VçFW"†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ —f"BÒ…FW‡D&÷‚—6VæFW#°Ğ —Bä×VÇF–Æ–æRÒG'VS°Ğ —f"’ÒBå6VÆV7F–öå7F'C°Ğ —BåFW‡BÒBåFW‡Bå&WÆ6R‚'Â"ÂVçf—&öæÖVçBäæWtÆ–æR“°Ğ —Bå6VÆV7F–öå7F'BÒ“°Ğ ––b‡BäÆ–æW2äÆVæwF‚â’°Ğ —Bä†V–v‡BÒ†–çB’ƒR£#B“°Ğ —Bå67&öÆÄ&'2Ò67&öÆÄ&'2åfW'F–6Ã°Ğ —ĞĞ —ĞĞ —fö–B‡G‡Eõ&VFVf–æW4ÆVfR†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ —f"BÒ…FW‡D&÷‚—6VæFW#°Ğ —f"’ÒBå6VÆV7F–öå7F'C°Ğ —BåFW‡BÒBåFW‡Bå&WÆ6R„Vçf—&öæÖVçBäæWtÆ–æRÂ'Â"“°Ğ —Bå6VÆV7F–öå7F'BÒ“°Ğ —Bä†V–v‡BÒ#C°Ğ¢òğ—Bä×VÇF–Æ–æRÒfÇ6S°Ğ —Bå67&öÆÄ&'2Ò67&öÆÄ&'2äæöæS°Ğ —ĞĞ —fö–B‡G‡Eõ&VFVf–æW5FW‡D6†ævVB†ö&¦V7B6VæFW"ÂWfVçD&w2R’°Ğ —f"BÒ…FW‡D&÷‚—6VæFW#°Ğ ––b‡Bäfö7W6VB’°Ğ —f"’ÒBå6VÆV7F–öå7F'C°Ğ ––b‡BåFW‡BäÆVæwF‚â’°Ğ ––b‡BåFW‡E·BåFW‡BäÆVæwF‚ÓÒÓÒwÂr’’²³°Ğ —BåFW‡BÒBåFW‡Bå&WÆ6R‚'Â"ÂVçf—&öæÖVçBäæWtÆ–æR“°Ğ —ĞĞ —Bå6VÆV7F–öå7F'BÒ“°Ğ —Bå67&öÆÅFô6&WB‚“°Ğ —ĞĞ —ĞĞ ’6VæG&Vv–öàĞ ’7&Vv–öâ7–æ0Ğ —7G&–æuµÒ&VEFô&6·W‡7G&–ær–BÂ7G&–æræÖRÂ&ööÂ6†²Â&ööÂ&÷‡–rÒG'VR’°Ğ —f""Ò"#°Ğ —f"7FBÒ"#°Ğ —f"bÒF‚ä6öÖ&–æR†åF‚ÂæÖR“°Ğ ––b†6†²’°Ğ ––b‚f–ÆRäW†—7G2†b’’°Ğ —7FB³ÒæÖR²""²ÔÖ–âäÆæu´ÆæwVvW2äVÆVÖVçBäæ÷EÒåFôÆ÷vW"‚’²""²ÔÖ–âäÆæu´ÆæwVvW2äVÆVÖVçBäW†—7EÒåFôÆ÷vW"‚“°Ğ —&WGW&âæWrµÒ²""Â7FGÓ°Ğ —ĞĞ —f"f’ÒæWrf–ÆT–æfò†b“°Ğ ––b†f’äÆVæwF‚ãÒC’ Ğ —7FB³ÒæÖR²ÔÖ–âäÆæu´ÆæwVvW2äVÆVÖVçBåFöô&–uÓ°Ğ —G'’°Ğ —"³Ò"2ÒÒÒÒÒÓâ"¶–B´Vçf—&öæÖVçBäæWtÆ–æS°Ğ ––b†bä6öçF–ç2‚$Ö†÷Ræ–æ’"’bb&÷‡–rĞ —"³ÒÔÖ–âä×”6öæg2ävWE&uv—F†÷WDw&÷W‚%µ&÷‡•Ò"“°Ğ –VÇ6R Ğ —"³Òf–ÆRå&VDÆÅFW‡B†b“°Ğ —"³ÒVçf—&öæÖVçBäæWtÆ–æR²"2ÒÒÒÒÒÓâ"¶–B´Vçf—&öæÖVçBäæWtÆ–æS°Ğ —Ò6F6‚„W†6WF–öâR’°Ğ —7FB³ÒæÖR²#¢"²ÔÖ–âäÆæu´ÆæwVvW2äVÆVÖVçBä6ææ÷D&UÒåFôÆ÷vW"‚’²""²ÔÖ–âäÆæu´ÆæwVvW2äVÆVÖVçBå&VFVåÒåFôÆ÷vW"‚’²RäÖW76vS°Ğ —ĞĞ —ĞĞ —&WGW&âæWrµ×·"Â7FGÓ°Ğ —ĞĞ —7G&–ærw&—FU&W7F÷&Tf–ÆW2‡7G&–ær&rÂ&ööÂÖ–æ’Â&ööÂ‡G‡BÂ&ööÂGG‡BÂ&ööÂ&÷‡–rÒG'VRÂ&ööÂÖÒÒfÇ6R’°Ğ —f"7FBÒ"#°Ğ —f"BÒ&rå&WÆ6R‚%Ç""Â""“°Ğ —f"ÆÂÒBå7Æ—B‚uÆâr“°Ğ —f"&"ÒæWrµÒ²Ö–æ’Â‡G‡BÂGG‡BÂÖÒÓ°Ğ —f"FãÒ&GVÖ×’#°Ğ —f"7BÒfÇ6S°Ğ —f"BÒæWrF–7F–öæ'“Ç7G&–ærÂ7G&–æsâ‚“°Ğ –f÷"‡f"’Ò²’ÒÆÂäÆVæwF‚Ó²’²²’°Ğ —f"ÂÒÆÅ¶•Ó°Ğ —f"6öçBÒfÇ6S°Ğ —f"VæBÒfÇ6S°Ğ ––b‡7B’°Ğ ––b†’³ÃÒÆÂäÆVæwF‚Ó’°Ğ —f"Ç¢ÒÆÅ¶’³Ó°Ğ ––b†Ç¢å7F'G5v—F‚…5”ä5õ4UÂ7G&–æt6ö×&—6öâä–çf&–çD7VÇGW&R’’°Ğ ––b†Ç¢ÓÒ5”ä5õ4U·Fâ’°Ğ –VæBÒG'VS°Ğ —ĞĞ —ĞĞ —ĞĞ —ĞĞ ––b†Âå7F'G5v—F‚…5”ä5õ4UÂ7G&–æt6ö×&—6öâä–çf&–çD7VÇGW&R’’°Ğ –f÷&V6‚‡f"G—R–â5”ä5õE•U2’°Ğ ––b†ÂÓÒ5”ä5õ4U·G—R’°Ğ ––b‡FâÓÒG—R’ Ğ —FâÒ&GVÖ×’#°Ğ –VÇ6R°Ğ —Fã×G—S°Ğ —7C×G'VS°Ğ –6öçC×G'VS°Ğ —ĞĞ —ĞĞ —ĞĞ —ĞĞ ––b†6öçB’6öçF–çVS°Ğ —f"ÆâÒÂ²‚†’ÓÒÆÂäÆVæwF‚Ó'ÇÆVæB’ò""¢Vçf—&öæÖVçBäæWtÆ–æR“°Ğ ––b†Bä6öçF–ç4¶W’‡Fâ’’°Ğ —f"fÒE·FåÓ°Ğ –E·FåÒÒf¶Æã°Ğ —ÒVÇ6R Ğ –BäFB‡FâÂÆâ“°Ğ —ĞĞ —f"ô²Ò"#°Ğ —f"U%"Ò"#°Ğ –f÷"‡f"’Ò²’Ò&"äÆVæwFƒ²’²²’°Ğ —f""Ò&%¶•Ó°Ğ —f"G’Ò5”ä5õE•U5¶•Ó°Ğ ––b†"’°Ğ ––b†Bä6öçF–ç4¶W’‡G’’’°Ğ —G'’°Ğ ––b‡G’ÓÒ&–æ’"’°Ğ ––b‚&÷‡–r’ Ğ ”ÔÖ–âä×”6öæg2åô”ä’å&WÆ6U&r„ÔÖ–âä×”6öæg2ävWE&uv—F†÷WDw&÷W‚%µ&÷‡•Ò"ÂE·G•Ò’“°Ğ –VÇ6PĞ ”ÔÖ–âä×”6öæg2åô”ä’å&WÆ6U&r†E·G•Ò“°Ğ —ĞĞ —f"bÒF‚ä6öÖ&–æR†åF‚Â5”ä5ôäÔU5¶•Ò“°Ğ ”FV'Vråw&—FTÆ–æR‚%w&—F–æs¢"¶b“°Ğ ”FöÖ–4f–ÆRåw&—FTÆÅFW‡B†bÂE·G•Ò“°Ğ ”ô²³Ò""²5”ä5ôäÔU5¶•Ó°Ğ —Ò6F6‚„W†6WF–öâR’°Ğ —7FB³ÒG’²#¢"²RäÖW76vR²Vçf—&öæÖVçBäæWtÆ–æS°Ğ —ĞĞ —ÒVÇ6R°Ğ ”U%"³Ò""²5”ä5ôäÔU5¶•Ó°Ğ —ĞĞ —ĞĞ —ĞĞ —7FB³Ò$ô³¢"²ô²²„U%"Ò""ò„Vçf—&öæÖVçBäæWtÆ–æR²$U%#¢"²U%"’¢""“°Ğ —&WGW&â7FC°Ğ —ĞĞ —V&Æ–27FF–2&æFöÒ&æBÒæWr&æFöÒ‚“°Ğ —V&Æ–27FF–27G&–ærvWE&æFöÕ7G&–ær†–çBÆVæwF‚’°Ğ ’6öç7B7G&–ær6†'2Ò$$4DTdt„”¤´ÄÔäõ%5EUeu…•£#3CScsƒ’#°Ğ ’f"2Ò"#°Ğ ’f÷"†–çB’Ò²’ÂÆVæwFƒ²’²²Ğ ’ —2³Ò6†'5·&æBäæW‡B†6†'2äÆVæwF‚•Ó°Ğ ’&WGW&â3°Ğ —ĞĞ —7G&–ær7–æ5WÆöE§…¢‡7G&–ær6öçFVçB’°Ğ —&WGW&â7G&–æräV×G“°Ğ —ĞĞ Ğ —7G&–ær7–æ5WÆöD„"†'—FUµÒFFÂ&Vb7G&–æt'V–ÆFW"7FB’°Ğ —7FBä6ÆV"‚’äVæB„ÆVv7”æWGv÷&´F—6&ÆVDÖW76vR“°Ğ —&WGW&â7G&–æräV×G“°Ğ —ĞĞ Ğ —fö–B7–æ4&6·W‚’°Ğ —G‡Eö&6·W7FGW2åFW‡BÒÆVv7”æWGv÷&´F—6&ÆVDÖW76vS°Ğ —G‡Eö&6·W7FGW2åf—6–&ÆRÒG'VS°Ğ —ĞĞ Ğ —fö–B7–æ5&W7F÷&R‚’°Ğ —G‡E÷&W7F÷&U7FGW2åFW‡BÒÆVv7”æWGv÷&´F—6&ÆVDÖW76vS°Ğ —G‡E÷&W7F÷&U7FGW2åf—6–&ÆRÒG'VS°Ğ —ĞĞ Ğ —fö–B6WD&ööÇ2‡7G&–ærfÇVW2Â6†"6W&F÷"Â÷WB&ööÂ–æ’Â÷WB&ööÂ†—7F÷'’Â÷WB&ööÂF–7F–öæ'’Â÷WB&ööÂ&÷‡’Â÷WB&ööÂÖVçR’°Ğ —f"'G2Ò‡fÇVW2óò""’å7Æ—B‡6W&F÷"“°Ğ —f"ÆVv7’Ò'G2äÆVæwF‚ãÒc°Ğ ––æ’Ò'G2äÆVæwF‚âbb&öò‡'G5³Ò“°Ğ –†—7F÷'’Ò'G2äÆVæwF‚â†ÆVv7’ò"¢’bb&öò‡'G5¶ÆVv7’ò"¢Ò“°Ğ –F–7F–öæ'’Ò'G2äÆVæwF‚â†ÆVv7’ò2¢"’bb&öò‡'G5¶ÆVv7’ò2¢%Ò“°Ğ —&÷‡’Ò'G2äÆVæwF‚â†ÆVv7’òB¢2’bb&öò‡'G5¶ÆVv7’òB¢5Ò“°Ğ –ÖVçRÒ'G2äÆVæwF‚â†ÆVv7’òR¢B’bb&öò‡'G5¶ÆVv7’òR¢EÒ“°Ğ —ĞĞ Ğ –&ööÂ&öò‡7G&–ær2’°Ğ ––çB’Ò°Ğ –&ööÂ#°Ğ –&ööÂåG'•'6R‡2Â÷WB"“°Ğ ––çBåG'•'6R‡2Â÷WB’“°Ğ ––b†’â’ Ğ —&WGW&âG'VS°Ğ —&WGW&â#°Ğ —ĞĞ ––çB&–â†&ööÂ"’°Ğ ––b†"Ğ —&WGW&â°Ğ —&WGW&â°Ğ —ĞĞ ’6VæG&Vv–öàĞ —ĞĞ§ĞĞ 
+							tabs.SelectedIndex = tabs.TabPages.IndexOf(tab_updates);
+							SetUInfo();
+							Visible = TopMost = true;
+							grb_DownloadUpdate.Enabled = true;
+							btn_DownloadUpdate.PerformClick();
+						}
+						showUpdWnd.Stop();
+						showUpdWnd.Dispose();
+					}
+					if (AtUpdateShow == 2) {
+						Logging.Log("No new version updates found.");
+						showUpdWnd.Stop();
+						showUpdWnd.Dispose();
+					}
+					if (AtUpdateShow == 3) {
+						Logging.Log("Network error.", 1);
+						showUpdWnd.Stop();
+						showUpdWnd.Dispose();
+					}
+				};
+				showUpdWnd.Interval = 1000;
+				showUpdWnd.Start();
+			} else { showUpdWnd.Dispose(); }
+			DPISCALE(this);
+			Memory.Flush();
+		}
+		static NotifyIcon[] Ticons;
+		static Icon[] TOwnedIcons;
+		static Timer ttmr;
+		static bool[] nvisible;
+		static void SetNcsTrayIcon(int index, Bitmap source) {
+			if (source == null || Ticons == null || Ticons[index] == null) return;
+			IntPtr nativeHandle = IntPtr.Zero;
+			Icon next = null;
+			try {
+				nativeHandle = source.GetHicon();
+				using (var borrowed = Icon.FromHandle(nativeHandle))
+					next = (Icon)borrowed.Clone();
+				Ticons[index].Icon = next;
+				var previous = TOwnedIcons[index];
+				TOwnedIcons[index] = next;
+				next = null;
+				if (previous != null) previous.Dispose();
+			} finally {
+				if (next != null) next.Dispose();
+				if (nativeHandle != IntPtr.Zero) WinAPI.DestroyIcon(nativeHandle);
+			}
+		}
+		public static void NCS_tray() {
+			var icons = new []{Properties.Resources.num, Properties.Resources.caps, Properties.Resources.scr};
+			var icons_on = new []{Properties.Resources.num_on, Properties.Resources.caps_on, Properties.Resources.scr_on};
+			if (Ticons == null)
+				Ticons = new NotifyIcon[3];
+			if (TOwnedIcons == null)
+				TOwnedIcons = new Icon[3];
+			if (nvisible != null) {
+				if (String.IsNullOrEmpty(ncs) && (nvisible[0] || nvisible[1] || nvisible[2])) {
+					NCS_destroy(); return;
+				} else {
+					var visible = new []{ncs.Contains("N"), ncs.Contains("C"), ncs.Contains("S")};
+					for (int v = 0; v<3; v++) {
+						if (Ticons[v] == null) continue;
+						if (!visible[v] || !nvisible[v]) { // if one of them off, remove 
+							Ticons[v].Visible = false;
+						}
+					}
+				}
+			}
+			nvisible = new []{ncs.Contains("N"), ncs.Contains("C"), ncs.Contains("S")};
+			var Tstates = new bool[3]{Control.IsKeyLocked(Keys.NumLock), Control.IsKeyLocked(Keys.CapsLock), Control.IsKeyLocked(Keys.Scroll)};
+			for (int v = 0; v < 3; v++) {
+				if (!nvisible[v])continue;
+				NotifyIcon t;
+				if (Ticons[v] == null) t = new NotifyIcon(); else t = Ticons[v];
+				Ticons[v] = t;
+				SetNcsTrayIcon(v, Tstates[v] ? icons_on[v] : icons[v]);
+			}
+			for(int v = 2; v >=0; v--) { 
+				if (!nvisible[v])continue;
+				Ticons[v].Visible = true; 
+			}
+			if (ttmr == null) {
+				ttmr = new Timer();
+				ttmr.Tick += (_, __) => {
+					var tTstates = new bool[3]{Control.IsKeyLocked(Keys.NumLock), Control.IsKeyLocked(Keys.CapsLock), Control.IsKeyLocked(Keys.Scroll)};
+					int diff = 0;
+					for (int v = 0; v < 3; v++) {
+						if (!nvisible[v])continue;
+						var t = Ticons[v];
+						if (Tstates[v] == tTstates[v])continue;
+						diff++;
+						SetNcsTrayIcon(v, tTstates[v] ? icons_on[v] : icons[v]);
+					}
+					if (diff >0) 
+						Tstates = tTstates;
+				};
+				ttmr.Interval = 50;
+				ttmr.Start();
+			}
+		}
+		public static void NCS_destroy() {
+			if (ttmr != null) {
+				ttmr.Stop();
+				ttmr.Dispose();
+				ttmr = null;
+			}
+			if (Ticons != null) {
+				for (int v = 0; v<3; v++) {
+					if (Ticons[v] == null) continue;
+					if (Ticons[v].Visible) Ticons[v].Visible = false;
+					Ticons[v].Icon = null;
+					Ticons[v].Dispose();
+					if (TOwnedIcons != null && TOwnedIcons[v] != null) {
+						TOwnedIcons[v].Dispose();
+						TOwnedIcons[v] = null;
+					}
+				}
+				Ticons = null;
+				TOwnedIcons = null;
+			}
+		}
+		public static double xr = 1, yr = 1;
+		public static void DPISCALE_CONTROL(Control c) {
+			int ww = Convert.ToInt32(Convert.ToDouble(c.Width)*xr);
+			int hh = Convert.ToInt32(Convert.ToDouble(c.Height)*yr);
+			c.Width = ww;
+			c.Height = hh;
+//			Debug.WriteLine(ww + " x " + hh);
+		}
+		public static void DPIPOS_CONTROL(Control c) {
+			int xx = Convert.ToInt32(Convert.ToDouble(c.Location.X)*xr);
+			int yy = Convert.ToInt32(Convert.ToDouble(c.Location.Y)*yr);
+			c.Location = new Point(xx, yy);
+//			Debug.WriteLine(xx + " p " + yy);
+		}
+		public static Control[] ALLCONTROLS(Control c) {
+			if (c == null) {return new Control[]{};}
+			List<Control> ctrls = new List<Control>();
+			foreach (Control con in c.Controls) {
+				ctrls.Add(con);
+				ctrls.AddRange(ALLCONTROLS(con));
+			}
+			return ctrls.ToArray();
+		}
+		public static void DPISCALE(Control cxx, bool nox = false) {
+			float dx, dy;
+			using (var g = cxx.CreateGraphics()) {
+				dx = g.DpiX;
+				dy = g.DpiY;
+			}
+			var es = Convert.ToSingle(96);
+			if (dx.Equals(es) && dy.Equals(es)) { return; }
+			xr = dx/96;
+			yr = dx/96;
+			Control[] Cons = new Control[]{cxx /*, _TranslatePanel, _langPanel, caretLangDisplay, mouseLangDisplay*/};
+			foreach(Control x in Cons) {
+				var cs = ALLCONTROLS(x);
+				if (!nox) {
+					DPIPOS_CONTROL(x);
+					DPISCALE_CONTROL(x);
+				}
+				foreach (var c in cs) {
+					DPIPOS_CONTROL(c);
+					DPISCALE_CONTROL(c);
+				}
+			}
+		}
+		public static void chrome_window_alt_fix() {
+			var last = Locales.ActiveWindow();
+			try {
+				using (var f = new Form()) {
+					f.FormBorderStyle = FormBorderStyle.None;
+					f.MaximizeBox = f.MinimizeBox = false;
+					f.TopMost = true;
+					f.Width = f.Height = 1;
+					f.Location = new Point(0, 0);
+					f.Show();
+					WinAPI.SetForegroundWindow(f.Handle);
+					KInputs.MakeInput(new [] {
+						KInputs.AddKey(Keys.LMenu, false),
+						KInputs.AddKey(Keys.RMenu, false)});
+					System.Threading.Thread.Sleep(1);
+				}
+			} finally {
+				WinAPI.SetForegroundWindow(last);
+			}
+		}
+		#region WndProc(Hotkeys) & Functions
+		protected override void WndProc(ref Message m) {
+			if (m.Msg == MMain.ao) { // ao = Already Opened
+				ToggleVisibility();
+        		Logging.Log("Another instance detected, closing it.");
+			}
+			if (m.Msg == MMain.re) { // Restart Mahou
+				Logging.Log("Restarting Mahou from command line...");
+				Restart();
+			}
+			if (m.Msg == WinAPI.WM_MOUSEWHEEL) {
+				if (WinAPI.WindowFromPoint(Cursor.Position) == tabs.Handle) {
+					try {
+					if (((uint)m.WParam >> 16) == 120) {
+						if (tabs.SelectedIndex + 1 > tabs.TabPages.Count -1)
+							tabs.SelectedIndex = 0;
+						else
+							tabs.SelectedIndex += 1;
+					}
+					else {
+						if (tabs.SelectedIndex -1 < 0)
+							tabs.SelectedIndex = tabs.TabPages.Count-1;
+						else
+							tabs.SelectedIndex -=1;
+					}
+					} catch (Exception e) { Logging.Log("Error in tabs wheel scroll, details: " + e.Message + "\r\n" + e.StackTrace + "\r\n"); }
+					tabs.Focus();
+				}
+			}
+//			Logging.Log("MSG: "+m.Msg+", LP: "+m.LParam+", WP: "+m.WParam+", KMS: "+KMHook.self+" 0x312");
+			if (m.Msg == WinAPI.WM_HOTKEY) {
+				if (HKBlockAlt.Contains(m.WParam.ToInt32())) {
+					BlockAltUpNOW = true;
+				}
+				var id = (Hotkey.HKID)m.WParam.ToInt32();
+				var mods = (int)m.LParam & 0xFFFF;
+				if (mods == WinAPI.MOD_ALT) { // Experimental fix for [only Alt] + something.
+					if (Locales.ActiveWindowClassName(40).Contains("Chrome_WidgetWin")) {
+						chrome_window_alt_fix();
+					} else
+						KInputs.MakeInput(new [] {
+					                  	KInputs.AddKey(Keys.LMenu, false),
+					                  	KInputs.AddKey(Keys.RMenu, false),
+					                  	KInputs.AddKey(Keys.LMenu, true)});
+					
+				}
+				if (m.WParam.ToInt32() == 774) {
+					AutoSwitchEnabled = !AutoSwitchEnabled;
+					ShowTooltip(MMain.Lang[Languages.Element.tab_AutoSwitch] + ": "+ (AutoSwitchEnabled?"ON":"OFF"), 1000);
+					if (AutoSwitchEnabled && (KMHook.as_corrects == null)) {
+						if (File.Exists(AS_dictfile)) {
+							AutoSwitchDictionaryRaw = File.ReadAllText(AS_dictfile);
+							AutoSwitchDictionaryTooBig = AutoSwitchDictionaryRaw.Length > 710000;
+							ChangeAutoSwitchDictionaryTextBox();
+						}
+						Debug.WriteLine("Reinit AutoSwitch Dictionary");
+					}
+					UpdateAutoSwitchCountLabel(KMHook.ReloadAutoSwitchDictionary(), lbl_AutoSwitchWordsCount);
+					Debug.WriteLine("ToggleAutoSwitch..$" + AutoSwitchEnabled);
+				}
+				#region Convert multiple words 
+				if (m.WParam.ToInt32() >= 100 && m.WParam.ToInt32() <= 109 && KMHook.waitfornum) {
+					int wordnum = m.WParam.ToInt32() - 100;
+					if (wordnum == 0) wordnum = 10;
+					Logging.Log("Attempt to convert " + wordnum + " word(s).");
+					var words = new List<KMHook.YuKey>();
+					try {
+						var wasLocale = Locales.GetCurrentLocale();
+						if (MahouUI.UseJKL && !KMHook.JKLERR)
+							wasLocale = MahouUI.currentLayout;
+						var desl = KMHook.GetNextLayout(wasLocale).uId;
+						for(int w = MMain.c_words.Count-wordnum; w != MMain.c_words.Count; w++) {
+							var mt = KMHook.LayoutKeyReplace(MMain.c_words[w], (int)(wasLocale>>16), (int)(desl>>16)).ToArray();
+							words.AddRange(mt);
+						}
+						Logging.Log("Full character count in all " + wordnum + " last word(s) is " + words.Count + ".");
+					} catch {
+						Logging.Log("Converting " + wordnum + " word(s) impossible it is bigger that entered words.");
+					}
+					FlushConvertMoreWords();
+					KMHook.ConvertLast(words, true);
+				} else if (KMHook.waitfornum) { FlushConvertMoreWords(); }
+				#endregion
+				var key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);	
+				#region Redefines
+				if (LLHook.redefines.len > 0) {
+					for (int i = 0; i < LLHook.redefines.len; i++) {
+						if (key == LLHook.redefines[i].v) {
+							KMHook.skip_up = LLHook.redefines[i].v;
+						}
+					}
+				}
+				#endregion
+				#region SpecificKeys			
+				var specific = false;
+				if (m.WParam.ToInt32() >= 201 && m.WParam.ToInt32() <= 299 && 
+				    (MahouUI.ChangeLayoutInExcluded || !KMHook.ExcludedProgram())) {
+					specific = true;
+					if (!OnceSpecific) {
+						OnceSpecific = true;
+						var si = m.WParam.ToInt32() - 200;
+						var type = SpecKeySetsValues["cbb_typ"+si];
+						try {
+							if (mods != 0 && EmulateLS) {
+								KMHook.SendModsUp(mods);
+							}
+							if (type == MMain.Lang[Languages.Element.SwitchBetween]) {
+								KMHook.ChangeLayout();
+							} else KMHook.ChangeToLayout(Locales.ActiveWindow(), Locales.GetLocaleFromString(type).uId);
+							if (key == Keys.CapsLock) {
+								KMHook.DoSelf(() => {
+									if (Control.IsKeyLocked(Keys.CapsLock)) {
+										KMHook.KeybdEvent(Keys.CapsLock, 0);
+										KMHook.KeybdEvent(Keys.CapsLock, 2);
+								    }
+				                }, "specific_keys_capslock");
+							}
+						} catch (Exception e) {
+							Logging.Log("Possibly layout switch type was not selected for " + OemReadable((SpecKeySetsValues["txt_key"+si+"_mods"].Replace(",", " +") + " + " +
+							                                                                               Remake(key)).Replace("None + ", "")) + ". Layout string: ["+type+"]. Exception: " + e.Message + "\r\n" + e.StackTrace, 2);
+						}
+					}
+				}
+				#endregion
+				if ((!KMHook.ExcludedProgram() || ConvertSWLinExcl) && !specific) {
+					var clcs = Hotkey.GetMods(HKCSelection_tempMods) == Hotkey.GetMods(HKCLast_tempMods) &&
+								HKCSelection_tempKey == HKCLast_tempKey && 
+								HKCLast_tempEnabled && HKCSelection_tempEnabled;
+					if (clcs && HKCSelection_tempDouble == HKCLast_tempDouble)
+						Hotkey.CallHotkey(HKCLast, id, ref hksOK, KMHook.ConvertSelectionOrLastWord);
+					else 
+						Hotkey.CallHotkey(HKCSelection, id, ref hksOK, KMHook.ConvertSelection);
+					var clcl = false; // Convert Line + Convert Last
+					var conv = false;
+					if (Hotkey.GetMods(HKCLine_tempMods) == Hotkey.GetMods(HKCLast_tempMods) &&
+					    HKCLine_tempKey == HKCLast_tempKey && HKCLine_tempDouble != HKCLast_tempDouble) {
+						clcl = true;
+						var lastcl = hklineOK;
+						Hotkey.CallHotkey(HKCLine, Hotkey.HKID.ConvertLastLine, ref hklineOK, () => {
+		                  	ConvertLastLine();
+							Debug.WriteLine("DISPOSING STIMER");
+							stimer.Dispose();
+							conv = true;
+						});
+						if (!lastcl && !conv) {
+							stimer = new Timer();
+							stimer.Interval = DoubleHKInterval + 50;
+							stimer.Tick += (_, __) => {
+								if (!hklineOK && !conv) // Even here !conv because of time delay!
+									Hotkey.CallHotkey(HKCLast, id, ref hklOK, () => KMHook.ConvertLast(MMain.c_word));
+								Debug.WriteLine("STOPING STIMER");
+								stimer.Stop();
+								Debug.WriteLine("DISPOSING STIMER");
+								stimer.Dispose();
+							};
+							Debug.WriteLine("STARTIN STIMER");
+							stimer.Start();
+						}
+					}
+					if (!clcl && !(clcs && HKCSelection_tempDouble == HKCLast_tempDouble)) {
+						if (clcs && HKCSelection_tempDouble && !HKCLast_tempDouble) {
+							if (!hklOK) {
+								hklOK = true;
+//								Debug.WriteLine("hklOK NOT");
+								KMHook.doublekey.Interval = MMain.mahou.DoubleHKInterval;
+								KMHook.doublekey.Start();
+								var clcst = new Timer();
+								clcst.Interval = MMain.mahou.DoubleHKInterval+25;
+								clcst.Tick += (_, __) => { 
+									if (!hklOK) {
+										Hotkey.CallHotkey(HKCLast, id, ref hklOK, () => KMHook.ConvertLast(MMain.c_word));
+									}
+									clcst.Stop(); clcst.Dispose(); };
+								clcst.Start();
+							} else
+								Hotkey.CallHotkey(HKCLast, id, ref hklOK, KMHook.ConvertSelection);
+						} else 
+							Hotkey.CallHotkey(HKCLast, id, ref hklOK, () => KMHook.ConvertLast(MMain.c_word));
+					}
+					Hotkey.CallHotkey(HKCLine, id, ref hklineOK, ConvertLastLine);
+				}
+				if (!KMHook.ExcludedProgram() && !specific) {
+					Hotkey.CallHotkey(HKCycleCase, id, ref hkccOK, ()=>CycleCase());
+					Hotkey.CallHotkey(HKTitleCase, id, ref hksTTCOK, ()=>KMHook.SelectionConversion(KMHook.ConvT.Title));
+					Hotkey.CallHotkey(HKSwapCase, id, ref hksTSCOK, ()=>KMHook.SelectionConversion(KMHook.ConvT.Swap));
+					Hotkey.CallHotkey(HKUpperCase, id, ref hkUcOK, ()=>KMHook.SelectionConversion(KMHook.ConvT.Upper));
+					Hotkey.CallHotkey(HKLowerCase, id, ref hklcOK, ()=>KMHook.SelectionConversion(KMHook.ConvT.Lower));
+					Hotkey.CallHotkey(HKRandomCase, id, ref hksTRCOK, ()=>KMHook.SelectionConversion(KMHook.ConvT.Random));
+					Hotkey.CallHotkey(HKConMorWor, id, ref hkcwdsOK, PrepareConvertMoreWords);
+					Hotkey.CallHotkey(HKTransliteration, id, ref hksTrslOK, ()=>KMHook.SelectionConversion(KMHook.ConvT.Transliteration));
+					Hotkey.CallHotkey(HKSelCustConv, id, ref hkSCCok, ()=>KMHook.SelectionConversion(KMHook.ConvT.Custom));
+					Hotkey.CallHotkey(HKShCMenuUM, id, ref hkSCMUM, ShowContextMenuUnderMouse);
+					ShiftInHotkey = Hotkey.ContainsModifier(((int)m.LParam & 0xFFFF), (int)WinAPI.MOD_SHIFT) ? true : false;
+					AltInHotkey = Hotkey.ContainsModifier(((int)m.LParam & 0xFFFF), (int)WinAPI.MOD_ALT) ? true : false;
+					CtrlInHotkey = Hotkey.ContainsModifier(((int)m.LParam & 0xFFFF), (int)WinAPI.MOD_CONTROL) ? true : false;
+					WinInHotkey = Hotkey.ContainsModifier(((int)m.LParam & 0xFFFF), (int)WinAPI.MOD_WIN) ? true : false;
+					KMHook.csdoing = false;
+				}
+				if (HKSymIgn.Enabled) {
+					Hotkey.CallHotkey(HKSymIgn, id, ref hkSIOK, ToggleSymIgn);
+				}
+				Hotkey.CallHotkey(HKRestart, id, ref dummy, Restart);
+				Hotkey.CallHotkey(Mainhk, id, ref hkShWndOK, ToggleVisibility);
+				Hotkey.CallHotkey(HKToggleLP, id, ref hkToglLPOK, ToggleLangPanel);
+				Hotkey.CallHotkey(ExitHk, id, ref hkExitOK, ExitProgram);
+				Hotkey.CallHotkey(HKShowST, id, ref hkShowTSOK, () => ShowSelectionTranslation());
+				Hotkey.CallHotkey(HKToggleMahou, id, ref hkToggleMahouOK, ToggleMahou);
+//				if (m.WParam.ToInt32() <= (int)Hotkey.HKID.TransliterateSelection)
+//					KMHook.ClearModifiers();
+				UpdateLDs();
+				// Fix for experimental alt-only + something;
+				if (!ShiftInHotkey && !CtrlInHotkey && !WinInHotkey && AltInHotkey) // probably should've been like that
+					KInputs.MakeInput(new []{KInputs.AddKey(Keys.LMenu, false)});
+			}
+			base.WndProc(ref m);
+		}
+		static void ToggleSymIgn() { 
+			if (SymIgnEnabled) {
+				SymIgnEnabled = false;
+				MMain.MyConfs.WriteSave("Functions", "SymbolIgnoreModeEnabled", "false");
+				MMain.mahou.Icon = MMain.mahou.icon.trIcon.Icon = Properties.Resources.MahouTrayHD;
+			} else {
+				MMain.MyConfs.WriteSave("Functions", "SymbolIgnoreModeEnabled", "true");
+				SymIgnEnabled = true;
+				MMain.mahou.Icon = MMain.mahou.icon.trIcon.Icon = Properties.Resources.MahouSymbolIgnoreMode;
+			}
+	    }
+		static void ConvertLastLine() {
+			var line = new List<KMHook.YuKey>();
+			var wasLocale = Locales.GetCurrentLocale();
+			if (MahouUI.UseJKL && !KMHook.JKLERR)
+				wasLocale = MahouUI.currentLayout;
+			var desl = KMHook.GetNextLayout(wasLocale).uId;
+			for(int w = 0; w!= MMain.c_words.Count; w++) {
+				var mt = KMHook.LayoutKeyReplace(MMain.c_words[w], (int)(wasLocale>>16), (int)(desl>>16)).ToArray();
+				line.AddRange(mt);
+				foreach(var x in mt) {
+					Debug.WriteLine("KK: " + x.key);
+				}
+			}
+			KMHook.ConvertLast(line, true);
+		}
+		static bool tooltip = true;
+		public static void ShowTooltip(string text, int time) {
+			if (tooltip) {
+				tooltip = false;
+				var s = new Form();
+				s.FormBorderStyle = FormBorderStyle.None;
+				s.MinimumSize = new Size(2,2);
+				s.TopMost = true;
+				var i = new TextBox();
+				i.ReadOnly = true;
+				i.TabStop = false;
+				i.Text = "Mahou: "+ text;
+				i.Size = TextRenderer.MeasureText(i.Text, i.Font);
+				if (text.Contains("\r\n")) {
+					i.Multiline = true;
+				}
+				i.AutoSize = true;
+				i.Height = i.Font.Height*(i.Multiline?2:1)+10;
+				i.BorderStyle = BorderStyle.None;
+				s.BackColor = i.BackColor = Color.Black;
+				i.ForeColor = Color.White;
+				i.TextAlign = HorizontalAlignment.Left;
+				s.Size = new Size(i.Size.Width+1, i.Size.Height-6);
+				s.Controls.Add(i);
+				i.Location = new Point(0,0);
+				s.Show();
+				s.Activate();
+				s.Location = new Point(Cursor.Position.X, Cursor.Position.Y-20);
+				var t = new Timer();
+				t.Interval = time;
+				t.Tick += (_,__) => {
+					tooltip = true;
+					s.Close();
+					s.Dispose();
+					t.Stop();
+					t.Dispose();
+				};
+				t.Start();
+			}
+		}
+		public static void CCReset(string info = "") {
+			if (CycleCaseSaveBase) {
+				Debug.WriteLine("CC [B]ase reset by: " +info);
+				CycleCaseBase = "";
+			}
+			if (CycleCaseReset) {
+				CCPos = 0;
+				if (!string.IsNullOrEmpty(info)) {
+					Logging.Log("CCPos reset, "+info);
+					Debug.WriteLine("CCPos reset, "+info);
+				}
+			}
+		}
+		public static int CCPos = 0;
+		public void CycleCase(bool hotkey=true) {
+			if (CCPos >= CycleCaseOrder.Length)
+				CCPos = 0;
+			var a = char.ToUpper(CycleCaseOrder[CCPos]);
+			var done = false;
+			switch (a) {
+				case 'T':
+					KMHook.SelectionConversion(KMHook.ConvT.Title); break;
+				case 'U':
+					KMHook.SelectionConversion(KMHook.ConvT.Upper); break;
+				case 'L':
+					KMHook.SelectionConversion(KMHook.ConvT.Lower); break;
+				case 'S':
+					KMHook.SelectionConversion(KMHook.ConvT.Swap); break;
+				case 'R':
+					KMHook.SelectionConversion(KMHook.ConvT.Random); break;
+				case 'B':
+					var cbe = String.IsNullOrEmpty(CycleCaseBase);
+					var r = CycleCaseSaveBase?(cbe?"Emtpy, needs saving first":"???"):"not enabled";
+					if (!CycleCaseSaveBase || cbe) { 
+						if (hotkey) {
+							Debug.WriteLine("Skip CC [B]: "+r);
+							CCPos++;
+							CycleCase(hotkey);
+							done = true;
+						}
+						break;
+					}
+					if (!cbe) {
+						Debug.WriteLine("CC [B]: Inputting: " + CycleCaseBase);
+						KMHook.DoSelf(() => {
+							KMHook.ClearModifiers();
+							if (MahouUI.UsePaste) {
+								KMHook.PasteText(CycleCaseBase, "Base");
+							} else {
+								KInputs.MakeInput(KInputs.AddString(CycleCaseBase));
+							}
+							MahouUI.hk_result = true;
+							KMHook.ReSelect(CycleCaseBase.Length, "B");
+		                }, "Cycle Case [B]ase restore");
+					} break;
+				default:
+					Logging.Log("I have no idea what: " + a + " means..."); break;
+			}
+			Debug.WriteLine("Hail to the ["+a+"]");
+			if (!done) CCPos++;
+		}
+		public static Point last_CR = new Point(0, 0);
+		public void ToggleMahou() {
+			if (ENABLED) {
+				PreExit(false, 2);
+				MMain.c_word.Clear();
+				MMain.c_words.Clear();
+				KMHook.ClearAutoSwitchTracking();
+				InitLangDisplays(true);
+				Text = Text.Replace(" ["+MMain.Lang[Languages.Element.Disabled]+"]", "");
+				Text += " ["+MMain.Lang[Languages.Element.Disabled]+"]";
+				icon.trIcon.Text = icon.trIcon.Text.Replace(" ["+MMain.Lang[Languages.Element.Disabled]+"]", "");
+				icon.trIcon.Text += " ["+MMain.Lang[Languages.Element.Disabled]+"]";
+				icon.trIcon.Icon = Properties.Resources.MahouTrayHD;
+				ENABLED = false;
+			} else {
+				ENABLED = true;
+				RegisterHotkeys();
+				MMain.rif.RegisterRawInputDevices(MMain.rif.Handle);
+				if (LLHook._ACTIVE) {
+					LLHook.Set();
+				}
+				InitLangDisplays();
+				ToggleTimers();
+				if (UseJKL)
+					jklXHidServ.Init();
+				Text = Text.Replace(" ["+MMain.Lang[Languages.Element.Disabled]+"]", "");
+				icon.trIcon.Text = icon.trIcon.Text.Replace(" ["+MMain.Lang[Languages.Element.Disabled]+"]", "");
+				ChangeTrayIconToFlag(true);
+			}
+			icon.CheckEnDis(ENABLED);
+			Logging.Log("Switched Mahou enabled state to: ["+ENABLED+"].");
+		}
+		public static void ShowSelectionTranslation(bool mouse = false) {
+			if (!TrEnabled) return;
+			var pos = Cursor.Position;
+			pos.Y += 10;
+			try {
+				var str = KMHook.GetClipStr().Replace('\n', ' ');
+				Debug.WriteLine(str);
+				if (!String.IsNullOrEmpty(str) && !TranslatePanel.running) {
+					MMain.mahou._TranslatePanel.ShowTranslation(str, pos);
+					MahouUI.hk_result = true;
+				}
+			} finally {
+				if (ACT_Match > 0) ACT_Match--;
+				KMHook.EnsureClipboardRestored();
+			}
+			if (!mouse) last_CR = pos;
+		}
+		/// <summary>
+		/// Restores temporary variables from settings.
+		/// </summary>
+		void LoadTemps() {
+			//This creates(silently) new config file if existed one disappeared o_O
+			// Restores temps
+			#region Hotkey enableds
+			Mainhk_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "ToggleMainWindow_Enabled");
+			HKCLast_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "ConvertLastWord_Enabled");
+			HKCSelection_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "ConvertSelectedText_Enabled");
+			HKCLine_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "ConvertLastLine_Enabled");
+			HKConMorWor_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "ConvertLastWords_Enabled");
+			HKSymIgn_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "ToggleSymbolIgnoreMode_Enabled");
+			HKTitleCase_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "SelectedTextToTitleCase_Enabled");
+			HKRandomCase_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "SelectedTextToRandomCase_Enabled");
+			HKSwapCase_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "SelectedTextToSwapCase_Enabled");
+			HKToUpper_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "SelectedToUpper_Enabled");
+			HKToLower_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "SelectedToLower_Enabled");
+			HKTransliteration_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "SelectedTextTransliteration_Enabled");
+			ExitHk_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "ExitMahou_Enabled");
+			HKRestart_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "RestartMahou_Enabled");
+			HKToggleLangPanel_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "ToggleLangPanel_Enabled");
+			HKShowSelectionTranslate_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "ShowSelectionTranslate_Enabled");
+			HKToggleMahou_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "ToggleMahou_Enabled");
+			HKCycleCase_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "CycleCase_Enabled");
+			HKSelCustConv_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "SelectedTextToCustomConv_Enabled");
+			HKShCMenuUM_tempEnabled = MMain.MyConfs.ReadBool("Hotkeys", "ShowCMenuUnderMouse_Enabled");
+			#endregion
+			#region Hotkey doubles
+			Mainhk_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "ToggleMainWindow_Double");
+			HKCLast_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "ConvertLastWord_Double");
+			HKCSelection_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "ConvertSelectedText_Double");
+			HKCLine_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "ConvertLastLine_Double");
+			HKConMorWor_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "ConvertLastWords_Double");
+			HKSymIgn_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "ToggleSymbolIgnoreMode_Double");
+			HKTitleCase_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "SelectedTextToTitleCase_Double");
+			HKRandomCase_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "SelectedTextToRandomCase_Double");
+			HKSwapCase_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "SelectedTextToSwapCase_Double");
+			HKToUpper_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "SelectedToUpper_Double");
+			HKToLower_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "SelectedToLower_Double");
+			HKTransliteration_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "SelectedTextTransliteration_Double");
+			ExitHk_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "ExitMahou_Double");
+			HKToggleLangPanel_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "ToggleLangPanel_Double");
+			HKShowSelectionTranslate_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "ShowSelectionTranslate_Double");
+			HKToggleMahou_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "ToggleMahou_Double");
+			HKCycleCase_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "CycleCase_Double");
+			HKSelCustConv_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "SelectedTextToCustomConv_Double");
+			HKShCMenuUM_tempDouble = MMain.MyConfs.ReadBool("Hotkeys", "ShowCMenuUnderMouse_Double");
+			#endregion
+			#region Hotkey modifiers
+			Mainhk_tempMods = MMain.MyConfs.Read("Hotkeys", "ToggleMainWindow_Modifiers");
+			HKCLast_tempMods = MMain.MyConfs.Read("Hotkeys", "ConvertLastWord_Modifiers");
+			HKCSelection_tempMods = MMain.MyConfs.Read("Hotkeys", "ConvertSelectedText_Modifiers");
+			HKCLine_tempMods = MMain.MyConfs.Read("Hotkeys", "ConvertLastLine_Modifiers");
+			HKConMorWor_tempMods = MMain.MyConfs.Read("Hotkeys", "ConvertLastWords_Modifiers");
+			HKSymIgn_tempMods = MMain.MyConfs.Read("Hotkeys", "ToggleSymbolIgnoreMode_Modifiers");
+			HKTitleCase_tempMods = MMain.MyConfs.Read("Hotkeys", "SelectedTextToTitleCase_Modifiers");
+			HKRandomCase_tempMods = MMain.MyConfs.Read("Hotkeys", "SelectedTextToRandomCase_Modifiers");
+			HKSwapCase_tempMods = MMain.MyConfs.Read("Hotkeys", "SelectedTextToSwapCase_Modifiers");
+			HKToUpper_tempMods = MMain.MyConfs.Read("Hotkeys", "SelectedToUpper_Modifiers");
+			HKToLower_tempMods = MMain.MyConfs.Read("Hotkeys", "SelectedToLower_Modifiers");
+			HKTransliteration_tempMods = MMain.MyConfs.Read("Hotkeys", "SelectedTextTransliteration_Modifiers");
+			ExitHk_tempMods = MMain.MyConfs.Read("Hotkeys", "ExitMahou_Modifiers");
+			HKRestart_tempMods = MMain.MyConfs.Read("Hotkeys", "RestartMahou_Modifiers");
+			HKToggleLangPanel_tempMods = MMain.MyConfs.Read("Hotkeys", "ToggleLangPanel_Modifiers");
+			HKShowSelectionTranslate_tempMods = MMain.MyConfs.Read("Hotkeys", "ShowSelectionTranslate_Modifiers");
+			HKToggleMahou_tempMods = MMain.MyConfs.Read("Hotkeys", "ToggleMahou_Modifiers");
+			HKCycleCase_tempMods = MMain.MyConfs.Read("Hotkeys", "CycleCase_Modifiers");
+			HKSelCustConv_tempMods = MMain.MyConfs.Read("Hotkeys", "SelectedTextToCustomConv_Mods");
+			HKShCMenuUM_tempMods = MMain.MyConfs.Read("Hotkeys", "ShowCMenuUnderMouse_Mods");
+			#endregion
+			#region Hotkey keys
+			Mainhk_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "ToggleMainWindow_Key");
+			HKCLast_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "ConvertLastWord_Key");
+			HKCSelection_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "ConvertSelectedText_Key");		
+			HKCLine_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "ConvertLastLine_Key");
+			HKConMorWor_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "ConvertLastWords_Key");
+			HKSymIgn_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "ToggleSymbolIgnoreMode_Key");
+			HKTitleCase_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "SelectedTextToTitleCase_Key");
+			HKRandomCase_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "SelectedTextToRandomCase_Key");
+			HKSwapCase_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "SelectedTextToSwapCase_Key");
+			HKToUpper_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "SelectedToUpper_Key");
+			HKToLower_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "SelectedToLower_Key");
+			HKTransliteration_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "SelectedTextTransliteration_Key");
+			ExitHk_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "ExitMahou_Key");
+			HKRestart_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "RestartMahou_Key");
+			HKToggleLangPanel_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "ToggleLangPanel_Key");
+			HKShowSelectionTranslate_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "ShowSelectionTranslate_Key");
+			HKToggleMahou_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "ToggleMahou_Key");
+			HKCycleCase_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "CycleCase_Key");
+			HKSelCustConv_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "SelectedTextToCustomConv_Key");
+			HKShCMenuUM_tempKey = MMain.MyConfs.ReadInt("Hotkeys", "ShowCMenuUnderMouse_Key");
+			#endregion
+			#region Lang Display colors
+			LDMouseFore_temp = GetColor(MMain.MyConfs.Read("Appearence", "MouseLTForeColor")); 
+			LDCaretFore_temp = GetColor(MMain.MyConfs.Read("Appearence", "CaretLTForeColor")); 
+			LDMouseBack_temp = GetColor(MMain.MyConfs.Read("Appearence", "MouseLTBackColor")); 
+			LDCaretBack_temp = GetColor(MMain.MyConfs.Read("Appearence", "CaretLTBackColor")); 
+			Layout1Fore_temp = GetColor(MMain.MyConfs.Read("Appearence", "Layout1ForeColor")); 
+			Layout2Fore_temp = GetColor(MMain.MyConfs.Read("Appearence", "Layout2ForeColor")); 
+			Layout1Back_temp = GetColor(MMain.MyConfs.Read("Appearence", "Layout1BackColor")); 
+			Layout2Back_temp = GetColor(MMain.MyConfs.Read("Appearence", "Layout2BackColor")); 
+			LDMouseFont_temp = GetFont(MMain.MyConfs.Read("Appearence", "MouseLTFont"));
+			LDCaretFont_temp = GetFont(MMain.MyConfs.Read("Appearence", "CaretLTFont"));
+			Layout1Font_temp = GetFont(MMain.MyConfs.Read("Appearence", "Layout1Font")); 
+			Layout2Font_temp = GetFont(MMain.MyConfs.Read("Appearence", "Layout2Font"));
+			// Transparent background colors
+			LDMouseTransparentBack_temp = MMain.MyConfs.ReadBool("Appearence", "MouseLTTransparentBackColor");
+			LDCaretTransparentBack_temp = MMain.MyConfs.ReadBool("Appearence", "CaretLTTransparentBackColor");
+			Layout1TransparentBack_temp = MMain.MyConfs.ReadBool("Appearence", "Layout1TransparentBackColor");
+			Layout2TransparentBack_temp = MMain.MyConfs.ReadBool("Appearence", "Layout2TransparentBackColor");
+			#endregion
+			#region Lang Display poisitions & sizes
+			LDMouseY_Pos_temp = MMain.MyConfs.ReadInt("Appearence", "MouseLTPositionY");
+			LDCaretY_Pos_temp = MMain.MyConfs.ReadInt("Appearence", "CaretLTPositionY");
+			LDMouseX_Pos_temp = MMain.MyConfs.ReadInt("Appearence", "MouseLTPositionX");
+			LDCaretX_Pos_temp = MMain.MyConfs.ReadInt("Appearence", "CaretLTPositionX");
+		    Layout1Y_Pos_temp = MMain.MyConfs.ReadInt("Appearence", "Layout1PositionY");
+			Layout2Y_Pos_temp = MMain.MyConfs.ReadInt("Appearence", "Layout2PositionY");
+			Layout1X_Pos_temp = MMain.MyConfs.ReadInt("Appearence", "Layout1PositionX");
+			Layout2X_Pos_temp = MMain.MyConfs.ReadInt("Appearence", "Layout2PositionX");
+			
+			LDMouseHeight_temp = MMain.MyConfs.ReadInt("Appearence", "MouseLTHeight");		
+			LDCaretHeight_temp = MMain.MyConfs.ReadInt("Appearence", "CaretLTHeight");
+			LDMouseWidth_temp = MMain.MyConfs.ReadInt("Appearence", "MouseLTWidth");
+			LDCaretWidth_temp = MMain.MyConfs.ReadInt("Appearence", "CaretLTWidth");
+		    Layout1Height_temp = MMain.MyConfs.ReadInt("Appearence", "Layout1Height");
+			Layout2Height_temp = MMain.MyConfs.ReadInt("Appearence", "Layout2Height");
+			Layout1Width_temp = MMain.MyConfs.ReadInt("Appearence", "Layout1Width");
+			Layout2Width_temp = MMain.MyConfs.ReadInt("Appearence", "Layout2Width");
+			// MCDS
+			MCDS_Xpos_temp = MMain.MyConfs.ReadInt("Appearence", "MCDS_Pos_X");
+			MCDS_Ypos_temp = MMain.MyConfs.ReadInt("Appearence", "MCDS_Pos_Y");
+			MCDS_TopIndent_temp = MMain.MyConfs.ReadInt("Appearence", "MCDS_Top");
+			MCDS_BottomIndent_temp = MMain.MyConfs.ReadInt("Appearence", "MCDS_Bottom");
+			// Use Flags
+			LDMouseUseFlags_temp = MMain.MyConfs.ReadBool("Appearence", "MouseLTUseFlags");
+			LDCaretUseFlags_temp = MMain.MyConfs.ReadBool("Appearence", "CaretLTUseFlags");
+			// Diff text for layouts
+			Layout1TText = MMain.MyConfs.Read("Appearence", "Layout1LTText");
+			Layout2TText = MMain.MyConfs.Read("Appearence", "Layout2LTText");
+			#endregion
+		}
+		void SaveFromTemps() {
+			UpdateHotkeyTemps();
+			#region Hotkey enableds
+			MMain.MyConfs.Write("Hotkeys", "ToggleMainWindow_Enabled", Mainhk_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastWord_Enabled", HKCLast_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ConvertSelectedText_Enabled", HKCSelection_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastLine_Enabled", HKCLine_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastWords_Enabled", HKConMorWor_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ToggleSymbolIgnoreMode_Enabled", HKSymIgn_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToTitleCase_Enabled", HKTitleCase_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToRandomCase_Enabled", HKRandomCase_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToSwapCase_Enabled", HKSwapCase_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedToUpper_Enabled", HKToUpper_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedToLower_Enabled", HKToLower_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextTransliteration_Enabled", HKTransliteration_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ExitMahou_Enabled", ExitHk_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "RestartMahou_Enabled", HKRestart_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ToggleLangPanel_Enabled", HKToggleLangPanel_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ShowSelectionTranslate_Enabled", HKShowSelectionTranslate_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ToggleMahou_Enabled", HKToggleMahou_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "CycleCase_Enabled", HKCycleCase_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToCustomConv_Enabled", HKSelCustConv_tempEnabled.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ShowCMenuUnderMouse_Enabled", HKShCMenuUM_tempEnabled.ToString());
+			#endregion
+			#region Hotkey doubles
+			MMain.MyConfs.Write("Hotkeys", "ToggleMainWindow_Double", Mainhk_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastWord_Double", HKCLast_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ConvertSelectedText_Double", HKCSelection_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastLine_Double", HKCLine_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastWords_Double", HKConMorWor_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ToggleSymbolIgnoreMode_Double", HKSymIgn_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToTitleCase_Double", HKTitleCase_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToRandomCase_Double", HKRandomCase_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToSwapCase_Double", HKSwapCase_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedToUpper_Double", HKToUpper_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedToLower_Double", HKToLower_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextTransliteration_Double", HKTransliteration_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ExitMahou_Double", ExitHk_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ToggleLangPanel_Double", HKToggleLangPanel_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ShowSelectionTranslate_Double", HKShowSelectionTranslate_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ToggleMahou_Double", HKToggleMahou_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "CycleCase_Double", HKCycleCase_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToCustomConv_Double", HKSelCustConv_tempDouble.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ShowCMenuUnderMouse_Double", HKShCMenuUM_tempDouble.ToString());
+			#endregion
+			#region Hotkey modifiers
+			MMain.MyConfs.Write("Hotkeys", "ToggleMainWindow_Modifiers", Mainhk_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastWord_Modifiers", HKCLast_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "ConvertSelectedText_Modifiers", HKCSelection_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastLine_Modifiers", HKCLine_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastWords_Modifiers", HKConMorWor_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "ToggleSymbolIgnoreMode_Modifiers", HKSymIgn_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToTitleCase_Modifiers", HKTitleCase_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToRandomCase_Modifiers", HKRandomCase_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToSwapCase_Modifiers", HKSwapCase_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "SelectedToUpper_Modifiers", HKToUpper_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "SelectedToLower_Modifiers", HKToLower_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextTransliteration_Modifiers", HKTransliteration_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "ExitMahou_Modifiers", ExitHk_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "RestartMahou_Modifiers", HKRestart_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "ToggleLangPanel_Modifiers", HKToggleLangPanel_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "ShowSelectionTranslate_Modifiers", HKShowSelectionTranslate_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "ToggleMahou_Modifiers", HKToggleMahou_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "CycleCase_Modifiers", HKCycleCase_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToCustomConv_Mods", HKSelCustConv_tempMods);
+			MMain.MyConfs.Write("Hotkeys", "ShowCMenuUnderMouse_Mods", HKShCMenuUM_tempMods);
+			#endregion
+			#region Hotkey keys
+			MMain.MyConfs.Write("Hotkeys", "ToggleMainWindow_Key", Mainhk_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastWord_Key", HKCLast_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ConvertSelectedText_Key", HKCSelection_tempKey.ToString());		
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastLine_Key", HKCLine_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ConvertLastWords_Key", HKConMorWor_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ToggleSymbolIgnoreMode_Key", HKSymIgn_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToTitleCase_Key", HKTitleCase_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToRandomCase_Key", HKRandomCase_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToSwapCase_Key", HKSwapCase_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedToUpper_Key", HKToUpper_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedToLower_Key", HKToLower_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextTransliteration_Key", HKTransliteration_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ExitMahou_Key", ExitHk_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "RestartMahou_Key", HKRestart_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ToggleLangPanel_Key", HKToggleLangPanel_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ShowSelectionTranslate_Key", HKShowSelectionTranslate_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ToggleMahou_Key", HKToggleMahou_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "CycleCase_Key", HKCycleCase_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "SelectedTextToCustomConv_Key", HKSelCustConv_tempKey.ToString());
+			MMain.MyConfs.Write("Hotkeys", "ShowCMenuUnderMouse_Key", HKShCMenuUM_tempKey.ToString());
+			#endregion
+			UpdateLangDisplayTemps();
+			#region Lang Display colors
+			MMain.MyConfs.Write("Appearence", "MouseLTForeColor", ColorTranslator.ToHtml(LDMouseFore_temp));
+			MMain.MyConfs.Write("Appearence", "CaretLTForeColor", ColorTranslator.ToHtml(LDCaretFore_temp));
+			MMain.MyConfs.Write("Appearence", "MouseLTBackColor", ColorTranslator.ToHtml(LDMouseBack_temp));
+			MMain.MyConfs.Write("Appearence", "CaretLTBackColor", ColorTranslator.ToHtml(LDCaretBack_temp));
+			MMain.MyConfs.Write("Appearence", "Layout1ForeColor", ColorTranslator.ToHtml(Layout1Fore_temp));
+			MMain.MyConfs.Write("Appearence", "Layout2ForeColor", ColorTranslator.ToHtml(Layout2Fore_temp));
+			MMain.MyConfs.Write("Appearence", "Layout1BackColor", ColorTranslator.ToHtml(Layout1Back_temp));
+			MMain.MyConfs.Write("Appearence", "Layout2BackColor", ColorTranslator.ToHtml(Layout2Back_temp));
+			MMain.MyConfs.Write("Appearence", "MouseLTFont", fcv.ConvertToString(LDMouseFont_temp));
+			MMain.MyConfs.Write("Appearence", "CaretLTFont", fcv.ConvertToString(LDCaretFont_temp));
+			MMain.MyConfs.Write("Appearence", "Layout1Font", fcv.ConvertToString(Layout1Font_temp));
+			MMain.MyConfs.Write("Appearence", "Layout2Font", fcv.ConvertToString(Layout2Font_temp));
+			// Transparent background colors
+			MMain.MyConfs.Write("Appearence", "MouseLTTransparentBackColor", LDMouseTransparentBack_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "CaretLTTransparentBackColor", LDCaretTransparentBack_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "Layout1TransparentBackColor", Layout1TransparentBack_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "Layout2TransparentBackColor", Layout2TransparentBack_temp.ToString());
+			#endregion
+			#region Lang Display poisitions & sizes
+			MMain.MyConfs.Write("Appearence", "MouseLTPositionY", LDMouseY_Pos_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "CaretLTPositionY", LDCaretY_Pos_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "MouseLTPositionX", LDMouseX_Pos_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "CaretLTPositionX", LDCaretX_Pos_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "Layout1PositionY", Layout1Y_Pos_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "Layout2PositionY", Layout2Y_Pos_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "Layout1PositionX", Layout1X_Pos_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "Layout2PositionX", Layout2X_Pos_temp.ToString());
+			
+			MMain.MyConfs.Write("Appearence", "MouseLTHeight", LDMouseHeight_temp.ToString());		
+			MMain.MyConfs.Write("Appearence", "CaretLTHeight", LDCaretHeight_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "MouseLTWidth", LDMouseWidth_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "CaretLTWidth", LDCaretWidth_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "Layout1Height", Layout1Height_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "Layout2Height", Layout2Height_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "Layout1Width", Layout1Width_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "Layout2Width", Layout2Width_temp.ToString());
+			// MCDS
+			MMain.MyConfs.Write("Appearence", "MCDS_Pos_X", MCDS_Xpos_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "MCDS_Pos_Y", MCDS_Ypos_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "MCDS_Top", MCDS_TopIndent_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "MCDS_Bottom", MCDS_BottomIndent_temp.ToString());
+			// Use Flags
+			MMain.MyConfs.Write("Appearence", "MouseLTUseFlags", LDMouseUseFlags_temp.ToString());
+			MMain.MyConfs.Write("Appearence", "CaretLTUseFlags", LDCaretUseFlags_temp.ToString());
+			// Diff text for layouts
+			MMain.MyConfs.Write("Appearence", "Layout1LTText", Layout1TText);
+			MMain.MyConfs.Write("Appearence", "Layout2LTText", Layout2TText);
+			#endregion
+			Logging.Log("Saved from temps.");
+		}
+		/// <summary>
+		/// Update save paths for logs, the AutoSwitch dictionary, and configs.
+		/// </summary>
+		void UpdateSaveLoadPaths(bool appdata = false) {
+			nPath = UserDataPaths.DataRoot + Path.DirectorySeparatorChar;
+			mahou_folder_appd = UserDataPaths.DataRoot;
+			AS_dictfile = Path.Combine(UserDataPaths.DataRoot, "AS_dict.txt");
+			Configs.filePath = Path.Combine(UserDataPaths.DataRoot, "Mahou.ini");
+			Logging.SetDirectory(Path.Combine(UserDataPaths.LocalRoot, "Logs"));
+			MMain.MyConfs = new Configs();
+		}
+		/// <summary>
+		/// Saves current settings to INI.
+		/// </summary>
+		void SaveConfigs() {
+			chk_AppDataConfigs.Checked = true;
+			Configs.forceAppData = !UserDataPaths.UsesCustomPath;
+			bool only_load = false;
+			nPath = UserDataPaths.DataRoot + Path.DirectorySeparatorChar;
+			mahou_folder_appd = UserDataPaths.DataRoot;
+			Directory.CreateDirectory(UserDataPaths.DataRoot);
+			Logging.Log("Base path: " + nPath);
+			AutoStartAsAdmin = (cbb_AutostartType.SelectedIndex != 0);
+			if (chk_AutoStart.Checked) {
+				if (!AutoStartExist(AutoStartAsAdmin))
+					CreateAutoStart();
+			}
+			else {
+				if(AutoStartExist(AutoStartAsAdmin))
+					AutoStartRemove(AutoStartAsAdmin);
+			}
+			var exist = File.Exists(Path.Combine(nPath,"Mahou.ini"));
+			if (latest_save_dir != nPath && exist) only_load = true;
+			if (!exist) {
+				Logging.Log("Creating new configs file ["+ Configs.filePath + "].");
+				Configs.CreateConfigsFile();
+			}
+			DoInMainConfigs(() => { MMain.MyConfs.WriteSave("Functions", "AppDataConfigs", chk_AppDataConfigs.Checked.ToString()); return (object)0; });
+			if (!only_load) {
+				tmpLangTTAppearenceIndex = lsb_LangTTAppearenceForList.SelectedIndex;
+				tmpHotkeysIndex = lsb_Hotkeys.SelectedIndex;
+				#region Functions
+				MMain.MyConfs.Write("Functions", "AutoStartAsAdmin", AutoStartAsAdmin.ToString());
+				MMain.MyConfs.Write("Functions", "TrayIconVisible", chk_TrayIcon.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "ConvertSelectionLayoutSwitching", chk_CSLayoutSwitching.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "ReSelect", chk_ReSelect.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "RePress", chk_RePress.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "AddOneSpaceToLastWord", chk_AddOneSpace.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "AddOneEnterToLastWord", chk_Add1NL.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "ConvertSelectionLayoutSwitchingPlus", chk_CSLayoutSwitchingPlus.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "ScrollTip", chk_HighlightScroll.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "StartupUpdatesCheck", chk_StartupUpdatesCheck.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "SilentUpdate", chk_SilentUpdate.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "Logging", chk_Logging.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "TrayFlags", (cbb_TrayDislpayType.SelectedIndex == 1).ToString());
+				MMain.MyConfs.Write("Functions", "TrayText", (cbb_TrayDislpayType.SelectedIndex == 2).ToString());
+				MMain.MyConfs.Write("Functions", "CapsLockTimer", chk_CapsLockDTimer.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "BlockMahouHotkeysWithCtrl", chk_BlockHKWithCtrl.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "MCDServerSupport", chk_MCDS_support.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "OneLayoutWholeWord", chk_OneLayoutWholeWord.Checked.ToString());
+				MMain.MyConfs.Write("Appearence", "MouseLTAlways", chk_MouseTTAlways.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "GuessKeyCodeFix", chk_GuessKeyCodeFix.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "RemapCapslockAsF18", chk_RemapCapsLockAsF18.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "UseJKL", chk_GetLayoutFromJKL.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "ReadOnlyNA", chk_ReadOnlyNA.Checked.ToString());
+				MMain.MyConfs.Write("Functions", "WriteInputHistory", chk_WriteInputHistory.Checked.ToString());
+				try { MMain.MyConfs.Write("Functions", "WriteInputHistoryBackSpaceType", cbb_BackSpaceType.SelectedIndex.ToString()); } catch { }
+				SaveSmartTypingSettings();
+				#endregion
+				#region Layouts
+				MMain.MyConfs.Write("Layouts", "SwitchBetweenLayouts", chk_SwitchBetweenLayouts.Checked.ToString());
+				MMain.MyConfs.Write("Layouts", "EmulateLayoutSwitch", chk_EmulateLS.Checked.ToString());
+				MMain.MyConfs.Write("Layouts", "ChangeToSpecificLayoutByKey", chk_SpecificLS.Checked.ToString());
+				// Specific keys sets
+				SaveSpecificKeySets();
+				// Specific keys type
+				MMain.MyConfs.Write("Layouts", "SpecificKeysType", cbb_SpecKeysType.SelectedIndex.ToString());
+				// Keys 
+				MMain.MyConfs.Write("Layouts", "SpecificKey1", cbb_Key1.SelectedIndex.ToString());
+				MMain.MyConfs.Write("Layouts", "SpecificKey2", cbb_Key2.SelectedIndex.ToString());
+				MMain.MyConfs.Write("Layouts", "SpecificKey3", cbb_Key3.SelectedIndex.ToString());
+				MMain.MyConfs.Write("Layouts", "SpecificKey4", cbb_Key4.SelectedIndex.ToString());
+				try {
+					try { MMain.MyConfs.Write("Layouts", "EmulateLayoutSwitchType", cbb_EmulateType.SelectedItem.ToString()); } catch { }
+					// Main Layouts
+					try { MMain.MyConfs.Write("Layouts", "MainLayout1", cbb_MainLayout1.SelectedItem.ToString()); } catch {  }
+					try { MMain.MyConfs.Write("Layouts", "MainLayout2", cbb_MainLayout2.SelectedItem.ToString()); } catch { }
+					// Layouts
+					try { MMain.MyConfs.Write("Layouts", "SpecificLayout1", cbb_Layout1.SelectedItem.ToString()); } catch { }
+					try { MMain.MyConfs.Write("Layouts", "SpecificLayout2", cbb_Layout2.SelectedItem.ToString()); } catch { }
+					try { MMain.MyConfs.Write("Layouts", "SpecificLayout3", cbb_Layout3.SelectedItem.ToString()); } catch { }
+					try { MMain.MyConfs.Write("Layouts", "SpecificLayout4", cbb_Layout4.SelectedItem.ToString()); } catch { }
+				} catch { Logging.Log("Some settings in layouts tab failed to save, they are skipped."); }
+				MMain.MyConfs.Write("Layouts", "OneLayout", chk_OneLayout.Checked.ToString());
+				MMain.MyConfs.Write("Layouts", "QWERTZfix", chk_qwertz.Checked.ToString());
+				MMain.MyConfs.Write("Layouts", "CTRL_ALT_TemporaryChangeLayout", txt_LCTRLLALTTempLayout.Text);
+				#endregion
+				#region Persistent Layout
+				MMain.MyConfs.Write("PersistentLayout", "OnlyOnWindowChange", chk_OnlyOnWindowChange.Checked.ToString());
+				MMain.MyConfs.Write("PersistentLayout", "ChangeOnlyOnce", chk_ChangeLayoutOnlyOnce.Checked.ToString());
+				MMain.MyConfs.Write("PersistentLayout", "ActivateForLayout1", chk_PersistentLayout1Active.Checked.ToString());
+				MMain.MyConfs.Write("PersistentLayout", "ActivateForLayout2", chk_PersistentLayout2Active.Checked.ToString());
+				MMain.MyConfs.Write("PersistentLayout", "Layout1CheckInterval", nud_PersistentLayout1Interval.Value.ToString());
+				MMain.MyConfs.Write("PersistentLayout", "Layout2CheckInterval", nud_PersistentLayout2Interval.Value.ToString());
+				MMain.MyConfs.Write("PersistentLayout", "Layout1Processes", txt_PersistentLayout1Processes.Text.Replace(Environment.NewLine, "^cr^lf"));
+				MMain.MyConfs.Write("PersistentLayout", "Layout2Processes", txt_PersistentLayout2Processes.Text.Replace(Environment.NewLine, "^cr^lf"));
+				#endregion
+				#region Appearence
+				MMain.MyConfs.Write("Appearence", "DisplayLangTooltipForMouse", chk_LangTooltipMouse.Checked.ToString());
+				MMain.MyConfs.Write("Appearence", "DisplayLangTooltipForCaret", chk_LangTooltipCaret.Checked.ToString());
+				MMain.MyConfs.Write("Appearence", "DisplayLangTooltipForMouseOnChange", chk_LangTTMouseOnChange.Checked.ToString());
+				MMain.MyConfs.Write("Appearence", "DisplayLangTooltipForCaretOnChange", chk_LangTTCaretOnChange.Checked.ToString());
+				MMain.MyConfs.Write("Appearence", "DifferentColorsForLayouts", chk_LangTTDiffLayoutColors.Checked.ToString());
+				try {
+				MMain.MyConfs.Write("Appearence", "Language", cbb_Language.SelectedItem.ToString());
+				} catch { 
+					Logging.Log("Language saving failed, restored to English.");
+					MMain.MyConfs.Write("Appearence", "Language", "English");
+				}
+				MMain.MyConfs.Write("Appearence", "MouseLTUpperArrow", mouseLTUpperArrow.ToString());
+				MMain.MyConfs.Write("Appearence", "CaretLTUpperArrow", caretLTUpperArrow.ToString());
+				MMain.MyConfs.Write("Appearence", "WindowsMessages", chk_LDMessages.Checked.ToString());
+				#endregion
+				#region Timings
+				if (LDUseWindowsMessages)
+					MMain.MyConfs.Write("Timings", "LangTooltipForMouseSkipMessages", nud_LangTTMouseRefreshRate.Value.ToString());
+				else
+					MMain.MyConfs.Write("Timings", "LangTooltipForMouseRefreshRate", nud_LangTTMouseRefreshRate.Value.ToString());
+				MMain.MyConfs.Write("Timings", "UsePasteInCS", chk_CSUsePaste.Checked.ToString());
+				MMain.MyConfs.Write("Timings", "LangTooltipForCaretRefreshRate", nud_LangTTCaretRefreshRate.Value.ToString());
+				MMain.MyConfs.Write("Timings", "DoubleHotkey2ndPressWait", nud_DoubleHK2ndPressWaitTime.Value.ToString());
+				MMain.MyConfs.Write("Timings", "FlagsInTrayRefreshRate", nud_TrayFlagRefreshRate.Value.ToString());
+				MMain.MyConfs.Write("Timings", "ScrollLockStateRefreshRate", nud_ScrollLockRefreshRate.Value.ToString());
+				MMain.MyConfs.Write("Timings", "CapsLockDisableRefreshRate", nud_CapsLockRefreshRate.Value.ToString());
+				MMain.MyConfs.Write("Timings", "ScrollLockStateRefreshRate", nud_ScrollLockRefreshRate.Value.ToString());
+				MMain.MyConfs.Write("Timings", "SelectedTextGetMoreTries", chk_SelectedTextGetMoreTries.Checked.ToString());
+				MMain.MyConfs.Write("Timings", "SelectedTextGetMoreTriesCount", nud_SelectedTextGetTriesCount.Value.ToString());
+				MMain.MyConfs.Write("Timings", "DelayAfterBackspaces", nud_DelayAfterBackspaces.Value.ToString());
+				MMain.MyConfs.Write("Timings", "UseDelayAfterBackspaces", chk_UseDelayAfterBackspaces.Checked.ToString());
+				#region Excluded
+				MMain.MyConfs.Write("Timings", "ExcludedPrograms", txt_ExcludedPrograms.Text.Replace(Environment.NewLine, "^cr^lf"));
+				MMain.MyConfs.Write("Timings", "ChangeLayoutInExcluded", chk_Change1KeyL.Checked.ToString());
+				MMain.MyConfs.Write("Timings", "ConvertSWLinExcl", chk_ConvSWL.Checked.ToString());
+				#endregion
+				#endregion
+				#region AutoSwitch
+				MMain.MyConfs.Write("AutoSwitch", "Enabled", chk_AutoSwitch.Checked.ToString());
+				MMain.MyConfs.Write("AutoSwitch", "SpaceAfter", chk_AutoSwitchSpaceAfter.Checked.ToString());
+				MMain.MyConfs.Write("AutoSwitch", "SwitchToGuessLayout", chk_AutoSwitchSwitchToGuessLayout.Checked.ToString());
+				MMain.MyConfs.Write("AutoSwitch", "DownloadInZip", chk_DownloadASD_InZip.Checked.ToString());
+				if (AutoSwitchEnabled && !string.IsNullOrEmpty(AutoSwitchDictionaryRaw) && !AutoSwitchDictionaryTooBig)
+					AtomicFile.WriteAllText(AS_dictfile, AutoSwitchDictionaryRaw, Encoding.UTF8);
+				#endregion
+				#region Appearence & Hotkeys
+				SaveFromTemps();
+				#endregion
+				#region LangPanel
+				MMain.MyConfs.Write("LangPanel", "Display", chk_DisplayLangPanel.Checked.ToString());
+				MMain.MyConfs.Write("LangPanel", "RefreshRate", nud_LPRefreshRate.Value.ToString());
+				MMain.MyConfs.Write("LangPanel", "Transparency", nud_LPTransparency.Value.ToString());
+				MMain.MyConfs.Write("LangPanel", "ForeColor", ColorTranslator.ToHtml(btn_LPFore.BackColor));
+				MMain.MyConfs.Write("LangPanel", "BackColor", ColorTranslator.ToHtml(btn_LPBack.BackColor));
+				MMain.MyConfs.Write("LangPanel", "BorderColor", ColorTranslator.ToHtml(btn_LPBorderColor.BackColor));
+				MMain.MyConfs.Write("LangPanel", "BorderAeroColor", chk_LPAeroColor.Checked.ToString());
+				MMain.MyConfs.Write("LangPanel", "Font", fcv.ConvertToString(btn_LPFont.Font));
+				MMain.MyConfs.Write("LangPanel", "UpperArrow", chk_LPUpperArrow.Checked.ToString());
+				#endregion
+				#region Translate Panel
+				MMain.MyConfs.Write("TranslatePanel", "Enabled", chk_TrEnable.Checked.ToString());
+				MMain.MyConfs.Write("TranslatePanel", "UseGS", TranslatePanel.useGS.ToString());
+				MMain.MyConfs.Write("TranslatePanel", "UseNA", TranslatePanel.useNA.ToString());
+				MMain.MyConfs.Write("TranslatePanel", "Transparency", nud_TrTransparency.Value.ToString());
+				MMain.MyConfs.Write("TranslatePanel", "OnDoubleClick", chk_TrOnDoubleClick.Checked.ToString());
+				MMain.MyConfs.Write("TranslatePanel", "FG", ColorTranslator.ToHtml(btn_TrFG.BackColor));
+				MMain.MyConfs.Write("TranslatePanel", "BG", ColorTranslator.ToHtml(btn_TrBG.BackColor));
+				MMain.MyConfs.Write("TranslatePanel", "BorderC", ColorTranslator.ToHtml(btn_TrBorderC.BackColor));
+				MMain.MyConfs.Write("TranslatePanel", "BorderAero", chk_TrUseAccent.Checked.ToString());
+				MMain.MyConfs.Write("TranslatePanel", "TextFont", fcv.ConvertToString(btn_TrTextFont.Font));
+				MMain.MyConfs.Write("TranslatePanel", "TitleFont", fcv.ConvertToString(btn_TrTitleFont.Font));
+				MMain.MyConfs.Write("TranslatePanel", "Transcription", chk_TrTranscription.Checked.ToString());
+				SaveTrSets();
+				#endregion
+				#region Sync
+				MMain.MyConfs.Write("Sync", "BBools", string.Join("|", bin(chk_Mini.Checked), bin(chk_Htxt.Checked), bin(chk_Ttxt.Checked), bin(chk_andPROXY.Checked), bin(chk_Mmm.Checked)));
+				MMain.MyConfs.Write("Sync", "RBools", string.Join("|", bin(chk_rMini.Checked), bin(chk_rHtxt.Checked), bin(chk_rTtxt.Checked), bin(chk_andPROXY2.Checked), bin(chk_rMmm.Checked)));
+				MMain.MyConfs.Write("Sync", "BLast", txt_backupId.Text);
+				MMain.MyConfs.Write("Sync", "RLast", txt_restoreId.Text);
+				MMain.MyConfs.Write("Sync", "ZxZ", ZxZ.ToString());
+				#endregion
+				#region Proxy
+				MMain.MyConfs.Write("Proxy", "ServerPort", txt_ProxyServerPort.Text);
+				MMain.MyConfs.Write("Proxy", "UserName", txt_ProxyLogin.Text);
+				MMain.MyConfs.Write("Proxy", "Password", txt_ProxyPassword.Text);
+				#endregion
+				#region Sounds
+				MMain.MyConfs.Write("Sounds", "Enabled", chk_EnableSnd.Checked.ToString());
+				MMain.MyConfs.Write("Sounds", "OnAutoSwitch", chk_SndAutoSwitch.Checked.ToString());
+					MMain.MyConfs.Write("Sounds", "OnConvertLast", chk_SndLast.Checked.ToString());
+				MMain.MyConfs.Write("Sounds", "OnLayoutSwitch", chk_SndLayoutSwitch.Checked.ToString());
+				MMain.MyConfs.Write("Sounds", "UseCustomSound", chk_UseCustomSnd.Checked.ToString());
+				MMain.MyConfs.Write("Sounds", "CustomSound", lbl_CustomSound.Text);
+				MMain.MyConfs.Write("Sounds", "OnAutoSwitch2", chk_SndAutoSwitch2.Checked.ToString());
+					MMain.MyConfs.Write("Sounds", "OnConvertLast2", chk_SndLast2.Checked.ToString());
+				MMain.MyConfs.Write("Sounds", "OnLayoutSwitch2", chk_SndLayoutSwitch2.Checked.ToString());
+				MMain.MyConfs.Write("Sounds", "UseCustomSound2", chk_UseCustomSnd2.Checked.ToString());
+				MMain.MyConfs.Write("Sounds", "CustomSound2", lbl_CustomSound2.Text);
+				#endregion
+				saveHidden();
+				MMain.MyConfs.WriteToDisk();
+				Logging.Log("All configurations saved.");
+			}
+			LoadConfigs();
+		}
+		void SaveTrSets() {
+			var sets = new StringBuilder();
+			for (int i = 1; i <= TrSetCount; i++) {
+				sets.Append("set_").Append(i).Append("/")
+				    .Append(TrSetsValues[new StringBuilder("cbb_fr").Append(i).ToString()]).Append("/")
+				    .Append(TrSetsValues[new StringBuilder("cbb_to").Append(i).ToString()]);
+				if (i != TrSetCount)
+					sets.Append("|");
+			}
+			if (String.IsNullOrEmpty(sets.ToString()))
+				sets.Clear().Append("set_0");
+			MMain.MyConfs.Write("TranslatePanel", "LanguageSets", sets.ToString());
+		}
+		void SaveSpecificKeySets(bool change1set = false, int setId = 0, string typ = "") {
+			var sets = new StringBuilder();;
+			for (int i = 1; i <= SpecKeySetCount; i++) {
+				sets.Append("set_").Append(i).Append("/")
+				    .Append(SpecKeySetsValues[new StringBuilder("txt_key").Append(i).Append("_key").ToString()]).Append("/")
+					.Append(SpecKeySetsValues[new StringBuilder("txt_key").Append(i).Append("_mods").ToString()]);
+				if ((pan_KeySets.Controls["set_"+i].Controls["chk_win"+i] as CheckBox).Checked &&
+				    !SpecKeySetsValues["txt_key"+i+"_mods"].Contains("Win"))
+					sets.Append(" + Win");
+				sets.Append("/");
+				if (setId == i && change1set)
+					sets.Append(typ);
+				else 
+					sets.Append(SpecKeySetsValues["cbb_typ"+i]);
+				if (i != SpecKeySetCount)
+					sets.Append("|");
+			}
+			if (String.IsNullOrEmpty(sets.ToString()))
+				sets.Clear().Append("set_0");
+			MMain.MyConfs.Write("Layouts", "SpecificKeySets", sets.ToString());
+		}
+		object DoInMainConfigs(Func<object> act) {
+			if (Configs.forceAppData || MMain.C_SWITCH) return (object)true;
+			var last = Configs.filePath; // Last configs file
+			Configs.filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Mahou.ini");
+			if (!Configs.Readable()) {
+				Configs.filePath = last;
+				return (object)true;
+			}
+			MMain.MyConfs = new Configs();
+			object rsl = act();
+			if (chk_AppDataConfigs.Checked) {;
+				if (!Directory.Exists(mahou_folder_appd))
+					Directory.CreateDirectory(mahou_folder_appd);
+				Configs.filePath = Path.Combine(mahou_folder_appd, "Mahou.ini");
+				MMain.MyConfs = new Configs();
+			}
+			return rsl;
+		}
+		void ChangeAutoSwitchDictionaryTextBox() {
+			autoSwitchDictionaryTextUpdating = true;
+			try {
+				if (AutoSwitchDictionaryTooBig) {
+					txt_AutoSwitchDictionary.ReadOnly = true;
+					txt_AutoSwitchDictionary.Text = MMain.Lang[Languages.Element.AutoSwitchDictionaryTooBigToDisplay];
+				} else {
+					txt_AutoSwitchDictionary.ReadOnly = false;
+					txt_AutoSwitchDictionary.Text = AutoSwitchDictionaryRaw;
+				}
+			} finally {
+				autoSwitchDictionaryTextUpdating = false;
+			}
+		}
+		Color GetColor(string color_html) {
+			Color color = SystemColors.WindowText;
+			try { 
+				color = ColorTranslator.FromHtml(color_html);
+			} catch  (Exception e) {
+				WrongColorLog(color_html, e.Message + "\r\n" + e.StackTrace);
+			}
+			return color;
+		}
+		Font GetFont(string font_raw, bool remstyle = false) {
+			Font font = SystemFonts.DefaultFont;
+			font_raw = FontDecimReplace(font_raw);
+			try {
+				if (remstyle) {
+					if (!font_raw.Contains("style=")) font_raw = font_raw.Replace("; style", "");
+				}
+				font = (Font)fcv.ConvertFromString(font_raw);
+			} catch (Exception e) {
+				WrongFontLog(font_raw, e.Message + "\r\n" + e.StackTrace);
+			}
+			return font;
+		}
+		string FontDecimReplace(string font_raw) {
+			var pattern = @"(?:([.,]))([0-9]+pt)";
+			var repl = font_raw;
+			var mt = new Regex(pattern).Match(repl);
+//			Debug.WriteLine("DECIM REPL FONT :" +mt.Groups[1] + " == " + decim);
+			if (mt.Groups[1].Value != decim && !string.IsNullOrEmpty(mt.Groups[1].Value)) {
+				repl = Regex.Replace(font_raw, pattern, decim+"$2");
+				Logging.Log("Replaced decimal in font " + font_raw + ", with: " + decim + " => " + repl);
+			}
+			return repl;
+		}
+		void parseRedefines() {
+			LLHook.redefines.Clear();
+			LLHook.redefines_excl_mods.Clear();
+			var pon = Redefines.Split('|');
+			for (int i = 0; i != pon.Length; i++) {
+				var pyon = pon[i].Split(new[]{'<'}, 2);
+				var kin = pyon[0].Split(new[]{'>'}, 2);
+				if (String.IsNullOrEmpty(pon[i])) {
+					Logging.Log("[REDEF] > Ignore empty: #"+i);
+			    	continue;
+			    }
+				if (kin.Length < 2) { 
+					Debug.WriteLine("Syntax error, expected: \">\"");
+					continue;
+				}
+				Keys k, k2;
+				try {
+					k = KMHook.strparsekey(kin[0])[0];
+				} catch { Logging.Log("[REDEF] > Can't parse key: " + kin[0]); continue; }
+				try {
+					k2 = KMHook.strparsekey(kin[1])[0];
+				} catch { Logging.Log("[REDEF] > Can't parse key: " + kin[1]); continue; }
+				var sn = (pyon.Length<2?"":pyon[1]);
+				Logging.Log("[REDEF] > +Redefine: " + k +" => " +k2 + " <= " + sn);
+				LLHook.redefines.Add(k, k2);
+				LLHook.redefines_excl_mods.Add(sn);
+			}
+		}
+		void saveHidden() {
+			MMain.MyConfs.Write("Hidden", "cmdbackfix", Hchk_cmdbackfix.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "DARKTHEME", Hchk_DARK.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "ChangeLayoutOnTrayLMB", Hchk_LMBTrayLayoutChange.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "DisableMemoryFlush", Hchk_DisableMemFlush.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "SymbolClear", Htxt_SymbolClear.Text);
+			MMain.MyConfs.Write("Hidden", "LibreCtrlAltShiftV", Hchk_LibrePasteFixCASV.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "CycleCaseOrder", Htxt_CycleCaseOrder.Text);
+			MMain.MyConfs.Write("Hidden", "CycleCaseReset", Hchk_CycleCaseReset.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "onlyAutoSwitchExcluded", Htxt_OAutoSwitchExcluded.Text);
+			MMain.MyConfs.Write("Hidden", "OverlayExcluded", Htxt_OverlayExcluded.Text);
+			MMain.MyConfs.Write("Hidden", "OverlayExcludedInterval", Hnud_OverlayExcludedInterval.Value.ToString());
+			MMain.MyConfs.Write("Hidden", "AutoCopyTranslation", Htxt_AutoCopyTranslation.Text);
+			MMain.MyConfs.Write("Hidden", "AS_IngoreBack", Hchk_ASIgnoreBack.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "AS_IngoreDel", Hchk_ASIgnoreDel.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "AS_IngoreLS", Hchk_ASIgnoreLS.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "AS_IngoreRules", Htxt_AutoSwitchIngoreRules.Text.ToUpper());
+			MMain.MyConfs.Write("Hidden", "AS_IngoreLSTimeout", Hnud_ASIgnoreTimeout.Value.ToString());
+			MMain.MyConfs.Write("Hidden", "NCS_tray", Hchk_NCStray.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "NCS", Htxt_NCS.Text.ToUpper());
+			MMain.MyConfs.Write("Hidden", "ToggleAutoSwitchHK", Htxt_AutoSwitchHotkeyStr.Text);
+			MMain.MyConfs.Write("Hidden", "AutoRestartMins", Hnud_AutoRestartMins.Value.ToString());
+			MMain.MyConfs.Write("Hidden", "ReSelectCustoms", Htxt_ReselectCustoms.Text);
+			MMain.MyConfs.Write("Hidden", "ChangeLayoutOnTrayLMB+DoubleClick", Hchk_LMBTrayLayoutChangeDC.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "TrayHoverMahouMM", Hnud_TrayHoverMM.Value.ToString());
+			MMain.MyConfs.Write("Hidden", "Redefines", Htxt_Redefines.Text);
+			MMain.MyConfs.Write("Hidden", "ClipBackOnlyText", Hchk_ClipBackOnlyText.Checked.ToString());
+			MMain.MyConfs.Write("Hidden", "AutoSwitchEndingSymbols", Htxt_ASEndSymbols.Text);
+			MMain.MyConfs.Write("Hidden", "CycleCaseSaveBase", Hchk_SaveBase.Checked.ToString());
+			try { MMain.MyConfs.Write("Hidden", "Layout_1_Modifier_Key", (
+					String.IsNullOrEmpty(Htxt_LayoutModifier_1.Text)?0:
+					((int)KMHook.strparsekey(Htxt_LayoutModifier_1.Text)[0])
+				).ToString()); }
+			catch { Logging.Log("Layout modifier 1 parse error, can't recognize that key:"+Htxt_LayoutModifier_1.Text, 1); }
+			try { MMain.MyConfs.Write("Hidden", "Layout_2_Modifier_Key", (
+					String.IsNullOrEmpty(Htxt_LayoutModifier_2.Text)?0:
+					((int)KMHook.strparsekey(Htxt_LayoutModifier_2.Text)[0])
+				).ToString()); }
+			catch { Logging.Log("Layout modifier 2 parse error, can't recognize that key:"+Htxt_LayoutModifier_2.Text, 1); }
+			try { MMain.MyConfs.Write("Hidden", "Layout_D_Modifier_Key", (
+					String.IsNullOrEmpty(Htxt_LayoutModifier_D.Text)?0:
+					((int)KMHook.strparsekey(Htxt_LayoutModifier_D.Text)[0])
+				).ToString()); }
+			catch { Logging.Log("Layout modifier D parse error, can't recognize that key:"+Htxt_LayoutModifier_D.Text, 1); }
+			try { MMain.MyConfs.Write("Hidden", "Layout_S_Modifier_Key", (
+					String.IsNullOrEmpty(Htxt_LayoutModifier_S.Text)?0:
+					((int)KMHook.strparsekey(Htxt_LayoutModifier_S.Text)[0])
+				).ToString()); }
+			catch { Logging.Log("Layout modifier S parse error, can't recognize that key:"+Htxt_LayoutModifier_S.Text, 1); }
+			try { MMain.MyConfs.Write("Hidden", "Layout_S_Modifier_Layout", 
+					String.IsNullOrEmpty(Htxt_LayoutModifier_S_LAYOUT.Text)? "0" :
+					Htxt_LayoutModifier_S_LAYOUT.Text ); }
+			catch { Logging.Log("Layout modifier S layout parse error, can't recognize that layout:"+Htxt_LayoutModifier_S_LAYOUT.Text, 1); }
+//			NCS_destroy();
+		}
+		string KeynameReplace(string input) {
+			var x = input.ToLower().Replace("menu", "alt").Replace("control", "ctrl")
+				.Replace("d0", "0").Replace("d1", "1")
+				.Replace("d2", "2").Replace("d3", "3")
+				.Replace("d4", "4").Replace("d5", "5")
+				.Replace("d6", "6").Replace("d7", "7")
+				.Replace("d8", "8").Replace("d9", "9")
+				.Replace("capital", "capsLock")
+				.Replace("return", "enter");
+			x = x[0].ToString().ToUpperInvariant() + x.Substring(1);
+			return x;
+		}
+		void loadHidden() {
+			Hchk_LMBTrayLayoutChange.Checked = MMain.MyConfs.ReadBool("Hidden", "ChangeLayoutOnTrayLMB");
+			Hchk_DisableMemFlush.Checked = nomemoryflush = MMain.MyConfs.ReadBool("Hidden", "DisableMemoryFlush");
+			Htxt_SymbolClear.Text = KMHook.symbolclear = MMain.MyConfs.Read("Hidden", "SymbolClear");
+			Hchk_LibrePasteFixCASV.Checked = LibreCtrlAltShiftV = MMain.MyConfs.ReadBool("Hidden", "LibreCtrlAltShiftV");
+			Htxt_CycleCaseOrder.Text = CycleCaseOrder = MMain.MyConfs.Read("Hidden", "CycleCaseOrder");
+			Hchk_CycleCaseReset.Checked = CycleCaseReset = MMain.MyConfs.ReadBool("Hidden", "CycleCaseReset");
+			Htxt_OAutoSwitchExcluded.Text = onlyAutoSwitchExcluded = MMain.MyConfs.Read("Hidden", "onlyAutoSwitchExcluded");
+			Htxt_OverlayExcluded.Text = OverlayExcluded = MMain.MyConfs.Read("Hidden", "OverlayExcluded");
+			Hnud_OverlayExcludedInterval.Value = OverlayExcludedInerval = MMain.MyConfs.ReadInt("Hidden", "OverlayExcludedInterval");
+			Htxt_AutoCopyTranslation.Text = AutoCopyTranslation = MMain.MyConfs.Read("Hidden", "AutoCopyTranslation");
+			Hchk_ASIgnoreBack.Checked = KMHook.AS_IGN_BACK = MMain.MyConfs.ReadBool("Hidden", "AS_IngoreBack");
+			Hchk_ASIgnoreDel.Checked = KMHook.AS_IGN_DEL = MMain.MyConfs.ReadBool("Hidden", "AS_IngoreDel");
+			Hchk_ASIgnoreLS.Checked = KMHook.AS_IGN_LS = MMain.MyConfs.ReadBool("Hidden", "AS_IngoreLS");
+			Htxt_AutoSwitchIngoreRules.Text = KMHook.AS_IGN_RULES = MMain.MyConfs.Read("Hidden", "AS_IngoreRules").ToUpper();
+			Hnud_ASIgnoreTimeout.Value = KMHook.AS_IGN_TIMEOUT = MMain.MyConfs.ReadInt("Hidden", "AS_IngoreLSTimeout");
+			Hchk_NCStray.Checked = MMain.MyConfs.ReadBool("Hidden", "NCS_tray");
+			Htxt_NCS.Text = ncs = MMain.MyConfs.Read("Hidden", "NCS").ToUpper();
+			Htxt_AutoSwitchHotkeyStr.Text = tas = MMain.MyConfs.Read("Hidden", "ToggleAutoSwitchHK");
+			Hnud_AutoRestartMins.Value = arm = MMain.MyConfs.ReadInt("Hidden", "AutoRestartMins");
+			Htxt_ReselectCustoms.Text = ReselectCustoms = MMain.MyConfs.Read("Hidden", "ReSelectCustoms");
+			Hchk_LMBTrayLayoutChangeDC.Checked = MMain.MyConfs.ReadBool("Hidden", "ChangeLayoutOnTrayLMB+DoubleClick");
+			TrayHoverMahouMM = MMain.MyConfs.ReadInt("Hidden", "TrayHoverMahouMM");
+			Htxt_Redefines.Text = Redefines = MMain.MyConfs.Read("Hidden", "Redefines");
+			ClipBackOnlyText = Hchk_ClipBackOnlyText.Checked = MMain.MyConfs.ReadBool("Hidden", "ClipBackOnlyText");
+			KMHook.AS_END_symbols = Htxt_ASEndSymbols.Text = MMain.MyConfs.Read("Hidden", "AutoSwitchEndingSymbols");
+			MahouMMTrayHoverLostFocusClose = MMain.MyConfs.ReadBool("Hidden", "MahouMMTrayHoverLostFocusClose");
+			CycleCaseSaveBase = Hchk_SaveBase.Checked = MMain.MyConfs.ReadBool("Hidden", "CycleCaseSaveBase");
+			Layout1ModifierKey = MMain.MyConfs.ReadInt("Hidden", "Layout_1_Modifier_Key");
+			Layout2ModifierKey = MMain.MyConfs.ReadInt("Hidden", "Layout_2_Modifier_Key");
+			LayoutDModifierKey = MMain.MyConfs.ReadInt("Hidden", "Layout_D_Modifier_Key");
+			LayoutSModifierKey = MMain.MyConfs.ReadInt("Hidden", "Layout_S_Modifier_Key");
+			Htxt_LayoutModifier_S_LAYOUT.Text = MMain.MyConfs.Read("Hidden", "Layout_S_Modifier_Layout");
+			int ti = 0;
+			Int32.TryParse(Regex.Replace(Htxt_LayoutModifier_S_LAYOUT.Text, @"[^0-9]+", ""), out ti);
+			LayoutSModifierLayout = (uint)ti;
+			if (MMain.MyConfs.ReadBool("Hidden", "DARKTHEME")) {
+				Hchk_DARK.Checked = true;
+			}
+			Hchk_cmdbackfix.Checked = cmdbackfix = MMain.MyConfs.ReadBool("Hidden", "cmdbackfix");
+			try { var k = (Keys)Layout1ModifierKey; Htxt_LayoutModifier_1.Text = k==Keys.None?"":KeynameReplace(k.ToString()); } catch { Logging.Log("Layout modifier 1 key code is not valid key."); }
+			try { var k = (Keys)Layout2ModifierKey; Htxt_LayoutModifier_2.Text = k==Keys.None?"":KeynameReplace(k.ToString()); } catch { Logging.Log("Layout modifier 2 key code is not valid key."); }
+			try { var k = (Keys)LayoutDModifierKey; Htxt_LayoutModifier_D.Text = k==Keys.None?"":KeynameReplace(k.ToString()); } catch { Logging.Log("Layout modifier D key code is not valid key."); }
+			try { var k = (Keys)LayoutSModifierKey; Htxt_LayoutModifier_S.Text = k==Keys.None?"":KeynameReplace(k.ToString()); } catch { Logging.Log("Layout modifier D key code is not valid key."); }
+			parseRedefines();
+			Hnud_TrayHoverMM.Value = TrayHoverMahouMM;
+			if (!String.IsNullOrEmpty(OverlayExcluded)) {
+				Debug.WriteLine("Starting overlay excluded");
+				if(overlay_excluder != null) {
+					overlay_excluder.Stop();
+					overlay_excluder.Dispose();
+				}
+				overlay_excluder = new Timer();
+				overlay_excluder.Interval = OverlayExcludedInerval;
+				overlay_excluder.Tick += (_,__) => {
+					OVEXDisabled = ENABLED = KMHook.OverlayExcluded(OverlayExcluded);
+//					Debug.WriteLine("Toggle Mahou to " +(!ENABLED));
+					ToggleMahou();
+				};
+				overlay_excluder.Start();
+			} else {
+				if(overlay_excluder != null) {
+					if (OVEXDisabled) {
+						ToggleMahou();
+					}
+					overlay_excluder.Stop();
+					overlay_excluder.Dispose();
+				}
+			}
+			if (arm > 0 && armt != null) {
+				armt = new Timer();
+				armt.Interval = 1000 * arm * 60;
+				armt.Tick += (_, __) => Restart();
+				armt.Start();
+			}
+		}
+		/// <summary>
+		/// Refresh all controls state from configs.
+		/// </summary>
+		void LoadConfigs() {
+			configs_loading = true;
+			loadHidden();
+			decim = (string)Registry.GetValue(@"HKEY_CURRENT_USER\Control Panel\International", "sDecimal", null);
+			TrSetsValues = new Dictionary<string, string>();
+			chk_AppDataConfigs.Checked = (bool)DoInMainConfigs(() => MMain.MyConfs.ReadBool("Functions", "AppDataConfigs"));
+			UpdateSaveLoadPaths(chk_AppDataConfigs.Checked);
+			InitializeTrayIcon();
+			InitLanguage();
+			RefreshLanguage();
+			#region Functions
+			MMain.MyConfs = new Configs();
+			AutoStartAsAdmin = MMain.MyConfs.ReadBool("Functions", "AutoStartAsAdmin");
+			chk_AutoStart.Checked = AutoStartExist(AutoStartAsAdmin);
+			lbl_TaskExist.Visible = AutoStartExist(true);
+			lbl_LinkExist.Visible = AutoStartExist(false);
+			TrayIconVisible = chk_TrayIcon.Checked = MMain.MyConfs.ReadBool("Functions", "TrayIconVisible");
+			ConvertSelectionLS = chk_CSLayoutSwitching.Checked = MMain.MyConfs.ReadBool("Functions", "ConvertSelectionLayoutSwitching");
+			ReSelect = chk_ReSelect.Checked = MMain.MyConfs.ReadBool("Functions", "ReSelect");
+			RePress = chk_RePress.Checked = MMain.MyConfs.ReadBool("Functions", "RePress");
+			AddOneSpace = chk_AddOneSpace.Checked = MMain.MyConfs.ReadBool("Functions", "AddOneSpaceToLastWord");
+			Add1NL = chk_Add1NL.Checked = MMain.MyConfs.ReadBool("Functions", "AddOneEnterToLastWord");
+			ConvertSelectionLSPlus = chk_CSLayoutSwitchingPlus.Checked = MMain.MyConfs.ReadBool("Functions", "ConvertSelectionLayoutSwitchingPlus");
+			ScrollTip = chk_HighlightScroll.Checked = MMain.MyConfs.ReadBool("Functions", "ScrollTip");
+			chk_StartupUpdatesCheck.Checked = MMain.MyConfs.ReadBool("Functions", "StartupUpdatesCheck");
+			chk_SilentUpdate.Checked = MMain.MyConfs.ReadBool("Functions", "SilentUpdate");
+			LoggingEnabled = chk_Logging.Checked = MMain.MyConfs.ReadBool("Functions", "Logging");
+			latest_save_dir = nPath;
+			if (LoggingEnabled) 
+				MMain._logTimer.Change(300, 0);
+			else 
+				MMain._logTimer.Change(0, 0);
+			TrayFlags = MMain.MyConfs.ReadBool("Functions", "TrayFlags");
+			TrayText = MMain.MyConfs.ReadBool("Functions", "TrayText");
+			CapsLockDisablerTimer = chk_CapsLockDTimer.Checked = MMain.MyConfs.ReadBool("Functions", "CapsLockTimer");
+			BlockHKWithCtrl = chk_BlockHKWithCtrl.Checked = MMain.MyConfs.ReadBool("Functions", "BlockMahouHotkeysWithCtrl");
+			SymIgnEnabled = MMain.MyConfs.ReadBool("Functions", "SymbolIgnoreModeEnabled");
+			MCDSSupport = chk_MCDS_support.Checked = MMain.MyConfs.ReadBool("Functions", "MCDServerSupport");
+			OneLayoutWholeWord = chk_OneLayoutWholeWord.Checked = MMain.MyConfs.ReadBool("Functions", "OneLayoutWholeWord");
+			MouseLangTooltipEnabled = MMain.MyConfs.ReadBool("Appearence", "DisplayLangTooltipForMouse");
+			CaretLangTooltipEnabled = MMain.MyConfs.ReadBool("Appearence", "DisplayLangTooltipForCaret");
+			GuessKeyCodeFix = chk_GuessKeyCodeFix.Checked = MMain.MyConfs.ReadBool("Functions", "GuessKeyCodeFix");
+			RemapCapslockAsF18 = chk_RemapCapsLockAsF18.Checked = MMain.MyConfs.ReadBool("Functions", "RemapCapslockAsF18");
+			UseJKL = chk_GetLayoutFromJKL.Checked = MMain.MyConfs.ReadBool("Functions", "UseJKL");
+			ReadOnlyNA = chk_ReadOnlyNA.Checked = MMain.MyConfs.ReadBool("Functions", "ReadOnlyNA");
+			WriteInputHistory = chk_WriteInputHistory.Checked = MMain.MyConfs.ReadBool("Functions", "WriteInputHistory");
+			WriteInputHistoryByDate = MMain.MyConfs.ReadBool("Functions", "WriteInputHistoryByDate");
+			WriteInputHistoryHourly = MMain.MyConfs.ReadBool("Functions", "WriteInputHistoryHourly");
+			LoadSmartTypingSettings();
+			#endregion
+			#region Layouts
+			SwitchBetweenLayouts = chk_SwitchBetweenLayouts.Checked = MMain.MyConfs.ReadBool("Layouts", "SwitchBetweenLayouts");
+			EmulateLS = chk_EmulateLS.Checked = MMain.MyConfs.ReadBool("Layouts", "EmulateLayoutSwitch");
+			ChangeLayouByKey = chk_SpecificLS.Checked = MMain.MyConfs.ReadBool("Layouts", "ChangeToSpecificLayoutByKey");
+			MainLayout1 = MMain.MyConfs.Read("Layouts", "MainLayout1");
+			MainLayout2 = MMain.MyConfs.Read("Layouts", "MainLayout2");
+			MAIN_LAYOUT1 = Locales.GetLocaleFromString(MainLayout1).uId;
+			MAIN_LAYOUT2 = Locales.GetLocaleFromString(MainLayout2).uId;
+			Layout1 = MMain.MyConfs.Read("Layouts", "SpecificLayout1");
+			Layout2 = MMain.MyConfs.Read("Layouts", "SpecificLayout2");
+			Layout3 = MMain.MyConfs.Read("Layouts", "SpecificLayout3");
+			Layout4 = MMain.MyConfs.Read("Layouts", "SpecificLayout4");
+			TestLayout(Layout1, 1);
+			TestLayout(Layout2, 2);
+			TestLayout(Layout3, 3);
+			TestLayout(Layout4, 4);
+			Layout1 = MMain.MyConfs.Read("Layouts", "SpecificLayout1");
+			Layout2 = MMain.MyConfs.Read("Layouts", "SpecificLayout2");
+			Layout3 = MMain.MyConfs.Read("Layouts", "SpecificLayout3");
+			Layout4 = MMain.MyConfs.Read("Layouts", "SpecificLayout4");
+			Key1 = MMain.MyConfs.ReadInt("Layouts", "SpecificKey1");
+			Key2 = MMain.MyConfs.ReadInt("Layouts", "SpecificKey2");
+			Key3 = MMain.MyConfs.ReadInt("Layouts", "SpecificKey3");
+			Key4 = MMain.MyConfs.ReadInt("Layouts", "SpecificKey4");
+			OneLayout = chk_OneLayout.Checked = MMain.MyConfs.ReadBool("Layouts", "OneLayout");
+			QWERTZ_fix = chk_qwertz.Checked = MMain.MyConfs.ReadBool("Layouts", "QWERTZfix");
+			txt_LCTRLLALTTempLayout.Text = MMain.MyConfs.Read("Layouts", "CTRL_ALT_TemporaryChangeLayout");
+			UInt32.TryParse(txt_LCTRLLALTTempLayout.Text, out CTRL_ALT_TemporaryLayout);
+			LoadSpecKeySetsValues();
+			#endregion
+			#region Persistent Layout
+			PersistentLayoutOnWindowChange = chk_OnlyOnWindowChange.Checked = MMain.MyConfs.ReadBool("PersistentLayout", "OnlyOnWindowChange");
+			PersistentLayoutOnlyOnce = chk_ChangeLayoutOnlyOnce.Checked = MMain.MyConfs.ReadBool("PersistentLayout", "ChangeOnlyOnce");
+			KMHook.PLC_HWNDs.Clear();
+			KMHook.ConHost_HWNDs.Clear();
+			PERSISTENT_LAYOUT1_HWNDs.Clear();
+			NOT_PERSISTENT_LAYOUT1_HWNDs.Clear();
+			PERSISTENT_LAYOUT2_HWNDs.Clear();
+			NOT_PERSISTENT_LAYOUT2_HWNDs.Clear();
+			PersistentLayoutForLayout1 = chk_PersistentLayout1Active.Checked = MMain.MyConfs.ReadBool("PersistentLayout", "ActivateForLayout1");
+			PersistentLayoutForLayout2 = chk_PersistentLayout2Active.Checked = MMain.MyConfs.ReadBool("PersistentLayout", "ActivateForLayout2");
+			nud_PersistentLayout1Interval.Value = MMain.MyConfs.ReadInt("PersistentLayout", "Layout1CheckInterval");
+			nud_PersistentLayout2Interval.Value = MMain.MyConfs.ReadInt("PersistentLayout", "Layout2CheckInterval");
+			PersistentLayout1Processes = txt_PersistentLayout1Processes.Text = MMain.MyConfs.Read("PersistentLayout", "Layout1Processes").Replace("^cr^lf", Environment.NewLine);
+			PersistentLayout2Processes = txt_PersistentLayout2Processes.Text = MMain.MyConfs.Read("PersistentLayout", "Layout2Processes").Replace("^cr^lf", Environment.NewLine);
+			#endregion
+			#region Appearence
+			LDForMouse = chk_LangTooltipMouse.Checked = MMain.MyConfs.ReadBool("Appearence", "DisplayLangTooltipForMouse");
+			LDForCaret = chk_LangTooltipCaret.Checked = MMain.MyConfs.ReadBool("Appearence", "DisplayLangTooltipForCaret");
+			LDForMouseOnChange = chk_LangTTMouseOnChange.Checked = MMain.MyConfs.ReadBool("Appearence", "DisplayLangTooltipForMouseOnChange");
+			LDForCaretOnChange = chk_LangTTCaretOnChange.Checked = MMain.MyConfs.ReadBool("Appearence", "DisplayLangTooltipForCaretOnChange");
+			DiffAppearenceForLayouts = chk_LangTTDiffLayoutColors.Checked = MMain.MyConfs.ReadBool("Appearence", "DifferentColorsForLayouts");
+			MouseTTAlways = chk_MouseTTAlways.Checked = MMain.MyConfs.ReadBool("Appearence", "MouseLTAlways");
+			mouseLTUpperArrow = MMain.MyConfs.ReadBool("Appearence", "MouseLTUpperArrow");
+			caretLTUpperArrow = MMain.MyConfs.ReadBool("Appearence", "CaretLTUpperArrow");
+			LDUseWindowsMessages = chk_LDMessages.Checked = MMain.MyConfs.ReadBool("Appearence", "WindowsMessages");
+			#endregion
+			#region Timings
+			LD_MouseSkipMessagesCount = MMain.MyConfs.ReadInt("Timings", "LangTooltipForMouseSkipMessages");
+			if (LDUseWindowsMessages) {
+				nud_LangTTMouseRefreshRate.Maximum = 100;
+				nud_LangTTMouseRefreshRate.Minimum = 0;
+				nud_LangTTMouseRefreshRate.Increment = 1;
+				nud_LangTTMouseRefreshRate.Value = LD_MouseSkipMessagesCount;
+				lbl_LangTTMouseRefreshRate.Text = MMain.Lang[Languages.Element.LD_MouseSkipMessages];
+			} else {
+				nud_LangTTMouseRefreshRate.Maximum = 2500;
+				nud_LangTTMouseRefreshRate.Minimum = 1;
+				nud_LangTTMouseRefreshRate.Increment = 25;
+				nud_LangTTMouseRefreshRate.Value = MMain.MyConfs.ReadInt("Timings", "LangTooltipForMouseRefreshRate");
+			}
+			nud_LangTTCaretRefreshRate.Value = MMain.MyConfs.ReadInt("Timings", "LangTooltipForCaretRefreshRate");
+			nud_DoubleHK2ndPressWaitTime.Value = DoubleHKInterval =  MMain.MyConfs.ReadInt("Timings", "DoubleHotkey2ndPressWait");
+			nud_TrayFlagRefreshRate.Value = MMain.MyConfs.ReadInt("Timings", "FlagsInTrayRefreshRate");
+			nud_ScrollLockRefreshRate.Value = MMain.MyConfs.ReadInt("Timings", "ScrollLockStateRefreshRate");
+			nud_CapsLockRefreshRate.Value = MMain.MyConfs.ReadInt("Timings", "CapsLockDisableRefreshRate");
+			nud_ScrollLockRefreshRate.Value = MMain.MyConfs.ReadInt("Timings", "ScrollLockStateRefreshRate");
+			SelectedTextGetMoreTries = chk_SelectedTextGetMoreTries.Checked = MMain.MyConfs.ReadBool("Timings", "SelectedTextGetMoreTries");
+			nud_SelectedTextGetTriesCount.Value = MMain.MyConfs.ReadInt("Timings", "SelectedTextGetMoreTriesCount");
+			nud_DelayAfterBackspaces.Value = DelayAfterBackspaces = MMain.MyConfs.ReadInt("Timings", "DelayAfterBackspaces");
+			UseDelayAfterBackspaces = chk_UseDelayAfterBackspaces.Checked = MMain.MyConfs.ReadBool("Timings", "UseDelayAfterBackspaces");
+			#region Excluded
+			ExcludeCaretLD = MMain.MyConfs.ReadBool("Timings", "ExcludeCaretLD");
+			UsePaste = chk_CSUsePaste.Checked = MMain.MyConfs.ReadBool("Timings", "UsePasteInCS");
+			ExcludedPrograms = txt_ExcludedPrograms.Text = MMain.MyConfs.Read("Timings", "ExcludedPrograms").Replace("^cr^lf", Environment.NewLine);
+			KMHook.EXCLUDED_HWNDs.Clear();
+			KMHook.NOT_EXCLUDED_HWNDs.Clear();
+			KMHook.AS_EXCLUDED_HWNDs.Clear();
+			KMHook.AS_NOT_EXCLUDED_HWNDs.Clear();
+			ChangeLayoutInExcluded = chk_Change1KeyL.Checked = MMain.MyConfs.ReadBool("Timings", "ChangeLayoutInExcluded");
+			ConvertSWLinExcl = chk_ConvSWL.Checked = MMain.MyConfs.ReadBool("Timings", "ConvertSWLinExcl");
+			#endregion
+			SelectedTextGetMoreTriesCount = (int)nud_SelectedTextGetTriesCount.Value;
+			#endregion
+			#region LangPanel
+			LangPanelDisplay = chk_DisplayLangPanel.Checked = MMain.MyConfs.ReadBool("LangPanel", "Display");
+			nud_LPRefreshRate.Value = LangPanelRefreshRate = MMain.MyConfs.ReadInt("LangPanel", "RefreshRate");
+			nud_LPTransparency.Value = LangPanelTransparency = MMain.MyConfs.ReadInt("LangPanel", "Transparency");
+			btn_LPFore.BackColor = LangPanelForeColor = GetColor(MMain.MyConfs.Read("LangPanel", "ForeColor"));
+			btn_LPBack.BackColor = LangPanelBackColor = GetColor(MMain.MyConfs.Read("LangPanel", "BackColor"));
+			btn_LPBorderColor.BackColor = LangPanelBorderColor = GetColor(MMain.MyConfs.Read("LangPanel", "BorderColor"));
+			LangPanelBorderAero = chk_LPAeroColor.Checked = MMain.MyConfs.ReadBool("LangPanel", "BorderAeroColor");
+			btn_LPFont.Font = LangPanelFont = GetFont(MMain.MyConfs.Read("LangPanel", "Font")); 
+			LangPanelUpperArrow = chk_LPUpperArrow.Checked = MMain.MyConfs.ReadBool("LangPanel", "UpperArrow");
+			#endregion
+			#region Translate Panel
+			TrEnabled = chk_TrEnable.Checked = MMain.MyConfs.ReadBool("TranslatePanel", "Enabled");
+			TranslatePanel.useGS = MMain.MyConfs.ReadBool("TranslatePanel", "UseGS");
+			TranslatePanel.useNA = MMain.MyConfs.ReadBool("TranslatePanel", "UseNA");
+			TrOnDoubleClick = chk_TrOnDoubleClick.Checked = MMain.MyConfs.ReadBool("TranslatePanel", "OnDoubleClick");
+			nud_TrTransparency.Value = TrTransparency = MMain.MyConfs.ReadInt("TranslatePanel", "Transparency");
+			btn_TrFG.BackColor = TrFore = GetColor(MMain.MyConfs.Read("TranslatePanel", "FG"));
+			btn_TrBG.BackColor = TrBack = GetColor(MMain.MyConfs.Read("TranslatePanel", "BG"));
+			btn_TrBorderC.BackColor = TrBorder = GetColor(MMain.MyConfs.Read("TranslatePanel", "BorderC"));
+			TrBorderAero = chk_TrUseAccent.Checked = MMain.MyConfs.ReadBool("TranslatePanel", "BorderAero");
+			LoadTrSetsValues();
+			RefreshComboboxes();
+			if (TrEnabled) {
+				if (_TranslatePanel == null)
+	               	_TranslatePanel = new TranslatePanel();
+               _TranslatePanel.SetTitle(MMain.Lang[Languages.Element.Translation]);
+               chk_TrTranscription.Checked = TranslatePanel.TRANSCRIPTION = MMain.MyConfs.ReadBool("TranslatePanel", "Transcription");
+			} else {
+				if (_TranslatePanel != null)
+					_TranslatePanel.Dispose();
+			}
+			TrText = btn_TrTextFont.Font = GetFont(MMain.MyConfs.Read("TranslatePanel", "TextFont")); 
+			TrTitle = btn_TrTitleFont.Font = GetFont(MMain.MyConfs.Read("TranslatePanel", "TitleFont")); 
+			#endregion
+			#region AutoSwitch
+			AutoSwitchEnabled = chk_AutoSwitch.Checked = MMain.MyConfs.ReadBool("AutoSwitch", "Enabled");
+			AutoSwitchSpaceAfter = chk_AutoSwitchSpaceAfter.Checked = MMain.MyConfs.ReadBool("AutoSwitch", "SpaceAfter");
+			AutoSwitchSwitchToGuessLayout = chk_AutoSwitchSwitchToGuessLayout.Checked = MMain.MyConfs.ReadBool("AutoSwitch", "SwitchToGuessLayout");
+			Dowload_ASD_InZip = chk_DownloadASD_InZip.Checked = MMain.MyConfs.ReadBool("AutoSwitch", "DownloadInZip");
+			if (AutoSwitchEnabled)
+				if (File.Exists(AS_dictfile)) {
+					AutoSwitchDictionaryRaw = File.ReadAllText(AS_dictfile);
+					AutoSwitchDictionaryTooBig = AutoSwitchDictionaryRaw.Length > 710000;
+					ChangeAutoSwitchDictionaryTextBox();
+				}
+			MahouUIActivated((object)1, new EventArgs());
+			UpdateAutoSwitchCountLabel(KMHook.ReloadAutoSwitchDictionary(), lbl_AutoSwitchWordsCount);
+			#endregion
+			LoadTemps();
+			#region DICT reload
+			KMHook.ReloadTSDict();
+			if (QWERTZ_fix) {
+				KMHook.ReloadLayReplDict();
+				KMHook.ReloadASsymDiffDict();
+			}
+			if (HKSelCustConv_tempEnabled) {
+				KMHook.ReloadCusRepDict();
+			}
+			KMHook.LayoutKeyReplaceInit();
+			#endregion
+			#region Appearence & Hotkeys
+			UpdateLangDisplayControlsSwitch();
+			UpdateHotkeyControlsSwitch();
+			#endregion
+			#region Proxy
+			txt_ProxyServerPort.Text = MMain.MyConfs.Read("Proxy", "ServerPort");
+			txt_ProxyLogin.Text = MMain.MyConfs.Read("Proxy", "UserName");
+			txt_ProxyPassword.Text = MMain.MyConfs.Read("Proxy", "Password");
+			#endregion
+			#region Sounds
+			SoundEnabled = chk_EnableSnd.Checked = MMain.MyConfs.ReadBool("Sounds", "Enabled");
+			SoundOnAutoSwitch = chk_SndAutoSwitch.Checked = MMain.MyConfs.ReadBool("Sounds", "OnAutoSwitch");
+			SoundOnConvLast = chk_SndLast.Checked = MMain.MyConfs.ReadBool("Sounds", "OnConvertLast");
+			SoundOnLayoutSwitch = chk_SndLayoutSwitch.Checked = MMain.MyConfs.ReadBool("Sounds", "OnLayoutSwitch");
+			UseCustomSound = chk_UseCustomSnd.Checked = MMain.MyConfs.ReadBool("Sounds", "UseCustomSound");
+			CustomSound = lbl_CustomSound.Text = MMain.MyConfs.Read("Sounds", "CustomSound");
+			SoundOnAutoSwitch2 = chk_SndAutoSwitch2.Checked = MMain.MyConfs.ReadBool("Sounds", "OnAutoSwitch2");
+			SoundOnConvLast2 = chk_SndLast2.Checked = MMain.MyConfs.ReadBool("Sounds", "OnConvertLast2");
+			SoundOnLayoutSwitch2 = chk_SndLayoutSwitch2.Checked = MMain.MyConfs.ReadBool("Sounds", "OnLayoutSwitch2");
+			UseCustomSound2 = chk_UseCustomSnd2.Checked = MMain.MyConfs.ReadBool("Sounds", "UseCustomSound2");
+			CustomSound2 = lbl_CustomSound2.Text = MMain.MyConfs.Read("Sounds", "CustomSound2");
+			var lbCSh = lbl_CustomSound.Text;
+			var lbCSh2 = lbl_CustomSound2.Text;
+			if (!File.Exists(replaceenv(CustomSound, "%mahou_dir%", () => nPath))) {
+				lbl_CustomSound.ForeColor = Color.Red;
+				lbCSh = MMain.Lang[Languages.Element.Not] + " " + MMain.Lang[Languages.Element.Exist] + ":\r\n["+lbl_CustomSound.Text+"]";
+			} else
+				lbl_CustomSound.ForeColor = Color.FromKnownColor(KnownColor.WindowText);
+			if (!File.Exists(replaceenv(CustomSound2, "%mahou_dir%", () => nPath))) {
+				lbl_CustomSound2.ForeColor = Color.Red;
+				lbCSh2 = MMain.Lang[Languages.Element.Not] + " " + MMain.Lang[Languages.Element.Exist] + ":\r\n["+lbl_CustomSound2.Text+"]";
+			} else
+				lbl_CustomSound2.ForeColor = Color.FromKnownColor(KnownColor.WindowText);
+			HelpMeUnderstand.SetToolTip(lbl_CustomSound, lbCSh);
+			HelpMeUnderstand.SetToolTip(lbl_CustomSound2, lbCSh2);
+			#endregion
+			#region Sync
+			var bbools = MMain.MyConfs.Read("Sync", "BBools");
+			bool m, h, t, p, mm;
+			SetBools(bbools, '|', out m, out h, out t, out p, out mm);
+			chk_Mini.Checked = m;
+			chk_Htxt.Checked = h;
+			chk_Ttxt.Checked = t;
+			chk_andPROXY.Checked = p;
+			chk_Mmm.Checked = mm;
+			var rbools = MMain.MyConfs.Read("Sync", "RBools");
+			SetBools(rbools, '|', out m, out h, out t, out p, out mm);
+			chk_rMini.Checked = m;
+			chk_rHtxt.Checked = h;
+			chk_rTtxt.Checked = t;
+			chk_andPROXY2.Checked = p;
+			chk_rMmm.Checked = mm;
+			var blast = MMain.MyConfs.Read("Sync", "BLast");
+			if (!string.IsNullOrEmpty(blast)) {
+				txt_backupId.Text = blast;
+				txt_backupId.Enabled = true;
+			}
+			var rlast = MMain.MyConfs.Read("Sync", "RLast");
+			if (!string.IsNullOrEmpty(rlast))
+				txt_restoreId.Text = rlast;
+			chk_ZxZ.Checked = ZxZ = MMain.MyConfs.ReadBool("Sync", "ZxZ");
+			#endregion
+			LLHook._ACTIVE = (RemapCapslockAsF18 || MahouMM || LLHook.redefines.len > 0);
+			if (LLHook._ACTIVE)
+				LLHook.Set();
+			else
+				LLHook.UnSet();
+			InitializeHotkeys();
+			InitializeTimers();
+			InitializeLangPanel();
+			ToggleDependentControlsEnabledState();
+			RefreshAllIcons(true);
+			if (_langPanel != null) {
+				_langPanel.UpdateApperence(LangPanelBackColor, LangPanelForeColor, LangPanelTransparency, LangPanelFont);
+				if(LangPanelDisplay)
+					_langPanel.ShowInactiveTopmost();
+				else 
+					_langPanel.HideWnd();
+			}
+			// Restore last positon
+			lsb_LangTTAppearenceForList.SelectedIndex = tmpLangTTAppearenceIndex;
+			lsb_Hotkeys.SelectedIndex = tmpHotkeysIndex;
+			if (UseJKL) {
+				if (!jklXHidServ.jklExist()) {
+					chk_GetLayoutFromJKL.ForeColor = Color.Red;
+					HelpMeUnderstand.SetToolTip(chk_GetLayoutFromJKL, jklXHidServ.jklInfoStr);
+				} else {
+					chk_GetLayoutFromJKL.ForeColor = chk_AutoStart.ForeColor;
+					HelpMeUnderstand.SetToolTip(chk_GetLayoutFromJKL, MMain.Lang[Languages.Element.TT_UseJKL]);
+				}
+				jklXHidServ.Init();
+			}
+			else {
+				jklXHidServ.Destroy();
+				chk_GetLayoutFromJKL.ForeColor = chk_AutoStart.ForeColor;
+				HelpMeUnderstand.SetToolTip(chk_GetLayoutFromJKL, MMain.Lang[Languages.Element.TT_UseJKL]);
+			}
+			UnregisterHotkeys();
+			RegisterHotkeys();
+			if (Hchk_NCStray.Checked) {
+				NCS_tray();
+			} else {
+				NCS_destroy();
+			}
+			Memory.Flush();
+			configs_loading = false;
+			Logging.Log("All configurations loaded.");
+		}
+		List<string[]> ParseSets(string raw_sets, char sep = '|', char sep2 = '/') {
+			if (raw_sets.Contains("set_0") || raw_sets.Contains("set0")) return new List<string[]>();
+			var sets = raw_sets.Split(sep);
+			var last_set = sets[sets.Length-1];
+//			Debug.WriteLine(last_set);
+//			var set_count = Int32.Parse(last_set.Split('/')[0].Replace("set_",""));
+			var SETS = new List<string[]>();
+			foreach (var _set in sets) {
+				SETS.Add(_set.Split(sep2));
+			}
+			return SETS;
+		}
+		void LoadTrSetsValues() {
+			var sets_raw = MMain.MyConfs.Read("TranslatePanel", "LanguageSets");
+			var SETS = ParseSets(sets_raw);
+			if (SETS.Count == 0) return;
+			var NOTR = TrSetCount == 0;
+			if (NOTR)
+				pan_TrSets.Controls.Clear();
+			for(int i = 1; i != SETS.Count+1; i++) {
+				if (NOTR)
+					Btn_TrAddSetClick((object)1, new EventArgs());
+				var values = SETS[i-1];
+				TrSetsValues["cbb_fr"+i] = values[1];
+				TrSetsValues["cbb_to"+i] = values[2];
+//				var key = 0;
+//				if (!String.IsNullOrEmpty(values[1]))
+//					key = Int32.Parse(values[1]);
+//				UpdateSetControls(i, key, values[2]);
+			}
+		}
+		void LoadSpecKeySetsValues() {
+			var sets_raw = MMain.MyConfs.Read("Layouts", "SpecificKeySets");
+			var SETS = ParseSets(sets_raw);
+			if (SETS.Count == 0) return;
+			var NOSPEC = SpecKeySetCount == 0;
+			if (NOSPEC)
+				pan_KeySets.Controls.Clear();
+			// Initilize sets
+			for(int i = 1; i != SETS.Count+1; i++) {
+				if (NOSPEC)
+					Btn_AddSetClick((object)1, new EventArgs());
+				var values = SETS[i-1];
+				SpecKeySetsValues["txt_key"+i+"_key"] = values[1];
+				SpecKeySetsValues["txt_key"+i+"_mods"] = values[2];
+				SpecKeySetsValues["cbb_typ"+i] = values[3];
+				if (!String.IsNullOrEmpty(values[3])) {
+					if ((values[3] == Languages.English[Languages.Element.SwitchBetween] && MMain.Lang == Languages.Russian) ||
+					    (values[3] == Languages.Russian[Languages.Element.SwitchBetween] && MMain.Lang == Languages.English)) {
+							SaveSpecificKeySets(true, i, MMain.Lang[Languages.Element.SwitchBetween]);
+							SpecKeySetsValues["cbb_typ"+i] = MMain.Lang[Languages.Element.SwitchBetween];
+					} 
+				}
+				var key = 0;
+				if (!String.IsNullOrEmpty(values[1]))
+					key = Int32.Parse(values[1]);
+				UpdateSetControls(i, key, values[2]);
+			}
+		}
+		void TestLayout(string layout, int id) {
+			if ((layout == Languages.English[Languages.Element.SwitchBetween] && MMain.Lang == Languages.Russian) ||
+			    (layout == Languages.Russian[Languages.Element.SwitchBetween] && MMain.Lang == Languages.English)) {
+				MMain.MyConfs.WriteSave("Layouts", "SpecificLayout" + id, MMain.Lang[Languages.Element.SwitchBetween]);
+			}
+		}
+		/// <summary>
+		/// Refreshes comboboxes items.
+		/// </summary>
+		void RefreshComboboxes() {
+			cbb_AutostartType.SelectedIndex = AutoStartAsAdmin ? 1 : 0;
+			cbb_UpdatesChannel.SelectedIndex = cbb_UpdatesChannel.Items.IndexOf(MMain.MyConfs.Read("Updates", "Channel"));
+			MMain.locales = Locales.AllList();
+			MMain.RefreshLCnMID();
+			cbb_BackSpaceType.Items.Clear();
+			cbb_BackSpaceType.Items.Add(MMain.Lang[Languages.Element.InputHistoryBackSpaceWriteType1]);
+			cbb_BackSpaceType.Items.Add(MMain.Lang[Languages.Element.InputHistoryBackSpaceWriteType2]);
+			cbb_TrayDislpayType.Items.Clear();
+			cbb_TrayDislpayType.Items.Add(MMain.Lang[Languages.Element.JustIcon]);
+			cbb_TrayDislpayType.Items.Add(MMain.Lang[Languages.Element.ContryFlags]);
+			cbb_TrayDislpayType.Items.Add(MMain.Lang[Languages.Element.TextLayout]);
+			cbb_TrMethod.Items.Clear();
+			cbb_TrMethod.Items.Add(MMain.Lang[Languages.Element.Direct]);
+			cbb_TrMethod.Items.Add(MMain.Lang[Languages.Element.WebScript]);
+			cbb_TrMethod.Items.Add(MMain.Lang[Languages.Element.DirectV2]);
+			if (TranslatePanel.useGS)
+				cbb_TrMethod.SelectedIndex = 1;
+			else if (TranslatePanel.useNA)
+				cbb_TrMethod.SelectedIndex = 2;
+			else
+				cbb_TrMethod.SelectedIndex = 0;
+			if (TrayFlags)
+				cbb_TrayDislpayType.SelectedIndex = 1;
+			else if (TrayText)
+				cbb_TrayDislpayType.SelectedIndex = 2;
+			else 
+				cbb_TrayDislpayType.SelectedIndex = 0;
+			InputHistoryBackSpaceWriteType = cbb_BackSpaceType.SelectedIndex = MMain.MyConfs.ReadInt("Functions", "WriteInputHistoryBackSpaceType");
+			if (SpecKeySetCount > 0)
+			for(int i = 1; i <= SpecKeySetCount; i++) {
+				Logging.Log("Refreshing Specific Hotkey Set #"+i);
+				var cbb = (pan_KeySets.Controls["set_"+i].Controls["cbb_typ"+i] as ComboBox);
+				cbb.Items.Clear();
+				cbb.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
+				cbb.Items.AddRange(MMain.lcnmid.ToArray());
+				cbb.SelectedIndex = cbb.Items.IndexOf(SpecKeySetsValues["cbb_typ"+i]);
+			}
+			if (TrSetCount > 0)
+			for(int i = 1; i <= TrSetCount; i++) {
+				Logging.Log("Refreshing Tr Set #"+i);
+				var cbb = (pan_TrSets.Controls["set_"+i].Controls["cbb_fr"+i] as ComboBox);
+				cbb.Items.Clear();
+				cbb.Items.AddRange(TranslatePanel.GTLangs);
+				cbb.SelectedIndex = Array.IndexOf(TranslatePanel.GTLangsSh, TrSetsValues["cbb_fr"+i]);
+				cbb = (pan_TrSets.Controls["set_"+i].Controls["cbb_to"+i] as ComboBox);
+				cbb.Items.Clear();
+				cbb.Items.AddRange(TranslatePanel.GTLangs);
+				cbb.SelectedIndex = Array.IndexOf(TranslatePanel.GTLangsSh, TrSetsValues["cbb_to"+i]);
+			}
+			cbb_Layout1.Items.Clear();
+			cbb_Layout2.Items.Clear();
+			cbb_Layout3.Items.Clear();
+			cbb_Layout4.Items.Clear();
+			cbb_MainLayout1.Items.Clear();
+			cbb_MainLayout2.Items.Clear();
+			cbb_Layout1.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
+			cbb_Layout2.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
+			cbb_Layout3.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
+			cbb_Layout4.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
+			cbb_Layout1.Items.AddRange(MMain.lcnmid.ToArray());
+			cbb_Layout2.Items.AddRange(MMain.lcnmid.ToArray());
+			cbb_Layout3.Items.AddRange(MMain.lcnmid.ToArray());
+			cbb_Layout4.Items.AddRange(MMain.lcnmid.ToArray());
+			cbb_MainLayout1.Items.AddRange(MMain.lcnmid.ToArray());
+			cbb_MainLayout2.Items.AddRange(MMain.lcnmid.ToArray());
+			cbb_SpecKeysType.SelectedIndex = MMain.MyConfs.ReadInt("Layouts", "SpecificKeysType");
+			try {
+				cbb_Language.SelectedIndex = cbb_Language.Items.IndexOf(MMain._language);
+				EmulateLSType = MMain.MyConfs.Read("Layouts", "EmulateLayoutSwitchType");
+				cbb_Layout1.SelectedIndex = cbb_Layout1.Items.IndexOf(Layout1);
+				cbb_Layout2.SelectedIndex = cbb_Layout2.Items.IndexOf(Layout2);
+				cbb_Layout3.SelectedIndex = cbb_Layout3.Items.IndexOf(Layout3);
+				cbb_Layout4.SelectedIndex = cbb_Layout4.Items.IndexOf(Layout4);
+				cbb_Key1.SelectedIndex = Key1;
+				cbb_Key2.SelectedIndex = Key2;
+				cbb_Key3.SelectedIndex = Key3;
+				cbb_Key4.SelectedIndex = Key4;
+				cbb_EmulateType.SelectedIndex = cbb_EmulateType.Items.IndexOf(EmulateLSType);
+				cbb_MainLayout1.SelectedIndex = MMain.lcnmid.IndexOf(MainLayout1);
+				cbb_MainLayout2.SelectedIndex = MMain.lcnmid.IndexOf(MainLayout2);
+			} catch (Exception e){
+//				MessageBox.Show(MMain.Msgs[9], MMain.Msgs[5], MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+				RefreshComboboxes();
+				cbb_MainLayout1.SelectedIndex = 0;
+				cbb_MainLayout2.SelectedIndex = 1;
+				Logging.Log("Locales indexes select failed, error message:\n" + e.Message +"\n"+e.StackTrace+"\n", 1);
+			}
+			Logging.Log("Locales for ALL comboboxes refreshed.");
+		}
+		/// <summary>
+		/// Toggles some controls enabled state based on some checkboxes checked state. 
+		/// </summary>
+		void ToggleDependentControlsEnabledState() {
+			// Functions tab
+			chk_CSLayoutSwitchingPlus.Enabled = chk_CSLayoutSwitching.Checked;
+//			chk_OneLayoutWholeWord.Enabled = !chk_CSLayoutSwitching.Checked;
+			if (chk_CSLayoutSwitching.Checked && chk_OneLayoutWholeWord.Checked)
+				chk_CSLayoutSwitchingPlus.Enabled = false;
+			if (!chk_OneLayoutWholeWord.Checked)
+				chk_CSLayoutSwitching.ForeColor = chk_CSLayoutSwitchingPlus.ForeColor = Color.Red;
+			else 
+				chk_CSLayoutSwitching.ForeColor = chk_CSLayoutSwitchingPlus.ForeColor = chk_OneLayoutWholeWord.ForeColor;
+			lbl_TrayDislpayType.Enabled = cbb_TrayDislpayType.Enabled = chk_TrayIcon.Checked;
+			chk_SilentUpdate.Enabled = chk_StartupUpdatesCheck.Checked;
+			lnk_OpenHistory.Enabled = lbl_BackSpaceType.Enabled = cbb_BackSpaceType.Enabled = chk_WriteInputHistory.Checked;
+			lnk_OpenLogs.Enabled = chk_Logging.Checked;
+			// Sync tab
+			chk_andPROXY.Enabled = chk_Mini.Checked;
+			chk_andPROXY2.Enabled = chk_rMini.Checked;
+			// Layouts tab
+			lbl_SetsCount.Enabled = pan_KeySets.Enabled = btn_AddSet.Enabled = btn_SubSet.Enabled = 
+				lbl_KeysType.Enabled = cbb_SpecKeysType.Enabled = chk_SpecificLS.Checked;
+			cbb_MainLayout1.Enabled = cbb_MainLayout2.Enabled = 
+				lbl_LayoutNum1.Enabled = lbl_LayoutNum2.Enabled = chk_SwitchBetweenLayouts.Checked;
+			lbl_EmuType.Enabled = cbb_EmulateType.Enabled = chk_EmulateLS.Checked;
+			grb_Keys.Enabled = grb_Layouts.Enabled = chk_SpecificLS.Checked;
+//			if (chk_EmulateLS.Checked) {
+//				chk_SwitchBetweenLayouts.Enabled = chk_SwitchBetweenLayouts.Checked = false;
+//			} else { chk_SwitchBetweenLayouts.Enabled = true; }
+			// Appearence tab
+			chk_LangTTCaretOnChange.Enabled = chk_LangTooltipCaret.Checked;
+			lbl_LangTTBackgroundColor.Enabled = btn_LangTTBackgroundColor.Enabled = 
+				!chk_LangTTTransparentColor.Checked;
+			lbl_LangTTBackgroundColor.Enabled = btn_LangTTBackgroundColor.Enabled = 
+				chk_LangTTTransparentColor.Enabled = lbl_LangTTForegroundColor.Enabled = btn_LangTTForegroundColor.Enabled = 
+				btn_LangTTFont.Enabled = !chk_LangTTUseFlags.Checked;
+			if (!chk_LangTooltipMouse.Checked)
+				chk_MouseTTAlways.Enabled = chk_LangTTMouseOnChange.Enabled = false;
+			else {
+				chk_MouseTTAlways.Enabled = !chk_LangTTMouseOnChange.Checked;
+				chk_LangTTMouseOnChange.Enabled = !chk_MouseTTAlways.Checked;
+			}
+			// Auto Switch tab
+			lbl_AutoSwitchWordsCount.Enabled = btn_UpdateAutoSwitchDictionary.Enabled = txt_AutoSwitchDictionary.Enabled = chk_AutoSwitchSwitchToGuessLayout.Enabled = chk_AutoSwitchSpaceAfter.Enabled = chk_DownloadASD_InZip.Enabled = chk_AutoSwitch.Checked;
+			// Persistent Layout tab
+			chk_ChangeLayoutOnlyOnce.Enabled = chk_OnlyOnWindowChange.Checked;
+			txt_PersistentLayout1Processes.Enabled = chk_PersistentLayout1Active.Checked;
+			txt_PersistentLayout2Processes.Enabled = chk_PersistentLayout2Active.Checked;
+			if (chk_OnlyOnWindowChange.Checked || !chk_PersistentLayout1Active.Checked)
+				lbl_PersistentLayout1Interval.Enabled = nud_PersistentLayout1Interval.Enabled = false;
+			else
+				lbl_PersistentLayout1Interval.Enabled = nud_PersistentLayout1Interval.Enabled = true;
+			if (chk_OnlyOnWindowChange.Checked || !chk_PersistentLayout2Active.Checked)
+				lbl_PersistentLayout2Interval.Enabled = nud_PersistentLayout2Interval.Enabled = false;
+			else
+				lbl_PersistentLayout2Interval.Enabled = nud_PersistentLayout2Interval.Enabled = true;
+			// Language Panel tab
+			grb_LPConfig.Enabled = chk_DisplayLangPanel.Checked;
+			btn_LPBorderColor.Enabled = !chk_LPAeroColor.Checked;
+			// Hotkeys tab
+			chk_DoubleHotkey.Enabled = chk_WinInHotKey.Enabled = txt_Hotkey.Enabled = chk_HotKeyEnabled.Checked;
+			chk_DoubleHotkey.Enabled = lsb_Hotkeys.SelectedIndex != 13;
+			// Timings tab
+			nud_DelayAfterBackspaces.Enabled = chk_UseDelayAfterBackspaces.Checked;
+			nud_SelectedTextGetTriesCount.Enabled = chk_SelectedTextGetMoreTries.Checked;
+			lbl_ScrollLockRefreshRate.Enabled = nud_ScrollLockRefreshRate.Enabled = chk_HighlightScroll.Checked;
+			lbl_CapsLockRefreshRate.Enabled = nud_CapsLockRefreshRate.Enabled = chk_CapsLockDTimer.Checked;
+			lbl_FlagTrayRefreshRate.Enabled = nud_TrayFlagRefreshRate.Enabled = cbb_TrayDislpayType.SelectedIndex == 1;
+			lbl_LangTTCaretRefreshRate.Enabled = nud_LangTTCaretRefreshRate.Enabled = chk_LangTooltipCaret.Checked;
+			lbl_LangTTMouseRefreshRate.Enabled = nud_LangTTMouseRefreshRate.Enabled = LDUseWindowsMessages || chk_LangTooltipMouse.Checked;
+			lbl_LangTTCaretRefreshRate.Enabled = !chk_LDMessages.Checked;
+			// Sounds tab
+			lbl_CustomSound.Enabled = btn_SelectSnd.Enabled = chk_UseCustomSnd.Checked;
+			lbl_CustomSound2.Enabled = btn_SelectSnd2.Enabled = chk_UseCustomSnd2.Checked;
+			grb_Sound1.Enabled = grb_Sound2.Enabled = chk_EnableSnd.Checked;
+			// Translation tab
+			btn_TrBorderC.Enabled = !chk_TrUseAccent.Checked;
+			grb_TrConfs.Enabled = chk_TrEnable.Checked;
+		}
+		/// <summary>
+		/// Toggles visibility of main window.
+		/// </summary>
+		public void ToggleVisibility() {
+			Logging.Log("Mahou Main window visibility changed to ["+!Visible+"].");
+			if (Visible) {
+				Visible = false;
+			} else {
+				TopMost = Visible = true;
+				TopMost = false;
+				WinAPI.SetForegroundWindow(Handle);
+			}
+			if (MMain.mahou != null)
+				KMHook.ClearModifiers();
+			icon.CheckShHi(Visible);
+			Memory.Flush();
+		}
+		public void ToggleLangPanel() {
+			if (_langPanel.Visible) {
+				chk_DisplayLangPanel.Checked = LangPanelDisplay = _langPanel.Visible = false;
+				MMain.MyConfs.WriteSave("LangPanel", "Display", "false");
+				langPanelRefresh.Stop();
+			}
+			else {
+				chk_DisplayLangPanel.Checked = LangPanelDisplay = _langPanel.Visible = true;
+				MMain.MyConfs.WriteSave("LangPanel", "Display", "true");
+				langPanelRefresh.Start();
+			}
+		}
+		/// <summary>
+		/// Restarts Mahou.
+		/// </summary>
+		public void Restart() {
+			try {
+				var psi = new ProcessStartInfo {
+					FileName = Application.ExecutablePath,
+					Arguments = "--restart-wait=" + Process.GetCurrentProcess().Id,
+					WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
+					UseShellExecute = true
+				};
+				Process.Start(psi);
+				ExitProgram();
+			} catch (Exception e) {
+				Logging.Log("Cannot restart Mahou safely: " + e.Message, 1);
+				MessageBox.Show(this, "MIXANIZM Mahou could not restart automatically. Please close and start it manually.\r\n\r\n" + e.Message,
+					"MIXANIZM Mahou", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+		/// <summary>
+		/// Refreshes all icon's images and tray icon visibility.
+		/// </summary>
+		public void RefreshAllIcons(bool force = false) {
+			var fong = false;
+			try {
+				var p = Process.GetProcessesByName("explorer");
+				if (explorer_pid != p[0].Id) {
+					fong = true;
+				}
+//				Debug.WriteLine(p[0].Id + " " + force);
+				explorer_pid = p[0].Id;
+				explorer_not_found_tries = 0;
+			} catch(Exception) {
+				fong = true;
+				explorer_not_found_tries++;
+			}
+			if (explorer_not_found_tries > 5) {
+				fong = false;
+				if (explorer_not_found_tries < 15) {
+					Logging.Log("explorer.exe process not found: "+explorer_not_found_tries +" times. Tray icon etc. unavailable.", 2);
+				}
+			}
+			if (fong) {
+				force = true;
+				icon.trIcon.Visible = false;
+				System.Threading.Thread.Sleep(1000);
+				icon.trIcon.Visible = true;
+			}
+			if (TrayFlags || TrayText) {
+				ChangeTrayIconToFlag(force);
+			} else {
+				if (HKSymIgn_tempEnabled && SymIgnEnabled && icon.trIcon.Icon != Properties.Resources.MahouSymbolIgnoreMode)
+					icon.trIcon.Icon = Properties.Resources.MahouSymbolIgnoreMode;
+				else if (!TrayFlags && !TrayText && icon.trIcon.Icon != Properties.Resources.MahouTrayHD)
+					icon.trIcon.Icon = Properties.Resources.MahouTrayHD;
+			}
+			if (!blueIcon && HKSymIgn_tempEnabled && SymIgnEnabled) {
+				blueIcon = true;
+				Icon = Properties.Resources.MahouSymbolIgnoreMode;
+			}
+			else if (blueIcon && HKSymIgn_tempEnabled && !SymIgnEnabled ) {
+				Icon = Properties.Resources.MahouTrayHD;
+				blueIcon = false;
+			}
+			if (TrayIconVisible && !icon.trIcon.Visible) {
+				icon.Show();
+			} else if(!TrayIconVisible && icon.trIcon.Visible) {
+				icon.Hide();
+			}
+		}
+		public static void IfDispose(ref Bitmap disposable) {
+			if (disposable != null) disposable.Dispose();
+			disposable = null;
+		}
+		public void SetTrayIconFromBitmap(Bitmap source) {
+			if (source == null || icon == null || icon.trIcon == null) return;
+			IntPtr nativeHandle = IntPtr.Zero;
+			Icon next = null;
+			try {
+				nativeHandle = source.GetHicon();
+				using (var borrowed = Icon.FromHandle(nativeHandle))
+					next = (Icon)borrowed.Clone();
+				icon.trIcon.Icon = next;
+				var previous = generatedTrayIcon;
+				generatedTrayIcon = next;
+				next = null;
+				if (previous != null) previous.Dispose();
+			} finally {
+				if (next != null) next.Dispose();
+				if (nativeHandle != IntPtr.Zero) WinAPI.DestroyIcon(nativeHandle);
+			}
+		}
+		void SetStaticTrayIcon(Icon source) {
+			if (icon == null || icon.trIcon == null) return;
+			icon.trIcon.Icon = source;
+			var previous = generatedTrayIcon;
+			generatedTrayIcon = null;
+			if (previous != null) previous.Dispose();
+		}
+		public static void RefreshFLAG(bool force = false) {
+			Debug.WriteLine("aLIVe");
+			// No need for update when no display wrapper
+			if (!TrayIconVisible && !LDCaretUseFlags_temp && !LDMouseUseFlags_temp && !LangPanelDisplay && !force) return;
+			IfDispose(ref FLAG);
+			if (!ENABLED) {
+				Debug.WriteLine("NOT ENABLED");
+				FLAG = new Bitmap(Properties.Resources.MahouTrayHD.ToBitmap());
+				return;
+			}
+			if (force) {
+				IfDispose(ref FLAG);
+				IfDispose(ref ITEXT);
+			}
+			Debug.WriteLine("STIlL");
+			uint lcraw = 0;
+			if (!UseJKL || KMHook.JKLERR)
+				lcraw = Locales.GetCurrentLocale();
+			else
+				lcraw = MahouUI.currentLayout;
+			var ol = false;
+			int lcid = (int)(lcraw>>16);
+			if (MMain.mahou != null) 
+				ol = MahouUI.OneLayout;
+			else 
+				ol = MMain.MyConfs.ReadBool("Layouts", "OneLayout");
+			if (ol)
+				lcid = (int)(MahouUI.GlobalLayout>>16);
+			if (lcid > 0) { 
+				var flagname = "jp";
+				CultureInfo clangname; 
+				try {
+					clangname = new CultureInfo(lcid);
+				} catch {
+					clangname = new CultureInfo((int)(lcraw&0xffff));
+				}
+				flagname = clangname.ThreeLetterISOLanguageName.Substring(0, 2).ToLower();
+				var flagpth = Path.Combine(MahouUI.nPath, "Flags\\" + flagname + ".png");
+				Debug.WriteLine("UpDATe?"+flagname+", "+(flagname != latestSwitch || (TrayText && ITEXT == null) || (TrayFlags && FLAG == null)));
+				if (flagname != latestSwitch || (TrayText && ITEXT == null) || (TrayFlags && FLAG == null) || force) {
+					Logging.Log("Changed flag to " + flagname + " lcid " + lcid);
+					Debug.WriteLine("Changed flag to " + flagname + " lcid " + lcid);
+					if (File.Exists(flagpth)) {
+						using (var loadedFlag = Image.FromFile(flagpth))
+							FLAG = new Bitmap(loadedFlag);
+					}
+					else
+						switch (flagname) {
+							case "ru":
+								FLAG = new Bitmap(Properties.Resources.ru);
+								break;
+							case "en":
+								FLAG = new Bitmap(Properties.Resources.en);
+								break;
+							case "es":
+								FLAG = new Bitmap(Properties.Resources.es);
+								break;
+							case "jp":
+								FLAG = new Bitmap(Properties.Resources.jp);
+								break;
+							case "bu":
+								FLAG = new Bitmap(Properties.Resources.bu);
+								break;
+							case "uk":
+								FLAG = new Bitmap(Properties.Resources.uk);
+								break;
+							case "po":
+								FLAG = new Bitmap(Properties.Resources.po);
+								break;
+							case "sw":
+								FLAG = new Bitmap(Properties.Resources.sw);
+								break;
+							case "zh":
+								FLAG = new Bitmap(Properties.Resources.zh);
+								break;
+							case "be":
+								FLAG = new Bitmap(Properties.Resources.be);
+								break;
+							case "de":
+								FLAG = new Bitmap(Properties.Resources.de);
+								break;
+							case "sp":
+								FLAG = new Bitmap(Properties.Resources.sp);
+								break;
+							case "it":
+								FLAG = new Bitmap(Properties.Resources.it);
+								break;
+							case "fr":
+								FLAG = new Bitmap(Properties.Resources.fr);
+								break;
+							case "la":
+								FLAG = new Bitmap(Properties.Resources.la);
+								break;
+							case "hy":
+								FLAG = new Bitmap(Properties.Resources.hy);
+								break;
+							case "ka":
+								FLAG = new Bitmap(Properties.Resources.ka);
+								break;
+							case "el":
+								FLAG = new Bitmap(Properties.Resources.el);
+								break;
+							default:
+								FLAG = new Bitmap(Properties.Resources.MahouTrayHD.ToBitmap());
+								Logging.Log("Missing flag for language [" + flagname + " / " + lcid + "].", 2);
+								break;
+						}
+					if (TrayText) {
+						Debug.WriteLine("Drawing the text layout *icon* in tray.");
+						var n2 = true;
+						var t = char.ToUpper(flagname[0]) + flagname.Substring(1);
+						var bg = LDCaretBack_temp;
+						var fg = LDCaretFore_temp;
+						var fn = LDCaretFont_temp;
+						if (lcid == (MAIN_LAYOUT2>>16)) {
+							bg = Layout2Back_temp;
+							if (Layout2TransparentBack_temp) {
+								bg = Color.Transparent;
+							}
+							fg = Layout2Fore_temp;
+							fn = Layout2Font_temp;
+							if (!String.IsNullOrEmpty(Layout2TText)) t = Layout2TText;
+							n2 = false;	
+						} else if (lcid == (MAIN_LAYOUT1>>16)) {
+							bg = Layout1Back_temp;
+							if (Layout1TransparentBack_temp) {
+								bg = Color.Transparent;
+							}
+							fg = Layout1Fore_temp;
+							fn = Layout1Font_temp;
+							if (!String.IsNullOrEmpty(Layout1TText)) t = Layout1TText;
+							n2 = false;	
+			            }
+						Debug.WriteLine("D" + n2);
+						var b = new Bitmap(16, 16);
+						var g = Graphics.FromImage(b);
+						var sf = new StringFormat(){ LineAlignment = StringAlignment.Center, Alignment = StringAlignment.Center };
+						var sb = new SolidBrush(fg);
+						g.Clear(bg);
+						g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SystemDefault;
+						g.DrawString(t, fn, sb, new PointF(8, 8), sf);
+						g.Dispose();
+						sf.Dispose();
+						sb.Dispose();
+						IfDispose(ref ITEXT);
+						ITEXT = new Bitmap(b);
+						if (n2 && LDCaretUseFlags_temp) {
+							IfDispose(ref ITEXT);
+							ITEXT = new Bitmap(FLAG);
+						}
+						b.Dispose();
+					}
+					latestSwitch = flagname;
+				}
+			} else
+				Logging.Log("Layout id was ["+lcid+"].", 2);
+		}
+		/// <summary>
+		/// Changes tray icon image to country flag based on current layout.
+		/// </summary>
+		void ChangeTrayIconToFlag(bool force = false) {
+			try {
+				uint lcid = 0;
+				if (OneLayout)
+					lcid = GlobalLayout;
+				else if (!UseJKL || KMHook.JKLERR)
+					lcid = Locales.GetCurrentLocale();
+				else 
+					lcid = MahouUI.currentLayout;
+	//			Debug.WriteLine("refresh?"+ (lastTrayFlagLayout != lcid || force));
+				if (lastTrayFlagLayout != lcid || force) {
+					RefreshFLAG(force);
+					Bitmap b = null;
+					try {
+						if (FLAG != null) b = new Bitmap(FLAG);
+						if (TrayText && ITEXT != null) {
+							if (b != null) b.Dispose();
+							b = new Bitmap(ITEXT);
+						}
+						if (b != null) SetTrayIconFromBitmap(b);
+						else SetStaticTrayIcon(Mahou.Properties.Resources.MahouTrayHD);
+					} finally {
+						if (b != null) b.Dispose();
+					}
+					lastTrayFlagLayout = lcid;
+				}
+			} catch(Exception e) {
+				Logging.Log("[TrICON] > Can't change tray icon, error: " + e.Message + "\r\n" + e.StackTrace, 1);
+			}
+		}
+		/// <summary>
+		/// Initializes UI language.
+		/// </summary>
+		public static void InitLanguage() {
+			MMain._language = MMain.MyConfs.Read("Appearence", "Language");
+			if (MMain._language == "English")
+				MMain.Lang = Languages.English;
+			else if (MMain._language == "Ğ ÑƒÑÑĞºĞ¸Ğ¹")
+				MMain.Lang = Languages.Russian;
+		}
+		/// <summary>
+		/// Initializes language tooltips.
+		/// </summary>
+		public void InitLangDisplays(bool destroyonly = false, bool lc = false) {
+			if (mouseLangDisplay == null)
+				mouseLangDisplay = new LangDisplay();
+			if (caretLangDisplay == null)
+				caretLangDisplay = new LangDisplay();
+			if (destroyonly || !ENABLED) {
+				mouseLangDisplay.Dispose();
+				caretLangDisplay.Dispose();
+				return; 
+			}
+			if (LDForMouse) {
+				mouseLangDisplay.mouseDisplay = true;
+				mouseLangDisplay.DisplayFlag = LDMouseUseFlags_temp;
+				mouseLangDisplay.Visible = true;
+			} else if (lc) {
+				mouseLangDisplay.Visible = false;
+			}
+			if (LDForCaret) {
+				caretLangDisplay.caretDisplay = true;
+				caretLangDisplay.DisplayFlag = LDCaretUseFlags_temp;
+				if (mouseLangDisplay != null) {
+					caretLangDisplay.AddOwnedForm(mouseLangDisplay); //Prevents flickering when tooltips are one on another
+				}
+				caretLangDisplay.Visible = true;
+			} else if (lc) {
+				caretLangDisplay.Visible = false;
+			}
+		}
+		void lastAltTabChangeLayout() {
+			KInputs.MakeInput(new [] { KInputs.AddKey(Keys.LMenu, true), KInputs.AddKey(Keys.Tab, true) });
+			System.Threading.Thread.Sleep(1);
+			KInputs.MakeInput(new [] { KInputs.AddKey(Keys.LMenu, false), KInputs.AddKey(Keys.Tab, false) });
+			var t = new Timer();
+			t.Tick += (x, xx) => {
+				KMHook.ChangeLayout(true);
+				t.Stop();
+				t.Dispose();
+			};
+			t.Interval = 300;
+			t.Start();
+		}
+		static Timer thmm;
+		static bool thmmr, thmme, start_skip = true;
+		/// <summary>
+		/// Initializes tray icon.
+		/// </summary>
+		void InitializeTrayIcon() {
+			if (icon != null) {
+				icon.Hide();
+				icon.trIcon.Dispose();
+			}
+			icon = new TrayIcon(MMain.MyConfs.ReadBool("Functions", "TrayIconVisible"));
+			icon.Exit += (_, __) => ExitProgram();
+			if (Hchk_LMBTrayLayoutChange.Checked) {
+				if (Hchk_LMBTrayLayoutChangeDC.Checked) {
+					var cc = 0; bool tx = false; Timer t = null;
+					icon.MLBAct += (_, __) => {
+						cc++;
+						Debug.WriteLine("CC" + cc);
+						if (cc > 1) {
+							ToggleVisibility();
+							cc = 0;
+							if (t != null) {
+								t.Stop();
+								t.Dispose();
+								tx = false;
+							}
+						}
+						else if (!tx) {
+							tx = true;
+							t = new Timer(); bool fign = false;
+							t.Tick += (x, xx) => { 
+								if (!fign) { fign = true; return; }
+								if (cc == 1) { lastAltTabChangeLayout(); } 
+								cc = 0; 
+								t.Stop(); t.Dispose(); tx = false; };
+							t.Interval = SystemInformation.DoubleClickTime;
+							t.Start();
+						}
+					};
+				} else
+					icon.MLBAct += (_, __) => lastAltTabChangeLayout();
+			} else
+				icon.MLBAct += (_, __) => ToggleVisibility();
+			icon.ShowHide += (_, __) => ToggleVisibility();
+			icon.EnaDisable += (_, __) => ToggleMahou();
+			icon.Restart += (_, __) => Restart();
+			icon.ChangeLt += (_, __) => lastAltTabChangeLayout();
+			icon.ConvertClip += (_, __) => {
+				var t = KMHook.ConvertText(KMHook.GetClipboard(2));
+				NativeClipboard.SetText(t);
+			};
+			icon.TransliClip += (_, __) => {
+				var t = KMHook.TransliterateText(KMHook.GetClipboard(2));
+				NativeClipboard.SetText(t);
+			};
+			var mm = Path.Combine(nPath, "Mahou.mm");
+			if (File.Exists(mm)) {
+				MahouMM = true;
+				makemenu(File.ReadAllText(mm));
+			} else MahouMM = false;
+			if (MahouMM && TrayHoverMahouMM > 0) {
+				var now_p = new Point(7777,7777);
+				if (thmm != null) {
+					thmm.Stop();
+					thmm.Dispose();
+				}
+				thmm = new Timer();
+				thmm.Interval = TrayHoverMahouMM;
+				thmm.Tick += (_, __) => {
+					thmm.Stop(); // doesn't work..
+					thmmr = false;  // either
+					if (now_p.Equals(Cursor.Position) && !icon.trIcon.ContextMenuStrip.Visible && !now_p.Equals(new Point(7777,7777))) {
+						Debug.WriteLine("You haven't moved from: " +now_p.X+"/"+now_p.Y+ " for "+TrayHoverMahouMM+"ms.");
+						ShowMahouMMMenuUnderMouse();
+						thmme = true; // prevents timer tick to go on and on
+						var t = new Timer(){Interval = 60}; // reset after 60ms
+						t.Tick += (z,zz) => { thmme = false; };
+						t.Start();
+					}
+					now_p = new Point(7777,7777);
+				};
+				icon.trIcon.MouseMove += (_, __) => {
+					if (thmme) { return; }
+					if (start_skip) { start_skip = false; return; }
+					Debug.WriteLine("MOMO:"+Cursor.Position.X);
+					now_p = Cursor.Position;
+					if (thmmr) {
+						thmmr = false;
+						thmm.Stop();
+					}
+					if (!thmmr) { 
+						thmm.Start();
+						thmmr = true;
+					} 
+				};
+				icon.trIcon.MouseClick += (_, __) => {
+					Debug.WriteLine("CLI");
+					thmm.Stop(); thmmr = false;
+				};
+			}
+		}
+		/// <summary>
+		/// Initializes list boxes.
+		/// </summary>
+		void InitializeListBoxes() {
+			lsb_Hotkeys.SelectedIndex = 0;
+			lsb_LangTTAppearenceForList.SelectedIndex = 0;
+		}
+		void InitializeLangPanel() {
+			if (_langPanel == null)
+				_langPanel = new LangPanel();
+			int x = -7, y = -7;
+			try { 
+				var getXY = new Regex(@"(X|Y)(\d+)");
+				var xy = MMain.MyConfs.Read("LangPanel", "Position");
+				var _xy = getXY.Matches(xy);
+				Logging.Log("XY: " + _xy[0].Groups[2].Value + " / " + _xy[1].Groups[2].Value);
+				x = Convert.ToInt32(_xy[0].Groups[2].Value);
+				y = Convert.ToInt32(_xy[1].Groups[2].Value);
+			} catch (Exception e) { Logging.Log("Erro during latest x/y position get, details:\r\n" + e.Message + "\r\n" + e.StackTrace, 1); }
+			_langPanel.Location = new Point(x, y);
+			_langPanel.UpdateApperence(LangPanelBackColor, LangPanelForeColor, LangPanelTransparency, LangPanelFont);
+			if(LangPanelDisplay) {
+				_langPanel.ShowInactiveTopmost();
+				langPanelRefresh.Start();
+			}
+		}
+		/// <summary>
+		/// Initializes all hotkeys.
+		/// </summary>
+		public void InitializeHotkeys() {
+			Mainhk = new Hotkey(Mainhk_tempEnabled, (uint)Mainhk_tempKey,
+			                    Hotkey.GetMods(Mainhk_tempMods), (int)Hotkey.HKID.ToggleVisibility, Mainhk_tempDouble);
+			HKCLast = new Hotkey(HKCLast_tempEnabled, (uint)HKCLast_tempKey, 
+				Hotkey.GetMods(HKCLast_tempMods), (int)Hotkey.HKID.ConvertLastWord, HKCLast_tempDouble);			
+			HKCSelection = new Hotkey(HKCSelection_tempEnabled, (uint)HKCSelection_tempKey, 
+				Hotkey.GetMods(HKCSelection_tempMods), (int)Hotkey.HKID.ConvertSelection, HKCSelection_tempDouble);			
+			HKCLine = new Hotkey(HKCLine_tempEnabled, (uint)HKCLine_tempKey, 
+				Hotkey.GetMods(HKCLine_tempMods), (int)Hotkey.HKID.ConvertLastLine, HKCLine_tempDouble);			
+			HKSymIgn = new Hotkey(HKSymIgn_tempEnabled, (uint)HKSymIgn_tempKey, 
+				Hotkey.GetMods(HKSymIgn_tempMods), (int)Hotkey.HKID.ToggleSymbolIgnoreMode, HKSymIgn_tempDouble);			
+			HKConMorWor = new Hotkey(HKConMorWor_tempEnabled, (uint)HKConMorWor_tempKey, 
+				Hotkey.GetMods(HKConMorWor_tempMods), (int)Hotkey.HKID.ConvertMultipleWords, HKConMorWor_tempDouble);			
+			HKTitleCase = new Hotkey(HKTitleCase_tempEnabled, (uint)HKTitleCase_tempKey, 
+				Hotkey.GetMods(HKTitleCase_tempMods), (int)Hotkey.HKID.ToTitleSelection, HKTitleCase_tempDouble);			
+			HKRandomCase = new Hotkey(HKRandomCase_tempEnabled, (uint)HKRandomCase_tempKey, 
+				Hotkey.GetMods(HKRandomCase_tempMods), (int)Hotkey.HKID.ToRandomSelection, HKRandomCase_tempDouble);			
+			HKSwapCase = new Hotkey(HKSwapCase_tempEnabled, (uint)HKSwapCase_tempKey,
+				Hotkey.GetMods(HKSwapCase_tempMods), (int)Hotkey.HKID.ToSwapSelection, HKSwapCase_tempDouble);			
+			HKUpperCase = new Hotkey(HKToUpper_tempEnabled, (uint)HKToUpper_tempKey,
+				Hotkey.GetMods(HKToUpper_tempMods), (int)Hotkey.HKID.ToUpperSelection, HKToUpper_tempDouble);		
+			HKLowerCase = new Hotkey(HKToLower_tempEnabled, (uint)HKToLower_tempKey,
+				Hotkey.GetMods(HKToLower_tempMods), (int)Hotkey.HKID.ToLowerSelection, HKToLower_tempDouble);		
+			HKTransliteration = new Hotkey(HKTransliteration_tempEnabled, (uint)HKTransliteration_tempKey, 
+				Hotkey.GetMods(HKTransliteration_tempMods), (int)Hotkey.HKID.TransliterateSelection, HKTransliteration_tempDouble);
+			ExitHk = new Hotkey(ExitHk_tempEnabled, (uint)ExitHk_tempKey, 
+			    Hotkey.GetMods(ExitHk_tempMods), (int)Hotkey.HKID.Exit, ExitHk_tempDouble);
+			HKRestart = new Hotkey(HKRestart_tempEnabled, (uint)HKRestart_tempKey, 
+			    Hotkey.GetMods(HKRestart_tempMods), (int)Hotkey.HKID.Restart, false);
+			HKToggleLP = new Hotkey(HKToggleLangPanel_tempEnabled, (uint)HKToggleLangPanel_tempKey, 
+			    Hotkey.GetMods(HKToggleLangPanel_tempMods), (int)Hotkey.HKID.ToggleLangPanel, HKToggleLangPanel_tempDouble);
+			HKShowST = new Hotkey(HKShowSelectionTranslate_tempEnabled, (uint)HKShowSelectionTranslate_tempKey, 
+			    Hotkey.GetMods(HKShowSelectionTranslate_tempMods), (int)Hotkey.HKID.ShowSelectionTranslation, HKShowSelectionTranslate_tempDouble);
+			HKToggleMahou = new Hotkey(HKToggleMahou_tempEnabled, (uint)HKToggleMahou_tempKey, 
+			    Hotkey.GetMods(HKToggleMahou_tempMods), (int)Hotkey.HKID.ToggleMahou, HKToggleMahou_tempDouble);
+			HKCycleCase = new Hotkey(HKCycleCase_tempEnabled, (uint)HKCycleCase_tempKey, 
+			    Hotkey.GetMods(HKCycleCase_tempMods), (int)Hotkey.HKID.CycleCase, HKCycleCase_tempDouble);
+			HKSelCustConv = new Hotkey(HKSelCustConv_tempEnabled, (uint)HKSelCustConv_tempKey, 
+			    Hotkey.GetMods(HKSelCustConv_tempMods), (int)Hotkey.HKID.CustomConversion, HKSelCustConv_tempDouble);
+			HKShCMenuUM = new Hotkey(HKShCMenuUM_tempEnabled, (uint)HKShCMenuUM_tempKey, 
+			    Hotkey.GetMods(HKShCMenuUM_tempMods), (int)Hotkey.HKID.ShowCMenuUnderMouse, HKShCMenuUM_tempDouble);
+			Logging.Log("Hotkeys initialized.");
+		}
+		public bool HasHotkey(Hotkey thishk) {
+			if (thishk == Mainhk || 
+				thishk == HKCLast ||
+				thishk == HKCSelection ||
+				thishk == HKCLine ||
+				thishk == HKSymIgn ||
+				thishk == HKConMorWor ||
+				thishk == HKTitleCase ||
+				thishk == HKRandomCase ||
+				thishk == HKSwapCase ||		
+				thishk == HKUpperCase ||	
+				thishk == HKLowerCase ||	
+				thishk == HKTransliteration ||
+				thishk == ExitHk ||
+				thishk == HKRestart ||
+				thishk == HKToggleLP ||
+				thishk == HKShowST)
+				return true;
+			foreach (Hotkey hk in SpecificSwitchHotkeys) {
+				if (thishk == hk)
+					return true;
+				
+			}
+			return false;
+		}
+		void WrongColorLog(string color, string err = "") {
+			Logging.Log("["+color+"]is not color, it is skipped." + (!string.IsNullOrEmpty(err) ? ("\r\nError: " + err) : ""), 2);
+		}
+		void WrongFontLog(string font, string err = "") {
+			Logging.Log("["+font+"]is not font, or its missing from system, it is skipped." + (!string.IsNullOrEmpty(err) ? ("\r\nError: " + err) : ""), 2);
+		}
+		/// <summary>
+		/// Initializes timers.
+		/// </summary>
+		void InitializeTimers() {
+			#region Reset Timers
+			crtCheck.Stop();
+			ICheck.Stop();
+			ScrlCheck.Stop();
+			res.Stop();
+			resC.Stop();
+			old.Stop();
+			capsCheck.Stop();
+			flagsCheck.Stop();
+			persistentLayout1Check.Stop();
+			persistentLayout2Check.Stop();
+			langPanelRefresh.Stop();
+			ICheck = new Timer();
+			crtCheck = new Timer();
+			ScrlCheck = new Timer();
+			res = new Timer();
+			resC = new Timer();
+			capsCheck = new Timer();
+			flagsCheck = new Timer();
+			persistentLayout1Check = new Timer();
+			persistentLayout2Check = new Timer();
+			langPanelRefresh = new Timer();
+			old = new Timer();
+			KMHook.doublekey = new Timer();
+			#endregion
+			crtCheck.Interval = MMain.MyConfs.ReadInt("Timings", "LangTooltipForCaretRefreshRate");
+			crtCheck.Tick += (_, __) => UpdateCaredLD();
+			ICheck.Interval = MMain.MyConfs.ReadInt("Timings", "LangTooltipForMouseRefreshRate");
+			ICheck.Tick += (_, __) => UpdateMouseLD();
+			res.Interval = (ICheck.Interval + crtCheck.Interval) * 2;
+			resC.Interval = (ICheck.Interval + crtCheck.Interval) * 2;
+			res.Tick += (_, __) => {
+				onepass = true;
+				mouseLangDisplay.HideWnd();
+				if (LDUseWindowsMessages)
+					UpdateMouseLD();
+				res.Stop();
+			};
+			resC.Tick += (_, __) => {
+				onepassC = true;
+				caretLangDisplay.HideWnd();
+				if (LDUseWindowsMessages)
+					UpdateCaredLD();
+				resC.Stop();
+			};
+			ScrlCheck.Interval = MMain.MyConfs.ReadInt("Timings", "ScrollLockStateRefreshRate");
+			ScrlCheck.Tick += (_, __) => {
+				if (ScrollTip && !KMHook.alt) {
+					KMHook.DoSelf(() => {
+		              	var l = currentLayout;
+		              	if (!UseJKL || KMHook.JKLERR)
+		              		l = Locales.GetCurrentLocale();
+						if (l == MahouUI.MAIN_LAYOUT1) {
+							if (!Control.IsKeyLocked(Keys.Scroll)) { // Turn on 
+								KMHook.KeybdEvent(Keys.Scroll, 0);
+								KMHook.KeybdEvent(Keys.Scroll, 2);
+							}
+						} else {
+							if (Control.IsKeyLocked(Keys.Scroll)) {
+								KMHook.KeybdEvent(Keys.Scroll, 0);
+								KMHook.KeybdEvent(Keys.Scroll, 2);
+							}
+						}
+	                }, "scroll_check_timer");
+				}
+			};
+			capsCheck.Tick += (_, __) => KMHook.DoSelf(() => {
+				if (Control.IsKeyLocked(Keys.CapsLock)) {
+					KMHook.KeybdEvent(Keys.CapsLock, 0);
+					KMHook.KeybdEvent(Keys.CapsLock, 2);
+				}
+			}, "caps_check_timer");
+			capsCheck.Interval = MMain.MyConfs.ReadInt("Timings", "CapsLockDisableRefreshRate");
+			KMHook.doublekey.Tick += (_, __) => {
+				if (hklOK)
+					hklOK = false;
+				if (hksOK)
+					hksOK = false;
+				if (hklineOK)
+					hklineOK = false;
+				if (hkSIOK)
+					hkSIOK = false;
+				if (hkShWndOK)
+					hkShWndOK = false;
+				if (hkExitOK)
+					hkExitOK = false;
+				if (hkcwdsOK)
+					hkcwdsOK = false;
+				if (hksTRCOK)
+					hksTRCOK = false;
+				if (hksTrslOK)
+					hksTrslOK = false;
+				if (hksTTCOK)
+					hksTTCOK = false;
+				if (hksTSCOK)
+					hksTSCOK = false;
+				if (hkUcOK)
+					hkUcOK = false;
+				if (hklcOK)
+					hklcOK = false;
+				if (hkccOK)
+					hkccOK = false;
+				if (hkShowTSOK)
+					hkShowTSOK = false;
+				if (hkToggleMahouOK)
+					hkToggleMahouOK = false;
+				KMHook.doublekey.Stop();
+			};
+			flagsCheck.Interval = MMain.MyConfs.ReadInt("Timings", "FlagsInTrayRefreshRate");
+			flagsCheck.Tick += (_,__) => RefreshAllIcons();			
+			titlebar = RectangleToScreen(ClientRectangle).Top - Top;
+			animate.Interval = 2500;
+			tmr.Interval = 3000;
+			old.Interval = 7500;
+			old.Tick += (_, __) => { isold = !isold; };	
+			persistentLayout1Check.Interval = MMain.MyConfs.ReadInt("PersistentLayout", "Layout1CheckInterval");
+			persistentLayout2Check.Interval = MMain.MyConfs.ReadInt("PersistentLayout", "Layout2CheckInterval");
+			persistentLayout1Check.Tick += (_, __) => PersistentLayoutCheck(PersistentLayout1Processes, MAIN_LAYOUT1);
+			persistentLayout2Check.Tick += (_, __) => PersistentLayoutCheck(PersistentLayout2Processes, MAIN_LAYOUT2);
+			langPanelRefresh.Interval = LangPanelRefreshRate;
+			langPanelRefresh.Tick += (_, __) => {
+				uint loc = 0;
+				try {
+					if (!OneLayout)
+						loc = currentLayout == 0 ? Locales.GetCurrentLocale() : currentLayout;
+					else
+						loc = GlobalLayout;
+					if (loc > 0 && loc != lastLayoutLangPanel) {
+						RefreshFLAG();
+						_langPanel.ChangeLayout(FLAG, MMain.locales[Array.FindIndex(MMain.locales, l => l.uId == loc)].Lang);
+						lastLayoutLangPanel = loc;
+					}
+				} catch (Exception e) { Logging.Log("Error in LangPanel Refresh, loc: "+loc+ ",  details:\r\n" + e.Message + "\r\n" + e.StackTrace); }
+			};
+			InitLangDisplays(false, true);
+			ToggleTimers();
+		}
+		public void UpdateMouseLD() {
+			if (mouseLangDisplay == null) {
+				Logging.Log("mouseLangDisplay was null when trying to update it.", 2);
+				InitLangDisplays();
+				return;
+			}
+			if (LDForMouseOnChange) {
+				var cLuid = Locales.GetCurrentLocale();
+				if (UseJKL && !KMHook.JKLERR)
+					cLuid = currentLayout;
+				if (onepass) {
+					latestL = cLuid;
+					onepass = false;
+				}
+				if (latestL != cLuid) {
+					latestL = cLuid;
+					mouseLangDisplay.ShowInactiveTopmost();
+					res.Start();
+				}
+			} else {
+				if ((ICheckings.IsICursor() || MouseTTAlways) && !mouseLangDisplay.Empty)
+					mouseLangDisplay.ShowInactiveTopmost();
+				else
+					mouseLangDisplay.HideWnd();
+			}
+			if (mouseLangDisplay.Visible) {
+				mouseLangDisplay.Location = new Point(Cursor.Position.X + LDMouseX_Pos_temp, Cursor.Position.Y + LDMouseY_Pos_temp);
+				mouseLangDisplay.RefreshLang();
+			}
+		}
+		public void UpdateCaredLD() {
+			if (caretLangDisplay == null) {
+				Logging.Log("caretLangDisplay was null when trying to update it.", 2);
+				InitLangDisplays();
+				return;
+			}
+			var crtOnly = new Point(0,0);
+			var curCrtPos = CaretPos.GetCaretPointToScreen(out crtOnly);
+			uint cLuid = 0;
+			var notTwo = false;
+			if (LDForCaretOnChange || DiffAppearenceForLayouts) {
+				cLuid = Locales.GetCurrentLocale();
+				if (UseJKL && !KMHook.JKLERR)
+					cLuid = currentLayout;
+			}
+			if (LDForCaretOnChange && cLuid != 0) {
+				if (onepassC) {
+//					Debug.WriteLine("OPC!" + cLuid);
+					latestCL = cLuid;
+					onepassC = false;
+				}
+//				Debug.WriteLine("L"+latestCL+", CL"+cLuid);
+				if (latestCL != cLuid) {
+					latestCL = cLuid;
+					caretLangDisplay.ShowInactiveTopmost();
+					resC.Start();
+				}
+			} else {
+				var x = false;
+				if (ExcludeCaretLD)
+					x = KMHook.ExcludedProgram();
+				if (KMHook.ff_chr_wheeled || caretLangDisplay.Empty || x)
+					caretLangDisplay.HideWnd();
+				else if (crtOnly.X != 77777 && crtOnly.Y != 77777) // 77777x77777 is null/none point
+					caretLangDisplay.ShowInactiveTopmost();
+			}
+			if (caretLangDisplay.Visible) {
+				var LDC_np = new Point(0,0);
+				if (DiffAppearenceForLayouts && cLuid != 0) {
+					if (cLuid == MahouUI.MAIN_LAYOUT1) {
+						LDC_np = new Point(curCrtPos.X + Layout1X_Pos_temp, 
+						                                      curCrtPos.Y + Layout1Y_Pos_temp);
+					} else if (cLuid == MahouUI.MAIN_LAYOUT2) {
+						LDC_np = new Point(curCrtPos.X + Layout2X_Pos_temp, 
+						                                      curCrtPos.Y + Layout2Y_Pos_temp);
+					} else notTwo = true;
+				} else notTwo = true;
+				if (notTwo)
+					LDC_np = new Point(curCrtPos.X + LDCaretX_Pos_temp, 
+					                                      curCrtPos.Y + LDCaretY_Pos_temp);
+				caretLangDisplay.RefreshLang();
+				if (LDC_lp != LDC_np) 
+					caretLangDisplay.Location = LDC_np;
+				LDC_lp = LDC_np;
+			}
+		}
+		public void UpdateLDs() {
+			if (LDUseWindowsMessages) {
+				if (LDForCaret)
+					UpdateCaredLD();
+				if (LDForMouse)
+					UpdateMouseLD();
+			}
+		}
+		public void PersistentLayoutCheck(string ProcessNames, uint Layout, string ProcName = "") {
+			try {
+				var actProcName = "";
+				var plh = PERSISTENT_LAYOUT1_HWNDs;
+				var nplh = NOT_PERSISTENT_LAYOUT1_HWNDs;
+				if (Layout == MAIN_LAYOUT2) {
+					plh = PERSISTENT_LAYOUT2_HWNDs;
+					nplh = NOT_PERSISTENT_LAYOUT2_HWNDs;
+				}
+				var hwnd = WinAPI.GetForegroundWindow();
+				if (nplh.Contains(hwnd)) {
+					Logging.Log("Already known hwnd which shouldn't have persistent layout.");
+					return;
+			    }
+				if (!plh.Contains(hwnd)) {
+					if (!String.IsNullOrEmpty(ProcName))
+						actProcName = ProcName;
+					else 
+						actProcName = Locales.ActiveWindowProcess().ProcessName;
+					actProcName = actProcName.ToLower().Replace(" ", "_") + ".exe";
+					Logging.Log("Checking active window's process name: ["+actProcName+"] with processes: ["+ProcessNames+"], for layout: ["+Layout+"].");
+					if (ProcessNames.ToLower().Replace(Environment.NewLine, " ").Contains(actProcName)) {
+						SetPersistentLayout(Layout);
+						plh.Add(hwnd);
+					} else {
+						nplh.Add(hwnd);
+					}
+				} else {
+					Logging.Log("Already known hwnd which needs to have persistent layout, setting layout " + Layout);
+					SetPersistentLayout(Layout);
+				}
+			} catch(Exception e) { Logging.Log("Exception in Persistent layout("+Layout+") check, error messages & stack:\r\n"+e.Message+"+\r\n"+e.StackTrace, 1); }
+		}
+		void SetPersistentLayout(uint layout) {
+			uint CurrentLayout = currentLayout;
+			if (!UseJKL || KMHook.JKLERR)
+				CurrentLayout = Locales.GetCurrentLocale();
+			Logging.Log("Checking current layout: ["+CurrentLayout+"] with selected persistent layout: ["+layout+"].");
+			if (CurrentLayout != layout) {
+				KMHook.ChangeToLayout(Locales.ActiveWindow(), layout);
+				Logging.Log("Layout was different, changing to: ["+layout+"].");
+			}
+		}
+		/// <summary>
+		/// Toggles timers state.
+		/// </summary>
+		public void ToggleTimers() {
+			if (!Configs.fine || !ENABLED) return;
+			if (!LDUseWindowsMessages) {
+				if (LDForMouse)
+					ICheck.Start();
+				else
+					ICheck.Dispose();
+				if (LDForCaret)
+					crtCheck.Start();
+				else
+					crtCheck.Dispose();
+			}
+			if (MMain.MyConfs.ReadBool("Functions", "ScrollTip"))
+				ScrlCheck.Start();
+			else
+				ScrlCheck.Dispose();
+			if (MMain.MyConfs.ReadBool("Functions", "CapsLockTimer"))
+				capsCheck.Start();
+			else
+				capsCheck.Dispose();
+			if ((MMain.MyConfs.ReadBool("Functions", "TrayFlags") || MMain.MyConfs.ReadBool("Functions", "TrayText")) && TrayIconVisible)
+				flagsCheck.Start();
+			else
+				flagsCheck.Dispose();
+			if (!PersistentLayoutOnWindowChange) {
+				if (PersistentLayoutForLayout1)
+					persistentLayout1Check.Start();
+				else
+					persistentLayout1Check.Dispose();
+				if (PersistentLayoutForLayout2)
+					persistentLayout2Check.Start();
+				else
+					persistentLayout2Check.Dispose();
+			}
+			if (LangPanelDisplay && !langPanelRefresh.Enabled)
+				langPanelRefresh.Start();
+			else
+				langPanelRefresh.Dispose();
+		}
+		void AutoStartTask(bool deleteonly = false) {
+			StartupManager.SetEnabled(!deleteonly);
+		}
+
+		public static void SoundPlay(bool second = false) {
+			if (SoundEnabled) {
+				byte[] snd = second ? Properties.Resources.snd2 : Properties.Resources.snd;
+				bool ucs = second ? UseCustomSound2 : UseCustomSound;
+				string csf = second ? CustomSound2 : CustomSound;
+				var sms = new MemoryStream(snd);
+				var sp = new System.Media.SoundPlayer(sms);
+				try {
+					csf = replaceenv(csf, "%mahou_dir%", () => nPath);
+					if (ucs) if (File.Exists(csf))
+						sp = new System.Media.SoundPlayer(csf);
+				} catch(Exception e) {
+					Logging.Log("Error during loading of the custom sound file: "+e.Message + "\n" + e.StackTrace, 1);
+					Logging.Log("Fallback to default sound...");
+				}
+				sp.Play();
+				sp.Dispose();
+				sms.Dispose();
+			}
+		}
+		public string SelectGetWavFile() {
+			var fp = "";
+			var ofd = new  OpenFileDialog();
+			ofd.DefaultExt = ".wav";
+			ofd.Filter = "Wave sound|*.wav";
+			ofd.Multiselect = false;
+			if (ofd.ShowDialog() == DialogResult.OK) {
+				fp = ofd.FileName;
+			}
+			ofd.Dispose();
+			return fp;
+		}
+		/// <summary>
+		/// Creates startup shortcut/task v3.0+v2.0.
+		/// </summary>
+		void CreateAutoStart() {
+			StartupManager.SetEnabled(true);
+			Logging.Log("HKCU Run startup enabled.");
+		}
+
+		bool AutoStartExist(bool admin) {
+			return StartupManager.IsEnabled();
+		}
+
+		/// <summary>
+		/// Remove startup with Windows.
+		/// </summary>
+		void AutoStartRemove(bool admin) {
+			StartupManager.SetEnabled(false);
+			Logging.Log("HKCU Run startup disabled.");
+		}
+
+		void PreExit(bool hideicon = true, int noglobal = 0) {
+			if (UseJKL && !KMHook.JKLERR)
+				jklXHidServ.Destroy();
+			if (hideicon)
+				icon.Hide();
+			if (RemapCapslockAsF18)
+				LLHook.UnSet();
+			MMain.mahou.UnregisterHotkeys(noglobal);
+			MMain.rif.RegisterRawInputDevices(IntPtr.Zero, WinAPI.RawInputDeviceFlags.Remove);
+			if (uche != null)
+				uche.Abort();
+			if (tmr != null) { tmr.Stop(); tmr.Dispose(); }
+			if (old != null) { old.Stop(); old.Dispose(); }
+			if (res != null) { res.Stop(); res.Dispose(); }
+			if (resC != null) { resC.Stop(); resC.Dispose(); }
+			if (stimer != null) { stimer.Stop(); stimer.Dispose(); }
+			if (ICheck != null) { ICheck.Stop(); ICheck.Dispose(); }
+			if (animate != null) { animate.Stop(); animate.Dispose(); }
+			if (crtCheck != null) { crtCheck.Stop(); crtCheck.Dispose(); }
+			if (ScrlCheck != null) { ScrlCheck.Stop(); ScrlCheck.Dispose(); }
+			if (capsCheck != null) { capsCheck.Stop(); capsCheck.Dispose(); }
+			if (showUpdWnd != null) { showUpdWnd.Stop(); showUpdWnd.Dispose(); }
+			if (flagsCheck != null) { flagsCheck.Stop(); flagsCheck.Dispose(); }
+			if (langPanelRefresh != null) { langPanelRefresh.Stop(); langPanelRefresh.Dispose(); }
+			if (persistentLayout1Check != null) { persistentLayout1Check.Stop(); persistentLayout1Check.Dispose(); }
+			if (persistentLayout2Check != null) { persistentLayout2Check.Stop(); persistentLayout2Check.Dispose(); }
+			NCS_destroy();
+		}
+		/// <summary>Exits Mahou.</summary>
+		public void ExitProgram() {
+			Logging.Log("Exit by user demand.");
+			try {
+				PreExit();
+			} catch (Exception e) {
+				Logging.Log("Cleanup during exit failed: " + e.Message, 2);
+			}
+			Application.Exit();
+		}
+		/// <summary>
+		/// Registers keys 1->9 & 0 on keyboard as hotkey to be used as word count selector for Convert Multiple Words Count.
+		/// </summary>
+		void PrepareConvertMoreWords() {
+			for (int i = 0; i <= 9; i++) {
+//				Debug.WriteLine("Registering +"+(Keys)(((int)Keys.D0)+i) + " i " +(i+100));
+				WinAPI.RegisterHotKey(Handle, 100+i, WinAPI.MOD_NO_REPEAT, ((int)Keys.D0)+i);
+			}
+			KMHook.waitfornum = true;
+		}
+		/// <summary>
+		/// Unregisters keys 1->9 & 0 on keyboard that were used for Convert Multiple Words Count function.
+		/// </summary>
+		public void FlushConvertMoreWords() {
+			for (int i = 100; i <= 109; i++) {
+//				Debug.WriteLine("Unregistering +"+i);
+				WinAPI.UnregisterHotKey(Handle, i);
+			}
+			KMHook.waitfornum = false;
+		}
+		/// <summary>
+		/// Unregisters Mahou hotkeys.
+		/// </summary>
+		/// <param name="noglobal">Keeps *global hotkeys*(the one's that goes after TransliterateSelection in HKID enum) alive if true.</param>
+		public void UnregisterHotkeys(int noglobal = 0, bool excluded_related = false) {
+			foreach (int id in Enum.GetValues(typeof(Hotkey.HKID))) {
+				if (excluded_related) {
+					if (ConvertSWLinExcl) {
+						if (id == (int)Hotkey.HKID.ConvertLastWord || 
+						    id == (int)Hotkey.HKID.ConvertSelection||
+						    id == (int)Hotkey.HKID.ConvertLastLine) {
+							continue;
+						}
+					}
+				}
+				if (noglobal == 1 && (id > (int)Hotkey.HKID.TransliterateSelection)) break;
+				if (noglobal == 2 && (id > (int)Hotkey.HKID.ShowSelectionTranslation)) break;
+				WinAPI.UnregisterHotKey(Handle, id);
+			}
+			for (int id = 201; id <= 300; id++) {
+				SpecificSwitchHotkeys.Clear();
+				WinAPI.UnregisterHotKey(Handle, id);
+			}
+		}
+		public void _regHK(IntPtr h, int id, uint mod, int key) {
+			int rk = key;
+			if (LLHook.redefines.len > 0) {
+				for (int i = 0; i != LLHook.redefines.len; i++) {
+					if (key == (int)LLHook.redefines[i].k) {
+						rk = (int)LLHook.redefines[i].v;
+					}
+				}
+			}
+			if (RemapCapslockAsF18) {
+				if (key == (int)Keys.Capital) {
+					rk = (int)Keys.F18;
+				}
+//				Debug.WriteLine("WCHI " + key + " rk:" +rk);
+			}
+			var mm = Hotkey.GetMods((int)(mod&0xfff));
+//			if (mm == "Control") {
+//				rk = (int)Keys.LControlKey;
+//			}
+//			if (mm == "Alt") {
+//				rk = (int)Keys.LMenu;
+//			}
+//			if (mm == "Win") {
+//				rk = (int)Keys.LWin;
+//			}
+//			if (mm == "Shift") {
+//				rk = (int)Keys.LShiftKey;
+//			}
+			var ok = WinAPI.RegisterHotKey(h, id,mod, rk);
+			Logging.Log("Registering: " + (Keys)rk + ", mod: " + mm + " ok: " + ok);
+		}
+		public void RegisterHotkeys() {
+			if (HKToggleMahou_tempEnabled)
+				WinAPI.RegisterHotKey(Handle, (int)Hotkey.HKID.ToggleMahou,
+				                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKToggleMahou_tempMods), HKToggleMahou_tempKey);
+			if (ENABLED) {
+				if (!String.IsNullOrEmpty(tas)) {
+					try {
+						var tasq = tas.Split('|');
+						var mods = Hotkey.GetMods(tasq[0]);
+						var kk = (int)KMHook.strparsekey(tasq[1])[0];
+						Debug.WriteLine("TT: Mod" + mods + " " + kk);
+						_regHK(Handle, 774, WinAPI.MOD_NO_REPEAT + mods, kk);
+					} catch(Exception e) {
+						Logging.Log("Error syntax: modifiers|keycode/key toggle AutoSwitch hotkey:" +e.Message);
+					}
+				}
+				if (HKCLast_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ConvertLastWord, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKCLast_tempMods), HKCLast_tempKey);
+				if (HKCSelection_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ConvertSelection, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKCSelection_tempMods), HKCSelection_tempKey);
+				if (HKCLine_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ConvertLastLine, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKCLine_tempMods), HKCLine_tempKey);
+				if (HKConMorWor_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ConvertMultipleWords,
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKConMorWor_tempMods), HKConMorWor_tempKey);
+				if (HKTitleCase_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ToTitleSelection, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKTitleCase_tempMods), HKTitleCase_tempKey);
+				if (HKSwapCase_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ToSwapSelection, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKSwapCase_tempMods), HKSwapCase_tempKey);
+				if (HKToUpper_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ToUpperSelection, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKToUpper_tempMods), HKToUpper_tempKey);
+				if (HKToLower_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ToLowerSelection, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKToLower_tempMods), HKToLower_tempKey);
+				if (HKRandomCase_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ToRandomSelection, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKRandomCase_tempMods), HKRandomCase_tempKey);
+				if (HKTransliteration_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.TransliterateSelection, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKTransliteration_tempMods), HKTransliteration_tempKey);
+				if (HKSymIgn_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ToggleSymbolIgnoreMode, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKSymIgn_tempMods), HKSymIgn_tempKey);
+				if (Mainhk_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ToggleVisibility, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(Mainhk_tempMods), Mainhk_tempKey);
+				if (ExitHk_tempEnabled) 
+					_regHK(Handle, (int)Hotkey.HKID.Exit, 
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(ExitHk_tempMods), ExitHk_tempKey);
+				if (HKRestart_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.Restart,
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKRestart_tempMods), HKRestart_tempKey);
+				if (HKToggleLangPanel_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ToggleLangPanel,
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKToggleLangPanel_tempMods), HKToggleLangPanel_tempKey);
+				if (HKShowSelectionTranslate_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ShowSelectionTranslation,
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKShowSelectionTranslate_tempMods), HKShowSelectionTranslate_tempKey);
+				if (HKCycleCase_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.CycleCase,
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKCycleCase_tempMods), HKCycleCase_tempKey);
+				if (HKSelCustConv_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.CustomConversion,
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKSelCustConv_tempMods),HKSelCustConv_tempKey);
+				if (HKShCMenuUM_tempEnabled)
+					_regHK(Handle, (int)Hotkey.HKID.ShowCMenuUnderMouse,
+					                      WinAPI.MOD_NO_REPEAT + Hotkey.GetMods(HKShCMenuUM_tempMods),HKShCMenuUM_tempKey);
+				if (!ChangeLayouByKey) return;
+				for(int i = 1; i != SpecKeySetCount+1; i++) {
+					var key = 0;
+					if (!String.IsNullOrEmpty(SpecKeySetsValues["txt_key"+i+"_key"])) {
+						key = Int32.Parse(SpecKeySetsValues["txt_key"+i+"_key"]);
+						var mods = Hotkey.GetMods(SpecKeySetsValues["txt_key"+i+"_mods"]);
+						if (key == (int)Keys.CapsLock && RemapCapslockAsF18)
+							key = (int)Keys.F18;
+						if ((key == (int)Keys.LControlKey || key == (int)Keys.RControlKey || key == (int)Keys.ControlKey ||
+							key == (int)Keys.LShiftKey || key == (int)Keys.ShiftKey || key == (int)Keys.RShiftKey) &&
+							Hotkey.ContainsModifier((int)mods, (int) WinAPI.MOD_ALT)) {
+							HKBlockAlt.Add(200+i);
+							Debug.WriteLine("hiHI: "+(200+i));
+						}
+						Debug.WriteLine("Key:" +key);
+						var hk = new Hotkey(true, (uint)key, mods, 200+i);
+						SpecificSwitchHotkeys.Add(hk);
+						WinAPI.RegisterHotKey(Handle, 200+i, mods, key);
+					}
+				}
+			}
+		}
+		/// <summary>
+		/// Converts some special keys to readable string.
+		/// </summary>
+		/// <param name="k">Key to be converted.</param>
+		/// <param name="oninit">On initialize.</param>
+		/// <returns>string</returns>
+		public string Remake(Keys k, bool oninit = false, bool Double = false) {
+			if (Double || oninit) {
+				switch (k) {
+					case Keys.ShiftKey:
+						return "Shift";
+					case Keys.Menu:
+						return "Alt";
+					case Keys.ControlKey:
+						return "Control";
+				}
+			}
+			switch (k) {
+				case Keys.Cancel:
+					return k.ToString().Replace("Cancel", "Pause");
+				case Keys.Scroll:
+					return k.ToString().Replace("Cancel", "Scroll");
+				case Keys.ShiftKey:
+				case Keys.Menu:
+				case Keys.ControlKey:
+				case Keys.LWin:
+				case Keys.RWin:
+					return "";
+				case Keys.D0:
+				case Keys.D1:
+				case Keys.D2:
+				case Keys.D3:
+				case Keys.D4:
+				case Keys.D5:
+				case Keys.D6:
+				case Keys.D7:
+				case Keys.D8:
+				case Keys.D9:
+					return k.ToString().Replace("D", "");
+				case Keys.Capital:
+					return "Caps Lock";
+				default:
+					return k.ToString();
+			}
+		}
+		/// <summary>
+		/// Converts Oem Keys string to readable string.
+		/// </summary>
+		/// <param name="inpt">String with oem keys.</param>
+		/// <returns>string</returns>
+		public string OemReadable(string inpt) {
+			return inpt
+                  .Replace("Oemtilde", "`")
+                  .Replace("OemMinus", "-")
+                  .Replace("Oemplus", "+")
+                  .Replace("OemBackslash", "\\")
+                  .Replace("Oem5", "\\")
+                  .Replace("OemOpenBrackets", "{")
+                  .Replace("OemCloseBrackets", "}")
+                  .Replace("Oem6", "}")
+                  .Replace("OemSemicolon", ";")
+                  .Replace("Oem1", ";")
+                  .Replace("OemQuotes", "\"")
+                  .Replace("Oem7", "\"")
+                  .Replace("OemPeriod", ".")
+                  .Replace("Oemcomma", ",")
+                  .Replace("OemQuestion", "/");
+		}
+		/// <summary>
+		/// Calls UpdateLangDisplayControls() which updates lang display controls based on selected [layout appearence]. 
+		/// </summary>
+		void UpdateLangDisplayControlsSwitch() {
+			if (lsb_LangTTAppearenceForList.SelectedIndex < 4) {
+				if (lsb_LangTTAppearenceForList.SelectedIndex > 1)
+					txt_LangTTText.Enabled = lbl_LangTTText.Enabled = false;
+				else
+					txt_LangTTText.Enabled = lbl_LangTTText.Enabled = true;
+				chk_LangTTTransparentColor.Enabled = btn_LangTTFont.Enabled = btn_LangTTForegroundColor.Enabled = 
+					btn_LangTTBackgroundColor.Enabled = lbl_LangTTBackgroundColor.Enabled = lbl_LangTTForegroundColor.Enabled = true;
+				grb_LangTTSize.Text = MMain.Lang[Languages.Element.LDSize];
+				lbl_LangTTWidth.Text = MMain.Lang[Languages.Element.LDWidth];
+				lbl_LangTTHeight.Text = MMain.Lang[Languages.Element.LDHeight];
+			} else {
+				chk_LangTTTransparentColor.Enabled = btn_LangTTFont.Enabled = btn_LangTTForegroundColor.Enabled = 
+					btn_LangTTBackgroundColor.Enabled = lbl_LangTTBackgroundColor.Enabled = lbl_LangTTForegroundColor.Enabled = false;
+				grb_LangTTSize.Text =  MMain.Lang[Languages.Element.LDPosition];
+				lbl_LangTTWidth.Text =  MMain.Lang[Languages.Element.MCDSTopIndent];
+				lbl_LangTTHeight.Text =  MMain.Lang[Languages.Element.MCDSBottomIndent];
+			}
+			lbl_LangTTWidth.Text += ":";
+			lbl_LangTTHeight.Text += ":";
+			switch (lsb_LangTTAppearenceForList.SelectedIndex) {
+				case 0:
+					UpdateLangDisplayControls(Layout1Fore_temp, Layout1Back_temp, Layout1TransparentBack_temp,
+					                          Layout1Font_temp, Layout1X_Pos_temp, Layout1Y_Pos_temp, Layout1Width_temp,
+					                          Layout1Height_temp, Layout1TText);
+					chk_LangTTUpperArrow.Visible = chk_LangTTUseFlags.Visible = false;
+					lbl_LangTTText.Visible = txt_LangTTText.Visible = true;
+					break;
+				case 1:
+					UpdateLangDisplayControls(Layout2Fore_temp, Layout2Back_temp, Layout2TransparentBack_temp,
+					                          Layout2Font_temp, Layout2X_Pos_temp, Layout2Y_Pos_temp, Layout2Width_temp,
+					                          Layout2Height_temp, Layout2TText);
+					chk_LangTTUpperArrow.Visible = chk_LangTTUseFlags.Visible = false;
+					lbl_LangTTText.Visible = txt_LangTTText.Visible = true;
+					break;
+				case 2:
+					UpdateLangDisplayControls(LDMouseFore_temp, LDMouseBack_temp, LDMouseTransparentBack_temp,
+					                          LDMouseFont_temp, LDMouseX_Pos_temp, LDMouseY_Pos_temp, LDMouseWidth_temp,
+					                          LDMouseHeight_temp, "", LDMouseUseFlags_temp, mouseLTUpperArrow);
+					chk_LangTTUpperArrow.Visible = chk_LangTTUseFlags.Visible = true;
+					lbl_LangTTText.Visible = txt_LangTTText.Visible = false;
+					break;
+				case 3:
+					UpdateLangDisplayControls(LDCaretFore_temp, LDCaretBack_temp, LDCaretTransparentBack_temp,
+					                          LDCaretFont_temp, LDCaretX_Pos_temp, LDCaretY_Pos_temp, LDCaretWidth_temp,
+					                          LDCaretHeight_temp, "", LDCaretUseFlags_temp, caretLTUpperArrow);
+					chk_LangTTUpperArrow.Visible = chk_LangTTUseFlags.Visible = true;
+					lbl_LangTTText.Visible = txt_LangTTText.Visible = false;
+					break;
+				case 4:
+					UpdateLangDisplayControls(LDCaretFore_temp, LDCaretBack_temp, LDCaretTransparentBack_temp,
+					                          LDCaretFont_temp, MCDS_Xpos_temp, MCDS_Ypos_temp, MCDS_TopIndent_temp,
+					                          MCDS_BottomIndent_temp);
+					chk_LangTTUpperArrow.Visible = chk_LangTTUseFlags.Visible = false;
+					lbl_LangTTText.Visible = txt_LangTTText.Visible = false;
+					break;
+			}
+		}
+		/// <summary>
+		/// Updates lang display controls.
+		/// </summary>
+		/// <param name="FGcolor">Foreground color.</param>
+		/// <param name="BGColor">Background color.</param>
+		/// <param name="TransparentBG">Transparent background color.</param>
+		/// <param name="font">Font.</param>
+		/// <param name="posX">Position x.</param>
+		/// <param name="posY">Position y.</param>
+		/// <param name="width">Width.</param>
+		/// <param name="height">Height.</param>
+		void UpdateLangDisplayControls(Color FGcolor, Color BGColor, bool TransparentBG, Font font,
+		                               int posX, int posY, int width, int height, string TTText = "", bool UseFlags = false, bool arrow = false) {
+			btn_LangTTForegroundColor.BackColor = FGcolor;
+			btn_LangTTBackgroundColor.BackColor = BGColor;
+			chk_LangTTTransparentColor.Checked = TransparentBG;
+			btn_LangTTFont.Font = font;
+			nud_LangTTPositionX.Value = posX;
+			nud_LangTTPositionY.Value = posY;
+			nud_LangTTWidth.Value = width;
+			nud_LangTTHeight.Value = height;
+			txt_LangTTText.Text = TTText;
+			chk_LangTTUseFlags.Checked = UseFlags;
+			chk_LangTTUpperArrow.Checked = arrow;
+		}
+		/// <summary>
+		/// Updates Lang Display temporary variables based on selected [layout appearence]. 
+		/// </summary>
+		void UpdateLangDisplayTemps() {
+			switch (lsb_LangTTAppearenceForList.SelectedIndex) {
+				case 0:
+					Layout1Fore_temp = btn_LangTTForegroundColor.BackColor;
+					Layout1Back_temp = btn_LangTTBackgroundColor.BackColor;
+					Layout1Font_temp = btn_LangTTFont.Font;
+					Layout1X_Pos_temp = (int)nud_LangTTPositionX.Value;
+					Layout1Y_Pos_temp = (int)nud_LangTTPositionY.Value;
+					Layout1Width_temp = (int)nud_LangTTWidth.Value;
+					Layout1Height_temp = (int)nud_LangTTHeight.Value;
+					Layout1TransparentBack_temp = chk_LangTTTransparentColor.Checked;
+					Layout1TText = txt_LangTTText.Text;
+					break;
+				case 1:
+					Layout2Fore_temp = btn_LangTTForegroundColor.BackColor;
+					Layout2Back_temp = btn_LangTTBackgroundColor.BackColor;
+					Layout2Font_temp = btn_LangTTFont.Font;
+					Layout2X_Pos_temp = (int)nud_LangTTPositionX.Value;
+					Layout2Y_Pos_temp = (int)nud_LangTTPositionY.Value;
+					Layout2Width_temp = (int)nud_LangTTWidth.Value;
+					Layout2Height_temp = (int)nud_LangTTHeight.Value;
+					Layout2TransparentBack_temp = chk_LangTTTransparentColor.Checked;
+					Layout2TText = txt_LangTTText.Text;
+					break;
+				case 2:
+					LDMouseFore_temp = btn_LangTTForegroundColor.BackColor;
+					LDMouseBack_temp = btn_LangTTBackgroundColor.BackColor;
+					LDMouseFont_temp = btn_LangTTFont.Font;
+					LDMouseX_Pos_temp = (int)nud_LangTTPositionX.Value;
+					LDMouseY_Pos_temp = (int)nud_LangTTPositionY.Value;
+					LDMouseWidth_temp = (int)nud_LangTTWidth.Value;
+					LDMouseHeight_temp = (int)nud_LangTTHeight.Value;
+					LDMouseUseFlags_temp = chk_LangTTUseFlags.Checked;
+					mouseLTUpperArrow = chk_LangTTUpperArrow.Checked;
+					LDMouseTransparentBack_temp = chk_LangTTTransparentColor.Checked;
+					break;
+				case 3:
+					LDCaretFore_temp = btn_LangTTForegroundColor.BackColor;
+					LDCaretBack_temp = btn_LangTTBackgroundColor.BackColor;
+					LDCaretFont_temp = btn_LangTTFont.Font;
+					LDCaretX_Pos_temp = (int)nud_LangTTPositionX.Value;
+					LDCaretY_Pos_temp = (int)nud_LangTTPositionY.Value;
+					LDCaretWidth_temp = (int)nud_LangTTWidth.Value;
+					LDCaretHeight_temp = (int)nud_LangTTHeight.Value;
+					LDCaretUseFlags_temp = chk_LangTTUseFlags.Checked;
+					caretLTUpperArrow = chk_LangTTUpperArrow.Checked;
+					LDCaretTransparentBack_temp = chk_LangTTTransparentColor.Checked;
+					break;
+				case 4:
+					MCDS_Xpos_temp = (int)nud_LangTTPositionX.Value;
+					MCDS_Ypos_temp = (int)nud_LangTTPositionY.Value;
+					MCDS_TopIndent_temp = (int)nud_LangTTWidth.Value;
+					MCDS_BottomIndent_temp = (int)nud_LangTTHeight.Value;
+					break;
+			}
+		}
+		/// <summary>
+		/// Calls UpdateHotkeyControls() which updates hotkey controls based on selected [layout appearence]. 
+		/// </summary>
+		void UpdateHotkeyControlsSwitch() {
+			chk_DoubleHotkey.Enabled = lsb_Hotkeys.SelectedIndex != 13;
+			switch(lsb_Hotkeys.SelectedIndex) {
+				case 0:
+					UpdateHotkeyControls(Mainhk_tempEnabled, Mainhk_tempDouble, Mainhk_tempMods, Mainhk_tempKey);
+					break;
+				case 1:
+					UpdateHotkeyControls(HKCLast_tempEnabled, HKCLast_tempDouble, HKCLast_tempMods, HKCLast_tempKey);
+					break;
+				case 2:
+					UpdateHotkeyControls(HKCSelection_tempEnabled, HKCSelection_tempDouble, HKCSelection_tempMods, HKCSelection_tempKey);
+					break;
+				case 3:
+					UpdateHotkeyControls(HKCLine_tempEnabled, HKCLine_tempDouble, HKCLine_tempMods, HKCLine_tempKey);
+					break;
+				case 4:
+					UpdateHotkeyControls(HKConMorWor_tempEnabled, HKConMorWor_tempDouble, HKConMorWor_tempMods, HKConMorWor_tempKey);
+					break;
+				case 5:
+					UpdateHotkeyControls(HKSymIgn_tempEnabled, HKSymIgn_tempDouble, HKSymIgn_tempMods, HKSymIgn_tempKey);
+					break;
+				case 6:
+					UpdateHotkeyControls(HKTitleCase_tempEnabled, HKTitleCase_tempDouble, HKTitleCase_tempMods, HKTitleCase_tempKey);
+					break;
+				case 7:
+					UpdateHotkeyControls(HKRandomCase_tempEnabled, HKRandomCase_tempDouble, HKRandomCase_tempMods, HKRandomCase_tempKey);
+					break;
+				case 8:
+					UpdateHotkeyControls(HKSwapCase_tempEnabled, HKSwapCase_tempDouble, HKSwapCase_tempMods, HKSwapCase_tempKey);
+					break;
+				case 9:
+					UpdateHotkeyControls(HKToUpper_tempEnabled, HKToUpper_tempDouble, HKToUpper_tempMods, HKToUpper_tempKey);
+					break;
+				case 10:
+					UpdateHotkeyControls(HKToLower_tempEnabled, HKToLower_tempDouble, HKToLower_tempMods, HKToLower_tempKey);
+					break;
+				case 11:
+					UpdateHotkeyControls(HKTransliteration_tempEnabled, HKTransliteration_tempDouble, HKTransliteration_tempMods, HKTransliteration_tempKey);
+					break;
+				case 12:
+					UpdateHotkeyControls(ExitHk_tempEnabled, ExitHk_tempDouble, ExitHk_tempMods, ExitHk_tempKey);
+					break;
+				case 13:
+					UpdateHotkeyControls(HKRestart_tempEnabled, false, HKRestart_tempMods, HKRestart_tempKey);
+					break;
+				case 14:
+					UpdateHotkeyControls(HKToggleLangPanel_tempEnabled, HKToggleLangPanel_tempDouble, HKToggleLangPanel_tempMods, HKToggleLangPanel_tempKey);
+					break;
+				case 15:
+					UpdateHotkeyControls(HKShowSelectionTranslate_tempEnabled, HKShowSelectionTranslate_tempDouble, HKShowSelectionTranslate_tempMods, HKShowSelectionTranslate_tempKey);
+					break;
+				case 16:
+					UpdateHotkeyControls(HKToggleMahou_tempEnabled, HKToggleMahou_tempDouble, HKToggleMahou_tempMods, HKToggleMahou_tempKey);
+					break;
+				case 17:
+					UpdateHotkeyControls(HKCycleCase_tempEnabled, HKCycleCase_tempDouble, HKCycleCase_tempMods, HKCycleCase_tempKey);
+					break;
+				case 18:
+					UpdateHotkeyControls(HKSelCustConv_tempEnabled, HKSelCustConv_tempDouble, HKSelCustConv_tempMods, HKSelCustConv_tempKey);
+					break;
+				case 19:
+					UpdateHotkeyControls(HKShCMenuUM_tempEnabled, HKShCMenuUM_tempDouble, HKShCMenuUM_tempMods, HKShCMenuUM_tempKey);
+					break;
+			}
+		}
+		/// <summary>
+		/// Updates hotkey controls.
+		/// </summary>
+		void UpdateHotkeyControls(bool enabled, bool Double, string modifiers, int key) {
+			chk_HotKeyEnabled.Checked = enabled;
+			chk_DoubleHotkey.Checked = Double;
+			txt_Hotkey.Text = Regex.Replace(OemReadable(modifiers.Replace(",", " +") +
+			                                            " + " + Remake((Keys)key, true, Double)), 
+			                                            @"Win\s?\+?\s?|\s?\+?\s?None\s?\+?\s?|^[ +]+|\s?\+\s?$", "", RegexOptions.Multiline);
+			chk_WinInHotKey.Checked = modifiers.Contains("Win");
+			txt_Hotkey_tempKey = key;
+			txt_Hotkey_tempModifiers = Regex.Replace(modifiers.Replace("Win",""), @"^[ +]+", "", RegexOptions.Multiline);
+			// Debug.WriteLine(txt_Hotkey_tempModifiers);
+		}
+		/// <summary>
+		/// Updates Hotkey temporary variables based on selected [layout appearence]. 
+		/// </summary>
+		void UpdateHotkeyTemps() {
+			switch (lsb_Hotkeys.SelectedIndex) {
+				case 0:
+					Mainhk_tempEnabled = chk_HotKeyEnabled.Checked;
+					Mainhk_tempDouble = chk_DoubleHotkey.Checked;
+					Mainhk_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					Mainhk_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 1:
+					HKCLast_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKCLast_tempDouble = chk_DoubleHotkey.Checked;
+					HKCLast_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKCLast_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 2:
+					HKCSelection_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKCSelection_tempDouble = chk_DoubleHotkey.Checked;
+					HKCSelection_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKCSelection_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 3:
+					HKCLine_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKCLine_tempDouble = chk_DoubleHotkey.Checked;
+					HKCLine_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKCLine_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 4:
+					HKConMorWor_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKConMorWor_tempDouble = chk_DoubleHotkey.Checked;
+					HKConMorWor_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKConMorWor_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 5:
+					HKSymIgn_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKSymIgn_tempDouble = chk_DoubleHotkey.Checked;
+					HKSymIgn_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKSymIgn_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 6:
+					HKTitleCase_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKTitleCase_tempDouble = chk_DoubleHotkey.Checked;
+					HKTitleCase_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKTitleCase_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 7:
+					HKRandomCase_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKRandomCase_tempDouble = chk_DoubleHotkey.Checked;
+					HKRandomCase_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKRandomCase_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 8:
+					HKSwapCase_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKSwapCase_tempDouble = chk_DoubleHotkey.Checked;
+					HKSwapCase_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKSwapCase_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 9:
+					HKToUpper_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKToUpper_tempDouble = chk_DoubleHotkey.Checked;
+					HKToUpper_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKToUpper_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 10:
+					HKToLower_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKToLower_tempDouble = chk_DoubleHotkey.Checked;
+					HKToLower_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKToLower_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 11:
+					HKTransliteration_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKTransliteration_tempDouble = chk_DoubleHotkey.Checked;
+					HKTransliteration_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKTransliteration_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 12:
+					ExitHk_tempEnabled = chk_HotKeyEnabled.Checked;
+					ExitHk_tempDouble = chk_DoubleHotkey.Checked;
+					ExitHk_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					ExitHk_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 13:
+					HKRestart_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKRestart_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKRestart_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 14:
+					HKToggleLangPanel_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKToggleLangPanel_tempDouble = chk_DoubleHotkey.Checked;
+					HKToggleLangPanel_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKToggleLangPanel_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 15:
+					HKShowSelectionTranslate_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKShowSelectionTranslate_tempDouble = chk_DoubleHotkey.Checked;
+					HKShowSelectionTranslate_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKShowSelectionTranslate_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 16:
+					HKToggleMahou_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKToggleMahou_tempDouble = chk_DoubleHotkey.Checked;
+					HKToggleMahou_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKToggleMahou_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 17:
+					HKCycleCase_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKCycleCase_tempDouble = chk_DoubleHotkey.Checked;
+					HKCycleCase_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKCycleCase_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 18:
+					HKSelCustConv_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKSelCustConv_tempDouble = chk_DoubleHotkey.Checked;
+					HKSelCustConv_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKSelCustConv_tempKey = txt_Hotkey_tempKey;
+					break;
+				case 19:
+					HKShCMenuUM_tempEnabled = chk_HotKeyEnabled.Checked;
+					HKShCMenuUM_tempDouble = chk_DoubleHotkey.Checked;
+					HKShCMenuUM_tempMods = (chk_WinInHotKey.Checked ? "Win + " : "") + txt_Hotkey_tempModifiers;
+					HKShCMenuUM_tempKey = txt_Hotkey_tempKey;
+					break;
+			}
+		}
+		/// <summary>
+		/// Returns selected hotkey's Double bool.
+		/// </summary>
+		bool GetSelectedHotkeyDoubleTemp() {
+			switch (lsb_Hotkeys.SelectedIndex) {				
+				case 0:
+					return Mainhk_tempDouble;
+				case 1:
+					return HKCLast_tempDouble;
+				case 2:
+					return HKCSelection_tempDouble;
+				case 3:
+					return HKCLine_tempDouble;
+				case 4:
+					return HKConMorWor_tempDouble;
+				case 5:
+					return HKSymIgn_tempDouble;
+				case 6:
+					return HKTitleCase_tempDouble;
+				case 7:
+					return HKRandomCase_tempDouble;
+				case 8:
+					return HKSwapCase_tempDouble;
+				case 9:
+					return HKToUpper_tempDouble;
+				case 10:
+					return HKToLower_tempDouble;
+				case 11:
+					return HKTransliteration_tempDouble;
+				case 12:
+					return ExitHk_tempDouble;
+				case 13:
+					return false;
+			}
+			return false;
+		}
+		void UpdateSetControls(int setIndex, int keyCode, string modifiers) {
+			var _set = pan_KeySets.Controls["set_"+setIndex];
+			_set.Controls["txt_key"+setIndex].Text = Regex.Replace(OemReadable(modifiers.Replace(",", " +") +
+			                                            " + " + Remake((Keys)keyCode, true, false)), 
+			                                            @"Win\s?\+?\s?|\s?\+?\s?None\s?\+?\s?|^[ +]+|\s?\+\s?$", "", RegexOptions.Multiline);
+			(_set.Controls["chk_win"+setIndex] as CheckBox).Checked = modifiers.Contains("Win");
+		}
+		void DeleteOrMove(string file) {
+			try {
+				File.Delete(file);
+				Logging.Log("Deleting file ["+file+"] succeeded.");
+			} catch {
+				Logging.Log("Deleting file [" + file + "] not succeeded, trying to move.", 2);
+				try {
+					var name = Guid.NewGuid().ToString("n").Substring(0, 8);
+					var d = Path.GetDirectoryName(file);
+					var trash = Path.Combine(d, "trash");
+					if (!Directory.Exists(trash))
+						Directory.CreateDirectory(trash);
+					var f = Path.Combine(trash, name);
+					File.Move(file, f);
+				} catch (Exception e) {
+					Logging.Log("Unexpected error happened when trying to move file, details:\r\n" + e.Message + "\r\n" + e.StackTrace, 1);
+				}
+			}
+		}
+		void DeleteTrash() {
+			var trash = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "trash");
+			try {
+				if (Directory.Exists(trash)) {
+					Directory.Delete(trash, true);
+					Logging.Log("Deleting ["+trash+"] directory succeeded.");
+				} else {
+					Logging.Log("No trash found. ("+trash+")");
+				}
+			} catch (Exception e) { 
+				Logging.Log("Error deleting trash directory, details:\r\n" + e.Message + "\r\n" + e.StackTrace, 2);
+			}
+		}
+		void  DeleteOldJKL() {
+			if (jklXHidServ.jklExist()) {
+				var jkl = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "jkl");
+				if (jklXHidServ.jklFEX[0])
+					DeleteOrMove(jkl+".exe");
+				if (jklXHidServ.jklFEX[1])
+					DeleteOrMove(jkl+".dll");
+				if (jklXHidServ.jklFEX[2])
+					DeleteOrMove(jkl+"x86.exe");
+				if (jklXHidServ.jklFEX[3])
+					DeleteOrMove(jkl+"x86.dll");
+			}
+		}
+		void ShowContextMenuUnderMouse() {
+			icon.trIcon.ContextMenuStrip.Show(Cursor.Position);
+			icon.trIcon.ContextMenuStrip.Focus();
+		}
+		void ShowMahouMMMenuUnderMouse() {
+			if (!MahouMM) return;
+//			List<ToolStripMenuItem> mmdd = new List<ToolStripMenuItem>();
+//			var mmddi = MMain.mahou.icon.trIcon.ContextMenuStrip.Items[0] as ToolStripMenuItem;
+//			for(var i = 0; i != mmddi.DropDownItems.Count; i++) {
+//				var z = mmddi.DropDownItems[i];
+//				var events = typeof(System.ComponentModel.Component).
+//							GetField("events", BindingFlags.NonPublic | BindingFlags.Instance);
+//				var all_events = events.GetValue(z);
+//				var y = new ToolStripMenuItem(z.Text);
+//				y.Name = z.Name;
+//				events.SetValue(y, all_events);
+//				mmdd.Add(y);
+//			}
+//			menu.Items.AddRange(mmdd.ToArray());
+            MMmenu.BackColor = SystemColors.Control;
+            MMmenu.RenderMode = ToolStripRenderMode.System;
+			MMmenu.Show(Cursor.Position);
+			MMmenu.Focus();
+			if (MMmenu.Items.Count >0) 
+				MMmenu.Items[0].Select();
+			Timer t = null;
+			if (MahouMMTrayHoverLostFocusClose) {
+				MMmenu.LostFocus += (_, __) => { MMmenu.Hide(); };
+//				MMmenu.VisibleChanged += (_, __) => {
+//					if (!menu.Visible) {
+//						menu.Close();
+//					}
+//				};
+				t = new Timer();
+				t.Interval = 50;
+				var con = 0;
+				t.Tick += (_,__) => { 
+					var magick = MMmenu.PointToClient(Cursor.Position);
+					for (int i = 0; i != MMmenu.Items.Count; i++) {
+						var x = MMmenu.Items[i] as ToolStripMenuItem;
+						if (x.HasDropDownItems) {
+							if (magick.X < 0 || magick.Y < 0) {
+								magick = x.DropDown.PointToClient(Cursor.Position);
+//								while (x.HasDropDownItems) {
+//									if (magick.X < 0 || magick.Y < 0) {
+//										for (int z = 0; z < x.DropDownItems.Count; z++) {
+//											var y = x.DropDownItems[z] as ToolStripMenuItem;
+//											if (y.HasDropDownItems) {
+//												magick = y.DropDown.PointToClient(Cursor.Position);
+//												x = y;
+//											}
+//										}
+//									}
+//								}
+							}
+						}
+					}
+					Debug.WriteLine(magick);
+					if (magick.X < 0 || magick.Y < 0) {
+						con+=50;
+					} else {
+						con = 0;
+					}
+					if(con >= TrayHoverMahouMM*1.5) {
+						Debug.WriteLine("Out of menu for " +con+"ms!, autohide!");
+//						if (!menu.IsDisposed || !menu.Disposing)
+							MMmenu.Hide();
+						t.Stop();
+						t.Dispose();
+					}
+				};
+				t.Start();
+			}
+			MMmenu.PreviewKeyDown += (_,__) => {
+				if (__.KeyCode == Keys.Escape) {
+					MMmenu.Hide();
+				}
+				if (t != null) {
+					Debug.WriteLine("Autohide disabled by keyboard.");
+					t.Stop();
+					t.Dispose();
+					t = null;
+				}
+			};
+			WinAPI.SetForegroundWindow(MMmenu.Handle);
+		}
+		#region Updates functions
+		void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) {
+			// Legacy self-update is intentionally disabled.
+		}
+
+		string getASD_RemoteSize(bool InZip = false) {
+			try {
+				var source = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AS_dict.txt");
+				if (!File.Exists(source)) return MMain.Lang[Languages.Element.Error];
+				var length = new FileInfo(source).Length;
+				return (length / 1024d / 1024d).ToString("0.00") + " MB";
+			} catch { return MMain.Lang[Languages.Element.Error]; }
+		}
+
+		string getResponce(string url) {
+			Logging.Log("Blocked legacy network request: " + url, 2);
+			return null;
+		}
+
+		void btn_UpdateAutoSwitchDictionary_Click(object sender, EventArgs e) {
+			var ok = RestoreBundledAutoSwitchDictionary();
+			btn_UpdateAutoSwitchDictionary.ForeColor = ok ? Color.BlueViolet : Color.OrangeRed;
+			btn_UpdateAutoSwitchDictionary.Text = ok ? "Bundled dictionary restored" : "Bundled dictionary missing";
+		}
+
+		static Regex rx = new Regex(@"\\u([a-fA-f0-9]{4})", RegexOptions.Compiled);
+		public static string UnescapeUnicode(string x) {
+			if (!x.Contains("\\u")) return x;
+		    var rep = rx.Replace(x, a => ((char)int.Parse(a.Groups[1].Value, System.Globalization.NumberStyles.HexNumber)).ToString()
+		    );
+//			Debug.WriteLine("REP:X: " + rep);
+			return rep;
+		}
+		static string trimlr(string t, int c=1) {
+			if (t.Length <= c) return "";
+			return t.Substring(c,t.Length-(c+1));
+		}
+		/// <summary>
+		/// Gets update info, and sets it to static [UpdInfo] string.
+		/// </summary>
+		void GetUpdateInfo() {
+			Logging.Log("Legacy update check is disabled; verified releases are installed manually.");
+		}
+
+		/// <summary>
+		/// Creates proxy from proxy controls(server/name/pass) text.
+		/// </summary>
+		/// <returns>WebProxy</returns>
+		WebProxy MakeProxy() {
+			Logging.Log("Creating proxy...");
+			var myProxy = new WebProxy();
+			try {
+				var newUri = new Uri("http://" + txt_ProxyServerPort.Text);
+				Logging.Log("Proxy is " + newUri + ", port is " + newUri.Port + ".");
+				myProxy.Address = newUri;
+			} catch {
+//				grb_ProxyConfig.Text = MMain.UI[51];
+				tmr.Interval = 3000;
+				tmr.Tick += (___, ____) => {
+					grb_ProxyConfig.Text = "Proxy configuration";
+					tmr.Stop();
+				};
+				tmr.Start();
+			}
+			if (!String.IsNullOrEmpty(txt_ProxyLogin.Text) || !String.IsNullOrEmpty(txt_ProxyPassword.Text))
+				myProxy.Credentials = new NetworkCredential(txt_ProxyLogin.Text, txt_ProxyPassword.Text); 
+			return myProxy;
+		}
+		/// <summary>
+		/// Check for updates at Mahou startup.
+		/// </summary>
+		public void StartupCheck() {
+			AtUpdateShow = 2;
+		}
+
+		/// <summary>
+		/// Sets UI info controls(version/title/description) text.
+		/// </summary>
+		void SetUInfo() {
+			if (MMain.mahou == null) return;
+			MMain.mahou.grb_MahouReleaseTitle.Text = "Manual verified updates only";
+			MMain.mahou.txt_UpdateDetails.Text = LegacyNetworkDisabledMessage;
+			MMain.mahou.btn_DownloadUpdate.Enabled = false;
+		}
+
+		void UpdateAutoSwitchCountLabel(string dictionary, Label target) {
+			UpdateAutoSwitchCountLabel(AutoSwitchDictionaryParser.Parse(dictionary), target);
+		}
+
+		void UpdateAutoSwitchCountLabel(AutoSwitchDictionaryParseResult result, Label target) {
+			if (result == null) result = AutoSwitchDictionaryParser.EmptySuccess();
+			var color = result.Success ? Color.Orange : Color.Red;
+			target.Text = target.Text.Split(' ')[0] + " " + result.AliasCount +
+				(result.Success ? "" : "?") + "(#" + result.CommentCount + ")";
+			var tooltip = HelpMeUnderstand.GetToolTip(target);
+			if (tooltip.StartsWith("ERR: ")) {
+				var firstLine = tooltip.IndexOf('\n') + 1;
+				HelpMeUnderstand.SetToolTip(target, tooltip.Substring(firstLine));
+			}
+			if (!result.Success) HelpMeUnderstand.SetToolTip(target,
+				"ERR: malformed dictionary near character " + result.ErrorIndex + Environment.NewLine +
+				HelpMeUnderstand.GetToolTip(target));
+			target.ForeColor = color;
+			AutoSwitchCount = result.AliasCount;
+		}
+
+		#endregion
+		/// <summary>
+		/// Refreshes language.
+		/// </summary>
+		void RefreshLanguage() {
+			#region Tabs
+			tab_functions.Text = MMain.Lang[Languages.Element.tab_Functions];
+			tab_layouts.Text = MMain.Lang[Languages.Element.tab_Layouts];
+			tab_appearence.Text = MMain.Lang[Languages.Element.tab_Appearence];
+			tab_timings.Text = MMain.Lang[Languages.Element.tab_Timings];
+			tab_excluded.Text = MMain.Lang[Languages.Element.tab_Excluded];
+			tab_autoswitch.Text = MMain.Lang[Languages.Element.tab_AutoSwitch];
+			tab_hotkeys.Text = MMain.Lang[Languages.Element.tab_Hotkeys];
+			tab_updates.Text = MMain.Lang[Languages.Element.tab_Updates];
+			tab_LangPanel.Text =  MMain.Lang[Languages.Element.tab_LangPanel];
+			tab_about.Text = MMain.Lang[Languages.Element.tab_About];
+			tab_sounds.Text = MMain.Lang[Languages.Element.tab_Sounds];
+			tab_translator.Text = MMain.Lang[Languages.Element.tab_Translator];
+			tab_sync.Text = MMain.Lang[Languages.Element.tab_Sync];
+			RefreshSmartTypingLanguage();
+			#endregion
+			#region Functions
+			lnk_plugin.Text = "ST3 " + MMain.Lang[Languages.Element.Plugin];
+			chk_OneLayoutWholeWord.Text = MMain.Lang[Languages.Element.OneLayoutWholeWord];
+			chk_AutoStart.Text = MMain.Lang[Languages.Element.AutoStart];
+			cbb_AutostartType.Items.Clear();
+			cbb_AutostartType.Items.AddRange(new [] { 
+			                                 	MMain.Lang[Languages.Element.CreateShortcut],
+			                                 	MMain.Lang[Languages.Element.CreateTask]
+			                                 });
+			chk_TrayIcon.Text = MMain.Lang[Languages.Element.TrayIcon];
+			chk_CSLayoutSwitching.Text = MMain.Lang[Languages.Element.ConvertSelectionLS];
+			chk_ReSelect.Text = MMain.Lang[Languages.Element.ReSelect];
+			chk_RePress.Text = MMain.Lang[Languages.Element.RePress];
+			chk_AddOneSpace.Text = MMain.Lang[Languages.Element.Add1Space];
+			chk_Add1NL.Text = MMain.Lang[Languages.Element.Add1NL];
+			chk_CSLayoutSwitchingPlus.Text = MMain.Lang[Languages.Element.ConvertSelectionLSPlus];
+			chk_HighlightScroll.Text = MMain.Lang[Languages.Element.HighlightScroll];
+			chk_StartupUpdatesCheck.Text = MMain.Lang[Languages.Element.UpdatesCheck];
+			chk_SilentUpdate.Text = MMain.Lang[Languages.Element.SilentUpdate];
+			chk_Logging.Text = MMain.Lang[Languages.Element.Logging];
+			chk_CapsLockDTimer.Text = MMain.Lang[Languages.Element.CapsTimer];
+			lbl_TrayDislpayType.Text = MMain.Lang[Languages.Element.DisplayInTray];
+			chk_BlockHKWithCtrl.Text = MMain.Lang[Languages.Element.BlockCtrlHKs];
+			chk_MCDS_support.Text = MMain.Lang[Languages.Element.MCDSSupport];
+			chk_GuessKeyCodeFix.Text = MMain.Lang[Languages.Element.GuessKeyCodeFix];
+			chk_AppDataConfigs.Text = MMain.Lang[Languages.Element.ConfigsInAppData];
+			chk_RemapCapsLockAsF18.Text = MMain.Lang[Languages.Element.RemapCapslockAsF18];
+			chk_GetLayoutFromJKL.Text = MMain.Lang[Languages.Element.UseJKL];
+			chk_ReadOnlyNA.Text = MMain.Lang[Languages.Element.ReadOnlyNA];
+			chk_WriteInputHistory.Text = MMain.Lang[Languages.Element.WriteInputHistory];
+			lbl_BackSpaceType.Text = MMain.Lang[Languages.Element.BackSpaceType];
+			lnk_OpenLogs.Text = lnk_OpenConfig.Text = lnk_OpenHistory.Text = MMain.Lang[Languages.Element.Open];
+			#endregion
+			#region Layouts
+			chk_SwitchBetweenLayouts.Text = MMain.Lang[Languages.Element.SwitchBetween]+":";
+			chk_EmulateLS.Text = MMain.Lang[Languages.Element.EmulateLS];
+			lbl_EmuType.Text = MMain.Lang[Languages.Element.EmulateType];
+			chk_SpecificLS.Text = MMain.Lang[Languages.Element.ChangeLayoutBy1Key];
+			grb_Layouts.Text = MMain.Lang[Languages.Element.Layouts];
+			grb_Keys.Text = MMain.Lang[Languages.Element.Keys];
+			chk_OneLayout.Text = MMain.Lang[Languages.Element.OneLayout];
+			chk_qwertz.Text = MMain.Lang[Languages.Element.QWERTZ];
+			lbl_KeysType.Text = MMain.Lang[Languages.Element.KeysType];
+			cbb_SpecKeysType.Items.Clear();
+			cbb_SpecKeysType.Items.AddRange(new [] { MMain.Lang[Languages.Element.SelectKeyType], MMain.Lang[Languages.Element.SetHotkeyType]});
+			lbl_LCTRLLALTTempLayout.Text = MMain.Lang[Languages.Element.LCTRLLALTTempLayout];
+			#endregion
+			#region Persistent Layout
+			chk_ChangeLayoutOnlyOnce.Text = MMain.Lang[Languages.Element.SwitchOnlyOnce];
+			chk_OnlyOnWindowChange.Text = MMain.Lang[Languages.Element.SwitchOnlyOnWindowChange];
+			tab_persistent.Text = MMain.Lang[Languages.Element.PersistentLayout];
+			grb_PersistentLayout1.Text = MMain.Lang[Languages.Element.Layout] + " 1";
+			grb_PersistentLayout2.Text = MMain.Lang[Languages.Element.Layout] + " 2";
+			chk_PersistentLayout1Active.Text = chk_PersistentLayout2Active.Text = MMain.Lang[Languages.Element.ActivatePLFP];
+			lbl_PersistentLayout1Interval.Text = lbl_PersistentLayout2Interval.Text = MMain.Lang[Languages.Element.CheckInterval];
+			#endregion
+			#region Appearence
+			chk_LangTooltipMouse.Text = MMain.Lang[Languages.Element.LDMouseDisplay];
+			chk_LangTooltipCaret.Text = MMain.Lang[Languages.Element.LDCaretDisplay];
+			chk_MouseTTAlways.Text = MMain.Lang[Languages.Element.Always];
+			chk_LangTTCaretOnChange.Text = chk_LangTTMouseOnChange.Text = MMain.Lang[Languages.Element.LDOnlyOnChange];
+			lbl_Language.Text = MMain.Lang[Languages.Element.Language];
+			chk_LangTTDiffLayoutColors.Text = MMain.Lang[Languages.Element.LDDifferentAppearence];
+			grb_LangTTAppearence.Text = MMain.Lang[Languages.Element.LDAppearence];
+			btn_LangTTFont.Text = MMain.Lang[Languages.Element.LDFont];
+			lbl_LangTTForegroundColor.Text = MMain.Lang[Languages.Element.LDFore];
+			lbl_LangTTBackgroundColor.Text = MMain.Lang[Languages.Element.LDBack];
+			lbl_LangTTText.Text = MMain.Lang[Languages.Element.LDText];
+			grb_LangTTSize.Text = MMain.Lang[Languages.Element.LDSize];
+			grb_LangTTPositon.Text = MMain.Lang[Languages.Element.LDPosition];
+			lbl_LangTTHeight.Text = MMain.Lang[Languages.Element.LDHeight];
+			lbl_LangTTWidth.Text = MMain.Lang[Languages.Element.LDWidth];
+			chk_LangTTTransparentColor.Text = MMain.Lang[Languages.Element.LDTransparentBG];
+			lsb_LangTTAppearenceForList.Items.Clear();
+			lsb_LangTTAppearenceForList.Items.AddRange(new [] {
+														MMain.Lang[Languages.Element.Layout] + " 1",
+														MMain.Lang[Languages.Element.Layout] + " 2",
+														MMain.Lang[Languages.Element.LDAroundMouse],
+														MMain.Lang[Languages.Element.LDAroundCaret],
+														"MCDS"
+														});
+			chk_LangTTUseFlags.Text = MMain.Lang[Languages.Element.UseFlags];
+			chk_LangTTUpperArrow.Text = MMain.Lang[Languages.Element.LDUpperArrow];
+			chk_LDMessages.Text = MMain.Lang[Languages.Element.LDUseWinMessages];
+			#endregion
+			#region Timings
+			chk_CSUsePaste.Text = MMain.Lang[Languages.Element.UsePasteInCS];
+			lbl_LangTTMouseRefreshRate.Text = MMain.Lang[Languages.Element.LDForMouseRefreshRate];
+			lbl_LangTTCaretRefreshRate.Text = MMain.Lang[Languages.Element.LDForCaretRefreshRate];
+			lbl_DoubleHK2ndPressWaitTime.Text = MMain.Lang[Languages.Element.DoubleHKDelay];
+			lbl_FlagTrayRefreshRate.Text = MMain.Lang[Languages.Element.TrayFlagsRefreshRate];
+			lbl_ScrollLockRefreshRate.Text = MMain.Lang[Languages.Element.ScrollLockRefreshRate];
+			lbl_CapsLockRefreshRate.Text = MMain.Lang[Languages.Element.CapsLockRefreshRate];
+			chk_SelectedTextGetMoreTries.Text = MMain.Lang[Languages.Element.MoreTriesToGetSelectedText];
+			chk_UseDelayAfterBackspaces.Text = MMain.Lang[Languages.Element.UseDelayAfterBackspaces];
+			#endregion
+			#region Excluded
+			lbl_ExcludedPrograms.Text =  MMain.Lang[Languages.Element.ExcludedPrograms];
+			chk_Change1KeyL.Text =  MMain.Lang[Languages.Element.Change1KeyLayoutInExcluded];
+			chk_ConvSWL.Text =  MMain.Lang[Languages.Element.AllowConvertSWL];
+			#endregion
+			#region AutoSwitch
+			chk_AutoSwitch.Text = MMain.Lang[Languages.Element.AutoSwitchEnabled];
+			chk_AutoSwitchSpaceAfter.Text = MMain.Lang[Languages.Element.AutoSwitchSpaceAfter];
+			chk_AutoSwitchSwitchToGuessLayout.Text = MMain.Lang[Languages.Element.AutoSwitchSwitchToGuessLayout];
+			btn_UpdateAutoSwitchDictionary.Text = MMain.Lang[Languages.Element.AutoSwitchUpdateDictionary];
+			if (lbl_AutoSwitchWordsCount.Text.Contains(" ")) {
+				var t = lbl_AutoSwitchWordsCount.Text.Split(new[]{' '}, 2);
+				lbl_AutoSwitchWordsCount.Text = MMain.Lang[Languages.Element.AutoSwitchDictionaryWordsCount] + t[1];
+			} else
+				lbl_AutoSwitchWordsCount.Text = MMain.Lang[Languages.Element.AutoSwitchDictionaryWordsCount];
+			chk_DownloadASD_InZip.Text = MMain.Lang[Languages.Element.DownloadAutoSwitchDictionaryInZip];
+			#endregion
+			#region Hotkeys
+			grb_Hotkey.Text = MMain.Lang[Languages.Element.Hotkey];
+			chk_HotKeyEnabled.Text = MMain.Lang[Languages.Element.Enabled];
+			chk_DoubleHotkey.Text = MMain.Lang[Languages.Element.DoubleHK];
+			lsb_Hotkeys.Items.Clear();
+			lsb_Hotkeys.Items.AddRange(new []{
+										MMain.Lang[Languages.Element.ToggleMainWnd],
+										MMain.Lang[Languages.Element.ConvertLast],
+										MMain.Lang[Languages.Element.ConvertSelected],
+										MMain.Lang[Languages.Element.ConvertLine],
+										MMain.Lang[Languages.Element.ConvertWords],
+										MMain.Lang[Languages.Element.ToggleSymbolIgnore],
+										MMain.Lang[Languages.Element.SelectedToTitleCase],
+										MMain.Lang[Languages.Element.SelectedToRandomCase],
+										MMain.Lang[Languages.Element.SelectedToSwapCase],
+										MMain.Lang[Languages.Element.SelectedToUpperCase],
+										MMain.Lang[Languages.Element.SelectedToLowerCase],
+										MMain.Lang[Languages.Element.SelectedTransliteration],
+										MMain.Lang[Languages.Element.ExitMahou],
+										MMain.Lang[Languages.Element.RestartMahou],
+										MMain.Lang[Languages.Element.ToggleLangPanel],
+										MMain.Lang[Languages.Element.TranslateSelection],
+										MMain.Lang[Languages.Element.ToggleMahou],
+										MMain.Lang[Languages.Element.CycleCase],
+										MMain.Lang[Languages.Element.CustomConversion],
+										MMain.Lang[Languages.Element.ShowCMenuUnderMouse]
+										});
+			#endregion
+			#region LangPanel/TranslatePanel
+			chk_DisplayLangPanel.Text = MMain.Lang[Languages.Element.DisplayLangPanel];
+			lbl_LPRefreshRate.Text = MMain.Lang[Languages.Element.RefreshRate];
+			lbl_TrTransparency.Text = lbl_LPTrasparency.Text = MMain.Lang[Languages.Element.Transparency];
+			lbl_TrBorderC.Text = lbl_LPBorderColor.Text = MMain.Lang[Languages.Element.BorderColor];
+			lbl_TrFG.Text = lbl_LPFore.Text = MMain.Lang[Languages.Element.LDFore];
+			lbl_TrBG.Text = lbl_LPBack.Text = MMain.Lang[Languages.Element.LDBack];
+			chk_TrUseAccent.Text = chk_LPAeroColor.Text = MMain.Lang[Languages.Element.UseAeroColor];
+			lbl_LPFont.Text = MMain.Lang[Languages.Element.LDFont] + ":";
+			btn_LPFont.Text = MMain.Lang[Languages.Element.LDFont];
+			chk_LPUpperArrow.Text = MMain.Lang[Languages.Element.DisplayUpperArrow];
+			lbl_TrMethod.Text = MMain.Lang[Languages.Element.Method] + ":";
+			#endregion
+			#region TranslatePanel
+			chk_TrEnable.Text = MMain.Lang[Languages.Element.EnableTranslatePanel];
+			chk_TrOnDoubleClick.Text = MMain.Lang[Languages.Element.ShowTranslationOnDoubleClick];
+			lbl_TrLanguages.Text = MMain.Lang[Languages.Element.TranslateLanguages];
+			lbl_TrTextFont.Text = MMain.Lang[Languages.Element.TextFont];
+			lbl_TrTitleFont.Text = MMain.Lang[Languages.Element.TitleFont];
+			btn_TrTitleFont.Text = btn_TrTextFont.Text = MMain.Lang[Languages.Element.LDFont];
+			chk_TrTranscription.Text = MMain.Lang[Languages.Element.Transcription];
+			#endregion
+			#region Updtaes
+			btn_CheckForUpdates.Text = MMain.Lang[Languages.Element.CheckForUpdates];
+			btn_DownloadUpdate.Text = MMain.Lang[Languages.Element.UpdateMahou];
+			grb_DownloadUpdate.Text = MMain.Lang[Languages.Element.DownloadUpdate];
+			grb_ProxyConfig.Text = MMain.Lang[Languages.Element.ProxyConfig];
+			lbl_ProxyServerPort.Text = MMain.Lang[Languages.Element.ProxyServer];
+			lbl_ProxyLogin.Text = MMain.Lang[Languages.Element.ProxyLogin];
+			lbl_ProxyPassword.Text = MMain.Lang[Languages.Element.ProxyPass];
+			lbl_UpdateChannel.Text = MMain.Lang[Languages.Element.UpdatesChannel];
+			#endregion
+			#region About
+			btn_DebugInfo.Text = MMain.Lang[Languages.Element.DbgInf];
+			lnk_Site.Text = MMain.Lang[Languages.Element.Site];
+			lnk_Releases.Text = MMain.Lang[Languages.Element.Releases];
+			txt_Help.Text = MMain.Lang[Languages.Element.Mahou] + "\r\n" + MMain.Lang[Languages.Element.About];
+			#endregion
+			#region Sync
+			grb_backup.Text = btn_backup.Text = MMain.Lang[Languages.Element.Backup];
+			grb_restore.Text = btn_restore.Text = MMain.Lang[Languages.Element.Restore];
+			#endregion
+			#region Sounds
+			chk_EnableSnd.Text = MMain.Lang[Languages.Element.EnableSounds];
+			grb_Sound1.Text = MMain.Lang[Languages.Element.Sound] + " #1";
+			grb_Sound2.Text = MMain.Lang[Languages.Element.Sound] + " #2";
+			grb_SoundOn2.Text = grb_SoundOn.Text = MMain.Lang[Languages.Element.PlaySoundWhen];
+			chk_SndAutoSwitch2.Text = chk_SndAutoSwitch.Text = MMain.Lang[Languages.Element.SoundOnAutoSwitch];
+			chk_SndLast2.Text = chk_SndLast.Text = MMain.Lang[Languages.Element.SoundOnConvertLast];
+			chk_SndLayoutSwitch2.Text = chk_SndLayoutSwitch.Text = MMain.Lang[Languages.Element.SoundOnLayoutSwitching];
+			chk_UseCustomSnd2.Text = chk_UseCustomSnd.Text = MMain.Lang[Languages.Element.UseCustomSound];
+			btn_SelectSnd2.Text = btn_SelectSnd.Text = MMain.Lang[Languages.Element.Select];
+			#endregion
+			#region Buttons
+			btn_Apply.Text = MMain.Lang[Languages.Element.ButtonApply];
+			btn_Cancel.Text = MMain.Lang[Languages.Element.ButtonCancel];
+			btn_OK.Text = MMain.Lang[Languages.Element.ButtonOK];
+			#endregion
+			#region Misc
+			icon.RefreshText(MMain.Lang[Languages.Element.Mahou], MMain.Lang[Languages.Element.ShowHide],
+			                 MMain.Lang[Languages.Element.ExitMahou], MMain.Lang[Languages.Element.Enable],
+			                 MMain.Lang[Languages.Element.RestartMahou], MMain.Lang[Languages.Element.Convert],
+			                 MMain.Lang[Languages.Element.Transliterate], MMain.Lang[Languages.Element.Clipboard],
+			                 MMain.Lang[Languages.Element.Latest], MMain.Lang[Languages.Element.ChangeLayout]);
+			#endregion
+			Logging.Log("Language changed.");
+			SetTooltips();
+		}
+		void ToggleDark(bool yes) {
+			var BGDARK = Color.FromArgb(51, 54, 58);
+			var FGDARK = Color.FromArgb(181, 181, 181);
+			int ix = yes ? 1 : 0;
+			System.Diagnostics.Debug.WriteLine("Enable IMMERSIVE dark" + ix);
+			WinAPI.DwmSetWindowAttribute(this.Handle, WinAPI.DWMWA_USE_IMMERSIVE_DARK_MODE, ref ix, sizeof(int));
+			WinAPI.SetWindowPos((int)this.Handle, (int)IntPtr.Zero, 0, 0, 0, 0, 
+			                    WinAPI.SWP_DRAWFRAME | 
+			                    WinAPI.SWP_NOACTIVATE | 
+			                    WinAPI.SWP_NOMOVE | 
+			                    WinAPI.SWP_NOSIZE | 
+			                    WinAPI.SWP_NOZORDER);
+			Invalidate();
+			if (yes) {
+				for(int ii = 0; ii != this.Controls.Count; ii++) {
+					this.Controls[ii].BackColor = BGDARK;
+					this.Controls[ii].ForeColor = FGDARK;
+				}
+				this.BackColor = tabs.BG = lsb_Hotkeys.BackColor = lsb_LangTTAppearenceForList.BackColor = BGDARK;
+				this.ForeColor = tabs.FG = lsb_Hotkeys.ForeColor = lsb_LangTTAppearenceForList.ForeColor = FGDARK;
+				tabs.TAB_BORDERS = Color.DarkSlateGray;
+				tabs.TAB_FOCUS_BG = Color.Black;
+				for(int i = 0; i != tabs.TabPages.Count; i++) {
+					if (tabs.TabPages[i].Text == "[Hidden]") continue;
+					tabs.TabPages[i].BackColor = BGDARK;
+					tabs.TabPages[i].ForeColor = FGDARK;
+					for(int ii = 0; ii != tabs.TabPages[i].Controls.Count; ii++) {
+						if (tabs.TabPages[i].Controls[ii] is TextBoxCA || tabs.TabPages[i].Controls[ii] is TextBox) {
+							tabs.TabPages[i].Controls[ii].BackColor = Color.Black;
+							
+						} else {
+							tabs.TabPages[i].Controls[ii].BackColor = BGDARK;
+						}
+						tabs.TabPages[i].Controls[ii].ForeColor = FGDARK;
+					}
+				}
+			} else {
+				for(int ii = 0; ii != this.Controls.Count; ii++) {
+					this.Controls[ii].BackColor = SystemColors.Control;
+					this.Controls[ii].ForeColor = SystemColors.WindowText;
+				}
+				this.BackColor = tabs.BG = lsb_Hotkeys.BackColor = lsb_LangTTAppearenceForList.BackColor = SystemColors.Control;
+				this.ForeColor = tabs.FG = lsb_Hotkeys.ForeColor = lsb_LangTTAppearenceForList.ForeColor = SystemColors.WindowText;
+				tabs.TAB_BORDERS = SystemColors.ControlLight;
+				tabs.TAB_FOCUS_BG = SystemColors.Window;
+				for(int i = 0; i != tabs.TabPages.Count; i++) {
+					if (tabs.TabPages[i].Text == "[Hidden]") continue;
+					tabs.TabPages[i].BackColor = SystemColors.Control;
+					tabs.TabPages[i].ForeColor = SystemColors.WindowText;
+					for(int ii = 0; ii != tabs.TabPages[i].Controls.Count; ii++) {
+						if (tabs.TabPages[i].Controls[ii] is TextBoxCA || tabs.TabPages[i].Controls[ii] is TextBox) {
+							tabs.TabPages[i].Controls[ii].BackColor = SystemColors.Window;
+							
+						} else {
+							tabs.TabPages[i].Controls[ii].BackColor = SystemColors.Control;
+						}
+						tabs.TabPages[i].Controls[ii].ForeColor = SystemColors.WindowText;
+					}
+				}
+			}
+		}
+		#region Colored TabControl
+		public class TabControlC : TabControl {
+			public Color BG = SystemColors.Control;
+			public Color FG = SystemColors.WindowText;
+			public Color TAB_BORDERS = SystemColors.ControlLight;
+			public Color TAB_FOCUS_BG = SystemColors.Window;
+			public TabControlC() {
+				this.DrawItem += DrawItemHandler;
+			}
+			Dictionary<int, DrawItemEventArgs> ItemArgs = new Dictionary<int, DrawItemEventArgs>();
+			Dictionary<int, string> ItemTexts = new Dictionary<int, string>();
+			void DrawItemHandler(object sender, DrawItemEventArgs e) {
+		        if (!ItemArgs.ContainsKey(e.Index))
+		            ItemArgs.Add(e.Index, e);
+		        else
+		            ItemArgs[e.Index] = e;
+		        if (!ItemTexts.ContainsKey(e.Index))
+		        	ItemTexts.Add(e.Index, (sender as TabControlC).TabPages[e.Index].Text);
+		        else
+		            ItemTexts[e.Index] = (sender as TabControlC).TabPages[e.Index].Text;
+			}
+		    protected override void WndProc(ref Message m) {
+	        	base.WndProc(ref m);
+	        	if(m.Msg == (int) WinAPI.WM_PAINT) {
+	            	using (var g = this.CreateGraphics()) {
+		                //Double buffering stuff...
+		                BufferedGraphicsContext currentContext;
+		                BufferedGraphics myBuffer;
+		                currentContext = BufferedGraphicsManager.Current;
+		                myBuffer = currentContext.Allocate(g,
+		                   this.ClientRectangle);
+		                Rectangle r = ClientRectangle;
+		
+		                //Painting background
+		                if(Enabled)
+		                    using (var backgroundBrush = new SolidBrush(BG))
+		                        myBuffer.Graphics.FillRectangle(backgroundBrush, r);
+		                else
+		                    myBuffer.Graphics.FillRectangle(Brushes.LightGray, r);
+		
+		                //Painting border
+		                r.Height = this.DisplayRectangle.Height +1; //Using display rectangle hight because it excludes the tab headers already
+		                r.Y = this.DisplayRectangle.Y - 1; //Same for Y coordinate
+		                r.Width -= 5;
+		                r.X += 1;
+		
+		                if(Enabled)
+		                    using (var borderPen = new Pen(Color.FromArgb(255, 133, 158, 191), 1))
+		                        myBuffer.Graphics.DrawRectangle(borderPen, r);
+		                else
+		                    myBuffer.Graphics.DrawRectangle(Pens.DarkGray, r);
+		
+		                for (int ii = 0; ii != ItemArgs.Count; ii++) {
+		                	var i = ItemArgs[ii];
+		                	var t = ItemTexts[ii];
+							Debug.WriteLine(i.Bounds);
+//		                	CustomDrawItem(ItemArgs[i], ItemTexts[i]);
+							using (var tabBorderPen = new Pen(TAB_BORDERS))
+								myBuffer.Graphics.DrawRectangle(tabBorderPen, i.Bounds.X, i.Bounds.Y, i.Bounds.Width, i.Bounds.Height);
+							var yal = i.Bounds.Y;
+							var xal = i.Bounds.X;
+							if (i.Bounds.Height == 24) { // Assume that is focused tab
+								yal += 4;
+								xal += 6;
+								using (var focusBrush = new SolidBrush(TAB_FOCUS_BG))
+									myBuffer.Graphics.FillRectangle(focusBrush, i.Bounds.X+1, i.Bounds.Y+1, i.Bounds.Width-2, i.Bounds.Height-2);
+							}
+							using (var textBrush = new SolidBrush(FG))
+								myBuffer.Graphics.DrawString(t, i.Font, textBrush, xal, yal);
+		                }
+		
+		                myBuffer.Render();
+		                myBuffer.Dispose();
+		            }
+		        }    
+		    }
+		}
+		#endregion
+		#region Link + Different cursor
+		public class LinkLabelNew : LinkLabel {
+	        static readonly Cursor SysHandCursor = new Cursor(WinAPI.LoadCursor(IntPtr.Zero, WinAPI.IDC_HAND));
+	        protected override void OnMouseMove(MouseEventArgs e) {
+	            base.OnMouseMove(e);
+	            if(OverrideCursor == Cursors.Hand)
+	                OverrideCursor = SysHandCursor;
+	        }
+		}
+		#endregion
+		#region Textbox + Ctrl+A
+		public class TextBoxCA : TextBox {
+			protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+			    var keyCode = (Keys) (msg.WParam.ToInt32() & Convert.ToInt32(Keys.KeyCode));
+			    if ((msg.Msg == WinAPI.WM_KEYDOWN && keyCode == Keys.A) &&
+			        (ModifierKeys == Keys.Control) && this.Focused) {
+			        this.SelectAll();
+			        return true;
+			    }            
+			    return base.ProcessCmdKey(ref msg, keyData);
+			}
+		}
+		#endregion
+		#region Tooltips
+		void SetTooltips() {
+			HelpMeUnderstand.SetToolTip(chk_CSLayoutSwitching, MMain.Lang[Languages.Element.TT_ConvertSelectionSwitch]);
+			HelpMeUnderstand.SetToolTip(chk_ReSelect, MMain.Lang[Languages.Element.TT_ReSelect]);
+			HelpMeUnderstand.SetToolTip(chk_RePress, MMain.Lang[Languages.Element.TT_RePress]);
+			HelpMeUnderstand.SetToolTip(chk_AddOneSpace, MMain.Lang[Languages.Element.TT_Add1Space]);
+			HelpMeUnderstand.SetToolTip(chk_Add1NL, MMain.Lang[Languages.Element.TT_Add1NL]);
+			HelpMeUnderstand.SetToolTip(chk_CSLayoutSwitchingPlus, MMain.Lang[Languages.Element.TT_ConvertSelectionSwitchPlus]);
+			HelpMeUnderstand.SetToolTip(chk_HighlightScroll, MMain.Lang[Languages.Element.TT_ScrollTip]);
+			HelpMeUnderstand.SetToolTip(chk_Logging, MMain.Lang[Languages.Element.TT_Logging]);
+			HelpMeUnderstand.SetToolTip(chk_CapsLockDTimer, MMain.Lang[Languages.Element.TT_CapsDis]);
+			HelpMeUnderstand.SetToolTip(cbb_TrayDislpayType, MMain.Lang[Languages.Element.TT_TrayDisplayType]);
+			HelpMeUnderstand.SetToolTip(lbl_TrayDislpayType, MMain.Lang[Languages.Element.TT_TrayDisplayType]);
+			HelpMeUnderstand.SetToolTip(chk_BlockHKWithCtrl, MMain.Lang[Languages.Element.TT_BlockCtrl]);
+			HelpMeUnderstand.SetToolTip(chk_MCDS_support, MMain.Lang[Languages.Element.TT_MCDSSupport]);
+			HelpMeUnderstand.SetToolTip(chk_OneLayoutWholeWord, MMain.Lang[Languages.Element.TT_OneLayoutWholeWordCS]);
+			HelpMeUnderstand.SetToolTip(chk_SwitchBetweenLayouts, MMain.Lang[Languages.Element.TT_SwitchBetween]);
+			HelpMeUnderstand.SetToolTip(chk_EmulateLS, MMain.Lang[Languages.Element.TT_EmulateLS]);
+			HelpMeUnderstand.SetToolTip(chk_LangTooltipCaret, MMain.Lang[Languages.Element.TT_LDForCaret]);
+			HelpMeUnderstand.SetToolTip(chk_LangTooltipMouse, MMain.Lang[Languages.Element.TT_LDForMouse]);
+			HelpMeUnderstand.SetToolTip(chk_LangTTCaretOnChange, MMain.Lang[Languages.Element.TT_LDOnlyOnChange]);
+			HelpMeUnderstand.SetToolTip(chk_LangTTMouseOnChange, MMain.Lang[Languages.Element.TT_LDOnlyOnChange]);
+			HelpMeUnderstand.SetToolTip(txt_LangTTText, MMain.Lang[Languages.Element.TT_LDText]);
+			HelpMeUnderstand.SetToolTip(chk_LangTTDiffLayoutColors, MMain.Lang[Languages.Element.TT_LDDifferentAppearence]);
+			HelpMeUnderstand.SetToolTip(lbl_ExcludedPrograms, MMain.Lang[Languages.Element.TT_ExcludedPrograms]);
+			HelpMeUnderstand.SetToolTip(txt_ExcludedPrograms, MMain.Lang[Languages.Element.TT_ExcludedPrograms]);
+			HelpMeUnderstand.SetToolTip(txt_PersistentLayout1Processes, MMain.Lang[Languages.Element.TT_PersistentLayout]);
+			HelpMeUnderstand.SetToolTip(txt_PersistentLayout2Processes, MMain.Lang[Languages.Element.TT_PersistentLayout]);
+			HelpMeUnderstand.SetToolTip(chk_OneLayout, MMain.Lang[Languages.Element.TT_OneLayout]);
+			HelpMeUnderstand.SetToolTip(chk_qwertz, MMain.Lang[Languages.Element.TT_QWERTZ]);
+			HelpMeUnderstand.SetToolTip(chk_Change1KeyL, MMain.Lang[Languages.Element.TT_Change1KeyLayoutInExcluded]);
+			HelpMeUnderstand.SetToolTip(chk_ConvSWL, MMain.Lang[Languages.Element.TT_AllowConvertSWL]);
+			HelpMeUnderstand.SetToolTip(chk_GuessKeyCodeFix, MMain.Lang[Languages.Element.TT_GuessKeyCodeFix]);
+			HelpMeUnderstand.SetToolTip(chk_AppDataConfigs, MMain.Lang[Languages.Element.TT_ConfigsInAppData]);
+			HelpMeUnderstand.SetToolTip(lbl_KeysType, MMain.Lang[Languages.Element.TT_KeysType]);
+			HelpMeUnderstand.SetToolTip(cbb_SpecKeysType, MMain.Lang[Languages.Element.TT_KeysType]);
+			HelpMeUnderstand.SetToolTip(chk_LDMessages, MMain.Lang[Languages.Element.TT_LDUseWinMessages]);
+			HelpMeUnderstand.SetToolTip(chk_RemapCapsLockAsF18, MMain.Lang[Languages.Element.TT_RemapCapslockAsF18]);
+			HelpMeUnderstand.SetToolTip(chk_OnlyOnWindowChange, MMain.Lang[Languages.Element.TT_SwitchOnlyOnWindowChange]);
+			HelpMeUnderstand.SetToolTip(chk_ChangeLayoutOnlyOnce, MMain.Lang[Languages.Element.TT_SwitchOnlyOnce]);
+			HelpMeUnderstand.SetToolTip(chk_UseDelayAfterBackspaces, MMain.Lang[Languages.Element.TT_UseDelayAfterBackspaces]);
+			HelpMeUnderstand.SetToolTip(chk_GetLayoutFromJKL, MMain.Lang[Languages.Element.TT_UseJKL]);
+			HelpMeUnderstand.SetToolTip(chk_ReadOnlyNA, MMain.Lang[Languages.Element.TT_ReadOnlyNA]);
+			HelpMeUnderstand.SetToolTip(chk_WriteInputHistory, MMain.Lang[Languages.Element.TT_WriteInputHistory]);
+			HelpMeUnderstand.SetToolTip(lnk_OpenLogs, MMain.Lang[Languages.Element.TT_LeftRightMB]+"\n"+Logging.log);
+			HelpMeUnderstand.SetToolTip(lnk_OpenHistory, MMain.Lang[Languages.Element.TT_LeftRightMB]+"\n"+Path.Combine(nPath,"history.txt"));
+			HelpMeUnderstand.SetToolTip(lnk_OpenConfig, MMain.Lang[Languages.Element.TT_LeftRightMB]+"\n"+Configs.filePath);
+			HelpMeUnderstand.SetToolTip(chk_TrTranscription, MMain.Lang[Languages.Element.TT_Transcription_1]+
+			                            MMain.Lang[Languages.Element.DirectV2]+MMain.Lang[Languages.Element.TT_Transcription_2]);
+			HelpMeUnderstand.SetToolTip(lbl_LCTRLLALTTempLayout, MMain.Lang[Languages.Element.TT_LCTRLLALTTempLayout]);
+		}
+		void HelpMeUnderstandPopup(object sender, PopupEventArgs e) {
+			HelpMeUnderstand.ToolTipTitle = e.AssociatedControl.Text;
+		}
+		#endregion
+		/// <summary>
+		/// Converts Mahou version string to float.
+		/// </summary>
+		/// <param name="ver">Mahou version string.</param>
+		/// <returns>float</returns>
+		public static float flVersion(string ver) {
+			var justdigs = Regex.Replace(ver, "\\D", "");
+			float fl = 0.0f;
+			if (justdigs.Length > 2) {
+				var strfl = justdigs[0] + "." + justdigs.Substring(1);
+				float.TryParse(strfl, out fl);
+			}
+			return fl;
+		}
+		#endregion
+		#region Links
+		static void __lopen(string file, string type, bool dir = false, bool copy = false) {
+			if (copy) {
+				NativeClipboard.SetText(file);
+				ShowTooltip(MMain.Lang[Languages.Element.DbgInf_Copied] + "\r\n" + file, 800);
+				return;
+			}
+			string fORd = dir ? Path.GetDirectoryName(file) : file;
+			try {
+				Process.Start(fORd);
+			} catch (Exception ex) { Logging.Log("No program to open "+type+", opening skiped. Details:\r\n"+ex.Message + "\r\n" + ex.StackTrace, 2); }
+		}
+		void Lnk_OpenHistoryClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+			var path = Path.Combine(nPath, "history.txt");
+			if (WriteInputHistoryByDate)
+				path = KMHook.GetHistoryByDatePath();
+			__lopen(path, "txt", e.Button == MouseButtons.Right);
+		}
+		void Lnk_OpenConfigClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+			__lopen(Path.Combine(nPath, "Mahou.ini"), "ini", e.Button == MouseButtons.Right);
+		}
+		void Lnk_OpenLogsClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+			__lopen(Logging.log, "txt", e.Button == MouseButtons.Right);
+		}
+		void Lnk_RepositoryLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+			__lopen("https://github.com/MIXANIZM/Mahou", "http", false, e.Button == MouseButtons.Right);
+		}
+		void Lnk_SiteLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+			__lopen("https://github.com/MIXANIZM/Mahou", "http", false, e.Button == MouseButtons.Right);
+		}
+		void Lnk_WikiLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+			__lopen("https://github.com/MIXANIZM/Mahou/wiki", "http", false, e.Button == MouseButtons.Right);
+		}
+		void Lnk_ReleasesLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+			__lopen("https://github.com/MIXANIZM/Mahou/releases", "http", false, e.Button == MouseButtons.Right);
+		}
+		void Lnk_EmailLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+			__lopen("https://github.com/MIXANIZM/Mahou/issues", "mailto", false, e.Button == MouseButtons.Right);
+		}
+		void Lnk_pluginLinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+			__lopen("https://github.com/MIXANIZM/MahouCaretDisplayServer", "http", false, e.Button == MouseButtons.Right);
+		}
+		#endregion
+		#region Custom Context Menu
+//		static string getargtype(string arg) {
+//			arg = arg.ToLower();
+//			if (arg.StartsWith("http"))
+//				return "http";
+//			if (arg.StartsWith("mailto"))
+//				return "mailto";
+//			if (File.Exists(arg)) {
+//				var m = Regex.Match(arg, @".*\.(.*)");
+//				if (m.Groups.Count >0) {
+//					return m.Groups[1].Value;
+//				}
+//			}
+//			return "unknown";
+//		}
+		static string replaceenv(string arg, string env, Func<string> getvalue) {
+			if (arg.Contains(env))
+				arg = arg.Replace(env, getvalue());
+			return arg;
+		}
+		static string expandmenuarg(string arg) {
+			arg = replaceenv(arg, "%clipboard%", () => KMHook.GetClipboard());
+			arg = replaceenv(arg, "%clipboard_url%", () => HttpUtility.UrlEncode(KMHook.GetClipboard()));
+			arg = replaceenv(arg, "%ini%", () => Configs.filePath);
+			arg = replaceenv(arg, "%mahou_dir%", () => nPath);
+			return arg;
+		}
+		/// <summary><br/>
+		/// 0 = layoutchange<br/>
+		/// 1 = layoutchangedfrom
+		/// </summary>
+		public static string[] bindable_events = {"layoutchange", "layoutchangedfrom"};
+		static void menuhandle(string act, string arg) {
+			act = act.ToLower();
+			arg = expandmenuarg(arg);
+			if (act == "url") {
+//				var type = getargtype(arg);
+				string args ="", prog =arg;
+				if (arg.Contains(" ")) {
+					var m = arg.Split(new[]{' '},2);
+					prog = m[0]; args = m[1];
+					if (arg[0] == '"') {
+						var quot = arg.Substring(1,arg.Length-1).IndexOf('"');
+						if (quot != -1) {
+							prog = arg.Substring(1, quot);
+							args = arg.Substring(quot+2, arg.Length-2-quot);
+							Debug.WriteLine("Quoted program: "+prog+" args: " + args);
+						}
+					}
+				}
+				try {
+					var re = new Regex(@"^([A-Za-z]:\\.*)\\");
+					var pi = new ProcessStartInfo();
+					pi.FileName = prog;
+					pi.Arguments = args;
+					var m = re.Matches(prog);
+					if (m.Count > 0) {
+						pi.WorkingDirectory = m[0].Groups[0].Value;
+						Debug.WriteLine("SerWorkingDirectory: " + pi.WorkingDirectory);
+					}
+					Process.Start(pi);
+				} catch(Exception e) {
+					MessageBox.Show(e.Message+"\n"+arg, "Mahou.mm => " + MMain.Lang[Languages.Element.Error], MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
+			} else if (act == "multi") {
+				var s = arg.Split('|');
+//				var by2 = (s.Length-1)%2 == 0;
+//				if (by2) {
+				for (int i = 0; i < s.Length-1; i+=2) {
+					if (s[i].ToLower() == "multi") continue;
+					if (!multi_continue) { 
+					Debug.WriteLine("Multi_continue break.");
+						multi_continue = true; 
+						hk_result = false;
+						break; 
+					}
+//						MessageBox.Show("multi"+i+" " + s[i] + " => " +s[i+1]);
+					menuhandle(s[i], s[i+1]);
+				}
+//				}
+			} else if (act == "kbd") {
+//				MessageBox.Show("KBD: " + arg);
+				KMHook.SendModsUp(15);
+				KMHook.SimKeyboard(arg);
+			} else if (act == "hk") {
+				if (arg.Length > 1) {
+					arg = arg.ToLower();
+					int x = -1;
+					Int32.TryParse(arg[1].ToString(), out x);
+					if (x >= 0) {
+						if (arg[0]=='s') {
+							MahouUI.hk_result = false;
+							KMHook.SendModsUp(15);
+							if (x <= 6)
+								KMHook.SelectionConversion((KMHook.ConvT)x);
+							else {
+								if (x==7) KMHook.ConvertSelection();
+								if (x==8) MMain.mahou.CycleCase(false);
+								if (x==9) ShowSelectionTranslation();	
+							}
+						}
+						if (arg[0]=='c') {
+							MahouUI.hk_result = false;
+							KMHook.SendModsUp(15);
+							if(x==0)KMHook.ConvertLast(MMain.c_word);
+							if(x==1)ConvertLastLine();
+							if(x==2)MMain.mahou.PrepareConvertMoreWords();
+						}
+						if (arg[0]=='h') {
+							if(x==0)MMain.mahou.ToggleVisibility();
+							if(x==1)MMain.mahou.Restart();
+							if(x==2)MMain.mahou.ExitProgram();
+							if(x==3)ToggleSymIgn();
+							if(x==4)MMain.mahou.ToggleLangPanel();
+							if(x==5)MMain.mahou.ToggleMahou();
+							if(x==6)MMain.mahou.ShowContextMenuUnderMouse();
+						}
+					}
+				}
+			} else if (act == "ifhk") {
+				if (arg.ToLower().StartsWith("y")) {
+					multi_continue = hk_result;
+				} else {
+					Debug.WriteLine("Not IF!");
+					multi_continue = !hk_result;
+				}
+				Debug.WriteLine("Multi_continue set: "+multi_continue);
+			} else if (act == "evt") {
+				Debug.WriteLine("Event-bind: " + arg);
+				var argx = arg.Split(new []{'_'}, 3);
+				argx[0] = argx[0].ToLower();
+				foreach (var evt in bindable_events) {
+					if (Regex.Replace(argx[0], "\\d+", "") == evt) {
+						event_bindings.Add(argx[0], () => menuhandle(argx[1], argx[2]));
+					}
+				}
+			} else if (act == "paste") {
+				var cl = NativeClipboard.GetText();
+				if (string.IsNullOrEmpty(cl)) {
+					cl = NativeClipboard.GetText(WinAPI.CF_HTMLFORMAT, false);
+					if (!string.IsNullOrEmpty(cl)) {
+						var st = "<!--StartFragment-->";
+						var s = cl.IndexOf(st)+st.Length;
+						var e = cl.IndexOf("<!--EndFragment-->");
+						cl = cl.Substring(s,e-s);
+					}
+				} else {
+					KMHook.SendModsUp(15);
+					KMHook.PasteText(cl);
+				}
+			} else if (act == "input") {
+				if (!String.IsNullOrEmpty(arg)) {
+					KInputs.MakeInput(KInputs.AddString(arg));
+				}
+			} else {
+				MessageBox.Show("Unknown action: " + act, "No such action",MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			}
+		}
+		public static DICT<string,Tuple<Action,string>> tray_hotkeys = new DICT<string,Tuple<Action,string>>();
+		public static DICT<string,Action> event_bindings = new DICT<string, Action>();
+		static ContextMenuStrip MMmenu;
+		static void makemenu(string mahoumenu) {
+			tray_hotkeys.Clear();
+			event_bindings.Clear();
+			if (MMmenu == null) {
+				MMmenu = new ContextMenuStrip();
+			} else {
+				MMmenu.Dispose(); MMmenu = null;
+				MMmenu = new ContextMenuStrip();
+			}
+			var mm = Regex.Replace(mahoumenu, "\r?\n", "\n");
+			var mmls = mm.Split('\n');
+			var mms = new ToolStripMenuItem();
+			mms.Text = "Mahou Custom Menu";
+			foreach (var me in mmls) {
+				if (me.StartsWith("||||")) { continue; }
+				var mct = Regex.Match(me, "^##(.*)##$", RegexOptions.Multiline);
+				if (mct.Groups.Count > 1) {
+					mms.Text = mct.Groups[1].Value;
+					continue;
+				}
+				var lc = '\0';
+				var type = 0;
+				StringBuilder buf, text, act, arg, hotk;
+				buf = new StringBuilder();
+				text = new StringBuilder();
+				act = new StringBuilder();
+				arg = new StringBuilder();
+				hotk = new StringBuilder();
+				int last = 2;
+				for (int i = 0; i != me.Length; i++) {
+					var c = me[i];
+					if ((lc != '\\' && c == '|') || i == me.Length-1) {
+						if (type == 0) text = new StringBuilder(buf.ToString());
+						if (type == 2 && (!string.IsNullOrEmpty(hotk.ToString()) || string.IsNullOrEmpty(act.ToString()))) {
+							act = new StringBuilder(buf.ToString());
+					    	last++;
+					    }
+						if (type == 1) {
+							if (buf.ToString().StartsWith("^^"))
+								hotk = new StringBuilder(buf.ToString());
+							else
+								act = new StringBuilder(buf.ToString());
+						}
+						if (type == last) { arg = new StringBuilder(buf.ToString()).Append(c); }
+						if (act.ToString().ToLower() == "multi") {
+							arg.Clear().Append(me.Substring(i+1, me.Length-i-1));
+							break;
+						}
+						type++;
+						buf.Clear();
+						lc = c;
+						continue;
+					}
+					buf.Append(c);
+					lc = c;
+				}
+				arg = arg.Replace("\\|", "|");
+				if (!string.IsNullOrEmpty(hotk.ToString())) {
+					tray_hotkeys.Add(hotk.ToString(), new Tuple<Action, string>(() => 
+                        menuhandle(act.ToString(), arg.ToString()),
+                        	new StringBuilder().Append(act).Append("|").Append(arg).ToString()));
+					var d = Hotkey.tray_hk_is_double(hotk.ToString());
+					Debug.WriteLine("hotk: " + hotk + d.Item1);
+					if(d.Item1) {
+						if (hotk.ToString().Contains("((")) {
+							hotk = hotk.Replace("((", "~")
+								.Replace("))", "ms [")
+								.Replace("&&", "] => ");
+					    } else {
+							hotk = hotk.Replace("&&", "] => ~250ms [");
+					    }
+						if (hotk.ToString().EndsWith("[")) {
+							hotk.Append(d.Item3);
+						}
+					}
+					text.Append("    [")
+						.Append(Regex.Replace(hotk.Replace("^^", "").ToString(), "((^|\\+|\\[)[lr]?.)", m => m.ToString().ToUpper()))
+						.Append("]");
+				}
+				var acts=act.ToString();
+				if (acts == "evt") {
+					menuhandle(acts, arg.ToString());
+					continue;
+				}
+				if (acts.ToLower() == "dir") {
+					try {
+						var argts = arg.ToString();
+						string dir = argts, allow_types = ".*";
+						int maxd = 10, maxentries = 25;
+						if (argts.Contains(">")) {
+							var spl = argts.Split(new []{'>'});
+							if (spl.Length >=1) {
+								dir = spl[0];
+							} 
+							if (spl.Length >=2) {
+								var t = spl[1];
+								if (t.Contains("&")) {
+									var splspl = t.Split(new [] {'&'});
+									t = splspl[0];
+									Int32.TryParse(splspl[1], out maxentries);
+								}
+								Int32.TryParse(t, out maxd);
+							}
+							if (spl.Length >=3) {
+								allow_types = spl[2];
+							}
+						}
+						if (Directory.Exists(dir)) {
+							var mmd = new ToolStripMenuItem(text.ToString(),null);
+							dirparser(ref mmd, dir, maxd, allow_types, maxentries);
+							mms.DropDownItems.Add(mmd);
+							var mmd2 = new ToolStripMenuItem(text.ToString(),null);
+							dirparser(ref mmd2, dir, maxd, allow_types, maxentries);
+							MMmenu.Items.Add(mmd2);
+						}
+					} catch(Exception e) {
+						Debug.WriteLine(e.Message + e.StackTrace);
+						Logging.Log("Mahou.mm > DIR error: " + e.Message + e.StackTrace, 1);
+					}
+					continue;
+				}
+				mms.DropDownItems.Add(new ToolStripMenuItem(text.ToString(),null,(_,__) =>
+				                                            menuhandle(act.ToString(), arg.ToString())));
+				MMmenu.Items.Add(new ToolStripMenuItem(text.ToString(),null,(_,__) =>
+		                                                    menuhandle(act.ToString(), arg.ToString())));
+			}
+			var wfm = new Timer();
+			wfm.Interval = 1000;
+			wfm.Tick += (x,xx) => {
+				if (MMain.mahou != null) {
+					List<ToolStripMenuItem> lastitems = new List<ToolStripMenuItem>();
+					for(var i = 0; i != MMain.mahou.icon.trIcon.ContextMenuStrip.Items.Count; i++) {
+						lastitems.Add((ToolStripMenuItem)MMain.mahou.icon.trIcon.ContextMenuStrip.Items[i]);
+					}
+					MMain.mahou.icon.trIcon.ContextMenuStrip.Items.Clear();
+					MMain.mahou.icon.trIcon.ContextMenuStrip.Items.Add(mms);
+					MMain.mahou.icon.trIcon.ContextMenuStrip.Items.AddRange(lastitems.ToArray());
+					wfm.Stop();
+					wfm.Dispose();
+				}
+			};
+			wfm.Start();
+		}
+		static string GetShortcutTarget(string file) {
+		    try {
+		        if (Path.GetExtension(file).ToLower() != ".lnk") {
+		            throw new Exception("Supplied file must be a .LNK file");
+		        }
+		        FileStream fileStream = File.Open(file, FileMode.Open, FileAccess.Read);
+		        using (BinaryReader fileReader = new BinaryReader(fileStream)) {
+		            fileStream.Seek(0x14, SeekOrigin.Begin);     // Seek to flags
+		            uint flags = fileReader.ReadUInt32();        // Read flags
+		            if ((flags & 1) == 1) {                      // Bit 1 set means we have to
+		                                                         // skip the shell item ID list
+		                fileStream.Seek(0x4c, SeekOrigin.Begin); // Seek to the end of the header
+		                uint offset = fileReader.ReadUInt16();   // Read the length of the Shell item ID list
+		                fileStream.Seek(offset, SeekOrigin.Current); // Seek past it (to the file locator info)
+		            }
+		 
+		            long fileInfoStartsAt = fileStream.Position; // Store the offset where the file info
+		            // structure begins
+		            uint totalStructLength = fileReader.ReadUInt32(); // read the length of the whole struct
+		            fileStream.Seek(0xc, SeekOrigin.Current); // seek to offset to base pathname
+		            uint fileOffset = fileReader.ReadUInt32(); // read offset to base pathname
+		            // the offset is from the beginning of the file info struct (fileInfoStartsAt)
+		            fileStream.Seek((fileInfoStartsAt + fileOffset), SeekOrigin.Begin); // Seek to beginning of
+		            // base pathname (target)
+		            long pathLength = (totalStructLength + fileInfoStartsAt) - fileStream.Position - 2; // read
+		            // the base pathname. I don't need the 2 terminating nulls.
+		            char[] linkTarget = fileReader.ReadChars((int) pathLength); // should be unicode safe
+		            var link = new string(linkTarget);
+		 
+		            int begin = link.IndexOf("\0\0");
+		            if (begin > -1) {
+		                int end = link.IndexOf("\\\\", begin + 2) + 2;
+		                end = link.IndexOf('\0', end) + 1;
+		 
+		                string firstPart = link.Substring(0, begin);
+		                string secondPart = link.Substring(end);
+		 
+		                return firstPart + secondPart;
+		            } else {
+		                return link;
+		            }
+		        }
+		    } catch {
+		        return "";
+		    }
+		}
+		public static string GetLnkTarget(string lnkpath) {
+ 			Type t = Type.GetTypeFromCLSID(new Guid("72C24DD5-D70A-438B-8A42-98424B88AFB8")); //Windows Script Host Shell Object
+ 			dynamic shell = Activator.CreateInstance(t);
+ 			string outpath = lnkpath;
+ 			try {
+ 				var lnk = shell.CreateShortcut(lnkpath);
+ 				try {
+ 					outpath = lnk.TargetPath;
+ 				} finally {
+ 					Marshal.FinalReleaseComObject(lnk);
+ 				}
+			} finally {
+				Marshal.FinalReleaseComObject(shell);
+ 			}
+ 			return outpath;
+		}
+		public static Icon GetPathIcon(string filepath, bool small = true) {
+            Icon clone;
+            WinAPI.SHGFI_Flag flags;
+            WinAPI.SHFILEINFO shinfo = new WinAPI.SHFILEINFO();
+            if (small) {
+                flags = WinAPI.SHGFI_Flag.SHGFI_ICON | WinAPI.SHGFI_Flag.SHGFI_SMALLICON;
+            }
+            else {
+                flags = WinAPI.SHGFI_Flag.SHGFI_ICON | WinAPI.SHGFI_Flag.SHGFI_LARGEICON;
+            }
+            if (WinAPI.SHGetFileInfo(filepath, 0, ref shinfo, Marshal.SizeOf(shinfo), flags) == 0) {
+                throw (new FileNotFoundException());
+            }
+            Icon tmp = Icon.FromHandle(shinfo.hIcon);
+            clone = (Icon)tmp.Clone();
+            tmp.Dispose();
+            if (!WinAPI.DestroyIcon(shinfo.hIcon))
+            {
+                return clone;
+            }
+            return clone;
+        }
+		static Dictionary<string, Image> file_icons_cache = new Dictionary<string, Image>();
+		static void dirparser(ref ToolStripMenuItem root, string dir, int max_depth, string allow_types, int maxentries, int this_depth=-1) {
+			Debug.WriteLine("parsing: " +dir);
+			if (this_depth == -1) { this_depth = 0; }
+			if (this_depth > max_depth) { return; }
+			var dirs = Directory.EnumerateDirectories(dir);
+			var fils = Directory.EnumerateFiles(dir);
+			var fidis = new List<string>();
+			foreach(var d in dirs) {
+				fidis.Add("D^"+d);
+			}
+			foreach(var f in fils) {
+				fidis.Add("F^"+f);
+			}
+			fidis.Sort();
+			int e = 0;
+			List<ToolStripMenuItem> _files = new List<ToolStripMenuItem>();
+			foreach (var fidi in fidis) {
+				if (e>=maxentries) { break; }
+				FileAttributes attr;
+				string t = fidi.Substring(0,2);
+				var fd =  fidi.Substring(2);
+				bool directory = t=="D^";
+				string ext = "", n = "";
+				if (t=="F^") {
+					var inf = new FileInfo(fd);
+					attr = inf.Attributes;
+					ext = inf.Extension;
+					n = inf.Name;
+				} else if (directory) {
+					var inf = new DirectoryInfo(fd);
+					attr = inf.Attributes;
+					directory = true;
+					n = inf.Name;
+				} else { continue; }
+				if ((attr & FileAttributes.Hidden) == FileAttributes.Hidden) { continue; }
+				if (!directory) {
+					if (!string.IsNullOrEmpty(allow_types)) {
+						var allowed = allow_types.ToLower().Split(',');
+						var lex = ext.ToLower();
+						var allow_that = false;
+						foreach (var a in allowed) {
+							if (a.EndsWith("*") && lex.StartsWith(a.Substring(0,a.Length-2)) ||
+							    a.StartsWith("*") && lex.EndsWith(a.Substring(1)) ||
+							   	a == lex) {
+								allow_that = true;
+								break;
+							}
+						}
+						if (!allow_that)
+							continue;
+					}
+				}
+				Image img = null;
+				if (!directory) {
+					var eex = ext;
+					var ffd = fd;
+					if (ext.ToLower() == ".lnk") {
+						ffd = GetLnkTarget(fd); //GetShortcutTarget(fd);
+						if (File.Exists(ffd)) {
+							eex = new FileInfo(ffd).Extension;
+						} else {
+							ffd = fd;
+						}
+						Debug.WriteLine("LNK-Real: " + ffd);
+					}
+					if (file_icons_cache.ContainsKey(eex)) {
+						img = file_icons_cache[eex];
+					} else {
+						using (var extractedIcon = GetPathIcon(ffd))
+							img = extractedIcon.ToBitmap();
+						if (eex != ".exe")
+							file_icons_cache[eex] = img;
+					}
+				} 
+				else {
+					if (file_icons_cache.ContainsKey("<DIRECTORY>")) {
+						img = file_icons_cache["<DIRECTORY>"];
+					} else {
+				        IntPtr large;
+				        IntPtr small;
+						WinAPI.ExtractIconEx("shell32.dll", 3, out large, out small, 1);
+						try {
+							var selectedIcon = large != IntPtr.Zero ? large : small;
+							if (selectedIcon != IntPtr.Zero)
+								using (var borrowedIcon = Icon.FromHandle(selectedIcon))
+									img = borrowedIcon.ToBitmap();
+						}
+						catch (Exception ee) {
+							Logging.Log("Can't extract icon..." +ee.Message + ee.StackTrace, 1);
+						}
+						finally {
+							if (large != IntPtr.Zero) WinAPI.DestroyIcon(large);
+							if (small != IntPtr.Zero && small != large) WinAPI.DestroyIcon(small);
+						}
+file_icons_cache["<DIRECTORY>"] = img;
+					}
+				}
+				var new_root = new ToolStripMenuItem(n,img);
+				new_root.MouseDown += (_, __) => __lopen(fd, directory ? "DIR" : ext, __.Button == MouseButtons.Right);
+				if (directory) {
+					dirparser(ref new_root, fd, max_depth, allow_types, maxentries, this_depth+1);
+					root.DropDownItems.Add(new_root);
+				} else {
+					_files.Add(new_root);
+				}
+				e++;
+			}
+			if (_files.Count>0) {
+				root.DropDownItems.AddRange(_files.ToArray());
+			}
+		}
+		#endregion
+		#region Mahou UI controls events
+		void Hchk_DARKCheckedChanged(object sender, EventArgs e) {
+			ToggleDark(Hchk_DARK.Checked);
+		}
+		void Txt_LCTRLLALTTempLayoutTextChanged(object sender, EventArgs e) {
+			var txt = (sender as TextBox);
+			if (Regex.IsMatch(txt.Text, @"[^0-9]")) {
+				txt.Text = Regex.Replace(txt.Text, @"[^0-9]", "");
+				if (txt.Text.Length >0) {
+					txt.SelectionStart = txt.Text.Length;
+				}
+			}
+		}
+		void Chk_CheckedChanged(object sender, EventArgs e) {
+			ToggleDependentControlsEnabledState();
+		}
+		void Chk_HKCheckedChanged(object sender, EventArgs e) {
+			UpdateHKTemps(sender, e);
+			ToggleDependentControlsEnabledState();
+		}
+		void Chk_AutoStartCheckedChanged(object sender, EventArgs e) {
+		}
+		void Btn_DebugInfoClick(object sender, EventArgs e) {
+			try {
+				var debuginfo = new StringBuilder().Append("<details><summary>MAHOU DEBUG INFO</summary>\r\n\r\n")
+					.Append("<details><summary>Environment info</summary>\r\n\r\n")
+					.Append("\r\n- ").Append(Text)
+					.Append("\r\n- OS = [").Append(Environment.OSVersion).Append("]")
+					.Append("\r\n- x64 = [").Append(Environment.Is64BitOperatingSystem).Append("]")
+					.Append("\r\n- .Net = [").Append(Environment.Version).Append("]")
+					.Append("\r\n</details>")
+					.Append("\r\n" + "<details><summary>All installed layouts</summary>\r\n\r\n");
+				foreach (var l in MMain.lcnmid) {
+					debuginfo.Append(l).Append("\r\n");
+				}
+				debuginfo.Append("\r\n</details>")
+				.Append("<details><summary>Mahou.ini</summary>\r\n\r\n```ini\r\n")
+					.Append(MMain.MyConfs.GetRawWithoutGroup("[Proxy]")).Append("\r\n```")
+					.Append("\r\n</details>");
+				debuginfo.Append("\r\n</details>");
+				if (Directory.Exists(Path.Combine(nPath, "Flags"))) {
+					debuginfo.Append("\r\n").Append("<details><summary>Additional flags in Flags directory</summary>\r\n\r\n");
+			    	foreach (var flg in Directory.GetFiles(Path.Combine(nPath, "Flags"))) {
+						debuginfo.Append("- ").Append(Path.GetFileName(flg)).Append("\r\n");
+			    	}
+			    	debuginfo.Append("\r\n")
+		    			.Append("\r\n</details>");
+	             }
+				debuginfo.Append("\r\n</details>");
+				Clipboard.SetText(debuginfo.ToString());
+				var btDgtTxtWas = btn_DebugInfo.Text;
+				btn_DebugInfo.Text = MMain.Lang[Languages.Element.DbgInf_Copied];
+				tmr.Tick += (_,__) => { 
+					btn_DebugInfo.Text = btDgtTxtWas;
+					tmr.Stop();
+				};
+				tmr.Interval = 2000;
+				tmr.Start(); 
+				Logging.Log("Debug info copied.");
+			}
+			catch(Exception er) {
+				MessageBox.Show("Error during dgbcopy" + er.StackTrace);
+				Logging.Log("Error during DEBUG INFO copy, details:\r\n" +er.Message +"\r\n"+er.StackTrace);
+			}
+		}
+		void Btn_OKClick(object sender, EventArgs e) {
+			ToggleVisibility();
+			SaveConfigs();
+		}
+		void Btn_ApplyClick(object sender, EventArgs e) {
+			SaveConfigs();
+		}
+		void Btn_CancelClick(object sender, EventArgs e) {
+			ToggleVisibility();
+			LoadConfigs();
+		}
+		void Cbb_KeySelectedIndexChanged(object sender, EventArgs e) {
+			cbb_Layout1.Enabled = cbb_Key1.SelectedIndex != 0;
+			cbb_Layout2.Enabled = cbb_Key2.SelectedIndex != 0;
+			cbb_Layout3.Enabled = cbb_Key3.SelectedIndex != 0;
+			cbb_Layout4.Enabled = cbb_Key4.SelectedIndex != 0;
+		}
+		void MahouUIFormClosing(object sender, FormClosingEventArgs e) {
+			if (e.CloseReason == CloseReason.UserClosing) {
+				e.Cancel = true;
+				ToggleVisibility();
+				LoadConfigs();
+			}
+		}
+		void Lsb_HotkeysSelectedIndexChanged(object sender, EventArgs e) {
+			UnregisterHotkeys(1);
+			UpdateHotkeyControlsSwitch();
+			UpdateHotkeyTemps();
+			switch (lsb_Hotkeys.SelectedIndex) {
+				case 4:
+					lbl_HotkeyHelp.Text = MMain.Lang[Languages.Element.TT_ConvertWords];
+					break;
+				case 5:
+					lbl_HotkeyHelp.Text = MMain.Lang[Languages.Element.TT_SymbolIgnore];
+					break;
+				case 15:
+					lbl_HotkeyHelp.Text = MMain.Lang[Languages.Element.TT_ShowSelectionTranslationHotkey];
+					break;
+				case 17:
+					lbl_HotkeyHelp.Text = MMain.Lang[Languages.Element.TT_CycleCase];
+					break;
+				case 18:
+					lbl_HotkeyHelp.Text = MMain.Lang[Languages.Element.TT_CustomConversion];
+					break;
+				default:
+					lbl_HotkeyHelp.Text = "";
+					break;
+			}
+		}
+		void Txt_HotkeyKeyDown(object sender, KeyEventArgs e) {
+			switch(lsb_Hotkeys.SelectedIndex) {
+				case 0:
+					WinAPI.UnregisterHotKey(Handle, (int)Hotkey.HKID.ToggleVisibility);
+					break;
+				case 5:
+					WinAPI.UnregisterHotKey(Handle, (int)Hotkey.HKID.ToggleSymbolIgnoreMode);
+					break;
+				case 12:
+					WinAPI.UnregisterHotKey(Handle, (int)Hotkey.HKID.Exit);
+					break;
+				case 13:
+					WinAPI.UnregisterHotKey(Handle, (int)Hotkey.HKID.Restart);
+					break;
+			}
+			txt_Hotkey.Text = OemReadable((e.Modifiers.ToString().Replace(",", " +") + " + " +
+										  Remake(e.KeyCode)).Replace("None + ", ""));
+			txt_Hotkey_tempModifiers = e.Modifiers.ToString().Replace(",", " +");
+			switch ((int)e.KeyCode) {
+				case 16:
+				case 17:
+				case 18:
+					txt_Hotkey_tempKey = 0;
+					break;
+				default:
+					txt_Hotkey_tempKey = (int)e.KeyCode;
+					break;
+			}
+			UpdateHotkeyTemps();
+		}
+		void Lsb_LangTTAppearenceForListSelectedIndexChanged(object sender, EventArgs e) {
+			UpdateLangDisplayControlsSwitch();
+			UpdateLangDisplayTemps();
+		}
+		void Btn_ColorSelectionClick(object sender, EventArgs e) {
+			var btn = sender as Button;
+			if (clrd.ShowDialog() == DialogResult.OK)
+				btn.BackColor = clrd.Color;
+			UpdateLangDisplayTemps();
+		}
+		void UpdateLDTemps(object sender, EventArgs e) {
+			UpdateLangDisplayTemps();
+		}
+		void UpdateHKTemps(object sender, EventArgs e) {
+			UpdateHotkeyTemps();
+		}
+		void Btn_LangTTFontClick(object sender, EventArgs e) {
+			Btn_FontSelection(sender, e);
+			UpdateLangDisplayTemps();
+		}
+		void Btn_FontSelection(object sender, EventArgs e) {
+			var btn = sender as Button;
+			fntd.Font = btn.Font;
+			if (fntd.ShowDialog() == DialogResult.OK)
+				btn.Font = fntd.Font;
+		}
+		void Btn_CheckForUpdatesClick(object sender, EventArgs e) {
+			ShowLegacyNetworkDisabled();
+		}
+
+		void Btn_DownloadUpdateClick(object sender, EventArgs e) {
+			ShowLegacyNetworkDisabled();
+		}
+
+		void MahouUIDeactivate(object sender, EventArgs e) {
+			RegisterHotkeys();
+		}
+		void MahouUIActivated(object sender, EventArgs e) {
+			if (tabs.SelectedIndex == tabs.TabPages.IndexOf(tab_hotkeys)) {
+				UnregisterHotkeys(1);
+				ScrlCheck.Stop();
+				capsCheck.Stop();
+			} else {
+				RegisterHotkeys();
+				ToggleTimers();
+			}
+			if (tabs.SelectedIndex == tabs.TabPages.IndexOf(tab_autoswitch)) ToggleDependentControlsEnabledState();
+		}
+		void Cbb_UpdatesChannelSelectedIndexChanged(object sender, EventArgs e) {
+			MMain.MyConfs.WriteSave("Updates", "Channel", (sender as ComboBox).SelectedItem.ToString());
+		}
+		void Txt_AutoSwitchDictionaryTextChanged(object sender, EventArgs e) {
+			if (configs_loading || autoSwitchDictionaryTextUpdating) return;
+			if (!AutoSwitchDictionaryTooBig && !txt_AutoSwitchDictionary.ReadOnly)
+				AutoSwitchDictionaryRaw = txt_AutoSwitchDictionary.Text;
+			if(!as_checking) {
+				as_checking = true;
+				tmr.Tick += (_, __) => {
+					UpdateAutoSwitchCountLabel(AutoSwitchDictionaryRaw, lbl_AutoSwitchWordsCount);
+					as_checking = false;
+					tmr.Dispose(); tmr = new Timer();
+				};
+				tmr.Interval = 1500;
+				tmr.Start();
+			}
+		}
+		void Chk_DownloadASD_InZipCheckedChanged(object sender, EventArgs e) {
+			Dowload_ASD_InZip = chk_DownloadASD_InZip.Checked;
+		}
+		void Btn_TrAddSetClick(object sender, EventArgs e) {
+			if (TrSetCount>98) return;
+			var _set = new Panel();
+			_set.Width = (pan_TrSets.Width*98/100)-2;
+			TrSetCount++;
+			_set.Name = "set_"+TrSetCount;
+			var top = 1;
+			if (TrSetCount>1)
+				top = pan_TrSets.Controls["set_"+(TrSetCount-1)].Top+25;
+			_set.Height = 23;
+			_set.Top = top;
+			_set.Left = 1;
+			var _baseLeft = (int)(pan_TrSets.Width*2/100);
+			var lbl_width = 25;
+			var lbl_frto_width = 40;
+			var cbb_width = 160;
+			_set.Controls.Add(new Label(){Left = _baseLeft, Name="lbl_num"+TrSetCount, Width=lbl_width, Text=TrSetCount+":", Top=2});
+			var fr_lbl = new Label() {Left = _baseLeft+lbl_width, Name="lbl_fr"+TrSetCount, Width=lbl_frto_width, Text="From:", Top=2};
+			var fr_cbb = new ComboBox(){DropDownStyle = ComboBoxStyle.DropDownList, Left = _baseLeft+lbl_width+lbl_frto_width+9, Name="cbb_fr"+TrSetCount, Width=cbb_width};
+			var to_lbl = new Label() {Left = _baseLeft+lbl_width+lbl_frto_width+49+cbb_width, Name="lbl_to"+TrSetCount, Width=lbl_frto_width, Text="To:", Top=2};
+			var to_cbb = new ComboBox(){DropDownStyle = ComboBoxStyle.DropDownList, Left = _baseLeft+lbl_width+lbl_frto_width+49+cbb_width+lbl_frto_width+9, Name="cbb_to"+TrSetCount, Width=cbb_width};
+			fr_cbb.SelectedIndexChanged += new EventHandler(Cbb_FrToSelectedIndexChanged);
+			to_cbb.SelectedIndexChanged += new EventHandler(Cbb_FrToSelectedIndexChanged);
+//			cbb.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
+			fr_cbb.Items.AddRange(TranslatePanel.GTLangs);
+			to_cbb.Items.AddRange(TranslatePanel.GTLangs);
+			fr_cbb.SelectedIndex = to_cbb.SelectedIndex = 0;
+			_set.Controls.Add(fr_lbl);
+			_set.Controls.Add(fr_cbb);
+			_set.Controls.Add(new Label(){Left = _baseLeft+lbl_width+lbl_frto_width+20+cbb_width, Name="lbl_arr"+TrSetCount, Width=lbl_width, Text="->", Top=2});
+			_set.Controls.Add(to_lbl);
+			_set.Controls.Add(to_cbb);
+//			SpecKeySetsValues["cbb_fr"+TrSetCount+"_key"] = SpecKeySetsValues["txt_key"+TrSetCount+"_mods"] = SpecKeySetsValues["cbb_typ"+TrSetCount] = "";
+			pan_TrSets.Controls.Add(_set);
+			lbl_TrSetsCount.ForeColor = Color.Black;
+			lbl_TrSetsCount.Text = "#"+TrSetCount;
+			if (TrSetCount>98) lbl_TrSetsCount.ForeColor = Color.Red;
+		}
+		void Btn_TrSubSetClick(object sender, EventArgs e) {
+			if (TrSetCount < 1) return;
+			pan_TrSets.Controls["set_"+TrSetCount].Dispose();
+			TrSetCount--;
+			lbl_TrSetsCount.ForeColor = Color.Black;
+			lbl_TrSetsCount.Text = "#"+TrSetCount;
+			if (TrSetCount < 1)
+				lbl_TrSetsCount.ForeColor = Color.LightGray;
+	
+		}
+		void Btn_AddSetClick(object sender, EventArgs e) {
+			if (SpecKeySetCount>98) return;
+			var _set = new Panel();
+			_set.Width = (pan_KeySets.Width*98/100)-2;
+			SpecKeySetCount++;
+			_set.Name = "set_"+SpecKeySetCount;
+			var top = 1;
+			if (SpecKeySetCount>1)
+				top = pan_KeySets.Controls["set_"+(SpecKeySetCount-1)].Top+25;
+			_set.Height = 23;
+			_set.Top = top;
+			_set.Left = 1;
+			var _baseLeft = (int)(pan_KeySets.Width*2/100);
+			var txt_width = 190;
+			var chk_width = 45;
+			var lbl_width = 25;
+			var cbb_width = 190;
+			_set.Controls.Add(new Label(){Left = _baseLeft, Name="lbl_num"+SpecKeySetCount, Width=lbl_width, Text=SpecKeySetCount+":", Top=2});
+			var txt = new TextBox(){Left = _baseLeft+lbl_width, Name="txt_key"+SpecKeySetCount, Width=txt_width, BackColor=SystemColors.Window, ReadOnly=true};
+			txt.KeyDown += new KeyEventHandler(Txt_SpecHotkeyDown);
+			var chk = new CheckBox(){Left = _baseLeft+lbl_width+txt_width+3, Name="chk_win"+SpecKeySetCount, Width=chk_width, Text="Win"};
+			chk.CheckedChanged += new EventHandler(Chk_SpecWinCheckedChanged);
+			var cbb = new ComboBox(){DropDownStyle = ComboBoxStyle.DropDownList, Left = _baseLeft+lbl_width+txt_width+chk_width+lbl_width+9, Name="cbb_typ"+SpecKeySetCount, Width=cbb_width};
+			cbb.SelectedIndexChanged += new EventHandler(Cbb_SpecTypeSelectedIndexChanged);
+			cbb.Items.Add(MMain.Lang[Languages.Element.SwitchBetween]);
+			cbb.Items.AddRange(MMain.lcnmid.ToArray());
+			_set.Controls.Add(txt);
+			_set.Controls.Add(chk);
+			_set.Controls.Add(new Label(){Left = _baseLeft+lbl_width+txt_width+chk_width+6, Name="lbl_arr"+SpecKeySetCount, Width=lbl_width, Text="->", Top=2});
+			_set.Controls.Add(cbb);
+			SpecKeySetsValues["txt_key"+SpecKeySetCount+"_key"] = SpecKeySetsValues["txt_key"+SpecKeySetCount+"_mods"] = SpecKeySetsValues["cbb_typ"+SpecKeySetCount] = "";
+			pan_KeySets.Controls.Add(_set);
+			lbl_SetsCount.ForeColor = Color.Black;
+			lbl_SetsCount.Text = "#"+SpecKeySetCount;
+			if (SpecKeySetCount>98) lbl_SetsCount.ForeColor = Color.Red;
+		}
+		void Btn_SubSetClick(object sender, EventArgs e) {
+			if (SpecKeySetCount < 1) return;
+			pan_KeySets.Controls["set_"+SpecKeySetCount].Dispose();
+			SpecKeySetCount--;
+			lbl_SetsCount.ForeColor = Color.Black;
+			lbl_SetsCount.Text = "#"+SpecKeySetCount;
+			if (SpecKeySetCount < 1)
+				lbl_SetsCount.ForeColor = Color.LightGray;
+	
+		}
+		void Txt_SpecHotkeyDown(object sender, KeyEventArgs e) {
+			var t = sender as TextBox;
+			if (e.KeyCode == Keys.Back && e.Modifiers == Keys.None) {
+				SpecKeySetsValues[t.Name+"_key"] = SpecKeySetsValues[t.Name+"_mods"] = t.Text = "";
+				return;
+			}
+			Debug.WriteLine(e.KeyCode +" E");
+			t.Text = OemReadable((e.Modifiers.ToString().Replace(",", " +") + " + " +
+										  Remake(e.KeyCode)).Replace("None + ", ""));
+			SpecKeySetsValues[t.Name+"_key"] = ((int)e.KeyCode).ToString();
+			SpecKeySetsValues[t.Name+"_mods"] = e.Modifiers.ToString().Replace(",", " +");
+		}
+		void Chk_SpecWinCheckedChanged(object sender, EventArgs e) {
+			var c = sender as CheckBox;
+			var key = SpecKeySetsValues["txt_key"+c.Name.Replace("chk_win","")+"_mods"];
+			var hasWin = key.Contains("Win");
+			if (hasWin && !c.Checked)
+				SpecKeySetsValues["txt_key"+c.Name.Replace("chk_win","")+"_mods"] = key.Replace("Win", "");
+			if (!hasWin && c.Checked)
+				SpecKeySetsValues["txt_key"+c.Name.Replace("chk_win","")+"_mods"] = key + " + Win";
+		}
+		void Cbb_SpecTypeSelectedIndexChanged(object sender, EventArgs e) {
+			var cb = sender as ComboBox;
+			SpecKeySetsValues[cb.Name] = cb.SelectedItem.ToString();
+		}
+		void Cbb_TrMethodSelectedIndexChanged(object sender, EventArgs e) {
+			TranslatePanel.useGS = (cbb_TrMethod.SelectedIndex == 1) ? true : false;
+			TranslatePanel.useNA = (cbb_TrMethod.SelectedIndex == 2) ? true : false;
+		}
+		void Cbb_FrToSelectedIndexChanged(object sender, EventArgs e) {
+			var cb = sender as ComboBox;
+			TrSetsValues[cb.Name] = TranslatePanel.GTLangsSh[cb.SelectedIndex];
+//			Debug.WriteLine(TrSetsValues[cb.Name]);
+		}
+		void Cbb_SpecKeysTypeSelectedIndexChanged(object sender, EventArgs e) {
+			var old = cbb_SpecKeysType.SelectedIndex == 0;
+			lbl_Arrow1.Visible = lbl_Arrow2.Visible = lbl_Arrow3.Visible = lbl_Arrow4.Visible = grb_Layouts.Visible = grb_Keys.Visible = old;
+			lbl_SetsCount.Visible = pan_KeySets.Visible = btn_SubSet.Visible = btn_AddSet.Visible = !old;
+		}
+		void Btn_SelectSndClick(object sender, EventArgs e) {
+			lbl_CustomSound.Text = SelectGetWavFile();
+			HelpMeUnderstand.SetToolTip(lbl_CustomSound, lbl_CustomSound.Text);
+		}
+		void Btn_SelectSnd2Click(object sender, EventArgs e) {
+			lbl_CustomSound2.Text = SelectGetWavFile();
+			HelpMeUnderstand.SetToolTip(lbl_CustomSound2, lbl_CustomSound2.Text);
+		}
+		void Btn_backupClick(object sender, EventArgs e) {
+			SyncBackup();
+		}
+		void Btn_restoreClick(object sender, EventArgs e) {
+			SyncRestore();
+		}
+		bool pctres, pctbkp;
+		void PctBkpCopyClick(object sender, EventArgs e) {
+			if (!pctbkp) {
+				pctbkp = true;
+				var t = new Timer();
+				t.Tick += (_, ___) => {
+					pctBkpCopy.BackgroundImage = Properties.Resources.clip;
+					pctbkp = false;
+					t.Stop();
+					t.Dispose();
+				};
+				t.Interval = 1800;
+				if (!string.IsNullOrEmpty(txt_backupId.Text)) {
+					NativeClipboard.SetText(txt_backupId.Text);
+					pctBkpCopy.BackgroundImage = Properties.Resources.clipok;
+					t.Start();
+				} else {
+					pctBkpCopy.BackgroundImage = Properties.Resources.cliperr;
+					t.Start();
+				}
+			}
+		}
+		void PctResPasteClick(object sender, EventArgs e) {
+			if (!pctres) {
+				pctres = true;
+				var t = new Timer();
+				t.Tick += (_, ___) => {
+					pctResPaste.BackgroundImage = Properties.Resources.clip;
+					pctres = false;
+					t.Stop();
+					t.Dispose();
+				};
+				t.Interval = 1800;
+				var stri = KMHook.GetClipboard(3);
+				if (!string.IsNullOrEmpty(stri)) {
+					txt_restoreId.Text = stri;
+					pctResPaste.BackgroundImage = Properties.Resources.clipok;
+					t.Start();
+				} else {
+					pctResPaste.BackgroundImage = Properties.Resources.cliperr;
+					t.Start();
+				}
+			}
+		}
+		void Chk_ZxZCheckedChanged(object sender, EventArgs e) {
+			ZxZ = (sender as CheckBox).Checked;
+		}
+		static string HotkeyForm_hotkey = "";
+		class HotkeyForm : Form {
+			Label hk;
+			public HotkeyForm() {
+				this.FormBorderStyle = FormBorderStyle.None;
+				this.ShowInTaskbar = false;
+				this.BackColor = Color.ForestGreen;
+				this.hk = new Label();
+				this.hk.AutoSize = false;
+				this.hk.Width = 238;
+				this.hk.Font = new Font(this.hk.Font.FontFamily, 14);
+				this.hk.Height = 26;
+				this.hk.BackColor = Color.White;
+				this.hk.ForeColor = Color.Orange;
+				this.hk.Location = new Point(1,1);
+				this.Controls.Add(hk);
+				this.MinimumSize = new Size(50,10);
+				this.Width = 240;
+				this.Height = 28;
+				this.CenterToScreen();
+				this.TopMost = true;
+			}
+			bool aok; int lmsg = 0;
+			protected override void WndProc(ref Message m) {
+				if (m.Msg == (int)WinAPI.WM_KEYUP ||
+						m.Msg == (int)WinAPI.WM_SYSKEYUP ||
+						m.Msg == (int)WinAPI.WM_SYSKEYDOWN ||
+						m.Msg == (int)WinAPI.WM_KEYDOWN) {
+					var mods = KMHook.GetModsStr(KMHook.ctrl,KMHook.ctrl_r, KMHook.shift,KMHook.shift_r,KMHook.alt,KMHook.alt_r,KMHook.win,KMHook.win_r);
+					var k = (Keys)m.WParam.ToInt32();
+					var ok = false;
+					if (k != Keys.LControlKey &&
+						    k != Keys.RControlKey &&
+						    k != Keys.LShiftKey &&
+						    k != Keys.RShiftKey &&
+						    k != Keys.LMenu &&
+						    k != Keys.RMenu &&
+						    k != Keys.ShiftKey &&
+						    k != Keys.Menu &&
+						    k != Keys.ControlKey &&
+						    k != Keys.LWin &&
+						    k != Keys.RWin) {
+						mods+=k;
+						ok = true;
+					}
+					this.hk.Text = mods;
+					if (lmsg == 0) { lmsg = m.Msg; }
+					if (ok) {
+						aok = true;
+						HotkeyForm_hotkey = this.hk.Text;
+					}
+					if (aok && lmsg != m.Msg) {
+						this.Close();
+					}
+					lmsg = m.Msg;
+				}
+				base.WndProc(ref m);
+			}
+		}
+		void Htxt_RedefinesEnter(object sender, EventArgs e) {
+			var t = (TextBox)sender;
+			t.Multiline = true;
+			var i = t.SelectionStart;
+			t.Text = t.Text.Replace("|", Environment.NewLine);
+			t.SelectionStart = i;
+			if (t.Lines.Length > 1) {
+				t.Height = (int)(5*24);
+				t.ScrollBars = ScrollBars.Vertical;
+			}
+		}
+		void Htxt_RedefinesLeave(object sender, EventArgs e) {
+			var t = (TextBox)sender;
+			var i = t.SelectionStart;
+			t.Text = t.Text.Replace(Environment.NewLine, "|");
+			t.SelectionStart = i;
+			t.Height = 24;
+//			t.Multiline = false;
+			t.ScrollBars = ScrollBars.None;
+		}
+		void Htxt_RedefinesTextChanged(object sender, EventArgs e) {
+			var t = (TextBox)sender;
+			if (t.Focused) {
+				var i = t.SelectionStart;
+				if (t.Text.Length > 0) {
+					if (t.Text[t.Text.Length-1] == '|') i++;
+					t.Text = t.Text.Replace("|", Environment.NewLine);
+				}
+				t.SelectionStart = i;
+				t.ScrollToCaret();
+			}
+		}
+		#endregion
+		#region Sync
+		string[] ReadToBackup(string id, string name, bool chk, bool proxyg = true) {
+			var r = "";
+			var stat = "";
+			var f = Path.Combine(nPath, name);
+			if (chk) {
+				if (!File.Exists(f)) {
+					stat += name + " " + MMain.Lang[Languages.Element.Not].ToLower() + " " + MMain.Lang[Languages.Element.Exist].ToLower();
+					return new [] {"", stat};
+				}
+				var fi = new FileInfo(f);
+				if (fi.Length >= 400000) 
+					stat += name + MMain.Lang[Languages.Element.TooBig];
+				try {
+					r += "#------>"+id+Environment.NewLine;
+					if (f.Contains("Mahou.ini") && !proxyg)
+						r += MMain.MyConfs.GetRawWithoutGroup("[Proxy]");
+					else 
+						r += File.ReadAllText(f);
+					r += Environment.NewLine+"#------>"+id+Environment.NewLine;
+				} catch (Exception e) {
+					stat += name  + ": " + MMain.Lang[Languages.Element.CannotBe].ToLower() + " " + MMain.Lang[Languages.Element.Readen].ToLower() + e.Message;
+				}
+			}
+			return new []{r, stat};
+		}
+		string WriteRestoreFiles(string raw, bool mini, bool htxt, bool ttxt, bool proxyg = true, bool mm = false) {
+			var stat = "";
+			var t = raw.Replace("\r", "");
+			var ll = t.Split('\n');
+			var bb = new [] { mini, htxt, ttxt, mm };
+			var tn="dummy";
+			var st = false;
+			var d = new Dictionary<string, string>();
+			for (var i = 0; i != ll.Length-1; i++) {
+				var l = ll[i];
+				var cont = false;
+				var end = false;
+				if (st) {
+					if (i+1 <= ll.Length-1) {
+						var lz = ll[i+1];
+						if (lz.StartsWith(SYNC_SEP, StringComparison.InvariantCulture)) {
+							if (lz == SYNC_SEP+tn) {
+								end = true;
+							}
+						}
+					}
+				}
+				if (l.StartsWith(SYNC_SEP, StringComparison.InvariantCulture)) {
+					foreach (var type in SYNC_TYPES) {
+						if (l == SYNC_SEP+type) {
+							if (tn == type) 
+								tn = "dummy";
+							else {
+								tn=type;
+								st=true;
+								cont=true;
+							}
+						}
+					}
+				}
+				if (cont) continue;
+				var ln = l + ((i == ll.Length-2||end) ? "" : Environment.NewLine);
+				if (d.ContainsKey(tn)) {
+					var va = d[tn];
+					d[tn] = va+ln;
+				} else 
+					d.Add(tn, ln);
+			}
+			var OK = "";
+			var ERR = "";
+			for (var i = 0; i != bb.Length; i++) {
+				var b = bb[i];
+				var ty = SYNC_TYPES[i];
+				if (b) {
+					if (d.ContainsKey(ty)) {
+						try {
+							if (ty == "ini") {
+								if (!proxyg) 
+									MMain.MyConfs._INI.ReplaceRaw(MMain.MyConfs.GetRawWithoutGroup("[Proxy]", d[ty]));
+								else
+									MMain.MyConfs._INI.ReplaceRaw(d[ty]);
+							}
+							var f = Path.Combine(nPath, SYNC_NAMES[i]);
+							Debug.WriteLine("Writing: " +f);
+							AtomicFile.WriteAllText(f, d[ty]);
+							OK += " " + SYNC_NAMES[i];
+						} catch (Exception e) {
+							stat += ty + ": " + e.Message + Environment.NewLine;
+						}
+					} else {
+						ERR += " " + SYNC_NAMES[i];
+					}
+				}
+			}
+			stat += "OK:" + OK + (ERR != "" ? (Environment.NewLine +  "ERR:" + ERR) : "");
+			return stat;
+		}
+		public static Random rand = new Random();
+		public static string GetRandomString(int length) {
+		    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		    var s = "";
+		    for (int i = 0; i < length; i++)
+		    	s+= chars[rand.Next(chars.Length)];
+		    return s;
+		}
+		string SyncUploadZxZ(string content) {
+			return String.Empty;
+		}
+
+		string SyncUploadHB(byte[] data, ref StringBuilder stat) {
+			stat.Clear().Append(LegacyNetworkDisabledMessage);
+			return String.Empty;
+		}
+
+		void SyncBackup() {
+			txt_backupStatus.Text = LegacyNetworkDisabledMessage;
+			txt_backupStatus.Visible = true;
+		}
+
+		void SyncRestore() {
+			txt_restoreStatus.Text = LegacyNetworkDisabledMessage;
+			txt_restoreStatus.Visible = true;
+		}
+
+		void SetBools(string values, char separator, out bool ini, out bool history, out bool dictionary, out bool proxy, out bool menu) {
+			var parts = (values ?? "").Split(separator);
+			var legacy = parts.Length >= 6;
+			ini = parts.Length > 0 && boo(parts[0]);
+			history = parts.Length > (legacy ? 2 : 1) && boo(parts[legacy ? 2 : 1]);
+			dictionary = parts.Length > (legacy ? 3 : 2) && boo(parts[legacy ? 3 : 2]);
+			proxy = parts.Length > (legacy ? 4 : 3) && boo(parts[legacy ? 4 : 3]);
+			menu = parts.Length > (legacy ? 5 : 4) && boo(parts[legacy ? 5 : 4]);
+		}
+
+		bool boo(string s) {
+			int i = 0;
+			bool b;
+			bool.TryParse(s, out b);
+			int.TryParse(s, out i);
+			if (i > 0) 
+				return true;
+			return b;
+		}
+		int bin(bool b) {
+			if (b)
+				return 1;
+			return 0;
+		}
+		#endregion
+	}
+}
