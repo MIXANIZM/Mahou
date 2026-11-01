@@ -64,3 +64,17 @@ The only new host file staged by the worker is an **independent Git-read helper*
 Its exact source is [AGZ-MAH-OwnerGit-Precheck-v1.ps1](docs/host-migration/AGZ-MAH-MB-20261101-01/AGZ-MAH-OwnerGit-Precheck-v1.ps1). Host SHA-256 **`57102A52A4A0520B0460D64674BCE16E4E9D5F7313B881CA8301CFDCDBA38E44`**; Windows PowerShell 5.1 AST `0 errors`; native Git self-test PASS; negative-principal test under `AGZ-Agent` correctly returned `USER_AUTH_REQUIRED` exit 1. Those are tooling checks only, **not** actual original repository Git PRECHECK and not a five-Evidence success.
 
 The helper refuses to run except as `HUAWEI-ULTRA-7\user`, checks target vacancy, runs native Git read-only HEAD/top-level/common-dir/worktrees/status/stash/refs/fsck with bounded timeouts and writes its **private receipt** only to own task Temp. It never copies source files, modifies ACL/safe.directory, runs parent Kopia or does producer cutover. **Output remains G0 incomplete** until full SHA/reparse/hardlink/dependency/consumer review, even when Git-read reports PASS.
+
+## Owner-authenticated Git PRECHECK receipt — VERIFIED 2026-11-01
+
+User ran SHA-pinned `AGZ-MAH-OwnerGit-Precheck-v1.ps1` under `HUAWEI-ULTRA-7\user` with all eight commands exit 0. Independently re-read the **actual on-host JSON** through AGZ Project Reader:
+`W:\AGZ\Temp\Projects\mahou\AGZ-MAH-MB-20261101-01\AGZ-MAH-OwnerGit-Precheck-v1.json`
+SHA-256 **`F1CD82AB4EC37612A13D5BE05878914C62E2940D9131344DCF8378DA65698827`** (Reader recomputed hash independently). Actor `HUAWEI-ULTRA-7\user`, UTC 2026-11-01 19:22:46.
+
+- **LOCAL HEAD `5527f662cb844ba90d264f5b93cb27f8334bf295`**, *not* GitHub PR #18 head `ba40fd4c...`.
+- Local branch `refs/heads/agz-mah-0019-remove-snippets-decouple-autoswitch`; native top-level `W:/AGZ/Repositories/Mahou`; common-dir `.git`; exactly **one registered worktree** pointing to that root.
+- `git status --porcelain=v1 --untracked-files=all`: **16 tracked unstaged modifications** and **3 new untracked files**. All local-only bytes MUST survive. None of the 19 may be overwritten, reset, cleaned, stashed or substituted with GitHub remote output.
+- Stash output empty. Refs enumerated with exit 0, do not assume remote refs equal local. `git fsck --full --no-reflogs` exit 0 with one informational **dangling tree `cf64a594f50925a894d6a72db6d66fc2f63eb41c`**; protect complete Git object store including dangling object. **No pruning**.
+- Git owner-access gate now **PASS_GIT_READ_ONLY_8_OF_8**; this DOES NOT grant full `PRECHECK_PASS` or permission to COPY before reparse/hardlink/ADS/hash/consumer checks. No source modification or production cutover.
+
+Remaining G0: private complete source SHA-256 inventory with hidden .git/ignored/dirty/untracked, hardlink/reparse/ADS containment and bounded Windows consumer/task/service inventory. Separate `AGZ-MAH-Inventory-Precheck-v1.ps1` staged in same own project Temp, SHA `B4CF100AB97E00F35AADD8DB45C12150512EF39FE902E0182E58EEC811F0386F`, PS5.1 AST 0, isolated fixture self-test PASS. This second helper performs **no source write/copy**.
