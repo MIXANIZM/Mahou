@@ -1,9 +1,9 @@
 # PROJECT-STORAGE-REGISTER — Mahou (Model B v3)
 **Batch:** `AGZ-MAH-MB-20261101-01`  
 **Observed:** 2026-11-01, Windows host `HUAWEI-ULTRA-7`  
-**CURRENT_STAGE:** `G0_PRECHECK_INCOMPLETE`  
-**CURRENT_STATUS:** `BLOCKED_GIT_OWNERSHIP`  
-**COPY_GATE:** `BLOCKED_NO_COPY`  
+**CURRENT_STAGE:** `G0_PASS_TECHNICAL_CONSUMERS_OPEN`  
+**CURRENT_STATUS:** `OWNER_COPY_SCRIPT_READY_NO_COPY`  
+**COPY_GATE:** `AWAIT_OWNER_INTERACTIVE_COPY_V2`  
 **ORIGINALS:** preserved; no source modification, move, cleanup, or rollback performed by this worker.
 
 ## Canonical identity and scope
@@ -78,3 +78,20 @@ SHA-256 **`F1CD82AB4EC37612A13D5BE05878914C62E2940D9131344DCF8378DA65698827`** (
 - Git owner-access gate now **PASS_GIT_READ_ONLY_8_OF_8**; this DOES NOT grant full `PRECHECK_PASS` or permission to COPY before reparse/hardlink/ADS/hash/consumer checks. No source modification or production cutover.
 
 Remaining G0: private complete source SHA-256 inventory with hidden .git/ignored/dirty/untracked, hardlink/reparse/ADS containment and bounded Windows consumer/task/service inventory. Separate `AGZ-MAH-Inventory-Precheck-v1.ps1` staged in same own project Temp, SHA `B4CF100AB97E00F35AADD8DB45C12150512EF39FE902E0182E58EEC811F0386F`, PS5.1 AST 0, isolated fixture self-test PASS. This second helper performs **no source write/copy**.
+
+## G0 source bytes, reparse, ADS and hardlink proof — VERIFIED 2026-11-01
+**Supersedes the earlier G0 Git ownership blocker.** The owner-native Git check 8/8 PASSED; read-only filesystem inventory ran separately under `HUAWEI-ULTRA-7\AGZ-Agent`. This is a **technical pre-copy PASS with unresolved consumer checks**, not a migration completion receipt.
+
+- Exact manifest: `W:\AGZ\Temp\Projects\mahou\AGZ-MAH-MB-20261101-01\AGZ-MAH-source-hash-baseline-v1.csv`. SHA-256 `5D28EA9D3A846067DA5C7374B1643FD59640CCB46E5EAAC873D76ACDC7250005`, independently revalidated by AGZ Project Reader.
+- Private scan report: `AGZ-MAH-inventory-precheck-v1.json`, SHA-256 `9B6002C38A72F5E4CA92E91B652E65470DBF759E6057F910B7DCDECC9A99FB72`, independently revalidated.
+- File coverage: **391/391 files including 171 in .git**, 104 directories, **41,404,389 bytes**. Per-file SHA-256, file size and mtime UTC baseline. Zero reparse points anywhere traversed; zero ADS; zero multiple hardlink aliases; zero external hardlink paths; zero fsutil failures; zero unstable hashes or hash errors. No files were copied or modified. At inventory time, source manifest stable.
+- Consumer checks: visible processes PASS no Mahou; scheduled tasks COM scan PASS visible only; HKLM Run PASS no Mahou; alternate machine service registry path scan read 878 service entries with 0 Mahou references. Agent's Win32_Service CIM returned `CimException` (superseded by read-only service registry fallback). The original `user` HKCU Run hive is inaccessible to AGZ-Agent (`SecurityException`), so **OWNER HKCU and indirect/dynamic consumers OPEN**; no path cutover permission.
+- W drive free-space observed **39,274,942,464 bytes**, target directory absent at time of check. Current standing authority is only independent **new-location COPY-FIRST preserving original**, never switching user app, Windows autorun, services or legacy paths.
+
+### Owner-only guarded COPY-FIRST v2 — READY, NOT RUN
+- On-host script: `W:\AGZ\Temp\Projects\mahou\AGZ-MAH-MB-20261101-01\AGZ-MAH-CopyFirst-v2.ps1`.
+- [Exact source in this Draft PR](docs/host-migration/AGZ-MAH-MB-20261101-01/AGZ-MAH-CopyFirst-v2.ps1).
+- SHA-256 `A71331AABBFD9728BF01E496A2312B7F0B1AA88AFD33CF623680B7E2E8EB84A2` independently verified by AGZ Project Reader. Windows PS5.1 AST errors=0. Fixture run with `robocopy` exit 1 and matching SHA-256: PASS. Separate self-test of tree enumeration and hash baseline: PASS. Initial `v1` superseded by `v2` after a self-test coverage correction, v1 preserved.
+- Script requires `HUAWEI-ULTRA-7\user` (never agent). It rejects an existing project target, source identity drift, Git HEAD/status/refs/stash/worktree mismatch, any mismatch from 391 hashed original files, reparse changes or missing expected artifacts before COPY. Then only `robocopy /E /COPY:DAT /DCOPY:DAT /R:0 /W:0 /XJ` under the original owner; verify 391 source and target hashes, Git HEAD/refs/stash/status/fsck and preserve dangling Git tree and all 19 local changes.
+- **On success only**, create five canonical on-host Evidence in `W:\AGZ\Projects\mahou\Evidence\Migration\AGZ-MAH-MB-20261101-01`. On failure, preserve original and any partial target; save a fail receipt in project Temp and prohibit cleanup.
+- Staged/tested does **not** mean performed: `CURRENT_COPY_STATUS=NO_COPY`; `CURRENT_FIVE_HOST_EVIDENCE=PENDING`; `KOPIA_PARENT_NOT_RUN`. Owner's explicit prompt authorizes scoped project-local COPY-FIRST only after PASS; exact interactive principal is required for safe target ownership. Runtime/remote/consumers/restore remain OPEN.
