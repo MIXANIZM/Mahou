@@ -1,7 +1,7 @@
 # Infrastructure migration — Model B v3 (separate from product work)
 
-- [AGZ-MAH-MB-20261101-01] [G0_PRECHECK_INCOMPLETE / BLOCKED_GIT_OWNERSHIP / NO_COPY] 2026-11-01
-  Exact original `W:\AGZ\Repositories\Mahou` exists; proposed new path `W:\AGZ\Projects\mahou\Repository` is absent. AGZ Project Reader and real Windows read-only checks completed in bounded scope. Windows `HUAWEI-ULTRA-7\AGZ-Agent` cannot read local Git because `fatal: detected dubious ownership`; do not alter ACL/safe.directory. Interactive owner-native Git/manifest/consumer PRECHECK must PASS before COPY-FIRST. No original, production, Kopia parent, Git refs, or existing Draft PR modified. Full details and five pending host Evidence are in [PROJECT-STORAGE-REGISTER.md](PROJECT-STORAGE-REGISTER.md); this work has its own Draft PR because repository Issues are disabled.
+- [AGZ-MAH-MB-20261101-01] [G0_PASS_TECHNICAL_CONSUMERS_OPEN / OWNER_COPY_V2_READY / NO_COPY] 2026-11-01
+  **Current owner Git 8/8 PASS; 391/391 source SHA-256, reparse/ADS/hardlinks PASS; owner-only COPY-FIRST v2 staged and fixture tested, not executed.** Original user HKCU and indirect consumers OPEN. The earlier AGZ-Agent ownership error is superseded by the validated owner Git receipt. No parent Kopia.\n  Exact original `W:\AGZ\Repositories\Mahou` exists; proposed new path `W:\AGZ\Projects\mahou\Repository` is absent. AGZ Project Reader and real Windows read-only checks completed in bounded scope. Windows `HUAWEI-ULTRA-7\AGZ-Agent` cannot read local Git because `fatal: detected dubious ownership`; do not alter ACL/safe.directory. Interactive owner-native Git/manifest/consumer PRECHECK must PASS before COPY-FIRST. No original, production, Kopia parent, Git refs, or existing Draft PR modified. Full details and five pending host Evidence are in [PROJECT-STORAGE-REGISTER.md](PROJECT-STORAGE-REGISTER.md); this work has its own Draft PR because repository Issues are disabled.
 
 # Active
 
