@@ -55,3 +55,12 @@ Run **one reviewed read-only PRECHECK under the interactive original repository 
 - [Central BOSS issue #99](https://github.com/MIXANIZM/agz-remote-bridge/issues/99)
 - [Product Draft PR #18](https://github.com/MIXANIZM/Mahou/pull/18)
 - Issues are **disabled** in `MIXANIZM/Mahou` (GitHub API 410); this dedicated Draft PR plus `ISSUES.md` is the project-local tracking record.
+
+## Prepared next-gate owner helper — tested, NOT executed under Owner
+
+The only new host file staged by the worker is an **independent Git-read helper** under its own isolated scratch:
+`W:\AGZ\Temp\Projects\mahou\AGZ-MAH-MB-20261101-01\AGZ-MAH-OwnerGit-Precheck-v1.ps1`.
+
+Its exact source is [AGZ-MAH-OwnerGit-Precheck-v1.ps1](docs/host-migration/AGZ-MAH-MB-20261101-01/AGZ-MAH-OwnerGit-Precheck-v1.ps1). Host SHA-256 **`57102A52A4A0520B0460D64674BCE16E4E9D5F7313B881CA8301CFDCDBA38E44`**; Windows PowerShell 5.1 AST `0 errors`; native Git self-test PASS; negative-principal test under `AGZ-Agent` correctly returned `USER_AUTH_REQUIRED` exit 1. Those are tooling checks only, **not** actual original repository Git PRECHECK and not a five-Evidence success.
+
+The helper refuses to run except as `HUAWEI-ULTRA-7\user`, checks target vacancy, runs native Git read-only HEAD/top-level/common-dir/worktrees/status/stash/refs/fsck with bounded timeouts and writes its **private receipt** only to own task Temp. It never copies source files, modifies ACL/safe.directory, runs parent Kopia or does producer cutover. **Output remains G0 incomplete** until full SHA/reparse/hardlink/dependency/consumer review, even when Git-read reports PASS.
