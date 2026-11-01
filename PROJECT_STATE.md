@@ -231,3 +231,7 @@ RichEdit was first because it might expose native range, caret and undo semantic
 - AutoSwitch modern Notepad containment smoke is complete and is no longer a pending Draft PR #2 merge gate.
 - Remaining merge gates include snippets and the other retained-feature Windows smoke, green final-head CI, an accurate PR #2 description, supervisor review, and explicit Ready/merge permission.
 - Public-release gates additionally include exact-candidate provenance, signing, final independent review, release-specific Windows checks, and separate tag/Release/publication permission.
+
+## Infrastructure migration — AGZ Model B v3 (2026-11-01)
+
+Dedicated project register: [PROJECT-STORAGE-REGISTER.md](PROJECT-STORAGE-REGISTER.md). CURRENT_STAGE: `G0_PRECHECK_INCOMPLETE`; STATUS: `BLOCKED_GIT_OWNERSHIP`; `COPY_GATE=BLOCKED_NO_COPY`. The canonical source `W:\AGZ\Repositories\Mahou` exists and target `W:\AGZ\Projects\mahou\Repository` is absent. The AGZ-Agent actor cannot read the source Git due to its ownership safety check. Interactive owner-native Git PRECHECK plus source hashes/dependency/consumer inventory must pass before any copy. No five host Evidence, post-copy parent Kopia snapshot, restore, or cleanup claimed. Product Draft PR #2 and #18, source originals and product runtime are unchanged.
