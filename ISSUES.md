@@ -1,3 +1,9 @@
+# Infrastructure migration — Model B v3 (separate from product work)
+
+- [AGZ-MAH-MB-20261101-01] [COPIED_VERIFIED_RUNTIME_UNTESTED / 391_SHA_GIT_PASS / FIVE_EVIDENCE_VERIFIED] 2026-11-01
+  Actual project-local Owner COPY-FIRST under `HUAWEI-ULTRA-7\user` completed. Original `W:\AGZ\Repositories\Mahou` preserved; new `W:\AGZ\Projects\mahou\Repository` verified with 391/391 matching SHA-256, standalone Git HEAD `5527f662cb844ba90d264f5b93cb27f8334bf295`, fsck PASS, all 16 tracked modifications and 3 untracked files intact, complete Git objects including dangling tree. Robocopy exit 1. Five real on-host Evidence in `W:\AGZ\Projects\mahou\Evidence\Migration\AGZ-MAH-MB-20261101-01`, each SHA independently confirmed by AGZ Reader; manifest 391 rows and 0 mismatches. Source/target Git owner confirmed `HUAWEI-ULTRA-7\user`. Details and all five SHA values: [PROJECT-STORAGE-REGISTER.md](PROJECT-STORAGE-REGISTER.md). Project tracking [Draft PR #19](https://github.com/MIXANIZM/Mahou/pull/19); repository Issues are disabled (GitHub HTTP 410).
+  Still OPEN: Owner HKCU and indirect consumer paths, runtime smoke, Git remote network validation, single centrally approved parent Kopia snapshot, isolated restore. Original and target kept; no cutover, deletion, ACL/production change, merge, or parent Kopia action.
+
 # Active
 
 - No product implementation task is currently active under the supervisor/executor workflow.
