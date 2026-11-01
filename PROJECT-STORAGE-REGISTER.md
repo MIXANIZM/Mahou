@@ -1,22 +1,22 @@
 # PROJECT-STORAGE-REGISTER — Mahou (Model B v3)
 **Batch:** `AGZ-MAH-MB-20261101-01`  
 **Observed:** 2026-11-01, Windows host `HUAWEI-ULTRA-7`  
-**CURRENT_STAGE:** `G0_PASS_TECHNICAL_CONSUMERS_OPEN`  
-**CURRENT_STATUS:** `OWNER_COPY_SCRIPT_READY_NO_COPY`  
-**COPY_GATE:** `AWAIT_OWNER_INTERACTIVE_COPY_V2`  
+**CURRENT_STAGE:** `COPIED_VERIFIED_RUNTIME_UNTESTED`  
+**CURRENT_STATUS:** `G1_COPY_SHA_GIT_PASS; G2_FIVE_EVIDENCE_VERIFIED; G3_KOPIA_NO_GO`  
+**COPY_GATE:** `OWNER_COPY_FIRST_SUCCESS_NO_DELETE`  
 **ORIGINALS:** preserved; no source modification, move, cleanup, or rollback performed by this worker.
 
 ## Canonical identity and scope
 - Product GitHub repository: `MIXANIZM/Mahou` (legacy `master`; development `mixanizm-modern-v2.9.0.1`; protected separate product Draft PRs #2 and #18).
 - Local source observed: `W:\AGZ\Repositories\Mahou`.
-- Exact proposed new checkout: `W:\AGZ\Projects\mahou\Repository`.
-- Own Evidence destination only **after valid copy**: `W:\AGZ\Projects\mahou\Evidence\Migration\AGZ-MAH-MB-20261101-01`.
+- Verified copied checkout: `W:\AGZ\Projects\mahou\Repository`.
+- Verified Evidence location: `W:\AGZ\Projects\mahou\Evidence\Migration\AGZ-MAH-MB-20261101-01`.
 - Scratch reserved: `W:\AGZ\Temp\Projects\mahou\AGZ-MAH-MB-20261101-01`.
 - Proposed separate `Artifacts`, `LocalState` under `W:\AGZ\Projects\mahou` only if required, with provenance/security review.
 - Quarantine **HOLD in place**, no blind material classification/move.
 - Parent Kopia is owned by central BOSS, `W:\AGZ\Projects`; **do not launch snapshot, create per-project sources, or change retention**.
 
-This route is from [M0 249-row source→target map](https://github.com/MIXANIZM/agz-remote-bridge/blob/adc3a59e8b3a0af88d1977239ae72ddf1e222d74/docs/p9a/storage-001/MODEL-B-M0-TARGET-ROUTING-249-20261031.csv). M0 initially marked `verified_slug=UNKNOWN`; the real local documents and GitHub metadata agree on project identity, but **local Git graph is still unverified**.
+This route is from [M0 249-row source→target map](https://github.com/MIXANIZM/agz-remote-bridge/blob/adc3a59e8b3a0af88d1977239ae72ddf1e222d74/docs/p9a/storage-001/MODEL-B-M0-TARGET-ROUTING-249-20261031.csv). M0 initially marked `verified_slug=UNKNOWN`; the real local documents and GitHub metadata agree on project identity, and original local Git graph was subsequently verified under the actual Windows owner (see the current post-copy checkpoint).
 
 ## Instrumented read-only findings
 | Check | Value | Authority / limitations |
@@ -88,10 +88,36 @@ Remaining G0: private complete source SHA-256 inventory with hidden .git/ignored
 - Consumer checks: visible processes PASS no Mahou; scheduled tasks COM scan PASS visible only; HKLM Run PASS no Mahou; alternate machine service registry path scan read 878 service entries with 0 Mahou references. Agent's Win32_Service CIM returned `CimException` (superseded by read-only service registry fallback). The original `user` HKCU Run hive is inaccessible to AGZ-Agent (`SecurityException`), so **OWNER HKCU and indirect/dynamic consumers OPEN**; no path cutover permission.
 - W drive free-space observed **39,274,942,464 bytes**, target directory absent at time of check. Current standing authority is only independent **new-location COPY-FIRST preserving original**, never switching user app, Windows autorun, services or legacy paths.
 
-### Owner-only guarded COPY-FIRST v2 — READY, NOT RUN
+### Historical owner-only COPY-FIRST v2 preparation — SUPERSEDED BY SUCCESSFUL EXECUTION
 - On-host script: `W:\AGZ\Temp\Projects\mahou\AGZ-MAH-MB-20261101-01\AGZ-MAH-CopyFirst-v2.ps1`.
 - [Exact source in this Draft PR](docs/host-migration/AGZ-MAH-MB-20261101-01/AGZ-MAH-CopyFirst-v2.ps1).
 - SHA-256 `A71331AABBFD9728BF01E496A2312B7F0B1AA88AFD33CF623680B7E2E8EB84A2` independently verified by AGZ Project Reader. Windows PS5.1 AST errors=0. Fixture run with `robocopy` exit 1 and matching SHA-256: PASS. Separate self-test of tree enumeration and hash baseline: PASS. Initial `v1` superseded by `v2` after a self-test coverage correction, v1 preserved.
 - Script requires `HUAWEI-ULTRA-7\user` (never agent). It rejects an existing project target, source identity drift, Git HEAD/status/refs/stash/worktree mismatch, any mismatch from 391 hashed original files, reparse changes or missing expected artifacts before COPY. Then only `robocopy /E /COPY:DAT /DCOPY:DAT /R:0 /W:0 /XJ` under the original owner; verify 391 source and target hashes, Git HEAD/refs/stash/status/fsck and preserve dangling Git tree and all 19 local changes.
 - **On success only**, create five canonical on-host Evidence in `W:\AGZ\Projects\mahou\Evidence\Migration\AGZ-MAH-MB-20261101-01`. On failure, preserve original and any partial target; save a fail receipt in project Temp and prohibit cleanup.
-- Staged/tested does **not** mean performed: `CURRENT_COPY_STATUS=NO_COPY`; `CURRENT_FIVE_HOST_EVIDENCE=PENDING`; `KOPIA_PARENT_NOT_RUN`. Owner's explicit prompt authorizes scoped project-local COPY-FIRST only after PASS; exact interactive principal is required for safe target ownership. Runtime/remote/consumers/restore remain OPEN.
+- **Historical pre-execution statement, superseded by the verified 2026-11-01 post-copy receipt below.** `KOPIA_PARENT_NOT_RUN`. Owner's explicit prompt authorizes scoped project-local COPY-FIRST only after PASS; exact interactive principal is required for safe target ownership. Runtime/remote/consumers/restore remain OPEN.
+
+
+## Post-copy verification — 2026-11-01 (CURRENT, supersedes G0 and ready-only sections)
+
+**G0 = PASS_TECHNICAL_CONSUMERS_OPEN; G1 = COPY_SHA256_GIT_PASS; G2 = FIVE_EVIDENCE_CREATED_AND_INDEPENDENTLY_HASH_VERIFIED; G3 = KOPIA_NO_GO; G4 = RESTORE_RUNTIME_AND_CUTOVER_PENDING.**
+
+Under authenticated Windows operator `HUAWEI-ULTRA-7\user`, SHA-pinned `AGZ-MAH-CopyFirst-v2.ps1` ran with all phases PASS. Source remained at `W:\AGZ\Repositories\Mahou`, target exists `W:\AGZ\Projects\mahou\Repository`. Robocopy exit 1 = successful copy. Source pre-hash 391/391, source post-hash 391/391, target 391/391 match against immutable pre-copy manifest; all local Git status/HEAD/refs/stash/fsck preserved. Exact local HEAD `5527f662cb844ba90d264f5b93cb27f8334bf295`; 16 modified tracked + 3 untracked, one dangling tree retained. **No merge, Git repair or production modification.**
+
+**Independent read-only audit after Owner execution:**
+- AGZ Project Reader re-hashed all five on-host Evidence; SHA-256 values match the exact Owner console.
+- Windows Remote Desktop Commander (`HUAWEI-ULTRA-7\AGZ-Agent`) separately confirmed original and target exist and file ownership of original checkout, target checkout and target `.git` is `HUAWEI-ULTRA-7\user`. Read-only parse of canonical manifest: 391 records, 0 mismatches in copied/matched/original-preserved and source-vs-target hash claims, 171 `.git` files, 41,404,389 bytes. Exactly five Evidence files exist.
+- Operator UTC in receipt: `2026-11-01T19:37:20.5435370Z`. This is **project-scope copy proof**, not proof of an independent off-drive backup.
+
+**The exact FIVE on-host Evidence** under `W:\AGZ\Projects\mahou\Evidence\Migration\AGZ-MAH-MB-20261101-01`:
+
+| Evidence | SHA-256 (recomputed by Reader) |
+|---|---|
+| `source-target-manifest.csv` | `062039A7810A9C388E748C6E88B92832A54279BE4F6E91F60CC64D8C9C465D88` |
+| `quarantine-manifest.csv` | `8F0F8A0DD45EA9F8C52411D85210D76EB656BC33102EEFC814BCFDE38F506705` |
+| `dependencies.json` | `8FEBD477483DAF99316BBCD5C87A3AAEC0951A2C41FAF3100147460F5BDD38D9` |
+| `verification-report.md` | `64099E56770B4FD9A19A08924829E902CA4F0C75B3A9A8799ABA2BFB73DEF63F` |
+| `migration-receipt.json` | `E61330E3511D844E5C948321C76C25FC469AF4AA79E9E1393838AEA9573179AB` |
+
+**Still OPEN / NO-GO:** consumer path audit in original owner's `HKCU` and indirect runtime dependencies; no service or user autostart cutover, no application launch/smoke from copied checkout; origin/upstream network read-only check not run; the single shared parent Kopia snapshot `W:\AGZ\Projects` has **not** been authorized or run, snapshot/root IDs remain null; no isolated restore performed. No cleanup, no source deletion, no Quarantine move, no promotion of Draft PR, no release. Parent Kopia requires new explicit Owner GO and central BOSS coordination. An older parent snapshot cannot be treated as coverage of this new copy.
+
+**Owner physical preservation:** original `W:\AGZ\Repositories\Mahou` and new `W:\AGZ\Projects\mahou\Repository` both stay in place without deleting either. Retain local-only uncommitted work and both .git stores until independently recovered/backed up and consumers safely reviewed. **CURRENT_STAGE=COPIED_VERIFIED_RUNTIME_UNTESTED.**
