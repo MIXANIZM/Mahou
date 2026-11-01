@@ -69,3 +69,7 @@ history and license; MIXANIZM maintains this modernization branch.
 ## Test artifact provenance
 
 Test ZIP names include the runtime version, platform, short source commit, and GitHub Actions run ID. Every archive carries its full source commit/tree manifest and SHA-256 inventory, with separate post-upload artifact evidence. A ZIP must pass the fail-closed handoff procedure in `ARTIFACT-PROVENANCE.md`; generic filenames are not valid provenance.
+
+## Model B storage and migration tracking
+
+The project-specific [PROJECT-STORAGE-REGISTER.md](PROJECT-STORAGE-REGISTER.md) records the 2026-11-01 AGZ Model B v3 migration gate. Current host state is `G0_PRECHECK_INCOMPLETE / BLOCKED_GIT_OWNERSHIP`; no filesystem COPY, Kopia snapshot, restore, cleanup, consumer cutover, or product runtime change has been performed. Issues are disabled in this GitHub repository; the independent migration Draft PR tracks this infrastructure work without changing product Draft PR #2 or #18.
