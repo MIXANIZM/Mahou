@@ -1,5 +1,13 @@
 # Active
 
+## AGZ-MAH-MB-20261124 — host storage alignment (docs only; diagnostic not started)
+
+- [Model B ADR](docs/ADR-AGZ-MAH-MODEL-B-HOST-STORAGE-2026-11-24.md) is proposed in a separate stacked documentation Draft PR. This records the **already accepted** 2026-11-01 391/391 SHA COPY-FIRST preservation, not a new migration or Git repair.
+- Prior Mahou original `W:\AGZ\Repositories\Mahou` and Model B `W:\AGZ\Projects\mahou\Repository` are preserved; 16 modified + 3 untracked were recorded at the old checkpoint. Independent **current** Git/recovery/consumer/backup classification is pending; legacy original and task Temp remain NO_DELETE.
+- Next storage action: separate independent read-only diagnostic worker, followed by Permanent BOSS acceptance, recovery/migration plan, then exact Owner GO. **No physical source movement, Git repair, Kopia, ACL, or cleanup GO.**
+- Parallel product task AGZ-MAH-0022 remains **artifact refresh/provenance only**; do not reclassify Windows user smoke as done or modify protected PRs #1/#2/#3/#18/#20.
+
+
 ## Supervisor transition and current execution blocker (2026-11-23)
 
 - **AGZ-MAH-0021 / supervisor handoff:** separate documentation-only Draft PR stacked on the `agz-mah-0019-remove-snippets-decouple-autoswitch` source. Read `docs/SUPERVISOR-HANDOFF-2026-11-23.md` first; do not merge this docs branch or mutate PR #18 without approval.
