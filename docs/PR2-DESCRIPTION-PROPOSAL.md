@@ -1,5 +1,7 @@
 # Proposed replacement body for Draft PR #2
 
+> **Supervisor transition note (2026-11-23):** This is still a **proposal**, not PR #2's live body. The actual development PR #2 is Draft/unmerged at `f02909611eb9a4502e9fe4d8fda9009922f352fd`. User-snippets removal/AutoSwitch refactor and startup remediation live on separate Draft PR #18 at `ba40fd4c588b7c48b64bcc2cdfcefbed0f39c0d6`; exact-head CI passed but real Windows Stage A/B did not, and the old x64 artifact is unavailable (404). Do not apply this proposal as approved metadata or mark PR #2 Ready before integration, fresh artifact smoke and separate permission. See `docs/SUPERVISOR-HANDOFF-2026-11-23.md`.
+
 This file is a proposal only. `AGZ-MAH-0016` does not update PR #2 metadata.
 
 ---

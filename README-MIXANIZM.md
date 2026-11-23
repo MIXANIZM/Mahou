@@ -8,6 +8,10 @@ This branch is based on the latest preserved modern Mahou source lineage and kee
 tabbed settings UI, a standalone AutoSwitch dictionary, selection conversion,
 translation panel, history and advanced layout controls.
 
+## Supervisor transition checkpoint (2026-11-23)
+
+The latest docs-only management handoff is `docs/SUPERVISOR-HANDOFF-2026-11-23.md`. Draft PR #18 at `ba40fd4c588b7c48b64bcc2cdfcefbed0f39c0d6` has accepted exact-head automated remediation but still awaits physical Windows Stage A and B. The former x64 artifact `8977741913` is unavailable (GitHub 404 on 2026-11-23), so validate a fresh exact-source artifact before requesting Stage A. Central rules `v2.7.1` now exist, but the **project remains pinned to v2.7.0** until a separate authorized rules update. No PR merge/Ready or public release is authorized.
+
 ## MIXANIZM defaults
 
 - Caps Lock behaves as normal Windows Caps Lock.
