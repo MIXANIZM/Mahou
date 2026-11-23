@@ -17,6 +17,15 @@ USER_SNIPPETS_REMOVED
 AUTOSWITCH_DECOUPLED
 ```
 
+## November 23, 2026 verified status and blockers
+
+- Draft PR #2 is unchanged and remains Draft/unmerged. Its development head is `f02909611eb9a4502e9fe4d8fda9009922f352fd`.
+- Draft PR #18 at `ba40fd4c588b7c48b64bcc2cdfcefbed0f39c0d6` / tree `a28af6cc694e6e857f6b0bb6844ed4113b55fc04` implements removed user snippets and independent AutoSwitch, with AGZ-MAH-0020 dictionary startup remediation. Exact-head CI is successful; **physical Stage A and Stage B have not passed**.
+- The earlier high-CPU startup candidate (`5527f662cb844ba90d264f5b93cb27f8334bf295`, artifact `8730807263`) is permanently rejected.
+- Historical replacement artifact `8977741913` from run `31135413918` could not be downloaded on 2026-11-23: available-artifact list empty and download returned 404. A new exact-source artifact must be generated and independently checked before inviting the Owner to test. New upload gets **new** hash/identifier.
+- Required order: artifact verification → **Stage A** clean-profile startup, CPU, tray/UI, normal exit → only after Stage A PASS, **Stage B** snippets absence/legacy preservation, Chrome/Word AutoSwitch, modern Notepad strict no-op, rapid focus cancellation, restart persistence.
+- This supervisor handoff is documentation-only; it does not turn either PR Ready, merge them, close historical gaps or authorize signing, tag, Release or publication. See `docs/SUPERVISOR-HANDOFF-2026-11-23.md`.
+
 ## Scope and evidence boundary
 
 This record reconciles Draft PR #2 with the accepted development line and now

@@ -1,5 +1,16 @@
 # Testing
 
+## November 23, 2026 physical smoke gate and artifact availability
+
+- AGZ-MAH-0020 source `ba40fd4c588b7c48b64bcc2cdfcefbed0f39c0d6`, tree `a28af6cc694e6e857f6b0bb6844ed4113b55fc04`: exact-head automated x86/x64 CI, deterministic build, source and executable regressions and provenance previously passed. This does **not** establish physical-Windows verification.
+- Former x64 artifact ID `8977741913`, workflow `31135413918`, ZIP SHA-256 `a3abb5973530741bb092100a14a4cb6a41ec3a0b1cc0f8e4d85ca1be6646b0b1`, `Mahou.exe` SHA-256 `01834bd7a9f288db1035c90389e40bdd461ef0fd873bcdcd7ba1290fc607ff06`: **historical**. On 2026-11-23 available-artifacts list was empty and direct download returned GitHub **404**. Do not claim the old URL is usable.
+- A freshly downloadable **exact-source** x64 candidate must be generated or found and its own commit/tree, deterministic gates, run ID, artifact ID, ZIP digest and binary SHA-256 verified. Never silently reuse the historical digest for a new upload. Old failed candidate ID `8730807263` is forbidden.
+- **Stage A** only: fresh extraction directory and clean isolated Mahou profile with no imported historical config; launch; confirm usable UI/tray, no sustained high CPU after loading, normal exit and process termination. Owner reports PASS or precise symptoms. Stage B must not start before Stage A PASS.
+- **Stage B** only after owner-confirmed Stage A PASS: no user snippets UI, no `snippets.txt` created on clean profile, legacy snippets files untouched/inactive, independent AutoSwitch enable, Chrome and Word `ghbdtn + Space → привет`, modern Notepad exact `notepad.exe + RichEditD2DPT` remains unchanged, rapid focus switch has no deferred mutation, restart retains AutoSwitch behavior.
+- If Stage A fails, record failed candidate identity and symptoms; do not repeatedly request the same unsafe artifact. If either stage fails, do not mark `VERIFIED` or remove release gates.
+- Full handoff: `docs/SUPERVISOR-HANDOFF-2026-11-23.md`.
+
+
 ## Fast gates
 
 ```text

@@ -1,11 +1,21 @@
 # Active
 
+## Supervisor transition and current execution blocker (2026-11-23)
+
+- **AGZ-MAH-0021 / supervisor handoff:** separate documentation-only Draft PR stacked on the `agz-mah-0019-remove-snippets-decouple-autoswitch` source. Read `docs/SUPERVISOR-HANDOFF-2026-11-23.md` first; do not merge this docs branch or mutate PR #18 without approval.
+- **AGZ-MAH-0020:** supervisor accepted the remediation and exact-head CI at `ba40fd4c588b7c48b64bcc2cdfcefbed0f39c0d6`; **physical Stage A and Stage B have NOT been reported as passed**. Status `IMPLEMENTED / EXACT-HEAD_CI_PASSED / USER_SMOKE_PENDING / DOWNLOAD_BLOCKED`.
+- **Artifact availability:** as of 2026-11-23, GitHub's available-artifacts list for run `31135413918` was empty and downloading artifact `8977741913` returned 404. Its historical hashes remain records, but that artifact is not a usable link. Obtain and verify a freshly downloadable exact-source candidate before asking for Stage A.
+- **Next bounded work:** provenance-only artifact refresh (suggested `AGZ-MAH-0022` if separately assigned), no code changes; then Stage A startup/CPU/exit; **only after Stage A PASS** run Stage B snippets removal, Chrome/Word AutoSwitch and modern Notepad strict no-op.
+- **Rules:** pin `v2.7.0` / `ba60623aec67c57d46bda7ce2b291a823de2d4ea` remains; newer stable central `v2.7.1` found, not adopted.
+- **Protected:** PR #1, #2, #3 and #18 remain Draft/unmerged; no merge, Ready, release, tag, signing or publication authorization.
+
+
 - [AGZ-MAH-0020] [IMPLEMENTED / EXACT-HEAD_CI_PASSED / USER_SMOKE_PENDING] 2026-08-07
   Remediate the AutoSwitch dictionary startup hang on existing branch `agz-mah-0019-remove-snippets-decouple-autoswitch` and Draft PR #18 from exact starting head `5527f662cb844ba90d264f5b93cb27f8334bf295`.
   The rejected AGZ-MAH-0019 candidate remains immutable as `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU`: build `30469006963`, x64 artifact `8730807263`, ZIP SHA-256 `4627c32bffe76ed3df71b8f35cfaa922783c31ee65770ea034207b78b2695214`, and `Mahou.exe` SHA-256 `87d86a215f0ee57fa95567a2a74550b4e1190b495bb4d8127601fb24a1407abb`.
   The bundled dictionary contains exactly 5,188,519 characters, 151,429 complete rules/aliases, and 18 comment lines. A monotonic parser now uses forward bounded indexes, publishes only complete successful results, supplies the displayed count, and eliminates the old suffix copies, separate character-array count, and configuration-load `TextChanged` recount. `AutoSwitchDictionaryStartupRegression` passes locally and in exact-head x86/x64 CI against the bundled dictionary and a 150,000-rule synthetic dictionary. Deterministic zero-warning builds and x64 provenance pass; the replacement physical-Windows two-stage smoke remains pending.
 
-- [AGZ-MAH-0019] [IMPLEMENTATION_IN_PROGRESS / DRAFT] 2026-07-29
+- [AGZ-MAH-0019] [IMPLEMENTED / EXACT-HEAD_CI_PASSED / USER_SMOKE_PENDING / DRAFT] 2026-07-29
   Remove user-defined snippets and decouple AutoSwitch from every snippet enablement, parser, persistence, expression, UI and hotkey path. Exact base: `f02909611eb9a4502e9fe4d8fda9009922f352fd`; task branch: `agz-mah-0019-remove-snippets-decouple-autoswitch`; Draft PR #18.
   Product decisions: `USER_SNIPPETS_REMOVED` and `AUTOSWITCH_DECOUPLED`. Existing `snippets.txt` and `snippets.txt.bak` are inactive legacy rollback data: the runtime must not read, parse, create, modify, execute or delete them.
   AutoSwitch now has its own source buffer, dictionary loader and literal replacement primitive outside `SnippetsEnabled`. Exact modern Notepad `notepad.exe` + `RichEditD2DPT` remains fail-closed. Its first candidate failed startup with high CPU and is rejected; `AGZ-MAH-0020` is the bounded remediation. General AutoSwitch behavior at the remediated source is not accepted until replacement exact-head CI and focused physical-Windows smoke complete.

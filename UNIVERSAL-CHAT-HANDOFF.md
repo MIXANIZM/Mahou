@@ -1,5 +1,17 @@
 # Universal chat handoff — MIXANIZM Mahou
 
+## Priority: November 23, 2026 supervisor transition
+
+The authoritative handoff for the next Permanent BOSS is `docs/SUPERVISOR-HANDOFF-2026-11-23.md`, in a separate docs-only Draft PR stacked on the unchanged PR #18 source. Read it **before** old task sections below.
+
+**Current working point:** Draft PR #18 `agz-mah-0019-remove-snippets-decouple-autoswitch`, head `ba40fd4c588b7c48b64bcc2cdfcefbed0f39c0d6`, tree `a28af6cc694e6e857f6b0bb6844ed4113b55fc04`; development Draft PR #2 head `f02909611eb9a4502e9fe4d8fda9009922f352fd`. No source PR was changed by this handoff. Supervisor accepted AGZ-MAH-0020 exact-head tests and parser remediation, **not** a physical Windows smoke. Status `IMPLEMENTED / EXACT-HEAD_CI_PASSED / USER_SMOKE_PENDING / DOWNLOAD_BLOCKED`.
+
+**Urgent blocker:** previously shared x64 artifact `8977741913` from run `31135413918` is no longer downloadable (GitHub available-artifacts list empty; attempted download 404 on 2026-11-23). Create and verify a fresh exact-source download/provenance record before user Stage A. Earlier failed high-CPU artifact `8730807263` must never be run again. Do not assert an artifact exists merely because its old link/hashes are in historical docs.
+
+**Stage order:** Stage A clean-profile launch/UI/tray/CPU/normal exit only; upon the Owner's explicit Stage A PASS, Stage B removed-snippets, preserved inactive legacy snippets files, Chrome/Word AutoSwitch, exact modern Notepad safe no-op, focus-change cancellation and restart persistence.
+
+**Rules:** pin `v2.7.0` remains authoritative; central stable `v2.7.1` observed on 2026-11-23, not adopted. PRs #1/#2/#3/#18 remain Draft/unmerged, with no merge, Ready or publication permission.
+
 ## Project
 
 - Repository: `MIXANIZM/Mahou`
@@ -309,4 +321,4 @@ Closed and merged into `mixanizm-modern-v2.9.0.1` at `1a930137f7254111f8ef200da3
 
 ## Next management step
 
-The project supervisor should review Draft PR #18 and the exact AGZ-MAH-0020 replacement candidate evidence after CI. Stage A must establish startup usability, settled CPU and normal exit before any functional testing. Only after Stage A passes may Stage B check snippets removal, Chrome/Word AutoSwitch, modern Notepad strict no-op, rapid-focus cancellation and restart persistence. Before PR #2 can leave Draft, accept that smoke, complete the other remaining retained-feature Windows smoke, and satisfy every merge gate in `docs/RELEASE-READINESS.md`; signing, final independent review, exact-candidate provenance and separate publication permission remain additional public-release gates.
+Verify current PR #18 exact head and the historical artifact 404. Assign only a bounded artifact-refresh/provenance task from the unchanged source if no downloadable verified artifact exists. Once the supervisor independently validates a new artifact, request **Stage A only**. If Stage A PASS, release **Stage B only**. Record resulting evidence in GitHub before making further acceptance/merge decisions. Draft PR #2 and #18 remain Draft, and older release gates and Owner permission constraints all remain in force.

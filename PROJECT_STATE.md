@@ -1,6 +1,17 @@
 # Project state — MIXANIZM Mahou
 
-Snapshot date: 2026-08-07
+Snapshot date: 2026-11-23 (supervisor transition; source candidate originally 2026-08-07)
+
+## Current authoritative transition checkpoint
+
+- Read `docs/SUPERVISOR-HANDOFF-2026-11-23.md` for the complete recovery snapshot and next-BOSS protocol. Earlier task entries below remain historical evidence, not permission to restart them.
+- Current development PR #2 is open/Draft/unmerged at `f02909611eb9a4502e9fe4d8fda9009922f352fd`. Protected PR #1 at `8c8a79686952717344ca70cf3cfc58e68e57b039` and PR #3 at `b547c0e00488b2e588e06cc25a57fdc3a5b4d1d3` are also open/Draft/unmerged.
+- AGZ-MAH-0019/0020 remain on Draft PR #18, exact head `ba40fd4c588b7c48b64bcc2cdfcefbed0f39c0d6`, tree `a28af6cc694e6e857f6b0bb6844ed4113b55fc04`, base `f02909611eb9a4502e9fe4d8fda9009922f352fd`. Source implementation and exact-head x86/x64 CI were accepted by the supervisor, but physical Windows verification is NOT complete.
+- New x64 artifact refresh is needed: the original ID `8977741913` from run `31135413918` returned GitHub 404 and did not appear in available artifacts on 2026-11-23. Do not promise this historical link will download. Refresh from the exact source and independently verify provenance before asking the Owner to run Stage A.
+- `AGZ-MAH-0020 = IMPLEMENTED / EXACT-HEAD_CI_PASSED / USER_SMOKE_PENDING / DOWNLOAD_BLOCKED`. Rejected earlier artifact `8730807263` remains `USER_SMOKE_FAILED / STARTUP_HANG_HIGH_CPU` and must never be re-tested.
+- Stage A (clean-profile startup, usable UI/tray, settled CPU, normal exit) is first; Stage B (removed snippets, legacy-file preservation, Chrome/Word conversions, modern Notepad no-op, rapid focus cancellation, restart persistence) is allowed only after a confirmed Stage A PASS.
+- Pinned central rules are still `v2.7.0` at `ba60623aec67c57d46bda7ce2b291a823de2d4ea`. On 2026-11-23 `MIXANIZM/agatzub-development-rules` main VERSION and stable tag `v2.7.1` showed the newer `2.7.1` release. Report it but do not update the project pin without a separate reviewed PR.
+- No protected PR transition, merge, release, tag, signing, publication, production work, runtime version change, restored snippets or positive modern Notepad support is authorized.
 
 ## Authoritative development line
 
