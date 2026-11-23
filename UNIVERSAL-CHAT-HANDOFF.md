@@ -1,5 +1,12 @@
 # Universal chat handoff — MIXANIZM Mahou
 
+## Model B host storage alignment — 2026-11-24 (separate docs-only Draft)
+
+- Read [Mahou host-specific Model B ADR](docs/ADR-AGZ-MAH-MODEL-B-HOST-STORAGE-2026-11-24.md), then the central 2026-10-31/11-05 host authority. The 2026-11-01 accepted copy `W:\AGZ\Repositories\Mahou` -> `W:\AGZ\Projects\mahou\Repository` has 391/391 SHA PASS and historical 16 modified + 3 untracked preserved; do **not** repeat the accepted preservation stage or delete the original.
+- Correct current Temp is `W:\AGZ\Temp\Projects\mahou\<Task-ID>`, not historical local project Temp. Installed Mahou/tools, per-user state and live consumers are distinct from Git development and remain unverified. Project-specific backup restore, consumer cutover and cleanup are **NOT accepted**.
+- Assign independent READ-ONLY Mahou Git/storage worker, independently review exact receipts and prepare separately gated recovery/migration and later cleanup allowlists. No writes, repairs, Kopia/ACL changes or cleanup absent bounded Owner GO. The product AGZ-MAH-0022 artifact refresh and protected Draft PR gates are unchanged.
+
+
 ## Priority: November 23, 2026 supervisor transition
 
 The authoritative handoff for the next Permanent BOSS is `docs/SUPERVISOR-HANDOFF-2026-11-23.md`, in a separate docs-only Draft PR stacked on the unchanged PR #18 source. Read it **before** old task sections below.
