@@ -1,5 +1,12 @@
 # Project state — MIXANIZM Mahou
 
+## Storage-specific checkpoint — 2026-11-24 (separate from product work)
+
+- See [Mahou host Model B ADR](docs/ADR-AGZ-MAH-MODEL-B-HOST-STORAGE-2026-11-24.md), docs-only **Draft pending review**. The previously accepted 2026-11-01 Mahou receipt at `W:\AGZ\Projects\mahou\Evidence\Migration\AGZ-MAH-MB-20261101-01` reports **391/391 SHA PASS**, full Git/fsck and 19 local changes preserved, original `W:\AGZ\Repositories\Mahou` retained. This is historical scoped preservation, not current full recovery/cutover or deletion authorization.
+- Canonical development target: `W:\AGZ\Projects\mahou\Repository` (separate from installed operational tool/runtime); registered worktrees under `Projects\mahou\Worktrees`; durable evidence/artifacts/state under project; proven disposable scratch under `W:\AGZ\Temp\Projects\mahou\<Task-ID>`. Legacy Temp and Git are HOLD until classified.
+- Next **storage-only** gate: independent bounded read-only Git + storage worker, BOSS review and plan. `BACKUP=PROJECT_RESTORE_NOT_VERIFIED`; `OWNER_WRITE_GO=NOT_GRANTED`; `GLOBAL_CLEANUP_GATE=HOLD`. No change to product AGZ-MAH-0022 smoke/artifact status or pinned v2.7.0.
+
+
 Snapshot date: 2026-11-23 (supervisor transition; source candidate originally 2026-08-07)
 
 ## Current authoritative transition checkpoint
